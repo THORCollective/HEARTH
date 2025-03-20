@@ -1,6 +1,6 @@
 # 🔥 Hunting Exchange And Research Threat Hub (HEARTH) 🔥
 
-<img src="/Assets/HEARTH-logo.png" alt="HEARTH Logo" width="500"/>
+<img src="HEARTH-logo.png" alt="HEARTH Logo" width="500"/>
 
 A community-driven repository for threat hunting ideas, methodologies, and research that serves as a central gathering place for hunters to share knowledge, collaborate on techniques, and advance the field of threat hunting.
 
