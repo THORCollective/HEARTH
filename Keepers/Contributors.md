@@ -16,5 +16,6 @@ Everyone listed below has submitted ideas that have been added to HEARTH. This l
 | 10 | wikijm | 1 |
 | 11 | hu983r | 1 |
 | 12 | Cody Lunday | 1 |
-| 13 | Claire Stromboe | 1 |
-| 14 | Jon Perez | 1 |
+| 13 | DarkWizardCatcher | 1 |
+| 14 | Claire Stromboe | 1 |
+| 15 | Jon Perez | 1 |
