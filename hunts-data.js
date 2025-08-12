@@ -1022,6 +1022,21 @@ const HUNTS_DATA = [
     "file_path": "Flames/H045.md"
   },
   {
+    "id": "H046",
+    "category": "Flames",
+    "title": "Evildoers might be using reverse ssh for Command and Control.",
+    "tactic": "Command and Control",
+    "notes": "Look for processes with \"ssh -R\" and use JA4SSH for TLS/JA4+ fingerprinting.",
+    "tags": [],
+    "submitter": {
+      "name": "DarkWizardCatcher",
+      "link": ""
+    },
+    "why": "- Aiming for hunting already executed C2 communications in network.\n- If you find something potentially evil it can indicate the host is already compromised and adversary estabilished C2.\n- We have seen adversaries using ssh for C2 communication. For example ALPHA SPIDER or Billbug.\n- We don't see much of JA4 fingerprinting telemetry ingested in SIEMs and using those for detections. Firewalls them self might already be detecting these kind of activities. Even EDR's don't flag ssh clients with -R activities.",
+    "references": "https://github.com/FoxIO-LLC/ja4\nhttps://github.com/Fahrj/reverse-ssh\nhttps://attack.mitre.org/techniques/T1572/\nhttps://medium.com/foxio/ja4-network-fingerprinting-9376fe9ca637",
+    "file_path": "Flames/H046.md"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
