@@ -1092,7 +1092,7 @@ const HUNTS_DATA = [
       "link": ""
     },
     "why": "- The identified hallmarks of location, file name, and binary path may all be indicators of malicious executables.\n- Files/binaries that carry similar hallmarks should be reviewed with scrutiny, especially if their source cannot be verified.",
-    "references": "https://attack.mitre.org/tactics/TA0005/\nhttps://attack.mitre.org/tactics/TA0002/\nhttps://attack.mitre.org/techniques/T1036/\nhttps://attack.mitre.org/techniques/T1218/\nhttps://attack.mitre.org/techniques/T1105/",
+    "references": "- https://attack.mitre.org/tactics/TA0005/\n- https://attack.mitre.org/tactics/TA0002/\n- https://attack.mitre.org/techniques/T1036/\n- https://attack.mitre.org/techniques/T1218/\nhttps://attack.mitre.org/techniques/T1105/",
     "file_path": "Flames/H048.md"
   },
   {
