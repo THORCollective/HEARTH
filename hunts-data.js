@@ -176,6 +176,26 @@ const HUNTS_DATA = [
     "file_path": "Embers/B009.md"
   },
   {
+    "id": "H-2025-001",
+    "category": "Flames",
+    "title": "The Cisco AnyConnect Secure Mobility Client updates for macOS are distributed via a download from https://disthost.umbrella.com/roaming/upgrade/mac_anyconnect/production/. The naming convention of the legitimate file is vpndownloader.app under a generated file path, perhaps like: _\"/private/tmp/vpn.<generated-suffix>/vpndownloader.app/Contents/MacOS/vpndownloader\"_. This generically named file / file path may be deemed malicious for several reasons: 1. Location - /private/tmp/ is a temporary directory on macOS, often used for short-lived files. Legitimate apps typically don’t install or run persistent binaries from there. 2. File Name - A generated suffix is often used by droppers or downloaders to avoid detection and to make each infection unique. 3. Binary Path - /Contents/MacOS/vpndownloader means it’s a compiled executable inside an .app bundle. If this were from a reputable VPN provider, it would normally live in /Applications/ or ~/Applications/, not inside /private/tmp Files showing these hallmarks (location, file name, binary path), should be reviewed for validity.",
+    "tactic": "Defense Evasion (TA0005), Execution (TA0002), Masquerading (T1036), Signed Binary Proxy Execution (T1218), Ingress Tool Transfer (T1105)",
+    "notes": "The legitimacy of the Cisco vpndownloader can be verified by identifying the running process and capturing command-line information.",
+    "tags": [
+      "DefenseEvasion",
+      "Execution",
+      "Masquerading",
+      "ProxyExecution"
+    ],
+    "submitter": {
+      "name": "Joshua Hines",
+      "link": ""
+    },
+    "why": "- The identified hallmarks of location, file name, and binary path may all be indicators of malicious executables.\n- Files/binaries that carry similar hallmarks should be reviewed with scrutiny, especially if their source cannot be verified.",
+    "references": "",
+    "file_path": "Flames/H-2025-001.md"
+  },
+  {
     "id": "H001",
     "category": "Flames",
     "title": "An adversary is attempting to brute force the admin account on the externally facing VPN gateway.",
