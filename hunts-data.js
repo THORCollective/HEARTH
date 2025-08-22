@@ -176,26 +176,6 @@ const HUNTS_DATA = [
     "file_path": "Embers/B009.md"
   },
   {
-    "id": "H-048",
-    "category": "Flames",
-    "title": "The Cisco AnyConnect Secure Mobility Client updates for macOS are distributed via a download from https://disthost.umbrella.com/roaming/upgrade/mac_anyconnect/production/. The naming convention of the legitimate file is vpndownloader.app under a generated file path, perhaps like: _\"/private/tmp/vpn.<generated-suffix>/vpndownloader.app/Contents/MacOS/vpndownloader\"_. This generically named file / file path may be deemed malicious for several reasons: 1. Location - /private/tmp/ is a temporary directory on macOS, often used for short-lived files. Legitimate apps typically don’t install or run persistent binaries from there. 2. File Name - A generated suffix is often used by droppers or downloaders to avoid detection and to make each infection unique. 3. Binary Path - /Contents/MacOS/vpndownloader means it’s a compiled executable inside an .app bundle. If this were from a reputable VPN provider, it would normally live in /Applications/ or ~/Applications/, not inside /private/tmp Files showing these hallmarks (location, file name, binary path), should be reviewed for validity.",
-    "tactic": "Defense Evasion (TA0005), Execution (TA0002), Masquerading (T1036), Signed Binary Proxy Execution (T1218), Ingress Tool Transfer (T1105)",
-    "notes": "The legitimacy of the Cisco vpndownloader can be verified by identifying the running process and capturing command-line information.",
-    "tags": [
-      "DefenseEvasion",
-      "Execution",
-      "Masquerading",
-      "ProxyExecution"
-    ],
-    "submitter": {
-      "name": "Joshua Hines",
-      "link": ""
-    },
-    "why": "- The identified hallmarks of location, file name, and binary path may all be indicators of malicious executables.\n- Files/binaries that carry similar hallmarks should be reviewed with scrutiny, especially if their source cannot be verified.",
-    "references": "https://attack.mitre.org/tactics/TA0005/\nhttps://attack.mitre.org/tactics/TA0002/\nhttps://attack.mitre.org/techniques/T1036/\nhttps://attack.mitre.org/techniques/T1218/\nhttps://attack.mitre.org/techniques/T1105/",
-    "file_path": "Flames/H-048.md"
-  },
-  {
     "id": "H001",
     "category": "Flames",
     "title": "An adversary is attempting to brute force the admin account on the externally facing VPN gateway.",
@@ -1094,6 +1074,26 @@ const HUNTS_DATA = [
     "why": "- Discord CDN is a legitimate service commonly abused by threat actors to host malware while blending in with normal traffic\n- PowerShell web requests to Discord CDN URLs downloading .dll/.exe files is highly suspicious behavior\n- This technique allows attackers to bypass traditional file transfer detection methods\n- The encrypted payloads enable malware delivery while evading network security controls\n- This behavior has been observed in recent ransomware campaigns using Bumblebee loader",
     "references": "- [MITRE ATT&CK: Ingress Tool Transfer (T1105)](https://attack.mitre.org/techniques/T1105/)\n- [Source CTI Report](https://thedfirreport.com/2025/08/05/from-bing-search-to-ransomware-bumblebee-and-adaptixc2-deliver-akira/)",
     "file_path": "Flames/H047.md"
+  },
+  {
+    "id": "H048",
+    "category": "Flames",
+    "title": "The Cisco AnyConnect Secure Mobility Client updates for macOS are distributed via a download from https://disthost.umbrella.com/roaming/upgrade/mac_anyconnect/production/. The naming convention of the legitimate file is vpndownloader.app under a generated file path, perhaps like: _\"/private/tmp/vpn.<generated-suffix>/vpndownloader.app/Contents/MacOS/vpndownloader\"_. This generically named file / file path may be deemed malicious for several reasons: 1. Location - /private/tmp/ is a temporary directory on macOS, often used for short-lived files. Legitimate apps typically don’t install or run persistent binaries from there. 2. File Name - A generated suffix is often used by droppers or downloaders to avoid detection and to make each infection unique. 3. Binary Path - /Contents/MacOS/vpndownloader means it’s a compiled executable inside an .app bundle. If this were from a reputable VPN provider, it would normally live in /Applications/ or ~/Applications/, not inside /private/tmp Files showing these hallmarks (location, file name, binary path), should be reviewed for validity.",
+    "tactic": "Defense Evasion (TA0005), Execution (TA0002), Masquerading (T1036), Signed Binary Proxy Execution (T1218), Ingress Tool Transfer (T1105)",
+    "notes": "The legitimacy of the Cisco vpndownloader can be verified by identifying the running process and capturing command-line information.",
+    "tags": [
+      "DefenseEvasion",
+      "Execution",
+      "Masquerading",
+      "ProxyExecution"
+    ],
+    "submitter": {
+      "name": "Joshua Hines",
+      "link": ""
+    },
+    "why": "- The identified hallmarks of location, file name, and binary path may all be indicators of malicious executables.\n- Files/binaries that carry similar hallmarks should be reviewed with scrutiny, especially if their source cannot be verified.",
+    "references": "https://attack.mitre.org/tactics/TA0005/\nhttps://attack.mitre.org/tactics/TA0002/\nhttps://attack.mitre.org/techniques/T1036/\nhttps://attack.mitre.org/techniques/T1218/\nhttps://attack.mitre.org/techniques/T1105/",
+    "file_path": "Flames/H048.md"
   },
   {
     "id": "M001",
