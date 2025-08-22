@@ -156,6 +156,26 @@ const HUNTS_DATA = [
     "file_path": "Embers/B008.md"
   },
   {
+    "id": "B009",
+    "category": "Embers",
+    "title": "Microsoft Playwright testing framework caches versions of various browsers for automated testing. In some version or configurations of this framework, the Firefox version is based on Firefox's Nightly.app, the developer-facing and, by Mozilla's own admission, least stable and secure version of the app. EDRs may flag this version of the app (often saved in this file hierarchy/structure: _\"~/Library/Caches/ms-playwright/firefox-<4-digit version number>/firefox/Nightly.app\"_) as vulnerable and thus a security concern. These vulnerable apps should be reviewed to determine (1) that it is indeed a legitimate file and not a spoof and (2) whether even a legitimate version of the app should be allowed. Dependencies for testing frameworks should be reviewed and allowed/disallowed as necessary.",
+    "tactic": "Defense Evasion (TA0005), Trusted Developer Utilities Proxy Execution (T1127), Masquerading (T1036), Exploitation for Defense Evasion (T1211)",
+    "notes": "Awareness should be raised about the flagging of Firefox Nightly.app by EDRs and the necessity for validating all dependencies associated with testing frameworks.",
+    "tags": [
+      "DefenseEvasion",
+      "Masquerading",
+      "TrustedDeveloperUtilities",
+      "ProxyExecution"
+    ],
+    "submitter": {
+      "name": "Joshua Hines",
+      "link": ""
+    },
+    "why": "- This hunt highlights the dangers of dependencies within frameworks; as stated above, many were unaware of the apps existence as no one had manually downloaded it.\n- Exploitation of testing frameworks can lead to higher-level access of systems.\n- As the vulnerability is related to developer utilities (Microsoft Playwright testing framework), it could be an unexpected foothold into the development environment.",
+    "references": "- https://attack.mitre.org/tactics/TA0005/\n- https://attack.mitre.org/techniques/T1127/\n- https://attack.mitre.org/techniques/T1036/\n- https://attack.mitre.org/techniques/T1211/\n- https://www.firefox.com/en-US/firefox/144.0a1/releasenotes/",
+    "file_path": "Embers/B009.md"
+  },
+  {
     "id": "H001",
     "category": "Flames",
     "title": "An adversary is attempting to brute force the admin account on the externally facing VPN gateway.",
