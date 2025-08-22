@@ -176,7 +176,7 @@ const HUNTS_DATA = [
     "file_path": "Embers/B009.md"
   },
   {
-    "id": "H-2025-001",
+    "id": "H-048",
     "category": "Flames",
     "title": "The Cisco AnyConnect Secure Mobility Client updates for macOS are distributed via a download from https://disthost.umbrella.com/roaming/upgrade/mac_anyconnect/production/. The naming convention of the legitimate file is vpndownloader.app under a generated file path, perhaps like: _\"/private/tmp/vpn.<generated-suffix>/vpndownloader.app/Contents/MacOS/vpndownloader\"_. This generically named file / file path may be deemed malicious for several reasons: 1. Location - /private/tmp/ is a temporary directory on macOS, often used for short-lived files. Legitimate apps typically don’t install or run persistent binaries from there. 2. File Name - A generated suffix is often used by droppers or downloaders to avoid detection and to make each infection unique. 3. Binary Path - /Contents/MacOS/vpndownloader means it’s a compiled executable inside an .app bundle. If this were from a reputable VPN provider, it would normally live in /Applications/ or ~/Applications/, not inside /private/tmp Files showing these hallmarks (location, file name, binary path), should be reviewed for validity.",
     "tactic": "Defense Evasion (TA0005), Execution (TA0002), Masquerading (T1036), Signed Binary Proxy Execution (T1218), Ingress Tool Transfer (T1105)",
@@ -192,8 +192,8 @@ const HUNTS_DATA = [
       "link": ""
     },
     "why": "- The identified hallmarks of location, file name, and binary path may all be indicators of malicious executables.\n- Files/binaries that carry similar hallmarks should be reviewed with scrutiny, especially if their source cannot be verified.",
-    "references": "",
-    "file_path": "Flames/H-2025-001.md"
+    "references": "https://attack.mitre.org/tactics/TA0005/\nhttps://attack.mitre.org/tactics/TA0002/\nhttps://attack.mitre.org/techniques/T1036/\nhttps://attack.mitre.org/techniques/T1218/\nhttps://attack.mitre.org/techniques/T1105/",
+    "file_path": "Flames/H-048.md"
   },
   {
     "id": "H001",
