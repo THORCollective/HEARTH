@@ -1096,6 +1096,25 @@ const HUNTS_DATA = [
     "file_path": "Flames/H048.md"
   },
   {
+    "id": "H049",
+    "category": "Flames",
+    "title": "Adversaries are using mailbox rules to hide their presence within compromised email accounts by automatically deleting, redirecting, or marking messages as read.",
+    "tactic": "Defense Evasion, Collection, Initial Access",
+    "notes": "Apply a multi-faceted approach to detect malicious mailbox rules.",
+    "tags": [
+      "DefenseEvasion",
+      "Phishing",
+      "Collection"
+    ],
+    "submitter": {
+      "name": "Bruce Breuer",
+      "link": ""
+    },
+    "why": "- The hunt for malicious mailbox rules that focus on concealing adversary presence addresses both persistence and the risk of internal spearphishing.",
+    "references": "- https://attack.mitre.org/techniques/T1566/ \n- https://attack.mitre.org/techniques/T1564/008/\n- https://attack.mitre.org/techniques/T1114/\n- https://learn.microsoft.com/en-us/defender-xdr/alert-grading-playbook-inbox-manipulation-rules",
+    "file_path": "Flames/H049.md"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
