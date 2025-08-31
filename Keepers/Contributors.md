@@ -14,9 +14,10 @@ Everyone listed below has submitted ideas that have been added to HEARTH. This l
 | 8 | Joshua Hines | 2 |
 | 9 | Audra Streetman | 2 |
 | 10 | Ryan Fetterman | 2 |
-| 11 | Cody Lunday | 1 |
-| 12 | wikijm | 1 |
-| 13 | DarkWizardCatcher | 1 |
-| 14 | hu983r | 1 |
-| 15 | Claire Stromboe | 1 |
-| 16 | Jon Perez | 1 |
+| 11 | Bruce Breuer | 1 |
+| 12 | Cody Lunday | 1 |
+| 13 | wikijm | 1 |
+| 14 | DarkWizardCatcher | 1 |
+| 15 | hu983r | 1 |
+| 16 | Claire Stromboe | 1 |
+| 17 | Jon Perez | 1 |
