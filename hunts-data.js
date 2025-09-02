@@ -1115,6 +1115,26 @@ const HUNTS_DATA = [
     "file_path": "Flames/H049.md"
   },
   {
+    "id": "H050",
+    "category": "Flames",
+    "title": "An adversary successfully obtained AD password hashes by abusing replication permissions through a DC Sync operation.",
+    "tactic": "Credential Access",
+    "notes": "DC sync attacks leave behind a variety of indicators.",
+    "tags": [
+      "CredentialAccess",
+      "ActiveDirectory",
+      "Identity",
+      "Secretsdump"
+    ],
+    "submitter": {
+      "name": "Bruce Breuer",
+      "link": ""
+    },
+    "why": "- The hunt targets credential theft via DC sync attacks, which extract password hashes from domain controllers. Security risks include privilege escalation, lateral movement, and domain compromise. \n- This type of AD hunt delivers visibility into an attack technique that can go unnoticed due to gaps in identity security, especially in environments with limited detections/hardening.",
+    "references": "- https://attack.mitre.org/techniques/T1003/006/",
+    "file_path": "Flames/H050.md"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
