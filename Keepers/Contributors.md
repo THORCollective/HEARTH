@@ -7,17 +7,17 @@ Everyone listed below has submitted ideas that have been added to HEARTH. This l
 | 1 | Sydney Marrone | 26 |
 | 2 | John Grageda | 6 |
 | 3 | Lauren Proehl | 4 |
-| 4 | Jocko | 3 |
-| 5 | Jamie Williams | 3 |
-| 6 | Bruce Breuer | 2 |
-| 7 | Azrara | 2 |
-| 8 | Siddhant Mishra | 2 |
-| 9 | Joshua Hines | 2 |
-| 10 | Audra Streetman | 2 |
+| 4 | Jamie Williams | 3 |
+| 5 | Jocko | 3 |
+| 6 | Joshua Hines | 2 |
+| 7 | Siddhant Mishra | 2 |
+| 8 | Azrara | 2 |
+| 9 | Audra Streetman | 2 |
+| 10 | Bruce Breuer | 2 |
 | 11 | Ryan Fetterman | 2 |
-| 12 | Cody Lunday | 1 |
-| 13 | wikijm | 1 |
+| 12 | wikijm | 1 |
+| 13 | hu983r | 1 |
 | 14 | DarkWizardCatcher | 1 |
-| 15 | hu983r | 1 |
-| 16 | Claire Stromboe | 1 |
-| 17 | Jon Perez | 1 |
+| 15 | Cody Lunday | 1 |
+| 16 | Jon Perez | 1 |
+| 17 | Claire Stromboe | 1 |
