@@ -176,6 +176,23 @@ const HUNTS_DATA = [
     "file_path": "Embers/B009.md"
   },
   {
+    "id": "B010",
+    "category": "Embers",
+    "title": "Establish a normal behavior baseline for VPC peering across your AWS environment, so that future deviations (e.g., unauthorized peering, unusual traffic patterns) can be more easily hunted/detected. Peering may be normal in your environment, but this is an opportunity to not only understand your cloud environment on a deeper level, but to collaborate with other teams to ensure the proper controls are in place.",
+    "tactic": "Lateral Movement",
+    "notes": "Explore typical peering requests, initiators, unusual IPs, and connection events.",
+    "tags": [
+      "LateralMovement"
+    ],
+    "submitter": {
+      "name": "Bruce Breuer",
+      "link": ""
+    },
+    "why": "The hunt helps establish a baseline for VPC peering activity, enabling detection of lateral movement in the cloud. It also supports risk reduction through targeted arcitecture review and enhances overall visibility into cloud network operations.",
+    "references": "https://www.wiz.io/academy/what-is-lateral-movement\nhttps://docs.aws.amazon.com/vpc/latest/peering/what-is-vpc-peering.html",
+    "file_path": "Embers/B010.md"
+  },
+  {
     "id": "H001",
     "category": "Flames",
     "title": "An adversary is attempting to brute force the admin account on the externally facing VPN gateway.",
