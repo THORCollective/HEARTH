@@ -193,6 +193,24 @@ const HUNTS_DATA = [
     "file_path": "Embers/B010.md"
   },
   {
+    "id": "B011",
+    "category": "Embers",
+    "title": "Establish a normal utilization of Xcode and Xcode projects across workstations/servers. Xcode projects are commonly used by software developers and can be targeted by MacOS malware.",
+    "tactic": "Initial Access",
+    "notes": "Indicators of Xcode usage can be found in EDR telemetry and potential for detection if Xcode is not utilized/approved in the environment.",
+    "tags": [
+      "InitialAccess",
+      "Baseline"
+    ],
+    "submitter": {
+      "name": "Collin McClaine",
+      "link": ""
+    },
+    "why": "- Xcode projects can be infected and the malware can propagate when Xcode projects are shared by developers.",
+    "references": "https://attack.mitre.org/software/S0658/\nhttps://www.microsoft.com/en-us/security/blog/2025/09/25/xcsset-evolves-again-analyzing-the-latest-updates-to-xcssets-inventory/\nhttps://attack.mitre.org/techniques/T1195/001/\nhttps://attack.mitre.org/tactics/TA0001/",
+    "file_path": "Embers/B011.md"
+  },
+  {
     "id": "H001",
     "category": "Flames",
     "title": "An adversary is attempting to brute force the admin account on the externally facing VPN gateway.",
