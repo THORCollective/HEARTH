@@ -20,4 +20,5 @@ Everyone listed below has submitted ideas that have been added to HEARTH. This l
 | 14 | DarkWizardCatcher | 1 |
 | 15 | Cody Lunday | 1 |
 | 16 | Jon Perez | 1 |
-| 17 | Claire Stromboe | 1 |
+| 17 | Collin McClaine | 1 |
+| 18 | Claire Stromboe | 1 |
