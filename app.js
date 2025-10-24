@@ -9,7 +9,48 @@ class HearthApp {
     this.searchCache = new Map();
     this.renderCache = new Map();
     this.debounceTimer = null;
-    
+    this.selectedTactics = new Set();
+    this.selectedTags = new Set();
+    this.currentPage = 1;
+    this.pageSize = 9;
+    this.totalHunts = this.huntsData.length;
+    this.sortedHunts = [...this.huntsData];
+    this.presets = new Map();
+    this.presetStorageKey = 'hearth.presets.v1';
+    this.defaultPresets = [
+      {
+        id: 'baseline-core',
+        label: 'Baseline sweeps',
+        filters: { tags: ['baseline'] },
+        builtIn: true
+      },
+      {
+        id: 'exfil-watch',
+        label: 'Exfil & C2 watchlist',
+        filters: { tactics: ['Command and Control', 'Exfiltration'] },
+        builtIn: true
+      }
+    ];
+    this.tacticGroupConfig = [
+      { label: 'Recon & Prep', keywords: ['reconnaissance', 'resource development'] },
+      { label: 'Initial Access', keywords: ['initial access'] },
+      { label: 'Execution', keywords: ['execution'] },
+      { label: 'Persistence', keywords: ['persistence'] },
+      { label: 'Privilege Escalation', keywords: ['privilege escalation'] },
+      { label: 'Defense Evasion', keywords: ['defense evasion'] },
+      { label: 'Credential Access', keywords: ['credential access'] },
+      { label: 'Discovery', keywords: ['discovery'] },
+      { label: 'Lateral Movement', keywords: ['lateral movement'] },
+      { label: 'Collection', keywords: ['collection'] },
+      { label: 'Command & Control', keywords: ['command and control'] },
+      { label: 'Exfiltration & Impact', keywords: ['exfiltration', 'impact'] },
+      { label: 'Additional tactics', keywords: [] }
+    ];
+    this.currentModalIndex = 0;
+    this.numberFormatter = new Intl.NumberFormat('en-US');
+
+    this.updatePageSize();
+
     this.initializeElements();
     this.setupEventListeners();
     this.initializeApp();
@@ -21,13 +62,30 @@ class HearthApp {
       searchInput: document.getElementById('searchInput'),
       clearSearch: document.getElementById('clearSearch'),
       categoryFilter: document.getElementById('categoryFilter'),
-      tacticFilter: document.getElementById('tacticFilter'),
-      tagFilter: document.getElementById('tagFilter'),
       huntCount: document.getElementById('huntCount'),
+      resultMeta: document.getElementById('resultMeta'),
+      searchFeedback: document.getElementById('searchFeedback'),
       loadingSection: document.getElementById('loading'),
-      sortHuntsSelect: document.getElementById('sortHunts')
+      sortHuntsSelect: document.getElementById('sortHunts'),
+      advancedFilters: document.getElementById('advancedFilters'),
+      toggleAdvancedFilters: document.getElementById('toggleAdvancedFilters'),
+      tacticChips: document.getElementById('tacticChips'),
+      tagChips: document.getElementById('tagChips'),
+      clearTactics: document.getElementById('clearTactics'),
+      clearTags: document.getElementById('clearTags'),
+      presetSelect: document.getElementById('presetSelect'),
+      savePreset: document.getElementById('savePreset'),
+      deletePreset: document.getElementById('deletePreset'),
+      pagination: document.getElementById('pagination'),
+      prevPage: document.getElementById('prevPage'),
+      nextPage: document.getElementById('nextPage'),
+      paginationInfo: document.getElementById('paginationInfo'),
+      activeFilters: document.getElementById('activeFilters'),
+      introTotalHunts: document.getElementById('introTotalHunts'),
+      introTotalTactics: document.getElementById('introTotalTactics'),
+      introTotalContributors: document.getElementById('introTotalContributors')
     };
-    
+
     // Validate required elements
     const missingElements = Object.entries(this.elements)
       .filter(([name, element]) => !element)
@@ -39,41 +97,71 @@ class HearthApp {
     }
 
   }
+
+  updatePageSize() {
+    const width = typeof window !== 'undefined' ? window.innerWidth : 1280;
+    if (width < 640) {
+      this.pageSize = 6;
+    } else if (width < 1024) {
+      this.pageSize = 8;
+    } else {
+      this.pageSize = 9;
+    }
+  }
   
   createModal() {
     const modal = document.createElement('div');
     modal.className = 'modal';
     modal.innerHTML = `
       <div class="modal-content">
-        <span class="close">&times;</span>
+        <button class="close" aria-label="Close">&times;</button>
+        <div class="modal-toolbar">
+          <button class="modal-nav-btn" data-direction="prev" aria-label="Previous hunt">◀</button>
+          <span class="modal-counter" id="modalCounter"></span>
+          <button class="modal-nav-btn" data-direction="next" aria-label="Next hunt">▶</button>
+        </div>
         <div id="modal-body"></div>
       </div>
     `;
     document.body.appendChild(modal);
-    
+
     const closeBtn = modal.querySelector('.close');
     const modalBody = document.getElementById('modal-body');
-    
+    const modalCounter = document.getElementById('modalCounter');
+    const [prevBtn, nextBtn] = modal.querySelectorAll('.modal-nav-btn');
+
     // Enhanced modal controls
     const closeModal = () => {
       modal.style.display = 'none';
       document.body.style.overflow = 'auto'; // Re-enable scrolling
     };
-    
+
     closeBtn.onclick = closeModal;
     modal.onclick = (e) => {
       if (e.target === modal) closeModal();
     };
-    
+
     // Keyboard navigation
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && modal.style.display === 'block') {
-        closeModal();
+      if (modal.style.display === 'block') {
+        if (e.key === 'Escape') {
+          closeModal();
+        } else if (e.key === 'ArrowLeft') {
+          this.navigateModal(-1);
+        } else if (e.key === 'ArrowRight') {
+          this.navigateModal(1);
+        }
       }
     });
-    
+
+    prevBtn.addEventListener('click', () => this.navigateModal(-1));
+    nextBtn.addEventListener('click', () => this.navigateModal(1));
+
     this.modal = modal;
     this.modalBody = modalBody;
+    this.modalCounter = modalCounter;
+    this.modalPrevButton = prevBtn;
+    this.modalNextButton = nextBtn;
   }
 
   // Helper: Get unique values for dropdowns
@@ -107,24 +195,269 @@ class HearthApp {
     return result;
   }
 
-  // Helper: Populate dropdown with values
-  populateDropdown(selectElement, optionValues, labelText) {
-    selectElement.innerHTML = `<option value="">All ${labelText}</option>` +
-      optionValues.map(value => `<option value="${value}">${value}</option>`).join('');
-  }
-
   // Initialize dropdowns
   initializeDropdowns() {
-    this.populateDropdown(this.elements.tacticFilter, this.getUniqueValues('tactic'), 'Tactics');
-    this.populateDropdown(this.elements.tagFilter, this.getUniqueValues('tags'), 'Tags');
+    this.renderTacticChips();
+    this.renderTagChips();
+    this.initializePresets();
+  }
+
+  renderTacticChips() {
+    const tactics = this.getUniqueValues('tactic');
+    const container = this.elements.tacticChips;
+    container.innerHTML = '';
+
+    const groups = this.groupTactics(tactics);
+    groups.forEach((values, label) => {
+      const cluster = document.createElement('div');
+      cluster.className = 'chip-group__cluster';
+      const heading = document.createElement('span');
+      heading.className = 'chip-group__title';
+      heading.textContent = label;
+      const chipsWrapper = document.createElement('div');
+      chipsWrapper.className = 'cluster-chips';
+
+      values.forEach(value => {
+        chipsWrapper.appendChild(this.createChip(value, 'tactic'));
+      });
+
+      cluster.appendChild(heading);
+      cluster.appendChild(chipsWrapper);
+      container.appendChild(cluster);
+    });
+  }
+
+  renderTagChips() {
+    const tags = this.getUniqueValues('tags');
+    const container = this.elements.tagChips;
+    container.innerHTML = '';
+    tags.forEach(tag => {
+      container.appendChild(this.createChip(tag, 'tag'));
+    });
+  }
+
+  updateIntroStats() {
+    const {
+      introTotalHunts,
+      introTotalTactics,
+      introTotalContributors
+    } = this.elements;
+
+    if (!introTotalHunts || !introTotalTactics || !introTotalContributors) {
+      return;
+    }
+
+    introTotalHunts.textContent = this.formatNumber(this.huntsData.length);
+    introTotalTactics.textContent = this.formatNumber(this.getUniqueValues('tactic').length);
+
+    const contributors = new Set();
+    this.huntsData.forEach(hunt => {
+      const name = hunt.submitter && hunt.submitter.name;
+      if (name) {
+        contributors.add(name.trim());
+      }
+    });
+
+    introTotalContributors.textContent = this.formatNumber(contributors.size);
+  }
+
+  groupTactics(tactics) {
+    const groups = new Map();
+    const defaultLabel = 'Additional tactics';
+
+    tactics.forEach(tactic => {
+      const label = this.resolveTacticGroup(tactic) || defaultLabel;
+      if (!groups.has(label)) {
+        groups.set(label, []);
+      }
+      groups.get(label).push(tactic);
+    });
+
+    groups.forEach(values => values.sort((a, b) => a.localeCompare(b)));
+
+    return new Map([...groups.entries()].sort((a, b) => a[0].localeCompare(b[0])));
+  }
+
+  resolveTacticGroup(tactic) {
+    const normalized = (tactic || '').toLowerCase();
+    const entry = this.tacticGroupConfig.find(group =>
+      group.keywords.some(keyword => normalized.includes(keyword))
+    );
+    return entry ? entry.label : 'Additional tactics';
+  }
+
+  createChip(value, type) {
+    const button = document.createElement('button');
+    button.className = 'chip';
+    button.type = 'button';
+    button.textContent = value;
+    button.setAttribute('data-value', value);
+    button.setAttribute('data-type', type);
+    button.setAttribute('aria-pressed', 'false');
+
+    button.addEventListener('click', (event) => {
+      event.stopPropagation();
+      this.toggleChipSelection(value, type, button);
+    });
+
+    return button;
+  }
+
+  toggleChipSelection(value, type, button) {
+    const targetSet = type === 'tactic' ? this.selectedTactics : this.selectedTags;
+    if (targetSet.has(value)) {
+      targetSet.delete(value);
+      button.classList.remove('is-selected');
+      button.setAttribute('aria-pressed', 'false');
+    } else {
+      targetSet.add(value);
+      button.classList.add('is-selected');
+      button.setAttribute('aria-pressed', 'true');
+    }
+    this.filterAndSortHunts();
+  }
+
+  clearFilterGroup(type) {
+    const targetSet = type === 'tactic' ? this.selectedTactics : this.selectedTags;
+    targetSet.clear();
+    const container = type === 'tactic' ? this.elements.tacticChips : this.elements.tagChips;
+    container.querySelectorAll('.chip').forEach(chip => {
+      chip.classList.remove('is-selected');
+      chip.setAttribute('aria-pressed', 'false');
+    });
+    this.filterAndSortHunts();
+  }
+
+  initializePresets() {
+    this.presets.clear();
+    this.defaultPresets.forEach(preset => {
+      this.presets.set(preset.id, preset);
+    });
+
+    const storedPresets = this.loadStoredPresets();
+    storedPresets.forEach(preset => {
+      this.presets.set(preset.id, preset);
+    });
+
+    this.renderPresetOptions();
+  }
+
+  loadStoredPresets() {
+    try {
+      const raw = window.localStorage.getItem(this.presetStorageKey);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+      console.warn('Unable to load filter presets:', error);
+      return [];
+    }
+  }
+
+  persistPresets() {
+    try {
+      const customPresets = [...this.presets.values()].filter(preset => !preset.builtIn);
+      window.localStorage.setItem(this.presetStorageKey, JSON.stringify(customPresets));
+    } catch (error) {
+      console.warn('Unable to persist filter presets:', error);
+    }
+  }
+
+  renderPresetOptions() {
+    const select = this.elements.presetSelect;
+    const options = ['<option value="">Select a preset...</option>'];
+    [...this.presets.values()]
+      .sort((a, b) => a.label.localeCompare(b.label))
+      .forEach(preset => {
+        const attrs = preset.builtIn ? ' data-built-in="true"' : '';
+        options.push(`<option value="${preset.id}"${attrs}>${preset.label}</option>`);
+      });
+    select.innerHTML = options.join('');
+  }
+
+  applyPreset(presetId) {
+    const preset = this.presets.get(presetId);
+    if (!preset) return;
+
+    const { filters = {} } = preset;
+    this.elements.categoryFilter.value = filters.category || '';
+    this.selectedTactics = new Set(filters.tactics || []);
+    this.selectedTags = new Set(filters.tags || []);
+
+    this.updateChipSelections();
+    this.filterAndSortHunts();
+  }
+
+  updateChipSelections() {
+    this.elements.tacticChips.querySelectorAll('.chip').forEach(chip => {
+      const value = chip.getAttribute('data-value');
+      const isSelected = this.selectedTactics.has(value);
+      chip.classList.toggle('is-selected', isSelected);
+      chip.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+    });
+
+    this.elements.tagChips.querySelectorAll('.chip').forEach(chip => {
+      const value = chip.getAttribute('data-value');
+      const isSelected = this.selectedTags.has(value);
+      chip.classList.toggle('is-selected', isSelected);
+      chip.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+    });
+  }
+
+  saveCurrentPreset() {
+    const rawLabel = window.prompt('Name this saved view');
+    const label = rawLabel ? rawLabel.trim() : '';
+    if (!label) return;
+
+    const id = `user-${Date.now()}`;
+    const preset = {
+      id,
+      label,
+      filters: {
+        category: this.elements.categoryFilter.value || '',
+        tactics: [...this.selectedTactics],
+        tags: [...this.selectedTags]
+      },
+      builtIn: false
+    };
+
+    this.presets.set(id, preset);
+    this.persistPresets();
+    this.renderPresetOptions();
+    this.elements.presetSelect.value = id;
+  }
+
+  deleteCurrentPreset() {
+    const { presetSelect } = this.elements;
+    const presetId = presetSelect.value;
+    if (!presetId) return;
+
+    const preset = this.presets.get(presetId);
+    if (!preset || preset.builtIn) {
+      alert('Built-in presets cannot be deleted.');
+      return;
+    }
+
+    this.presets.delete(presetId);
+    this.persistPresets();
+    this.renderPresetOptions();
+    presetSelect.value = '';
   }
 
   // Show hunt details in modal
+  showHuntDetailsByIndex(index) {
+    const hunt = this.sortedHunts[index];
+    if (!hunt) return;
+    this.currentModalIndex = index;
+    this.showHuntDetails(hunt);
+  }
+
   showHuntDetails(hunt) {
     const modalContent = this.buildHuntDetailContent(hunt);
     this.modalBody.innerHTML = modalContent;
     this.modal.style.display = 'block';
     document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    this.updateModalNavigation();
   }
 
   // Build hunt detail content
@@ -197,48 +530,254 @@ class HearthApp {
 
   // Render hunts
   renderHunts(hunts) {
-    this.elements.huntsGrid.innerHTML = '';
-    if (!hunts.length) {
-      this.elements.huntsGrid.innerHTML = `<div class="no-results"><h3>No hunts found</h3><p>Try adjusting your search or filters.</p></div>`;
+    const { huntsGrid, huntCount, paginationInfo, pagination, resultMeta } = this.elements;
+    const total = hunts.length;
+    const totalPages = Math.max(1, Math.ceil((total || 1) / this.pageSize));
+
+    if (this.currentPage > totalPages) {
+      this.currentPage = totalPages;
+    }
+
+    const startIndex = total === 0 ? 0 : (this.currentPage - 1) * this.pageSize;
+    const pageItems = total === 0 ? [] : hunts.slice(startIndex, startIndex + this.pageSize);
+
+    huntsGrid.innerHTML = '';
+
+    if (!pageItems.length) {
+      huntsGrid.innerHTML = `
+        <div class="no-results">
+          <h3>No hunts found</h3>
+          <p>Try refining your search terms or clearing filters.</p>
+        </div>
+      `;
     } else {
-      hunts.forEach(hunt => {
-        this.elements.huntsGrid.appendChild(this.createHuntCard(hunt));
+      pageItems.forEach((hunt, offset) => {
+        const globalIndex = startIndex + offset;
+        huntsGrid.appendChild(this.createHuntCard(hunt, globalIndex));
       });
     }
-    this.elements.huntCount.textContent = `Showing ${hunts.length} hunt${hunts.length === 1 ? '' : 's'}`;
+
+    const startDisplay = total === 0 ? 0 : startIndex + 1;
+    const endDisplay = total === 0 ? 0 : startIndex + pageItems.length;
+    huntCount.textContent = `Showing ${startDisplay}-${endDisplay} of ${total} hunt${total === 1 ? '' : 's'}`;
+    resultMeta.textContent = this.buildResultMeta();
+
+    if (total === 0) {
+      pagination.style.visibility = 'hidden';
+    } else {
+      pagination.style.visibility = totalPages > 1 ? 'visible' : 'hidden';
+    }
+
+    paginationInfo.textContent = total ? `Page ${this.currentPage} of ${totalPages}` : 'No results';
+    this.elements.prevPage.disabled = this.currentPage <= 1;
+    this.elements.nextPage.disabled = this.currentPage >= totalPages;
+    this.updateActiveFiltersDisplay();
+  }
+
+  buildResultMeta() {
+    const filters = [];
+    const searchTerm = (this.elements.searchInput.value || '').trim();
+    const category = this.elements.categoryFilter.value;
+
+    if (searchTerm) {
+      filters.push(`Search: “${searchTerm}”`);
+    }
+
+    if (category) {
+      filters.push(`Category: ${category}`);
+    }
+
+    if (this.selectedTactics.size) {
+      filters.push(`${this.selectedTactics.size} tactic${this.selectedTactics.size > 1 ? 's' : ''}`);
+    }
+
+    if (this.selectedTags.size) {
+      filters.push(`${this.selectedTags.size} tag${this.selectedTags.size > 1 ? 's' : ''}`);
+    }
+
+    const base = `${this.totalHunts} hunts cataloged`;
+    return filters.length ? `${filters.join(' • ')} • ${base}` : `All hunts • ${base}`;
+  }
+
+  hasActiveFilters() {
+    const searchTerm = (this.elements.searchInput.value || '').trim();
+    const category = this.elements.categoryFilter.value;
+    return Boolean(
+      searchTerm ||
+      category ||
+      this.selectedTactics.size ||
+      this.selectedTags.size
+    );
+  }
+
+  updateActiveFiltersDisplay() {
+    const { activeFilters } = this.elements;
+    if (!activeFilters) return;
+
+    const searchTerm = (this.elements.searchInput.value || '').trim();
+    const category = this.elements.categoryFilter.value;
+    const filters = [];
+
+    if (searchTerm) {
+      filters.push({ type: 'search', value: searchTerm, label: `Search “${searchTerm}”` });
+    }
+
+    if (category) {
+      filters.push({ type: 'category', value: category, label: `Category: ${category}` });
+    }
+
+    [...this.selectedTactics]
+      .sort((a, b) => a.localeCompare(b))
+      .forEach(tactic => {
+        filters.push({ type: 'tactic', value: tactic, label: `Tactic: ${tactic}` });
+      });
+
+    [...this.selectedTags]
+      .sort((a, b) => a.localeCompare(b))
+      .forEach(tag => {
+        filters.push({ type: 'tag', value: tag, label: `Tag: #${tag}` });
+      });
+
+    activeFilters.innerHTML = '';
+
+    if (!filters.length) {
+      const emptyState = document.createElement('span');
+      emptyState.className = 'active-filters__empty';
+      emptyState.textContent = 'No filters active — explore the full library.';
+      activeFilters.appendChild(emptyState);
+      return;
+    }
+
+    filters.forEach(filter => {
+      const button = document.createElement('button');
+      button.className = 'active-filter-chip';
+      button.type = 'button';
+      button.setAttribute('data-type', filter.type);
+      button.setAttribute('data-value', filter.value);
+
+      const labelSpan = document.createElement('span');
+      labelSpan.textContent = filter.label;
+
+      const removeSpan = document.createElement('span');
+      removeSpan.setAttribute('aria-hidden', 'true');
+      removeSpan.textContent = '✕';
+
+      button.append(labelSpan, removeSpan);
+      button.addEventListener('click', () => this.clearSingleFilter(filter));
+      activeFilters.appendChild(button);
+    });
+  }
+
+  clearSingleFilter(filter) {
+    if (!filter) return;
+
+    switch (filter.type) {
+      case 'search':
+        this.elements.searchInput.value = '';
+        break;
+      case 'category':
+        this.elements.categoryFilter.value = '';
+        break;
+      case 'tactic':
+        this.selectedTactics.delete(filter.value);
+        break;
+      case 'tag':
+        this.selectedTags.delete(filter.value);
+        break;
+      default:
+        return;
+    }
+
+    this.updateChipSelections();
+    this.filterAndSortHunts();
+  }
+
+  updateSearchFeedback(duration, totalMatches) {
+    const { searchFeedback } = this.elements;
+    if (!searchFeedback) return;
+
+    if (typeof duration !== 'number' || Number.isNaN(duration)) {
+      searchFeedback.textContent = '';
+      return;
+    }
+
+    const displayDuration = duration < 1 ? '<1ms' : `${Math.round(duration)}ms`;
+
+    if (!totalMatches) {
+      searchFeedback.textContent = `No hunts matched • ${displayDuration}`;
+      return;
+    }
+
+    if (!this.hasActiveFilters()) {
+      searchFeedback.textContent = `All hunts • ${displayDuration}`;
+      return;
+    }
+
+    const matchesLabel = totalMatches === 1 ? 'hunt' : 'hunts';
+    searchFeedback.textContent = `Matched ${this.formatNumber(totalMatches)} ${matchesLabel} • ${displayDuration}`;
+  }
+
+  formatNumber(value) {
+    return this.numberFormatter.format(typeof value === 'number' ? value : 0);
+  }
+
+  changePage(pageNumber) {
+    const totalPages = Math.max(1, Math.ceil((this.filteredHunts.length || 1) / this.pageSize));
+    const targetPage = Math.min(Math.max(1, pageNumber), totalPages);
+    if (targetPage === this.currentPage) return;
+    this.currentPage = targetPage;
+    this.renderHunts(this.sortedHunts);
+  }
+
+  updateModalNavigation() {
+    if (!this.modalCounter) return;
+    const total = this.sortedHunts.length;
+    const current = total ? this.currentModalIndex + 1 : 0;
+    this.modalCounter.textContent = total ? `${current} / ${total}` : 'No hunts';
+
+    if (this.modalPrevButton) {
+      this.modalPrevButton.disabled = this.currentModalIndex <= 0;
+    }
+    if (this.modalNextButton) {
+      this.modalNextButton.disabled = this.currentModalIndex >= total - 1;
+    }
+  }
+
+  navigateModal(direction) {
+    if (!this.modal || this.modal.style.display !== 'block') return;
+    const targetIndex = this.currentModalIndex + direction;
+    if (targetIndex < 0 || targetIndex >= this.sortedHunts.length) return;
+    this.showHuntDetailsByIndex(targetIndex);
   }
 
   // Create a hunt card element
-  createHuntCard(hunt) {
-    const card = document.createElement('div');
+  createHuntCard(hunt, index) {
+    const card = document.createElement('article');
     card.className = 'hunt-card';
-    card.style.cursor = 'pointer';
-    card.onclick = () => this.showHuntDetails(hunt);
+    card.dataset.index = index;
+    card.setAttribute('tabindex', '0');
 
-    // Header
     const header = document.createElement('div');
     header.className = 'hunt-header';
     header.innerHTML = `
       <span class="hunt-id">${hunt.id}</span>
-      <span class="hunt-category">${hunt.category}</span>
+      <span class="hunt-category">${hunt.category || 'Uncategorized'}</span>
     `;
     card.appendChild(header);
 
-    // Title/Idea
-    const title = document.createElement('div');
+    const title = document.createElement('h3');
     title.className = 'hunt-title';
-    title.textContent = hunt.title || hunt.notes || '';
+    title.textContent = hunt.title || hunt.notes || 'Untitled hunt';
     card.appendChild(title);
 
-    // Tactic
-    if (hunt.tactic) {
+    const tactics = this.getHuntTactics(hunt);
+    if (tactics.length) {
       const tactic = document.createElement('div');
       tactic.className = 'hunt-tactic';
-      tactic.textContent = hunt.tactic;
+      tactic.textContent = tactics.join(' • ');
       card.appendChild(tactic);
     }
 
-    // Tags
     if (hunt.tags && hunt.tags.length) {
       const tags = document.createElement('div');
       tags.className = 'hunt-tags';
@@ -251,65 +790,170 @@ class HearthApp {
       card.appendChild(tags);
     }
 
-    // Submitter
     if (hunt.submitter && hunt.submitter.name) {
       const submitter = document.createElement('div');
       submitter.className = 'hunt-submitter';
-      submitter.textContent = `Submitter: ${hunt.submitter.name}`;
+      const submitterName = hunt.submitter.link
+        ? `<a href="${hunt.submitter.link}" target="_blank" rel="noopener">${hunt.submitter.name}</a>`
+        : `<strong>${hunt.submitter.name}</strong>`;
+      submitter.innerHTML = `Authored by ${submitterName}`;
       card.appendChild(submitter);
     }
 
-    // Click indicator
-    const clickIndicator = document.createElement('div');
-    clickIndicator.className = 'hunt-click-indicator';
-    clickIndicator.textContent = 'Click to view details';
-    card.appendChild(clickIndicator);
+    const previewToggle = document.createElement('button');
+    previewToggle.className = 'preview-toggle';
+    previewToggle.type = 'button';
+    previewToggle.setAttribute('aria-expanded', 'false');
+    previewToggle.innerHTML = 'Quick preview <span aria-hidden="true">▼</span>';
+
+    const preview = document.createElement('div');
+    preview.className = 'hunt-preview';
+    preview.innerHTML = `
+      <p class="preview-title">Snapshot</p>
+      <p class="preview-body">${this.buildPreviewSnippet(hunt)}</p>
+      <div class="preview-links">${this.buildPreviewMeta(hunt)}</div>
+    `;
+
+    previewToggle.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const isExpanded = card.classList.toggle('is-expanded');
+      previewToggle.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+      previewToggle.innerHTML = isExpanded
+        ? 'Hide preview <span aria-hidden="true">▲</span>'
+        : 'Quick preview <span aria-hidden="true">▼</span>';
+    });
+
+    card.appendChild(previewToggle);
+    card.appendChild(preview);
+
+    const footer = document.createElement('div');
+    footer.className = 'card-footer';
+    footer.innerHTML = `
+      <span class="hint">🗂️ View full hunt brief</span>
+      <span>${tactics.length ? tactics[0] : ''}</span>
+    `;
+    card.appendChild(footer);
+
+    card.addEventListener('click', () => this.showHuntDetailsByIndex(index));
+    card.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        this.showHuntDetailsByIndex(index);
+      }
+    });
 
     return card;
+  }
+
+  getHuntTactics(hunt) {
+    if (!hunt || !hunt.tactic) return [];
+    return hunt.tactic
+      .split(',')
+      .map(tactic => tactic.trim())
+      .filter(Boolean);
+  }
+
+  buildPreviewSnippet(hunt) {
+    const source = hunt.why || hunt.notes || '';
+    if (!source) {
+      return 'No summary has been added to this hunt yet.';
+    }
+
+    const sanitized = source
+      .replace(/\r\n/g, '\n')
+      .replace(/\n+/g, ' ')
+      .replace(/\*\*/g, '')
+      .replace(/[-•]\s*/g, '')
+      .trim();
+
+    if (sanitized.length <= 240) {
+      return sanitized;
+    }
+    return `${sanitized.slice(0, 240).trim()}…`;
+  }
+
+  buildPreviewMeta(hunt) {
+    const meta = [];
+    if (hunt.why) meta.push('Why notes');
+    if (hunt.references) {
+      const references = hunt.references.split('\n').filter(Boolean);
+      if (references.length) {
+        meta.push(`${references.length} reference${references.length === 1 ? '' : 's'}`);
+      }
+    }
+    if (hunt.tags && hunt.tags.length) {
+      meta.push(`${hunt.tags.length} tag${hunt.tags.length === 1 ? '' : 's'}`);
+    }
+    return meta.length ? meta.join(' • ') : 'No extended details yet';
   }
 
   // Sorting logic
   sortHunts(hunts) {
     const sortValue = this.elements.sortHuntsSelect.value;
-    const direction = sortValue.split('-')[1];
+    const [key, direction = 'asc'] = sortValue.split('-');
 
-    // Return a sorted COPY of the array.
-    return [...hunts].sort((a, b) => {
+    const compareId = (a, b) => {
       const valA = a.id;
       const valB = b.id;
-
-      // Extract letter and number from IDs like 'H001', 'B002', etc.
       const letterA = valA.charAt(0);
       const letterB = valB.charAt(0);
       const numA = parseInt(valA.substring(1), 10);
       const numB = parseInt(valB.substring(1), 10);
-
-      // First, compare by the letter prefix (e.g., 'B' vs 'H')
       if (letterA !== letterB) {
         return direction === 'asc' ? letterA.localeCompare(letterB) : letterB.localeCompare(letterA);
       }
-
-      // If letters are the same, compare by number
       return direction === 'asc' ? numA - numB : numB - numA;
-    });
+    };
+
+    const compareTitle = (a, b) => {
+      const titleA = (a.title || '').toLowerCase();
+      const titleB = (b.title || '').toLowerCase();
+      return direction === 'asc' ? titleA.localeCompare(titleB) : titleB.localeCompare(titleA);
+    };
+
+    const compareCategory = (a, b) => {
+      const categoryA = (a.category || '').toLowerCase();
+      const categoryB = (b.category || '').toLowerCase();
+      return direction === 'asc' ? categoryA.localeCompare(categoryB) : categoryB.localeCompare(categoryA);
+    };
+
+    switch (key) {
+      case 'title':
+        return [...hunts].sort(compareTitle);
+      case 'category':
+        return [...hunts].sort(compareCategory);
+      case 'id':
+      default:
+        return [...hunts].sort(compareId);
+    }
   }
 
   // Filter and sort hunts
-  filterAndSortHunts() {
+  filterAndSortHunts(options = {}) {
+    const { preservePage = false } = options;
+    const getNow = () => (typeof performance !== 'undefined' && typeof performance.now === 'function')
+      ? performance.now()
+      : Date.now();
+    const start = getNow();
     const searchTerm = (this.elements.searchInput.value || '').toLowerCase();
     const selectedCategory = this.elements.categoryFilter.value;
-    const selectedTactic = this.elements.tacticFilter.value;
-    const selectedTag = this.elements.tagFilter.value;
-    
+
     this.filteredHunts = this.huntsData.filter(hunt => {
       return this.matchesSearchCriteria(hunt, searchTerm) &&
              this.matchesCategory(hunt, selectedCategory) &&
-             this.matchesTactic(hunt, selectedTactic) &&
-             this.matchesTag(hunt, selectedTag);
+             this.matchesTactic(hunt) &&
+             this.matchesTag(hunt);
     });
 
-    const sortedHunts = this.sortHunts(this.filteredHunts);
-    this.renderHunts(sortedHunts);
+    this.sortedHunts = this.sortHunts(this.filteredHunts);
+
+    if (!preservePage) {
+      this.currentPage = 1;
+    }
+
+    this.renderHunts(this.sortedHunts);
+    const duration = getNow() - start;
+    this.updateSearchFeedback(duration, this.filteredHunts.length);
   }
 
   // Search criteria matching
@@ -334,13 +978,19 @@ class HearthApp {
   }
 
   // Tactic matching
-  matchesTactic(hunt, tactic) {
-    return !tactic || (hunt.tactic && hunt.tactic.split(',').map(tacticItem => tacticItem.trim()).includes(tactic));
+  matchesTactic(hunt) {
+    if (!this.selectedTactics.size) return true;
+    const huntTactics = this.getHuntTactics(hunt);
+    if (!huntTactics.length) return false;
+    return [...this.selectedTactics].every(tactic => huntTactics.includes(tactic));
   }
 
   // Tag matching
-  matchesTag(hunt, tag) {
-    return !tag || (hunt.tags && hunt.tags.includes(tag));
+  matchesTag(hunt) {
+    if (!this.selectedTags.size) return true;
+    const tags = hunt.tags || [];
+    if (!tags.length) return false;
+    return [...this.selectedTags].every(tag => tags.includes(tag));
   }
 
   // Setup event listeners
@@ -350,23 +1000,58 @@ class HearthApp {
       clearTimeout(this.debounceTimer);
       this.debounceTimer = setTimeout(() => this.filterAndSortHunts(), 300);
     });
-    
+
     this.elements.clearSearch.addEventListener('click', () => {
       this.elements.searchInput.value = '';
       this.filterAndSortHunts();
     });
-    
+
     this.elements.categoryFilter.addEventListener('change', () => this.filterAndSortHunts());
-    this.elements.tacticFilter.addEventListener('change', () => this.filterAndSortHunts());
-    this.elements.tagFilter.addEventListener('change', () => this.filterAndSortHunts());
-    this.elements.sortHuntsSelect.addEventListener('change', () => this.filterAndSortHunts());
+    this.elements.sortHuntsSelect.addEventListener('change', () => this.filterAndSortHunts({ preservePage: true }));
+
+    this.elements.toggleAdvancedFilters.addEventListener('click', () => {
+      const { advancedFilters, toggleAdvancedFilters } = this.elements;
+      const isOpen = advancedFilters.classList.toggle('is-open');
+      toggleAdvancedFilters.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+
+    this.elements.clearTactics.addEventListener('click', () => this.clearFilterGroup('tactic'));
+    this.elements.clearTags.addEventListener('click', () => this.clearFilterGroup('tag'));
+
+    this.elements.presetSelect.addEventListener('change', (event) => {
+      const presetId = event.target.value;
+      if (presetId) {
+        this.applyPreset(presetId);
+      }
+    });
+
+    this.elements.savePreset.addEventListener('click', () => this.saveCurrentPreset());
+    this.elements.deletePreset.addEventListener('click', () => this.deleteCurrentPreset());
+
+    this.elements.prevPage.addEventListener('click', () => this.changePage(this.currentPage - 1));
+    this.elements.nextPage.addEventListener('click', () => this.changePage(this.currentPage + 1));
+
+    window.addEventListener('resize', () => {
+      const previousPageSize = this.pageSize;
+      this.updatePageSize();
+      if (previousPageSize !== this.pageSize) {
+        this.filterAndSortHunts({ preservePage: true });
+      } else {
+        this.renderHunts(this.sortedHunts);
+      }
+    });
   }
 
   // Initialize the application
   initializeApp() {
     this.createModal();
     this.initializeDropdowns();
-    
+    this.updateIntroStats();
+
+    if (this.elements.toggleAdvancedFilters) {
+      this.elements.toggleAdvancedFilters.setAttribute('aria-expanded', 'false');
+    }
+
     // Hide loading, show grid
     this.elements.loadingSection.style.display = 'none';
     this.elements.huntsGrid.style.display = 'grid';
@@ -901,17 +1586,17 @@ function showHuntJsonData(huntId) {
   modalBody.innerHTML = `
     <div class="hunt-json-data">
       <h3>Hunt Data for Advanced Notebook Generation</h3>
-      <p>Copy the JSON below and use it with the THOR Collective 
-      <a href="https://github.com/THORCollective/threat-hunting-notebook-generator" target="_blank">threat-hunting-notebook-generator</a> 
+      <p>Copy the JSON below and use it with the THOR Collective
+      <a href="https://github.com/THORCollective/threat-hunting-notebook-generator" target="_blank">threat-hunting-notebook-generator</a>
       tool for more advanced notebooks:</p>
       <div class="json-container">
         <pre class="json-code">${JSON.stringify(huntData, null, 2)}</pre>
       </div>
       <div class="json-actions">
-        <button class="btn btn-primary" onclick="copyToClipboard(JSON.stringify(${JSON.stringify(huntData)}, null, 2))">
+        <button class="btn btn-primary" data-action="copy-json">
           Copy JSON
         </button>
-        <button class="btn btn-secondary" onclick="generateNotebook('${huntId}')">
+        <button class="btn btn-secondary" data-action="back-to-notebook">
           Back to Notebook
         </button>
       </div>
@@ -926,18 +1611,82 @@ function showHuntJsonData(huntId) {
       </div>
     </div>
   `;
+
+  const copyButton = modalBody.querySelector('[data-action="copy-json"]');
+  if (copyButton) {
+    copyButton.addEventListener('click', (event) => {
+      copyToClipboard(event, JSON.stringify(huntData, null, 2));
+    });
+  }
+
+  const backButton = modalBody.querySelector('[data-action="back-to-notebook"]');
+  if (backButton) {
+    backButton.addEventListener('click', () => {
+      generateNotebook(huntId);
+    });
+  }
 }
 
 // Copy to clipboard function
-function copyToClipboard(text) {
-  navigator.clipboard.writeText(text).then(() => {
-    // Show temporary success message
-    const originalContent = event.target.textContent;
-    event.target.textContent = '✓ Copied!';
+function copyToClipboard(event, text) {
+  if (event && typeof event.preventDefault === 'function') {
+    event.preventDefault();
+  }
+
+  const trigger = event?.currentTarget || event?.target || null;
+  const originalLabel = trigger ? trigger.textContent : '';
+
+  const restoreLabel = () => {
+    if (!trigger) return;
     setTimeout(() => {
-      event.target.textContent = originalContent;
+      trigger.disabled = false;
+      trigger.textContent = originalLabel;
     }, 2000);
-  });
+  };
+
+  const applySuccessState = () => {
+    if (!trigger) return;
+    trigger.disabled = true;
+    trigger.textContent = '✓ Copied!';
+  };
+
+  const fallbackCopy = () => {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'absolute';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.select();
+    let successful = false;
+    try {
+      successful = document.execCommand('copy');
+    } catch (error) {
+      console.warn('Clipboard copy failed:', error);
+    }
+    document.body.removeChild(textarea);
+    if (successful) {
+      applySuccessState();
+      restoreLabel();
+    } else if (trigger) {
+      trigger.textContent = 'Copy failed';
+      restoreLabel();
+    }
+  };
+
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        applySuccessState();
+        restoreLabel();
+      })
+      .catch((error) => {
+        console.warn('Clipboard API error, falling back to execCommand:', error);
+        fallbackCopy();
+      });
+  } else {
+    fallbackCopy();
+  }
 }
 
 // Generate notebook function
