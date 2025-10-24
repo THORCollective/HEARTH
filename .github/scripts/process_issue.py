@@ -163,9 +163,10 @@ def main():
             final_content = f"### CTI Content\n\n❌ **Failed to save content to file.**\n\n**Content Preview:**\n```\n{content[:1000]}...\n```\n\n*Please try again or contact an administrator.*"
     
     # Replace the placeholder text with the status update
+    # Use re.escape to prevent special characters in final_content from being interpreted as regex
     new_issue_body = re.sub(
         r'### CTI Content\s*\n\s*\*\(This will be processed automatically by our system\. Please leave this section as is\.\)\*',
-        final_content,
+        lambda m: final_content,
         issue_body
     )
 
