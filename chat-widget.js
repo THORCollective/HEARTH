@@ -7,7 +7,17 @@ class HearthChatWidget {
     this.isOpen = false;
     this.messages = [];
     this.currentTypingIndicator = null;
-    
+    this.quickReplyTemplates = [
+      'Show me the latest persistence hunts',
+      'What is the PEAK framework?',
+      'Recommend hunts for data exfiltration',
+      'How do I submit a new hunt?'
+    ];
+
+    this.themeKey = 'hearth.chat.theme';
+    this.availableThemes = ['forge', 'ember', 'frost'];
+    this.currentTheme = this.getStoredTheme();
+
     // Chat capabilities
     this.capabilities = {
       huntSearch: true,
@@ -33,6 +43,8 @@ class HearthChatWidget {
     this.createChatWidget();
     this.setupEventListeners();
     this.addWelcomeMessage();
+    this.renderQuickReplies();
+    this.applyTheme(this.currentTheme);
   }
   
   createChatWidget() {
@@ -48,14 +60,24 @@ class HearthChatWidget {
     chatWidget.className = 'chat-widget';
     chatWidget.innerHTML = `
       <div class="chat-header">
-        <span>🔥 HEARTH Hunt Assistant</span>
+        <div class="chat-header-meta">
+          <span class="presence-dot" aria-hidden="true"></span>
+          <div class="chat-title-block">
+            <span class="chat-title">🔥 HEARTH Hunt Assistant</span>
+            <span class="chat-status">Online • threat hunting support</span>
+          </div>
+        </div>
         <div class="chat-header-controls">
+          <div class="chat-theme-palette" aria-label="Select assistant theme">
+            ${this.availableThemes.map(theme => `<button class="chat-theme-swatch" data-theme="${theme}" title="${theme} mode"></button>`).join('')}
+          </div>
           <button class="chat-size-btn" id="minimize-btn" title="Minimize">−</button>
           <button class="chat-size-btn" id="maximize-btn" title="Maximize">□</button>
           <button class="close-btn" aria-label="Close chat">×</button>
         </div>
       </div>
       <div class="chat-messages" id="chat-messages"></div>
+      <div class="chat-quick-replies" id="chat-quick-replies" aria-label="Quick replies"></div>
       <div class="chat-input-container">
         <input type="text" class="chat-input" placeholder="Ask about threat hunts..." maxlength="500">
         <button class="chat-send-btn">Send</button>
@@ -76,6 +98,8 @@ class HearthChatWidget {
     this.minimizeBtn = chatWidget.querySelector('#minimize-btn');
     this.maximizeBtn = chatWidget.querySelector('#maximize-btn');
     this.resizeHandles = chatWidget.querySelectorAll('.chat-resize-handle');
+    this.quickReplyContainer = chatWidget.querySelector('#chat-quick-replies');
+    this.themeSwatches = chatWidget.querySelectorAll('.chat-theme-swatch');
   }
   
   setupEventListeners() {
@@ -107,9 +131,15 @@ class HearthChatWidget {
     // Size control buttons
     this.minimizeBtn.addEventListener('click', () => this.minimizeChat());
     this.maximizeBtn.addEventListener('click', () => this.toggleMaximize());
-    
+
     // Resize functionality
     this.setupResizeHandlers();
+
+    if (this.themeSwatches && this.themeSwatches.length) {
+      this.themeSwatches.forEach(swatch => {
+        swatch.addEventListener('click', () => this.applyTheme(swatch.getAttribute('data-theme')));
+      });
+    }
   }
   
   toggleChat() {
@@ -145,10 +175,60 @@ class HearthChatWidget {
 📊 **Hunt stats** - "How many hunts do we have?"
 
 What would you like to explore?`;
-    
+
     this.addMessage('bot', welcomeText);
   }
-  
+
+  renderQuickReplies() {
+    if (!this.quickReplyContainer) return;
+    this.quickReplyContainer.innerHTML = '';
+    this.quickReplyTemplates.forEach(template => {
+      const button = document.createElement('button');
+      button.className = 'chat-quick-reply';
+      button.type = 'button';
+      button.textContent = template;
+      button.addEventListener('click', () => {
+        this.chatInput.value = template;
+        this.sendMessage();
+      });
+      this.quickReplyContainer.appendChild(button);
+    });
+  }
+
+  getStoredTheme() {
+    try {
+      const stored = window.localStorage.getItem(this.themeKey);
+      if (stored && this.availableThemes.includes(stored)) {
+        return stored;
+      }
+    } catch (error) {
+      console.warn('Unable to load chat theme', error);
+    }
+    return 'forge';
+  }
+
+  applyTheme(theme) {
+    const chosenTheme = this.availableThemes.includes(theme) ? theme : 'forge';
+    this.currentTheme = chosenTheme;
+    if (this.chatWidget) {
+      this.chatWidget.dataset.theme = chosenTheme;
+    }
+    this.highlightActiveTheme();
+    try {
+      window.localStorage.setItem(this.themeKey, chosenTheme);
+    } catch (error) {
+      console.warn('Unable to persist chat theme', error);
+    }
+  }
+
+  highlightActiveTheme() {
+    if (!this.themeSwatches) return;
+    this.themeSwatches.forEach(swatch => {
+      const theme = swatch.getAttribute('data-theme');
+      swatch.classList.toggle('is-active', theme === this.currentTheme);
+    });
+  }
+
   sendMessage() {
     const message = this.chatInput.value.trim();
     if (!message) return;
