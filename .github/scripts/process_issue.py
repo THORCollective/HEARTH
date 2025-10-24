@@ -47,6 +47,8 @@ def get_cti_content(url):
         }
         response = requests.get(url, timeout=15, headers=headers)
         response.raise_for_status()
+        # Ensure proper encoding
+        response.encoding = response.apparent_encoding
         content_type = response.headers.get('content-type', '')
 
         if 'pdf' in content_type:
@@ -60,10 +62,17 @@ def get_cti_content(url):
                 text = "\n".join([para.text for para in doc.paragraphs])
             return text
         else:
-            soup = BeautifulSoup(response.content, 'html.parser')
+            # Use response.text which respects the encoding we set
+            soup = BeautifulSoup(response.text, 'html.parser')
             for script_or_style in soup(["script", "style"]):
                 script_or_style.decompose()
-            return " ".join(soup.stripped_strings)
+            # Clean up the text and ensure it's properly encoded
+            text = " ".join(soup.stripped_strings)
+            # Remove any non-printable characters except newlines and tabs
+            import string
+            printable = set(string.printable)
+            text = ''.join(filter(lambda x: x in printable, text))
+            return text
 
     except requests.exceptions.RequestException as e:
         return f"Error fetching URL: {e}"
