@@ -1022,7 +1022,7 @@ main {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
-    align-items: center;
+    align-items: flex-end;
 }
 
 .quick-filter {
@@ -1054,6 +1054,11 @@ main {
     outline: none;
     border-color: rgba(138, 71, 255, 0.4);
     box-shadow: 0 0 0 3px rgba(138, 71, 255, 0.18);
+}
+
+#toggleAdvancedFilters {
+    min-height: 44px;
+    align-self: flex-end;
 }
 
 .advanced-filters {
@@ -1702,6 +1707,10 @@ main {
     .controls-middle {
         flex-direction: column;
         align-items: stretch;
+    }
+    
+    #toggleAdvancedFilters {
+        align-self: stretch;
     }
 
     .quick-filter,
