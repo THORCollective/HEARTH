@@ -713,6 +713,45 @@
         background: rgba(255, 255, 255, 0.98) !important;
     }
     
+    /* Notebook generation modal */
+    .notebook-success,
+    .notebook-actions,
+    .notebook-modal,
+    [class*="notebook"] {
+        background: white !important;
+        color: var(--text-primary) !important;
+    }
+    
+    .notebook-success h3 {
+        color: var(--success) !important;
+    }
+    
+    /* Success messages and alerts */
+    .success-message,
+    .alert-success,
+    [class*="success"] {
+        background: rgba(46, 184, 122, 0.1) !important;
+        color: var(--text-primary) !important;
+        border: 1px solid rgba(46, 184, 122, 0.3) !important;
+    }
+    
+    /* Advanced options sections */
+    .advanced-option,
+    .Advanced-Option,
+    [class*="advanced"] {
+        background: white !important;
+        color: var(--text-primary) !important;
+    }
+    
+    /* Info boxes and panels */
+    .info-box,
+    .panel,
+    .card {
+        background: white !important;
+        color: var(--text-primary) !important;
+        border: 1px solid rgba(138, 71, 255, 0.12) !important;
+    }
+    
     /* Fix any remaining text on potentially dark backgrounds */
     * {
         color: var(--text-primary);
