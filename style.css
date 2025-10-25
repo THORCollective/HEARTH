@@ -394,8 +394,12 @@
     }
     
     header {
-        background: rgba(255, 255, 255, 0.95);
-        border-bottom: 1px solid rgba(138, 71, 255, 0.12);
+        background: rgba(255, 255, 255, 0.98) !important;
+        border-bottom: 1px solid rgba(138, 71, 255, 0.12) !important;
+    }
+    
+    .header-content {
+        background: transparent !important;
     }
     
     .search-input {
@@ -598,12 +602,25 @@
         color: var(--text-primary) !important;
     }
     
-    /* Hunt card snapshots */
+    /* Hunt card snapshots and previews */
     .hunt-details,
-    .hunt-snapshot {
-        background: rgba(250, 248, 255, 0.5) !important;
+    .hunt-snapshot,
+    .hunt-preview,
+    .preview-body,
+    [class*="snapshot"],
+    [class*="SNAPSHOT"],
+    [class*="preview"],
+    [class*="Preview"] {
+        background: white !important;
         color: var(--text-primary) !important;
-        border: 1px solid rgba(138, 71, 255, 0.1) !important;
+        border: 1px solid rgba(138, 71, 255, 0.12) !important;
+    }
+    
+    .preview-title,
+    .preview-links,
+    .preview-toggle {
+        color: var(--text-muted) !important;
+        background: transparent !important;
     }
     
     /* Ensure all buttons are light */
@@ -654,6 +671,41 @@
     [class*="Dark"] {
         background: white !important;
         color: var(--text-primary) !important;
+    }
+    
+    /* Override any remaining backgrounds with dark colors */
+    * {
+        /* Force any dark backgrounds to be light */
+    }
+    
+    /* Specific overrides for known dark elements */
+    div[style*="background: rgba(11"],
+    div[style*="background: rgba(12"],
+    div[style*="background: rgba(28"],
+    div[style*="background: rgba(32"],
+    div[style*="background: #0"],
+    div[style*="background: #1"],
+    div[style*="background: #2"],
+    div[style*="background: #3"],
+    div[style*="background: #4"] {
+        background: white !important;
+    }
+    
+    /* Ensure modals and overlays are light */
+    .modal, .overlay, .popup {
+        background: rgba(255, 255, 255, 0.98) !important;
+    }
+    
+    /* Fix any remaining text on potentially dark backgrounds */
+    * {
+        color: var(--text-primary);
+    }
+    
+    /* Keep only accent buttons with non-white backgrounds */
+    .btn-accent,
+    [type="submit"] {
+        background: var(--accent) !important;
+        color: white !important;
     }
 }
 
