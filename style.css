@@ -436,14 +436,28 @@
     }
     
     .hunt-card {
-        background: rgba(255, 255, 255, 0.95);
-        border: 1px solid rgba(138, 71, 255, 0.1);
+        background: rgba(255, 255, 255, 0.95) !important;
+        border: 1px solid rgba(138, 71, 255, 0.1) !important;
     }
     
     .hunt-card:hover {
-        background: rgba(255, 255, 255, 1);
-        border-color: var(--accent-soft);
-        box-shadow: 0 8px 25px rgba(138, 71, 255, 0.08);
+        background: rgba(255, 255, 255, 1) !important;
+        border-color: var(--accent-soft) !important;
+        box-shadow: 0 8px 25px rgba(138, 71, 255, 0.08) !important;
+    }
+    
+    .hunt-card * {
+        color: var(--text-primary);
+    }
+    
+    .hunt-card .hunt-category,
+    .hunt-card .hunt-tag,
+    .hunt-card .hunt-submitter {
+        color: var(--text-muted) !important;
+    }
+    
+    .hunt-card .hunt-title {
+        color: var(--text-primary) !important;
     }
     
     .hunt-tag {
@@ -520,18 +534,18 @@
     }
     
     .highlight-card {
-        background: rgba(255, 255, 255, 0.95);
-        border: 1px solid rgba(138, 71, 255, 0.15);
-        box-shadow: 0 2px 8px rgba(138, 71, 255, 0.06);
+        background: rgba(255, 255, 255, 0.95) !important;
+        border: 1px solid rgba(138, 71, 255, 0.15) !important;
+        box-shadow: 0 2px 8px rgba(138, 71, 255, 0.06) !important;
     }
     
     .highlight-card .highlight-value {
-        color: var(--accent);
+        color: var(--accent) !important;
     }
     
     .highlight-card .highlight-label,
     .highlight-card .highlight-sub {
-        color: var(--text-muted);
+        color: var(--text-muted) !important;
     }
     
     .meta-pill {
