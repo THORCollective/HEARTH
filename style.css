@@ -520,13 +520,47 @@
     }
     
     .highlight-card {
-        background: rgba(255, 255, 255, 0.8);
-        border: 1px solid rgba(138, 71, 255, 0.12);
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(138, 71, 255, 0.15);
+        box-shadow: 0 2px 8px rgba(138, 71, 255, 0.06);
+    }
+    
+    .highlight-card .highlight-value {
+        color: var(--accent);
+    }
+    
+    .highlight-card .highlight-label,
+    .highlight-card .highlight-sub {
+        color: var(--text-muted);
     }
     
     .meta-pill {
         background: rgba(138, 71, 255, 0.08);
         color: var(--text-muted);
+    }
+    
+    /* Ensure all sections have light backgrounds */
+    .controls {
+        background: transparent;
+    }
+    
+    .controls-top,
+    .controls-middle {
+        background: transparent;
+    }
+    
+    .stats {
+        background: transparent;
+        color: var(--text-muted);
+    }
+    
+    .hunt-count {
+        color: var(--text-primary);
+    }
+    
+    /* Fix any remaining dark sections */
+    section {
+        background: transparent;
     }
 }
 
