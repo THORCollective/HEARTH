@@ -365,16 +365,168 @@
 
 @media (prefers-color-scheme: light) {
     :root {
-        --surface: rgba(250, 244, 255, 0.9);
-        --surface-glass: rgba(255, 255, 255, 0.8);
-        --surface-border: rgba(138, 71, 255, 0.18);
-        --text-primary: #1b1037;
-        --text-muted: #4a4b68;
-        --bg: radial-gradient(circle at top left, rgba(138, 71, 255, 0.18), transparent 55%),
-                radial-gradient(circle at bottom right, rgba(255, 76, 106, 0.1), transparent 60%),
-                #f6f4ff;
-        --shadow-lg: 0 35px 45px rgba(33, 16, 62, 0.08);
-        --shadow-md: 0 18px 35px rgba(33, 16, 62, 0.1);
+        --bg: radial-gradient(circle at top left, rgba(138, 71, 255, 0.08), transparent 55%),
+                radial-gradient(circle at bottom right, rgba(255, 76, 106, 0.05), transparent 60%),
+                #fafafc;
+        --surface: rgba(255, 255, 255, 0.95);
+        --surface-glass: rgba(255, 255, 255, 0.85);
+        --surface-border: rgba(138, 71, 255, 0.15);
+        --text-primary: #1a1523;
+        --text-muted: #6b6d7a;
+        --accent: #7a3ff2;
+        --accent-soft: rgba(122, 63, 242, 0.1);
+        --accent-strong: #d442c8;
+        --shadow-lg: 0 25px 50px rgba(33, 16, 62, 0.08);
+        --shadow-md: 0 10px 30px rgba(33, 16, 62, 0.06);
+        --success: #2eb87a;
+    }
+    
+    /* Light mode specific overrides */
+    .chat-widget {
+        background: rgba(255, 255, 255, 0.98);
+        border: 1px solid rgba(138, 71, 255, 0.2);
+        box-shadow: 0 10px 40px rgba(33, 16, 62, 0.12);
+    }
+    
+    .chat-header {
+        background: linear-gradient(135deg, rgba(250, 248, 255, 0.95), rgba(245, 242, 255, 0.9));
+        border-bottom: 1px solid rgba(138, 71, 255, 0.15);
+    }
+    
+    header {
+        background: rgba(255, 255, 255, 0.95);
+        border-bottom: 1px solid rgba(138, 71, 255, 0.12);
+    }
+    
+    .search-input {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(138, 71, 255, 0.15);
+        color: var(--text-primary);
+    }
+    
+    .search-input::placeholder {
+        color: var(--text-muted);
+    }
+    
+    .filter-select {
+        background: rgba(255, 255, 255, 0.9) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%234a4b68"><path d="M4 6l4 4 4-4z"/></svg>') right 0.75rem center/12px no-repeat;
+        border: 1px solid rgba(138, 71, 255, 0.15);
+        color: var(--text-primary);
+    }
+    
+    .advanced-filters {
+        background: rgba(255, 255, 255, 0.85);
+        border: 1px solid rgba(138, 71, 255, 0.12);
+    }
+    
+    .chip {
+        border: 1px solid rgba(138, 71, 255, 0.15);
+        background: rgba(250, 248, 255, 0.7);
+        color: var(--text-muted);
+    }
+    
+    .chip:hover {
+        border-color: var(--accent);
+        background: rgba(138, 71, 255, 0.08);
+    }
+    
+    .chip.is-active {
+        background: var(--accent);
+        color: white;
+    }
+    
+    .hunt-card {
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(138, 71, 255, 0.1);
+    }
+    
+    .hunt-card:hover {
+        background: rgba(255, 255, 255, 1);
+        border-color: var(--accent-soft);
+        box-shadow: 0 8px 25px rgba(138, 71, 255, 0.08);
+    }
+    
+    .hunt-tag {
+        background: rgba(138, 71, 255, 0.08);
+        color: var(--text-muted);
+    }
+    
+    .hunt-category {
+        background: rgba(138, 71, 255, 0.1);
+        color: var(--text-muted);
+    }
+    
+    .btn-ghost {
+        background: rgba(250, 248, 255, 0.6);
+        border-color: rgba(138, 71, 255, 0.2);
+    }
+    
+    .btn-ghost:hover {
+        background: rgba(138, 71, 255, 0.08);
+        border-color: var(--accent);
+    }
+    
+    .btn-accent {
+        background: var(--accent);
+        color: white;
+    }
+    
+    .btn-chip {
+        background: rgba(250, 248, 255, 0.8);
+        border-color: rgba(138, 71, 255, 0.15);
+        color: var(--text-muted);
+    }
+    
+    .modal-content {
+        background: rgba(255, 255, 255, 0.98);
+        border: 1px solid rgba(138, 71, 255, 0.15);
+    }
+    
+    .loading {
+        background: rgba(255, 255, 255, 0.85);
+    }
+    
+    .clear-btn {
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(138, 71, 255, 0.15);
+        color: var(--text-muted);
+    }
+    
+    .pagination-btn {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(138, 71, 255, 0.15);
+        color: var(--text-primary);
+    }
+    
+    .pagination-btn:hover:not(:disabled) {
+        background: var(--accent);
+        color: white;
+    }
+    
+    .pagination-btn:disabled {
+        background: rgba(250, 248, 255, 0.5);
+        color: var(--text-muted);
+        opacity: 0.5;
+    }
+    
+    .active-filter-chip {
+        background: rgba(138, 71, 255, 0.12);
+        border-color: var(--accent);
+    }
+    
+    /* Intro section adjustments */
+    .intro {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(250, 248, 255, 0.85));
+    }
+    
+    .highlight-card {
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(138, 71, 255, 0.12);
+    }
+    
+    .meta-pill {
+        background: rgba(138, 71, 255, 0.08);
+        color: var(--text-muted);
     }
 }
 
