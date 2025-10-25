@@ -365,19 +365,19 @@
 
 @media (prefers-color-scheme: light) {
     :root {
-        --bg: radial-gradient(circle at top left, rgba(138, 71, 255, 0.08), transparent 55%),
-                radial-gradient(circle at bottom right, rgba(255, 76, 106, 0.05), transparent 60%),
-                #fafafc;
-        --surface: rgba(255, 255, 255, 0.95);
-        --surface-glass: rgba(255, 255, 255, 0.85);
-        --surface-border: rgba(138, 71, 255, 0.15);
+        --bg: radial-gradient(circle at top left, rgba(138, 71, 255, 0.06), transparent 55%),
+                radial-gradient(circle at bottom right, rgba(255, 76, 106, 0.04), transparent 60%),
+                #ffffff;
+        --surface: rgba(255, 255, 255, 1);
+        --surface-glass: rgba(255, 255, 255, 0.95);
+        --surface-border: rgba(138, 71, 255, 0.12);
         --text-primary: #1a1523;
-        --text-muted: #6b6d7a;
+        --text-muted: #5a5c68;
         --accent: #7a3ff2;
-        --accent-soft: rgba(122, 63, 242, 0.1);
+        --accent-soft: rgba(122, 63, 242, 0.08);
         --accent-strong: #d442c8;
-        --shadow-lg: 0 25px 50px rgba(33, 16, 62, 0.08);
-        --shadow-md: 0 10px 30px rgba(33, 16, 62, 0.06);
+        --shadow-lg: 0 20px 40px rgba(33, 16, 62, 0.06);
+        --shadow-md: 0 8px 20px rgba(33, 16, 62, 0.04);
         --success: #2eb87a;
     }
     
@@ -575,6 +575,85 @@
     /* Fix any remaining dark sections */
     section {
         background: transparent;
+    }
+    
+    /* Override ALL potentially dark elements */
+    .search-wrapper {
+        background: white !important;
+        border: 1px solid rgba(138, 71, 255, 0.15) !important;
+    }
+    
+    .search-input {
+        background: white !important;
+        color: var(--text-primary) !important;
+    }
+    
+    .filter-select {
+        background: white url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%235a5c68"><path d="M4 6l4 4 4-4z"/></svg>') right 0.75rem center/12px no-repeat !important;
+        color: var(--text-primary) !important;
+    }
+    
+    .filter-select option {
+        background: white !important;
+        color: var(--text-primary) !important;
+    }
+    
+    /* Hunt card snapshots */
+    .hunt-details,
+    .hunt-snapshot {
+        background: rgba(250, 248, 255, 0.5) !important;
+        color: var(--text-primary) !important;
+        border: 1px solid rgba(138, 71, 255, 0.1) !important;
+    }
+    
+    /* Ensure all buttons are light */
+    button, .btn {
+        background: white !important;
+        color: var(--text-primary) !important;
+        border: 1px solid rgba(138, 71, 255, 0.15) !important;
+    }
+    
+    .btn-accent {
+        background: var(--accent) !important;
+        color: white !important;
+        border-color: var(--accent) !important;
+    }
+    
+    .btn-ghost {
+        background: rgba(250, 248, 255, 0.8) !important;
+    }
+    
+    /* Advanced filters button */
+    #toggleAdvancedFilters {
+        background: white !important;
+        color: var(--text-primary) !important;
+        border: 1px solid rgba(138, 71, 255, 0.15) !important;
+    }
+    
+    #toggleAdvancedFilters:hover {
+        background: rgba(138, 71, 255, 0.05) !important;
+        border-color: var(--accent) !important;
+    }
+    
+    /* Category badges */
+    .hunt-category {
+        background: rgba(138, 71, 255, 0.08) !important;
+        color: var(--accent) !important;
+        border: 1px solid rgba(138, 71, 255, 0.15) !important;
+    }
+    
+    /* Tags */
+    .hunt-tag {
+        background: rgba(250, 248, 255, 0.6) !important;
+        color: var(--text-muted) !important;
+        border: 1px solid rgba(138, 71, 255, 0.1) !important;
+    }
+    
+    /* Any element that might be dark */
+    [class*="dark"], 
+    [class*="Dark"] {
+        background: white !important;
+        color: var(--text-primary) !important;
     }
 }
 
