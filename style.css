@@ -496,8 +496,12 @@
     }
     
     .modal-content {
-        background: rgba(255, 255, 255, 0.98);
-        border: 1px solid rgba(138, 71, 255, 0.15);
+        background: white !important;
+        border: 1px solid rgba(138, 71, 255, 0.15) !important;
+    }
+    
+    .modal-content * {
+        background-color: transparent;
     }
     
     .loading {
@@ -607,10 +611,14 @@
     .hunt-snapshot,
     .hunt-preview,
     .preview-body,
+    .hunt-detail-why,
+    .hunt-detail-references,
+    .hunt-detail-tags,
     [class*="snapshot"],
     [class*="SNAPSHOT"],
     [class*="preview"],
-    [class*="Preview"] {
+    [class*="Preview"],
+    [class*="hunt-detail"] {
         background: white !important;
         color: var(--text-primary) !important;
         border: 1px solid rgba(138, 71, 255, 0.12) !important;
@@ -618,9 +626,18 @@
     
     .preview-title,
     .preview-links,
-    .preview-toggle {
+    .preview-toggle,
+    .hunt-detail-why h3,
+    .hunt-detail-references h3,
+    .hunt-detail-tags strong {
         color: var(--text-muted) !important;
         background: transparent !important;
+    }
+    
+    .hunt-detail-why p,
+    .hunt-detail-references p,
+    .hunt-detail-tags p {
+        color: var(--text-primary) !important;
     }
     
     /* Ensure all buttons are light */
