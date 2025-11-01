@@ -38,7 +38,7 @@ load_dotenv()
 AI_PROVIDER = os.getenv("AI_PROVIDER", "claude").lower()
 
 # Claude model configuration - use environment variable or default to latest
-CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-3-5-sonnet-20250129")
+CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-5-20250929")
 
 if AI_PROVIDER == "claude":
     if not CLAUDE_AVAILABLE:

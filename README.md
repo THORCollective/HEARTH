@@ -106,7 +106,7 @@ For maintainers and self-hosted instances, HEARTH can be configured using enviro
 | `AI_PROVIDER` | AI provider to use for hunt generation (`claude` or `openai`) | `claude` | No |
 | `ANTHROPIC_API_KEY` | API key for Claude (required if using Claude) | - | Yes (for Claude) |
 | `OPENAI_API_KEY` | API key for OpenAI (required if using OpenAI) | - | Yes (for OpenAI) |
-| `CLAUDE_MODEL` | Specific Claude model version to use | `claude-3-5-sonnet-20250129` | No |
+| `CLAUDE_MODEL` | Specific Claude model version to use | `claude-sonnet-4-5-20250929` | No |
 
 ### GitHub Actions Configuration
 

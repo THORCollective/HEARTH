@@ -216,7 +216,7 @@ jobs:
           AI_PROVIDER: ${{ vars.AI_PROVIDER || 'claude' }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          CLAUDE_MODEL: ${{ vars.CLAUDE_MODEL || 'claude-3-5-sonnet-20250129' }}
+          CLAUDE_MODEL: ${{ vars.CLAUDE_MODEL || 'claude-sonnet-4-5-20250929' }}
           CTI_SOURCE_URL: ${{ steps.parse_issue.outputs.source_url }}
           EXISTING_HUNT_FILE: ${{ steps.find_hunt.outputs.hunt_file_path }}
           SUBMITTER_NAME: ${{ steps.parse_issue.outputs.submitter_name }}
