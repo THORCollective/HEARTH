@@ -37,6 +37,9 @@ load_dotenv()
 # AI provider selection
 AI_PROVIDER = os.getenv("AI_PROVIDER", "claude").lower()
 
+# Claude model configuration - use environment variable or default to latest
+CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-3-5-sonnet-20250129")
+
 if AI_PROVIDER == "claude":
     if not CLAUDE_AVAILABLE:
         raise ImportError("Anthropic (Claude) client not installed. Please install 'anthropic' Python package.")
@@ -180,7 +183,7 @@ def summarize_cti_with_map_reduce(text, model="gpt-4", max_tokens=128000):
                     f"--- CHUNK {i+1}/{len(chunks)} ---\n\n{chunk}\n\nAssistant:"
                 )
                 response = anthropic_client.messages.create(
-                    model="claude-3-5-sonnet-20241022",  # Updated to supported model
+                    model=CLAUDE_MODEL,
                     max_tokens=1024,
                     temperature=0.2,
                     messages=[{"role": "user", "content": prompt}]
@@ -219,7 +222,7 @@ def summarize_cti_with_map_reduce(text, model="gpt-4", max_tokens=128000):
                 f"--- COMBINED SUMMARIES ---\n\n{combined_summary}\n\nAssistant:"
             )
             final_response = anthropic_client.messages.create(
-                model="claude-3-5-sonnet-20241022",
+                model=CLAUDE_MODEL,
                 max_tokens=2048,
                 temperature=0.2,
                 messages=[{"role": "user", "content": prompt}]
@@ -342,7 +345,7 @@ def generate_hunt_content_with_ttp_diversity(cti_text, cti_source_url, submitter
             if AI_PROVIDER == "claude":
                 full_prompt = f"\n\nHuman: {SYSTEM_PROMPT}\n\n{prompt}\n\nAssistant:"
                 response = anthropic_client.messages.create(
-                    model="claude-3-5-sonnet-20241022",
+                    model=CLAUDE_MODEL,
                     max_tokens=1200,
                     temperature=temperature,
                     messages=[{"role": "user", "content": full_prompt}]
@@ -451,7 +454,7 @@ def generate_hunt_content_basic(cti_text, cti_source_url, submitter_credit, is_r
         if AI_PROVIDER == "claude":
             full_prompt = f"\n\nHuman: {SYSTEM_PROMPT}\n\n{prompt}\n\nAssistant:"
             response = anthropic_client.messages.create(
-                model="claude-3-5-sonnet-20241022",
+                model=CLAUDE_MODEL,
                 max_tokens=1200,
                 temperature=temperature,
                 messages=[{"role": "user", "content": full_prompt}]

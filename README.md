@@ -95,6 +95,31 @@ HEARTH combines a simple frontend with a powerful, serverless backend built on G
 
 ---
 
+## ⚙️ Configuration
+
+For maintainers and self-hosted instances, HEARTH can be configured using environment variables.
+
+### Environment Variables
+
+| Variable | Description | Default | Required |
+| :--- | :--- | :--- | :--- |
+| `AI_PROVIDER` | AI provider to use for hunt generation (`claude` or `openai`) | `claude` | No |
+| `ANTHROPIC_API_KEY` | API key for Claude (required if using Claude) | - | Yes (for Claude) |
+| `OPENAI_API_KEY` | API key for OpenAI (required if using OpenAI) | - | Yes (for OpenAI) |
+| `CLAUDE_MODEL` | Specific Claude model version to use | `claude-3-5-sonnet-20250129` | No |
+
+### GitHub Actions Configuration
+
+When running in GitHub Actions, these variables should be set as:
+- **Repository Secrets**: `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `HEARTH_TOKEN`
+- **Repository Variables**: `AI_PROVIDER`, `CLAUDE_MODEL` (optional)
+
+To update the Claude model version, you can either:
+1. Set the `CLAUDE_MODEL` repository variable in GitHub Settings
+2. Update the default value in [scripts/generate_from_cti.py](scripts/generate_from_cti.py)
+
+---
+
 ## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
