@@ -45,11 +45,33 @@ def get_cti_content(url):
             'Connection': 'keep-alive',
             'Upgrade-Insecure-Requests': '1'
         }
-        response = requests.get(url, timeout=15, headers=headers)
+        # Explicitly allow automatic decompression
+        response = requests.get(url, timeout=15, headers=headers, stream=False)
         response.raise_for_status()
-        # Ensure proper encoding
-        response.encoding = response.apparent_encoding
-        content_type = response.headers.get('content-type', '')
+
+        # Debug: Check if content is compressed/binary
+        content_type = response.headers.get('content-type', '').lower()
+        content_encoding = response.headers.get('content-encoding', '').lower()
+
+        print(f"Content-Type: {content_type}")
+        print(f"Content-Encoding: {content_encoding}")
+        print(f"Response length: {len(response.content)} bytes")
+
+        # Ensure proper text encoding
+        if 'charset' not in content_type:
+            response.encoding = response.apparent_encoding or 'utf-8'
+
+        # Check if response is actually HTML text
+        is_binary = response.content[:100].count(b'\x00') > 5  # Null bytes indicate binary
+        if is_binary:
+            print("⚠️  Content appears to be binary/compressed, attempting text decoding...")
+            # Try to decode as text
+            try:
+                text_content = response.content.decode('utf-8', errors='ignore')
+                if len(text_content.strip()) < 100:
+                    return f"Error: Content appears to be binary or compressed and could not be decoded"
+            except:
+                return f"Error: Unable to decode binary content"
 
         if 'pdf' in content_type:
             with io.BytesIO(response.content) as f:
