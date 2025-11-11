@@ -33,7 +33,7 @@ def get_user_agent():
 def get_cti_content(url):
     """
     Downloads and extracts text content from a given URL.
-    Supports HTML, PDF, and DOCX formats.
+    Supports HTML (with JS rendering fallback), PDF, and DOCX formats.
     """
     try:
         headers = {
@@ -103,12 +103,65 @@ def get_cti_content(url):
             import re
             text = re.sub(r'[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]', '', text)
 
-            return text if text.strip() else " ".join(soup.stripped_strings)
+            final_text = text if text.strip() else " ".join(soup.stripped_strings)
+
+            # Check if content seems valid (has enough words and reasonable length)
+            word_count = len(final_text.split())
+            if word_count < 100:
+                # Content is suspiciously short - might be JS-rendered
+                print(f"⚠️  Content seems too short ({word_count} words), trying JS rendering...")
+                js_content = try_js_rendering(url)
+                if js_content and len(js_content.split()) > word_count:
+                    print(f"✅ JS rendering succeeded ({len(js_content.split())} words)")
+                    return js_content
+
+            return final_text
 
     except requests.exceptions.RequestException as e:
         return f"Error fetching URL: {e}"
     except Exception as e:
         return f"Error processing content: {e}"
+
+def try_js_rendering(url):
+    """
+    Attempt to render JavaScript content using urllib and readability.
+    This is a lightweight approach that works in GitHub Actions.
+    """
+    try:
+        from readability import Document
+        import urllib.request
+
+        # Fetch with a real browser user agent
+        req = urllib.request.Request(
+            url,
+            headers={'User-Agent': get_user_agent()}
+        )
+
+        with urllib.request.urlopen(req, timeout=20) as response:
+            html = response.read()
+
+        # Use readability to extract main content
+        doc = Document(html)
+        content_html = doc.summary()
+
+        # Parse the cleaned HTML
+        soup = BeautifulSoup(content_html, 'html.parser')
+
+        # Extract text preserving structure
+        paragraphs = []
+        for element in soup.find_all(['p', 'h1', 'h2', 'h3', 'h4', 'li', 'blockquote']):
+            text = element.get_text(strip=True)
+            if text and len(text) > 20:
+                paragraphs.append(text)
+
+        return '\n\n'.join(paragraphs)
+
+    except ImportError:
+        print("⚠️  readability-lxml not available, skipping JS rendering")
+        return None
+    except Exception as e:
+        print(f"⚠️  JS rendering failed: {e}")
+        return None
 
 def save_cti_content_to_file(content, issue_number):
     """
