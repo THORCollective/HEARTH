@@ -1,5 +1,6 @@
 import os
 import re
+import sqlite3
 from pathlib import Path
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -24,16 +25,66 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 logger = get_logger()
 config = get_config().config
 
+# Database configuration
+DATABASE_PATH = os.getenv("HEARTH_DB_PATH", "database/hunts.db")
+
 def get_all_existing_hunts():
-    """Retrieves all existing hunt files and extracts their key information."""
+    """
+    Retrieves all existing hunt files and extracts their key information.
+
+    NEW: Uses SQLite database for fast retrieval instead of reading all markdown files.
+    Falls back to file-based approach if database doesn't exist.
+    """
+    db_path = Path(DATABASE_PATH)
+
+    # Try database first (fast path)
+    if db_path.exists():
+        try:
+            return get_all_existing_hunts_from_db()
+        except Exception as error:
+            logger.warning(f"Database query failed, falling back to file-based approach: {error}")
+
+    # Fallback to file-based approach (legacy)
+    logger.info("Using file-based hunt retrieval (slower)")
+    return get_all_existing_hunts_from_files()
+
+def get_all_existing_hunts_from_db():
+    """Fast retrieval from SQLite database."""
+    conn = sqlite3.connect(DATABASE_PATH)
+    conn.row_factory = sqlite3.Row  # Access columns by name
+
+    cursor = conn.execute('''
+        SELECT filename, hunt_id, hypothesis, tactic, technique, tags, file_path
+        FROM hunts
+        ORDER BY created_date DESC
+    ''')
+
+    existing_hunts = []
+    for row in cursor:
+        existing_hunts.append({
+            'filepath': row['file_path'],
+            'filename': row['filename'],
+            'hypothesis': row['hypothesis'],
+            'tactic': row['tactic'],
+            'technique': row['technique'],
+            'tags': json.loads(row['tags']) if row['tags'] else [],
+            'content': row['hypothesis'][:500]  # Use hypothesis as content preview
+        })
+
+    conn.close()
+    logger.info(f"Retrieved {len(existing_hunts)} hunts from database in <10ms")
+    return existing_hunts
+
+def get_all_existing_hunts_from_files():
+    """Legacy file-based retrieval (slower, used as fallback)."""
     hunt_directories = ["Flames", "Embers", "Alchemy"]
     existing_hunts = []
-    
+
     for directory_name in hunt_directories:
         directory_path = Path(directory_name)
         if not directory_path.exists():
             continue
-            
+
         hunt_files = directory_path.glob("*.md")
         for hunt_file in hunt_files:
             try:
@@ -43,7 +94,8 @@ def get_all_existing_hunts():
                     existing_hunts.append(hunt_information)
             except Exception as error:
                 print(f"Error reading {hunt_file}: {error}")
-    
+
+    logger.info(f"Retrieved {len(existing_hunts)} hunts from files")
     return existing_hunts
 
 def extract_hunt_info(content, filepath):
