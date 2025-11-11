@@ -82,6 +82,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests beautifulsoup4 PyPDF2 python-docx openai python-dotenv anthropic readability-lxml brotli zstandard
 
+      - name: "Download MITRE ATT&CK data"
+        run: |
+          mkdir -p data
+          curl -s -o data/enterprise-attack.json https://raw.githubusercontent.com/mitre/cti/master/enterprise-attack/enterprise-attack.json
+          echo "✅ Downloaded MITRE ATT&CK Enterprise data ($(du -h data/enterprise-attack.json | cut -f1))"
+
       - name: "Setup Git Branch"
         run: |
           if [ "${{ github.event.label.name }}" == "regenerate" ]; then

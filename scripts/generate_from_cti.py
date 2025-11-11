@@ -24,6 +24,14 @@ except ImportError:
     print("⚠️ TTP diversity system not available. Skipping TTP diversity checks.")
     TTP_DIVERSITY_AVAILABLE = False
 
+# Import MITRE ATT&CK data
+try:
+    from mitre_attack import get_mitre_attack
+    MITRE_AVAILABLE = True
+except ImportError:
+    print("⚠️ MITRE ATT&CK data not available. Using fallback tactic matching.")
+    MITRE_AVAILABLE = False
+
 # Import legacy duplicate detection as backup
 try:
     from duplicate_detection import check_duplicates_for_new_submission
@@ -56,6 +64,64 @@ OUTPUT_DIR    = Path("Flames/")
 PROCESSED_DIR = Path(".hearth/processed-intel-drops/")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
+
+def extract_technique_and_tactic(content: str) -> tuple:
+    """
+    Extract technique ID and tactic from generated hunt content.
+    Uses MITRE ATT&CK data for validation and accurate tactic mapping.
+
+    Returns:
+        tuple: (technique_id, tactic, confidence_score)
+    """
+    import re
+
+    # Try to extract technique ID from content
+    technique_pattern = r'T\d{4}(?:\.\d{3})?'
+    techniques_found = re.findall(technique_pattern, content)
+
+    if techniques_found and MITRE_AVAILABLE:
+        # Validate using MITRE data
+        mitre = get_mitre_attack()
+        for tech_id in techniques_found:
+            tech_data = mitre.validate_technique(tech_id)
+            if tech_data:
+                tactic = mitre.get_technique_tactic(tech_id)
+                if tactic:
+                    print(f"✅ Validated technique {tech_id}: {tech_data['name']}")
+                    print(f"   MITRE tactic: {tactic}")
+                    return (tech_id, tactic, 1.0)  # 100% confidence from MITRE
+
+    # Fallback: Extract from table in generated content
+    lines = content.split('\n')
+    for line in lines:
+        if '|' in line:
+            parts = [p.strip() for p in line.split('|')]
+            if len(parts) >= 4:
+                potential_tactic = parts[2].strip() if len(parts) > 2 and parts[2].strip() else None
+                if potential_tactic and potential_tactic.lower() != "tactic":
+                    # Validate tactic name if MITRE available
+                    if MITRE_AVAILABLE:
+                        mitre = get_mitre_attack()
+                        # Normalize tactic name
+                        for mitre_tactic in mitre.tactics.keys():
+                            if mitre_tactic.lower() == potential_tactic.lower():
+                                return (None, mitre_tactic, 0.8)  # 80% confidence from table
+                    return (None, potential_tactic, 0.7)  # 70% confidence from table
+
+    # Final fallback: Keyword-based inference (low confidence)
+    hypothesis = content.split('\n')[0].strip()
+    hypothesis_lower = hypothesis.lower()
+
+    if any(word in hypothesis_lower for word in ['tunnel', 'proxy', 'socks', 'c2', 'command', 'control', 'communication']):
+        return (None, "Command And Control", 0.3)
+    elif any(word in hypothesis_lower for word in ['download', 'execute', 'run', 'launch', 'powershell', 'cmd']):
+        return (None, "Execution", 0.3)
+    elif any(word in hypothesis_lower for word in ['persist', 'startup', 'service', 'registry', 'scheduled']):
+        return (None, "Persistence", 0.3)
+    elif any(word in hypothesis_lower for word in ['credential', 'password', 'token', 'hash', 'mimikatz']):
+        return (None, "Credential Access", 0.3)
+    else:
+        return (None, "Command And Control", 0.2)  # Default fallback
 
 def get_next_hunt_id():
     """Scans the Flames/ directory to find the next available hunt ID."""
@@ -370,36 +436,14 @@ def generate_hunt_content_with_ttp_diversity(cti_text, cti_source_url, submitter
             hypothesis = cleaned_content.split('\n')[0].strip()
             if hypothesis.startswith('#'):
                 hypothesis = hypothesis.lstrip('#').strip()
-            
-            # Extract tactic from the generated content (look for tactic in table)
-            tactic = "Command and Control"  # Default for most cases, can be improved
-            lines = cleaned_content.split('\n')
-            for line in lines:
-                if '|' in line and any(word in line.lower() for word in ['execution', 'persistence', 'privilege', 'defense', 'credential', 'discovery', 'lateral', 'collection', 'command', 'exfiltration', 'impact']):
-                    # Found tactic in table, extract it
-                    parts = [p.strip() for p in line.split('|')]
-                    if len(parts) >= 4:  # Hunt#, Hypothesis, Tactic, Notes...
-                        potential_tactic = parts[2].strip() if len(parts) > 2 and parts[2].strip() else None
-                        if potential_tactic and potential_tactic.lower() != "tactic":
-                            tactic = potential_tactic
-                            break
-            
-            # If still unknown, try to infer from hypothesis content
-            if tactic == "Unknown" or not tactic:
-                hypothesis_lower = hypothesis.lower()
-                if any(word in hypothesis_lower for word in ['tunnel', 'proxy', 'socks', 'c2', 'command', 'control', 'communication']):
-                    tactic = "Command and Control"
-                elif any(word in hypothesis_lower for word in ['download', 'execute', 'run', 'launch', 'powershell', 'cmd']):
-                    tactic = "Execution"
-                elif any(word in hypothesis_lower for word in ['persist', 'startup', 'service', 'registry', 'scheduled']):
-                    tactic = "Persistence"
-                elif any(word in hypothesis_lower for word in ['credential', 'password', 'token', 'hash', 'mimikatz']):
-                    tactic = "Credential Access"
-                else:
-                    tactic = "Command and Control"  # Reasonable default
-            
+
+            # Extract technique ID and tactic using MITRE ATT&CK data
+            technique_id, tactic, confidence = extract_technique_and_tactic(cleaned_content)
+
             print(f"🔍 Generated hypothesis: {hypothesis[:80]}...")
-            print(f"🎯 Detected tactic: {tactic}")
+            print(f"🎯 Detected tactic: {tactic} (confidence: {confidence:.0%})")
+            if technique_id:
+                print(f"   Technique: {technique_id}")
             
             # Check TTP diversity
             ttp_result = deduplicator.check_hypothesis_uniqueness(hypothesis, tactic)

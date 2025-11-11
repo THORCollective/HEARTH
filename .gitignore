@@ -8,3 +8,6 @@ scripts/__pycache__/
 *.pyo
 __pycache__/
 
+# MITRE ATT&CK data (downloaded during workflows)
+data/enterprise-attack.json
+
