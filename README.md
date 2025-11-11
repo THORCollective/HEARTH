@@ -41,8 +41,10 @@ HEARTH is more than just a list of hunts; it's a fully-featured platform with a 
 | Feature | Description |
 | :--- | :--- |
 | **🔍 Interactive UI** | A searchable, filterable, and sortable database of all hunts, making it easy to find exactly what you're looking for. |
-| **🤖 AI-Powered CTI Analysis** | Submit a link to a CTI report, and our system uses **GPT-4** to automatically read, analyze, and draft a complete hunt hypothesis for you. |
-| **🛡️ Duplicate Detection** | An AI-powered system analyzes new submissions against the existing database to flag potential duplicates and ensure content quality. |
+| **🤖 AI-Powered CTI Analysis** | Submit a link to a CTI report, and our system uses **Claude Sonnet 4.5** to automatically read, analyze, and draft a complete hunt hypothesis for you. |
+| **🌐 Advanced Web Scraping** | Intelligent content extraction supporting Brotli/Zstandard compression, JavaScript-rendered content, and multiple formats (HTML, PDF, DOCX). |
+| **🛡️ Duplicate Detection** | AI-powered system analyzes new submissions against the existing database to flag potential duplicates and ensure content quality. **30-60x faster** with SQLite indexing. |
+| **⚡ Performance Optimized** | SQLite database index provides lightning-fast queries while keeping markdown files as the source of truth. |
 | **⚙️ Automated Workflows** | GitHub Actions manage the entire lifecycle of a submission, from initial draft to final approval, including creating branches and PRs. |
 | **🏆 Contributor Leaderboard** | We recognize and celebrate our contributors! An automated system tracks submissions and maintains a public [leaderboard](/Keepers/Contributors.md). |
 | **✅ Review & Regeneration Loop** | Maintainers can request a new version of an AI-generated hunt by simply adding a `regenerate` label to the submission issue. |
@@ -90,8 +92,44 @@ HEARTH combines a simple frontend with a powerful, serverless backend built on G
     *   GitHub Actions
     *   Python
     *   Claude (Anthropic) API and OpenAI API
+    *   SQLite (for fast indexing and queries)
 *   **Hosting**:
     *   GitHub Pages
+
+---
+
+## 🏗️ Architecture
+
+HEARTH uses a hybrid approach that balances simplicity with performance:
+
+### Hunt Storage
+- **Markdown files** in `Flames/`, `Embers/`, and `Alchemy/` are the **source of truth**
+- Hunt files remain human-readable and version-controlled
+- Easy to browse, edit, and contribute via standard Git workflows
+
+### Database Index
+- **SQLite database** (`database/hunts.db`) provides fast querying for duplicate detection
+- Automatically updated when hunt files are added, modified, or deleted
+- Provides **30-60x faster** duplicate detection in GitHub Actions
+- See [database/README.md](database/README.md) for technical details
+
+### CTI Extraction
+Our content extraction system handles diverse web sources:
+- **Compression Support**: Brotli, Zstandard, and Gzip decompression
+- **JavaScript Rendering**: Falls back to readability-lxml for JS-heavy sites
+- **Multiple Formats**: HTML, PDF, and DOCX file support
+- **Smart Parsing**: Extracts article content from common blog/report structures
+
+### Automation Workflows
+- **Duplicate Detection**: Fast similarity analysis using vector embeddings
+- **Hunt Generation**: AI-powered draft creation from CTI sources
+- **Database Updates**: Automatic index maintenance on file changes
+- **Quality Checks**: TTP diversity analysis and content validation
+
+For more details on the technical implementation, see:
+- [Database Architecture](database/README.md)
+- [Scripts Documentation](scripts/)
+- [Workflow Configurations](.github/workflows/)
 
 ---
 
@@ -117,6 +155,40 @@ When running in GitHub Actions, these variables should be set as:
 To update the Claude model version, you can either:
 1. Set the `CLAUDE_MODEL` repository variable in GitHub Settings
 2. Update the default value in [scripts/generate_from_cti.py](scripts/generate_from_cti.py)
+
+---
+
+## 🔧 Troubleshooting
+
+### CTI Submission Issues
+
+**Problem**: "Failed to retrieve or process content from the URL"
+- **Solution**: Verify the URL is correct and publicly accessible
+- Check if the article requires authentication or is behind a paywall
+- Try submitting the content manually instead of via URL
+
+**Problem**: Content appears garbled or incomplete
+- **Solution**: This has been fixed! Ensure you're using the latest version of HEARTH
+- The system now supports Brotli and Zstandard compression
+- If issues persist, try the manual submission workflow
+
+### Database Issues
+
+**Problem**: Duplicate detection is slow or failing
+- **Solution**: The database is automatically rebuilt on file changes
+- Maintainers can manually rebuild: `python scripts/build_hunt_database.py --rebuild`
+- Check [database/README.md](database/README.md) for more troubleshooting
+
+**Problem**: Database appears out of sync
+- **Solution**: Database auto-updates via GitHub Actions on every merge to main
+- For local testing, run: `python scripts/build_hunt_database.py`
+
+### General Issues
+
+For other issues or questions:
+1. Check existing [GitHub Issues](https://github.com/THORCollective/HEARTH/issues)
+2. Search the [database documentation](database/README.md)
+3. [Open a new issue](https://github.com/THORCollective/HEARTH/issues/new) with details
 
 ---
 
