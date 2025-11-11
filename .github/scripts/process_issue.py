@@ -64,15 +64,46 @@ def get_cti_content(url):
         else:
             # Use response.text which respects the encoding we set
             soup = BeautifulSoup(response.text, 'html.parser')
-            for script_or_style in soup(["script", "style"]):
+
+            # Remove unwanted tags
+            for script_or_style in soup(["script", "style", "meta", "noscript"]):
                 script_or_style.decompose()
-            # Clean up the text and ensure it's properly encoded
-            text = " ".join(soup.stripped_strings)
-            # Remove any non-printable characters except newlines and tabs
-            import string
-            printable = set(string.printable)
-            text = ''.join(filter(lambda x: x in printable, text))
-            return text
+
+            # Try to find main content areas (common article/content containers)
+            content_selectors = [
+                'article',
+                '.entry-content',
+                '.post-content',
+                '.article-content',
+                'main',
+                '[role="main"]'
+            ]
+
+            content_area = None
+            for selector in content_selectors:
+                content_area = soup.select_one(selector)
+                if content_area:
+                    break
+
+            # Use content area if found, otherwise full body
+            target = content_area if content_area else soup
+
+            # Extract text, preserving paragraphs
+            paragraphs = []
+            for element in target.find_all(['p', 'h1', 'h2', 'h3', 'h4', 'li']):
+                text = element.get_text(strip=True)
+                if text and len(text) > 20:  # Filter out very short snippets
+                    paragraphs.append(text)
+
+            # Join paragraphs with double newlines
+            text = '\n\n'.join(paragraphs)
+
+            # Basic cleanup - only remove truly problematic characters
+            # Keep most unicode, just remove control characters except newlines/tabs
+            import re
+            text = re.sub(r'[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]', '', text)
+
+            return text if text.strip() else " ".join(soup.stripped_strings)
 
     except requests.exceptions.RequestException as e:
         return f"Error fetching URL: {e}"
