@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme Test - HEARTH</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: #8a47ff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            z-index: 10000;
+        }
+        .theme-toggle:hover {
+            background: #7a3ff2;
+        }
+        iframe {
+            width: 100%;
+            height: calc(100vh - 40px);
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+            height: calc(100vh - 40px);
+        }
+        .frame-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .frame-label {
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            background: #f0f0f0;
+            border-radius: 8px 8px 0 0;
+        }
+        .dark-mode .frame-label {
+            background: #1a1a1a;
+            color: white;
+        }
+        .dark-mode {
+            background: #0f0f11;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
+    
+    <div class="container">
+        <div class="frame-container">
+            <div class="frame-label">Light Mode</div>
+            <iframe id="lightFrame" src="index.html"></iframe>
+        </div>
+        <div class="frame-container">
+            <div class="frame-label">Dark Mode</div>
+            <iframe id="darkFrame" src="index.html"></iframe>
+        </div>
+    </div>
+
+    <script>
+        // Force light mode in first iframe
+        document.getElementById('lightFrame').onload = function() {
+            this.contentDocument.documentElement.style.colorScheme = 'light';
+        };
+        
+        // Force dark mode in second iframe
+        document.getElementById('darkFrame').onload = function() {
+            this.contentDocument.documentElement.style.colorScheme = 'dark';
+        };
+        
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+        }
+    </script>
+</body>
+</html>

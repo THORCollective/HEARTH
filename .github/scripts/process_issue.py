@@ -34,18 +34,20 @@ def get_cti_content(url):
     """
     Downloads and extracts text content from a given URL.
     Supports HTML (with JS rendering fallback), PDF, and DOCX formats.
+    Handles Brotli (br) and Zstandard (zstd) compression.
     """
     try:
         headers = {
             'User-Agent': get_user_agent(),
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
             'Accept-Language': 'en-US,en;q=0.9',
-            'Accept-Encoding': 'gzip, deflate, br',
+            'Accept-Encoding': 'gzip, deflate, br, zstd',
             'DNT': '1',
             'Connection': 'keep-alive',
             'Upgrade-Insecure-Requests': '1'
         }
         # Explicitly allow automatic decompression
+        # Note: requires 'brotli' and 'zstandard' packages for br/zstd compression
         response = requests.get(url, timeout=15, headers=headers, stream=False)
         response.raise_for_status()
 
@@ -139,6 +141,11 @@ def get_cti_content(url):
 
             return final_text
 
+    except requests.exceptions.HTTPError as e:
+        if e.response.status_code == 404:
+            return f"Error: URL not found (404). Please verify the URL is correct and try again. URL attempted: {url}"
+        else:
+            return f"Error fetching URL (HTTP {e.response.status_code}): {e}"
     except requests.exceptions.RequestException as e:
         return f"Error fetching URL: {e}"
     except Exception as e:
