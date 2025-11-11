@@ -270,8 +270,9 @@ def main():
     # Download the full content
     print("Downloading CTI content from URL...")
     content = get_cti_content(cti_url)
-    
-    if "Error" in content:
+
+    # Check if content starts with "Error:" (our error messages, not content containing the word "error")
+    if content.startswith("Error"):
         final_content = f"### CTI Content\n\n❌ **Failed to retrieve or process content from the URL.**\n\n**Details:**\n```\n{content}\n```\n\n*Please check the URL and try again, or paste the content manually.*"
     else:
         # Save the full content to a file
