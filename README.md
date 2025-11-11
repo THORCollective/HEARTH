@@ -129,6 +129,7 @@ Our content extraction system handles diverse web sources:
 For more details on the technical implementation, see:
 - [Database Architecture](database/README.md)
 - [Optimization Guide](docs/OPTIMIZATION_GUIDE.md) - Performance improvements and cost reduction strategies
+- [Testing Guide](docs/TESTING_GUIDE.md) - Local development and testing instructions
 - [Scripts Documentation](scripts/)
 - [Workflow Configurations](.github/workflows/)
 
