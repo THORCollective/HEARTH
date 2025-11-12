@@ -4,7 +4,7 @@ Everyone listed below has submitted ideas that have been added to HEARTH. This l
 
 | Rank | Contributor | Hunts Submitted |
 |------|-------------|-----------------|
-| 1 | Sydney Marrone | 26 |
+| 1 | Sydney Marrone | 27 |
 | 2 | John Grageda | 6 |
 | 3 | Lauren Proehl | 4 |
 | 4 | Jamie Williams | 3 |
