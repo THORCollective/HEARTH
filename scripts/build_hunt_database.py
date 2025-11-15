@@ -100,7 +100,7 @@ def extract_hunt_info(content, filepath):
     for i, line in enumerate(lines):
         if '|' in line and 'Submitter' in line:
             # Next non-separator row should have submitter
-            for j in range(i+1, min(i+3, len(lines))):
+            for j in range(i +1, min(i +3, len(lines))):
                 if '|' in lines[j] and '---' not in lines[j]:
                     cells = [c.strip() for c in lines[j].split('|') if c.strip()]
                     if len(cells) >= 6:
@@ -350,14 +350,14 @@ def print_statistics(conn):
     last_updated = cursor.fetchone()
     last_updated = last_updated[0] if last_updated else "Never"
 
-    print(f"\n📊 Database Statistics:")
+    print("\n📊 Database Statistics:")
     print(f"   Total hunts: {total}")
     print(f"   Unique tactics: {unique_tactics}")
     print(f"   Unique techniques: {unique_techniques}")
     print(f"   Last updated: {last_updated}")
 
     if top_tactics:
-        print(f"\n🔥 Top Tactics:")
+        print("\n🔥 Top Tactics:")
         for tactic, count in top_tactics:
             print(f"   {tactic}: {count} hunts")
 
@@ -388,7 +388,7 @@ def main():
     conn = sqlite3.connect(str(db_path))
 
     if verbose:
-        print(f"🗄️  HEARTH Hunt Database Builder")
+        print("🗄️  HEARTH Hunt Database Builder")
         print(f"   Database: {db_path}")
         print()
 
@@ -400,7 +400,7 @@ def main():
     stats = scan_and_update_hunts(conn, hunt_directories, verbose=verbose)
 
     if verbose:
-        print(f"\n✨ Update complete!")
+        print("\n✨ Update complete!")
         print(f"   Processed: {stats['processed']} files")
         print(f"   Added: {stats['added']} new hunts")
         print(f"   Updated: {stats['updated']} modified hunts")

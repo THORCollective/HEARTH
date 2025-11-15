@@ -3,9 +3,8 @@
 Minimal hypothesis deduplicator for CI compatibility.
 """
 
-from typing import Dict, Any, Optional, Tuple, List
+from typing import Dict, Any, Tuple, List
 from dataclasses import dataclass
-import time
 
 from logger_config import get_logger
 from config_manager import get_config
@@ -24,7 +23,7 @@ class DeduplicationResult:
     similar_hunts: List[Dict[str, Any]]
     recommendation: str
     detailed_report: str
-    
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             'is_duplicate': self.is_duplicate,
@@ -39,16 +38,16 @@ class DeduplicationResult:
 
 class HypothesisDeduplicator:
     """Minimal deduplicator for CI compatibility."""
-    
+
     def __init__(self, similarity_threshold: float = 0.75):
         self.similarity_threshold = similarity_threshold
         logger.info("Minimal hypothesis deduplicator initialized")
-    
-    def check_hypothesis_uniqueness(self, new_hypothesis: str, tactic: str = "", 
+
+    def check_hypothesis_uniqueness(self, new_hypothesis: str, tactic: str = "",
                                   tags: List[str] = None) -> DeduplicationResult:
         """Check if hypothesis is unique (minimal implementation)."""
         logger.info(f"Checking uniqueness for: {new_hypothesis[:50]}...")
-        
+
         # For CI compatibility, return a simple non-duplicate result
         return DeduplicationResult(
             is_duplicate=False,
@@ -59,12 +58,12 @@ class HypothesisDeduplicator:
             recommendation="APPROVE: Minimal check passed",
             detailed_report="Minimal deduplicator - no similar hunts found"
         )
-    
+
     def generate_unique_hypothesis(self, generation_prompt: str, max_attempts: int = 5,
                                  ai_generator_func: callable = None) -> Tuple[str, DeduplicationResult]:
         """Generate unique hypothesis (minimal implementation)."""
         logger.info("Generating unique hypothesis with minimal implementation")
-        
+
         if not ai_generator_func:
             return "Generated unique hypothesis", DeduplicationResult(
                 is_duplicate=False,
@@ -75,15 +74,15 @@ class HypothesisDeduplicator:
                 recommendation="APPROVE: Generated successfully",
                 detailed_report="Minimal implementation - hypothesis generated"
             )
-        
+
         # Try to generate with AI
         try:
             result = ai_generator_func(generation_prompt, 0)
             hypothesis = result.get('hypothesis', 'AI generated hypothesis')
-            
+
             dedup_result = self.check_hypothesis_uniqueness(hypothesis)
             return hypothesis, dedup_result
-            
+
         except Exception as error:
             logger.warning(f"AI generation failed: {error}")
             return "Fallback generated hypothesis", DeduplicationResult(

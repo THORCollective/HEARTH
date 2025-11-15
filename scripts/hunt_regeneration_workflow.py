@@ -3,14 +3,13 @@
 Minimal hunt regeneration workflow for CI compatibility.
 """
 
-import json
 import time
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass, asdict
 
 from logger_config import get_logger
 from config_manager import get_config
-from hypothesis_deduplicator import get_hypothesis_deduplicator, DeduplicationResult
+from hypothesis_deduplicator import get_hypothesis_deduplicator
 
 logger = get_logger()
 config = get_config().config
@@ -27,7 +26,7 @@ class RegenerationRequest:
     max_attempts: int = 5
     similarity_threshold: float = 0.75
     additional_constraints: List[str] = None
-    
+
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
 
@@ -44,35 +43,35 @@ class RegenerationResult:
     deduplication_result: Dict[str, Any]
     generation_time_seconds: float
     error_message: Optional[str] = None
-    
+
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
 
 
 class HuntRegenerationWorkflow:
     """Minimal regeneration workflow for CI compatibility."""
-    
+
     def __init__(self):
         self.deduplicator = get_hypothesis_deduplicator()
         logger.info("Minimal hunt regeneration workflow initialized")
-    
+
     def regenerate_hypothesis(self, request: RegenerationRequest) -> RegenerationResult:
         """Regenerate hypothesis (minimal implementation)."""
         start_time = time.time()
-        
+
         try:
             logger.info(f"Starting minimal hypothesis regeneration: {request.request_id}")
-            
+
             # For CI compatibility, generate a simple unique hypothesis
             hypothesis = f"Detect {request.tactic or 'suspicious'} activity patterns in network traffic"
             tactic = request.tactic or "Discovery"
             tags = ["automated", "minimal", "ci-test"]
-            
+
             # Check uniqueness with minimal deduplicator
             dedup_result = self.deduplicator.check_hypothesis_uniqueness(hypothesis, tactic, tags)
-            
+
             generation_time = time.time() - start_time
-            
+
             result = RegenerationResult(
                 success=True,
                 hypothesis=hypothesis,
@@ -83,14 +82,14 @@ class HuntRegenerationWorkflow:
                 deduplication_result=dedup_result.to_dict(),
                 generation_time_seconds=generation_time
             )
-            
+
             logger.info("Minimal regeneration completed successfully")
             return result
-            
+
         except Exception as error:
             generation_time = time.time() - start_time
             logger.error(f"Minimal regeneration failed: {error}")
-            
+
             return RegenerationResult(
                 success=False,
                 hypothesis="",

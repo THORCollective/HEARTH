@@ -1,15 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('huntSubmissionForm');
+  const form = document.getElementById('huntSubmissionForm');
 
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
 
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData.entries());
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
 
-        const issueTitle = `Hunt Submission: ${data.huntTitle}`;
+    const issueTitle = `Hunt Submission: ${data.huntTitle}`;
 
-        const issueBody = `
+    const issueBody = `
 ### New Threat Hunt Submission
 
 **Idea / Hypothesis:**
@@ -45,10 +45,10 @@ ${data.huntReferences}
 **Profile:** ${data.submitterLink || 'N/A'}
 `;
 
-        const encodedTitle = encodeURIComponent(issueTitle);
-        const encodedBody = encodeURIComponent(issueBody);
-        const githubUrl = `https://github.com/THORCollective/HEARTH/issues/new?title=${encodedTitle}&body=${encodedBody}&labels=hunt-submission`;
+    const encodedTitle = encodeURIComponent(issueTitle);
+    const encodedBody = encodeURIComponent(issueBody);
+    const githubUrl = `https://github.com/THORCollective/HEARTH/issues/new?title=${encodedTitle}&body=${encodedBody}&labels=hunt-submission`;
 
-        window.open(githubUrl, '_blank');
-    });
+    window.open(githubUrl, '_blank');
+  });
 }); 

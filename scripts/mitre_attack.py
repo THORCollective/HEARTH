@@ -10,8 +10,9 @@ This replaces keyword-based tactic inference with authoritative data.
 
 import json
 from pathlib import Path
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Optional
 import re
+
 
 class MITREAttack:
     """
@@ -328,6 +329,7 @@ class MITREAttack:
 
 # Global instance for easy access
 _mitre_instance = None
+
 
 def get_mitre_attack() -> MITREAttack:
     """Get singleton MITRE ATT&CK instance."""

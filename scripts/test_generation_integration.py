@@ -11,11 +11,12 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from generate_from_cti import generate_hunt_content_with_ttp_diversity
 
+
 def test_generation_integration():
     """Test TTP diversity integration in hunt generation."""
     print("🧪 Testing TTP Diversity Integration in Hunt Generation")
     print("=" * 70)
-    
+
     # Mock CTI content about Chisel tunneling
     mock_cti = """
     Threat Intelligence Report: Advanced Tunneling Campaign
@@ -44,14 +45,14 @@ def test_generation_integration():
     - Network connections to tunneling infrastructure
     - SOCKS proxy traffic patterns
     """
-    
+
     print("\n🎯 Testing multiple generation attempts for TTP diversity:")
     print("-" * 70)
-    
+
     # Test multiple generations to see TTP diversity in action
     for attempt in range(3):
         print(f"\n🔄 Generation Attempt {attempt + 1}:")
-        
+
         content = generate_hunt_content_with_ttp_diversity(
             cti_text=mock_cti,
             cti_source_url="https://example.com/threat-report",
@@ -59,16 +60,16 @@ def test_generation_integration():
             is_regeneration=(attempt > 0),
             max_attempts=3
         )
-        
+
         if content:
             # Extract hypothesis
             lines = content.split('\n')
             hypothesis = lines[0].strip() if lines else "No hypothesis found"
             if hypothesis.startswith('#'):
                 hypothesis = hypothesis.lstrip('#').strip()
-            
+
             print(f"   📝 Generated: {hypothesis[:80]}...")
-            
+
             # Look for tactic in content
             tactic = "Unknown"
             for line in lines:
@@ -77,18 +78,19 @@ def test_generation_integration():
                     if len(parts) >= 4:
                         tactic = parts[2] if parts[2] else "Unknown"
                         break
-            
+
             print(f"   🎯 Tactic: {tactic}")
-            print(f"   ✅ Generation successful")
+            print("   ✅ Generation successful")
         else:
-            print(f"   ❌ Generation failed")
-    
+            print("   ❌ Generation failed")
+
     print("\n" + "=" * 70)
     print("🏆 Integration test complete!")
     print("\nExpected behavior:")
     print("- First attempt should generate Chisel/tunneling hypothesis")
     print("- Subsequent attempts should be rejected or use different TTPs")
     print("- System should enforce TTP diversity during generation")
+
 
 if __name__ == "__main__":
     test_generation_integration()

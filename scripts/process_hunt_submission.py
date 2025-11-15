@@ -1,5 +1,4 @@
 import os
-import re
 from pathlib import Path
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -54,6 +53,7 @@ The final markdown file content should look like this:
 {references}
 """
 
+
 def parse_issue_body(body):
     """Parses the structured data from the HEARTH Hunt Submission Form issue."""
     details = {}
@@ -63,7 +63,7 @@ def parse_issue_body(body):
             lines = section.strip().split('\n')
             header = lines[0].strip().lower()
             content = "\n".join(lines[1:]).strip()
-            
+
             if "hunt type" in header:
                 details['hunt_type'] = content
             elif "hunt idea / hypothesis" in header:
@@ -81,8 +81,9 @@ def parse_issue_body(body):
             elif "hearth crafter" in header:
                 details['submitter'] = content
         except IndexError:
-            continue # Ignore malformed sections
+            continue  # Ignore malformed sections
     return details
+
 
 def generate_hunt_file(details):
     """Generates the hunt file content using the AI."""
@@ -96,7 +97,7 @@ def generate_hunt_file(details):
         references=details.get('references', ''),
         submitter=details.get('submitter', 'A Helpful Contributor')
     )
-    
+
     response = client.chat.completions.create(
         model="gpt-4",
         messages=[
@@ -108,6 +109,7 @@ def generate_hunt_file(details):
     )
     return response.choices[0].message.content.strip()
 
+
 def get_next_hunt_id(hunt_type_prefix, hunt_dir):
     """Determines the next hunt ID for a given type."""
     hunt_files = list(Path(hunt_dir).glob(f"{hunt_type_prefix}*.md"))
@@ -117,6 +119,7 @@ def get_next_hunt_id(hunt_type_prefix, hunt_dir):
         if hunt_numbers:
             next_hunt_num = max(hunt_numbers) + 1
     return next_hunt_num
+
 
 if __name__ == "__main__":
     issue_body = os.getenv("ISSUE_BODY")
@@ -135,10 +138,10 @@ if __name__ == "__main__":
     elif 'alchemy' in hunt_type:
         prefix, directory = 'A', 'Alchemy'
     else:
-        prefix, directory = 'H', 'Flames' # Default to Flames
+        prefix, directory = 'H', 'Flames'  # Default to Flames
 
     Path(directory).mkdir(exist_ok=True)
-    
+
     # 3. Determine next hunt ID
     next_id = get_next_hunt_id(prefix, directory)
     year = datetime.now().year
@@ -161,4 +164,4 @@ if __name__ == "__main__":
     if 'GITHUB_OUTPUT' in os.environ:
         with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
             print(f'HUNT_FILE_PATH={out_md_path}', file=f)
-            print(f'HUNT_ID={hunt_id}', file=f) 
+            print(f'HUNT_ID={hunt_id}', file=f)

@@ -95,7 +95,7 @@ def main():
     db_hunts = get_hunts_from_database()
     db_time = time.time() - start
     print(f"   Retrieved {len(db_hunts)} hunts")
-    print(f"   Time: {db_time*1000:.2f}ms\n")
+    print(f"   Time: {db_time *1000:.2f}ms\n")
 
     # Test 2: File-based retrieval
     print("2️⃣  FILE-BASED SCAN (reading all .md files)")
@@ -103,17 +103,17 @@ def main():
     file_hunts = get_hunts_from_files()
     file_time = time.time() - start
     print(f"   Retrieved {len(file_hunts)} hunts")
-    print(f"   Time: {file_time*1000:.2f}ms\n")
+    print(f"   Time: {file_time *1000:.2f}ms\n")
 
     # Results
     speedup = file_time / db_time if db_time > 0 else 0
     improvement = ((file_time - db_time) / file_time * 100) if file_time > 0 else 0
 
     print("📊 PERFORMANCE RESULTS")
-    print(f"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-    print(f"   Database:   {db_time*1000:>8.2f}ms")
-    print(f"   File-based: {file_time*1000:>8.2f}ms")
-    print(f"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    print("   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    print(f"   Database:   {db_time *1000:>8.2f}ms")
+    print(f"   File-based: {file_time *1000:>8.2f}ms")
+    print("   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
     print(f"   Speedup:    {speedup:>8.1f}x faster")
     print(f"   Improvement: {improvement:>7.1f}% reduction\n")
 
@@ -128,22 +128,22 @@ def main():
     conn.close()
 
     print(f"   Found {len(filtered)} Defense Evasion hunts")
-    print(f"   Query time: {query_time*1000:.2f}ms")
+    print(f"   Query time: {query_time *1000:.2f}ms")
 
     # Compare to filtering in-memory
     start = time.time()
     file_filtered = [h for h in file_hunts if h.get('tactic') == 'Defense Evasion']
     filter_time = time.time() - start
 
-    print(f"   In-memory filter time: {filter_time*1000:.2f}ms")
-    print(f"   Database is {filter_time/query_time:.1f}x faster for filtered queries\n")
+    print(f"   In-memory filter time: {filter_time *1000:.2f}ms")
+    print(f"   Database is {filter_time /query_time:.1f}x faster for filtered queries\n")
 
     print("✨ SUMMARY")
     print(f"   The SQLite database makes duplicate detection {speedup:.0f}x faster!")
-    print(f"   In GitHub Actions, this means:")
+    print("   In GitHub Actions, this means:")
     print(f"     • Workflows complete ~{file_time - db_time:.1f}s faster")
-    print(f"     • Lower GitHub Actions costs")
-    print(f"     • Faster feedback for contributors")
+    print("     • Lower GitHub Actions costs")
+    print("     • Faster feedback for contributors")
 
 
 if __name__ == '__main__':

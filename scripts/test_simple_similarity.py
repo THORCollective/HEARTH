@@ -28,19 +28,19 @@ except Exception as e:
 # Test basic functionality
 try:
     detector = HypothesisSimilarityDetector()
-    
+
     hunt1 = {
         "title": "Adversaries use PowerShell to execute malicious commands",
         "tactic": "Execution"
     }
     hunt2 = {
-        "title": "Threat actors leverage PowerShell for malicious command execution", 
+        "title": "Threat actors leverage PowerShell for malicious command execution",
         "tactic": "Execution"
     }
-    
+
     score = detector.calculate_similarity(hunt1, hunt2)
     print(f"✅ Similarity calculation successful: {score.overall_score:.2%}")
-    
+
 except Exception as e:
     print(f"❌ Error in similarity calculation: {e}")
 

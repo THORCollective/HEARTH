@@ -42,7 +42,7 @@ try:
     print("\n📋 DUPLICATE DETECTION RESULT:")
     print("=" * 60)
     print(result)
-    
+
     # Analyze the result
     if "no similar" in result.lower() or "unique" in result.lower():
         print("\n✅ Result: No duplicates detected")
@@ -50,7 +50,7 @@ try:
         print("\n⚠️ Result: Similar hunts found")
     else:
         print("\n❓ Result: Unclear")
-        
+
 except Exception as error:
     print(f"\n❌ Error testing duplicate detection: {error}")
     import traceback

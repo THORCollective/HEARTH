@@ -138,7 +138,9 @@ class HearthApp {
 
     closeBtn.onclick = closeModal;
     modal.onclick = (e) => {
-      if (e.target === modal) closeModal();
+      if (e.target === modal) {
+        closeModal();
+      }
     };
 
     // Keyboard navigation
@@ -175,18 +177,22 @@ class HearthApp {
     const uniqueValues = new Set();
     this.huntsData.forEach(hunt => {
       switch (fieldName) {
-        case 'tags':
-          (hunt.tags || []).forEach(tag => uniqueValues.add(tag));
-          break;
-        case 'tactic':
-          if (hunt.tactic) {
-            hunt.tactic.split(',').map(tactic => tactic.trim()).forEach(tactic => {
-              if (tactic) uniqueValues.add(tactic);
-            });
-          }
-          break;
-        default:
-          if (hunt[fieldName]) uniqueValues.add(hunt[fieldName]);
+      case 'tags':
+        (hunt.tags || []).forEach(tag => uniqueValues.add(tag));
+        break;
+      case 'tactic':
+        if (hunt.tactic) {
+          hunt.tactic.split(',').map(tactic => tactic.trim()).forEach(tactic => {
+            if (tactic) {
+              uniqueValues.add(tactic);
+            }
+          });
+        }
+        break;
+      default:
+        if (hunt[fieldName]) {
+          uniqueValues.add(hunt[fieldName]);
+        }
       }
     });
     
@@ -345,7 +351,9 @@ class HearthApp {
   loadStoredPresets() {
     try {
       const raw = window.localStorage.getItem(this.presetStorageKey);
-      if (!raw) return [];
+      if (!raw) {
+        return [];
+      }
       const parsed = JSON.parse(raw);
       return Array.isArray(parsed) ? parsed : [];
     } catch (error) {
@@ -377,7 +385,9 @@ class HearthApp {
 
   applyPreset(presetId) {
     const preset = this.presets.get(presetId);
-    if (!preset) return;
+    if (!preset) {
+      return;
+    }
 
     const { filters = {} } = preset;
     this.elements.categoryFilter.value = filters.category || '';
@@ -407,7 +417,9 @@ class HearthApp {
   saveCurrentPreset() {
     const rawLabel = window.prompt('Name this saved view');
     const label = rawLabel ? rawLabel.trim() : '';
-    if (!label) return;
+    if (!label) {
+      return;
+    }
 
     const id = `user-${Date.now()}`;
     const preset = {
@@ -430,7 +442,9 @@ class HearthApp {
   deleteCurrentPreset() {
     const { presetSelect } = this.elements;
     const presetId = presetSelect.value;
-    if (!presetId) return;
+    if (!presetId) {
+      return;
+    }
 
     const preset = this.presets.get(presetId);
     if (!preset || preset.builtIn) {
@@ -447,7 +461,9 @@ class HearthApp {
   // Show hunt details in modal
   showHuntDetailsByIndex(index) {
     const hunt = this.sortedHunts[index];
-    if (!hunt) return;
+    if (!hunt) {
+      return;
+    }
     this.currentModalIndex = index;
     this.showHuntDetails(hunt);
   }
@@ -612,7 +628,9 @@ class HearthApp {
 
   updateActiveFiltersDisplay() {
     const { activeFilters } = this.elements;
-    if (!activeFilters) return;
+    if (!activeFilters) {
+      return;
+    }
 
     const searchTerm = (this.elements.searchInput.value || '').trim();
     const category = this.elements.categoryFilter.value;
@@ -669,23 +687,25 @@ class HearthApp {
   }
 
   clearSingleFilter(filter) {
-    if (!filter) return;
+    if (!filter) {
+      return;
+    }
 
     switch (filter.type) {
-      case 'search':
-        this.elements.searchInput.value = '';
-        break;
-      case 'category':
-        this.elements.categoryFilter.value = '';
-        break;
-      case 'tactic':
-        this.selectedTactics.delete(filter.value);
-        break;
-      case 'tag':
-        this.selectedTags.delete(filter.value);
-        break;
-      default:
-        return;
+    case 'search':
+      this.elements.searchInput.value = '';
+      break;
+    case 'category':
+      this.elements.categoryFilter.value = '';
+      break;
+    case 'tactic':
+      this.selectedTactics.delete(filter.value);
+      break;
+    case 'tag':
+      this.selectedTags.delete(filter.value);
+      break;
+    default:
+      return;
     }
 
     this.updateChipSelections();
@@ -694,7 +714,9 @@ class HearthApp {
 
   updateSearchFeedback(duration, totalMatches) {
     const { searchFeedback } = this.elements;
-    if (!searchFeedback) return;
+    if (!searchFeedback) {
+      return;
+    }
 
     if (typeof duration !== 'number' || Number.isNaN(duration)) {
       searchFeedback.textContent = '';
@@ -724,13 +746,17 @@ class HearthApp {
   changePage(pageNumber) {
     const totalPages = Math.max(1, Math.ceil((this.filteredHunts.length || 1) / this.pageSize));
     const targetPage = Math.min(Math.max(1, pageNumber), totalPages);
-    if (targetPage === this.currentPage) return;
+    if (targetPage === this.currentPage) {
+      return;
+    }
     this.currentPage = targetPage;
     this.renderHunts(this.sortedHunts);
   }
 
   updateModalNavigation() {
-    if (!this.modalCounter) return;
+    if (!this.modalCounter) {
+      return;
+    }
     const total = this.sortedHunts.length;
     const current = total ? this.currentModalIndex + 1 : 0;
     this.modalCounter.textContent = total ? `${current} / ${total}` : 'No hunts';
@@ -744,9 +770,13 @@ class HearthApp {
   }
 
   navigateModal(direction) {
-    if (!this.modal || this.modal.style.display !== 'block') return;
+    if (!this.modal || this.modal.style.display !== 'block') {
+      return;
+    }
     const targetIndex = this.currentModalIndex + direction;
-    if (targetIndex < 0 || targetIndex >= this.sortedHunts.length) return;
+    if (targetIndex < 0 || targetIndex >= this.sortedHunts.length) {
+      return;
+    }
     this.showHuntDetailsByIndex(targetIndex);
   }
 
@@ -846,7 +876,9 @@ class HearthApp {
   }
 
   getHuntTactics(hunt) {
-    if (!hunt || !hunt.tactic) return [];
+    if (!hunt || !hunt.tactic) {
+      return [];
+    }
     return hunt.tactic
       .split(',')
       .map(tactic => tactic.trim())
@@ -874,7 +906,9 @@ class HearthApp {
 
   buildPreviewMeta(hunt) {
     const meta = [];
-    if (hunt.why) meta.push('Why notes');
+    if (hunt.why) {
+      meta.push('Why notes');
+    }
     if (hunt.references) {
       const references = hunt.references.split('\n').filter(Boolean);
       if (references.length) {
@@ -918,13 +952,13 @@ class HearthApp {
     };
 
     switch (key) {
-      case 'title':
-        return [...hunts].sort(compareTitle);
-      case 'category':
-        return [...hunts].sort(compareCategory);
-      case 'id':
-      default:
-        return [...hunts].sort(compareId);
+    case 'title':
+      return [...hunts].sort(compareTitle);
+    case 'category':
+      return [...hunts].sort(compareCategory);
+    case 'id':
+    default:
+      return [...hunts].sort(compareId);
     }
   }
 
@@ -958,7 +992,9 @@ class HearthApp {
 
   // Search criteria matching
   matchesSearchCriteria(hunt, searchTerm) {
-    if (!searchTerm) return true;
+    if (!searchTerm) {
+      return true;
+    }
     
     const searchableContent = [
       hunt.id,
@@ -979,17 +1015,25 @@ class HearthApp {
 
   // Tactic matching
   matchesTactic(hunt) {
-    if (!this.selectedTactics.size) return true;
+    if (!this.selectedTactics.size) {
+      return true;
+    }
     const huntTactics = this.getHuntTactics(hunt);
-    if (!huntTactics.length) return false;
+    if (!huntTactics.length) {
+      return false;
+    }
     return [...this.selectedTactics].every(tactic => huntTactics.includes(tactic));
   }
 
   // Tag matching
   matchesTag(hunt) {
-    if (!this.selectedTags.size) return true;
+    if (!this.selectedTags.size) {
+      return true;
+    }
     const tags = hunt.tags || [];
-    if (!tags.length) return false;
+    if (!tags.length) {
+      return false;
+    }
     return [...this.selectedTags].every(tag => tags.includes(tag));
   }
 
@@ -1076,10 +1120,10 @@ async function generateNotebookContent(huntData) {
           '*This notebook provides a structured and consistent way to document threat hunting activities using the PEAK Framework (Prepare, Execute, Act with Knowledge). It guides threat hunters through defining clear hypotheses, scoping the hunt precisely using the ABLE methodology, executing targeted queries, and documenting findings to ensure thorough and actionable results.*\n',
           '\n',
           `**Generated:** ${timestamp}  \n`,
-          `**Source:** THOR Collective HEARTH Database  \n`,
-          `**Database:** https://hearth.thorcollective.com  \n`,
-          `**Framework:** PEAK (Prepare, Execute, Act with Knowledge)  \n`,
-          `**Template:** https://dispatch.thorcollective.com/p/the-peak-threat-hunting-template\n`,
+          '**Source:** THOR Collective HEARTH Database  \n',
+          '**Database:** https://hearth.thorcollective.com  \n',
+          '**Framework:** PEAK (Prepare, Execute, Act with Knowledge)  \n',
+          '**Template:** https://dispatch.thorcollective.com/p/the-peak-threat-hunting-template\n',
           '\n',
           '---\n',
           '\n',
@@ -1567,7 +1611,9 @@ async function generateNotebookContent(huntData) {
 // Show hunt JSON data function
 function showHuntJsonData(huntId) {
   const hunt = HUNTS_DATA.find(h => h.id === huntId);
-  if (!hunt) return;
+  if (!hunt) {
+    return;
+  }
   
   const huntData = {
     id: hunt.id,
@@ -1637,7 +1683,9 @@ function copyToClipboard(event, text) {
   const originalLabel = trigger ? trigger.textContent : '';
 
   const restoreLabel = () => {
-    if (!trigger) return;
+    if (!trigger) {
+      return;
+    }
     setTimeout(() => {
       trigger.disabled = false;
       trigger.textContent = originalLabel;
@@ -1645,7 +1693,9 @@ function copyToClipboard(event, text) {
   };
 
   const applySuccessState = () => {
-    if (!trigger) return;
+    if (!trigger) {
+      return;
+    }
     trigger.disabled = true;
     trigger.textContent = '✓ Copied!';
   };

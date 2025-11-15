@@ -15,15 +15,18 @@ hunt1 = {
 }
 
 hunt2 = {
-    "title": "Threat actors leverage PowerShell for malicious command execution", 
+    "title": "Threat actors leverage PowerShell for malicious command execution",
     "tactic": "Execution"
 }
 
 # Simple keyword overlap test
+
+
 def extract_keywords(text):
     import re
     words = re.findall(r'\w+', text.lower())
     return set(word for word in words if len(word) > 2)
+
 
 keywords1 = extract_keywords(hunt1["title"])
 keywords2 = extract_keywords(hunt2["title"])
@@ -85,11 +88,11 @@ similar_found = []
 for hunt in existing_hunts:
     keywords_existing = extract_keywords(hunt["title"])
     keywords_new = extract_keywords(new_hunt["title"])
-    
+
     intersection = keywords_existing.intersection(keywords_new)
     union = keywords_existing.union(keywords_new)
     similarity = len(intersection) / len(union) if union else 0
-    
+
     if similarity >= threshold:
         similar_found.append((hunt["id"], similarity))
         print(f"Similar to {hunt['id']}: {similarity:.2%}")
@@ -109,7 +112,7 @@ print("✅ Ready to prevent duplicate hunt generation")
 # Summary for user
 print("\n📋 SIMILARITY DETECTION SUMMARY:")
 print("▶️ Algorithm successfully detects high similarity between related hunts")
-print("▶️ Algorithm correctly identifies low similarity between unrelated hunts") 
+print("▶️ Algorithm correctly identifies low similarity between unrelated hunts")
 print("▶️ Deduplication workflow can flag potential duplicates")
 print("▶️ Threshold-based filtering works as expected")
 print("\n✨ The hypothesis regeneration system will now ensure diverse, unique hunt generation!")

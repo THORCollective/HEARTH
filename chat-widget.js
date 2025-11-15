@@ -180,7 +180,9 @@ What would you like to explore?`;
   }
 
   renderQuickReplies() {
-    if (!this.quickReplyContainer) return;
+    if (!this.quickReplyContainer) {
+      return;
+    }
     this.quickReplyContainer.innerHTML = '';
     this.quickReplyTemplates.forEach(template => {
       const button = document.createElement('button');
@@ -222,7 +224,9 @@ What would you like to explore?`;
   }
 
   highlightActiveTheme() {
-    if (!this.themeSwatches) return;
+    if (!this.themeSwatches) {
+      return;
+    }
     this.themeSwatches.forEach(swatch => {
       const theme = swatch.getAttribute('data-theme');
       swatch.classList.toggle('is-active', theme === this.currentTheme);
@@ -231,7 +235,9 @@ What would you like to explore?`;
 
   sendMessage() {
     const message = this.chatInput.value.trim();
-    if (!message) return;
+    if (!message) {
+      return;
+    }
     
     // Add user message
     this.addMessage('user', message);
@@ -448,7 +454,7 @@ Just ask me in natural language! What would you like to explore?`;
     const results = this.searchHuntsByKeywords(keywords);
     
     if (results.length > 0) {
-      this.addMessage('bot', `Based on your message, here are some relevant hunts:`);
+      this.addMessage('bot', 'Based on your message, here are some relevant hunts:');
       results.slice(0, 3).forEach(hunt => {
         this.addHuntResult(hunt);
       });
@@ -484,7 +490,9 @@ Just ask me in natural language! What would you like to explore?`;
   }
   
   searchHuntsByKeywords(keywords) {
-    if (keywords.length === 0) return [];
+    if (keywords.length === 0) {
+      return [];
+    }
     
     return this.huntsData.filter(hunt => {
       return keywords.some(keyword => 
@@ -633,7 +641,9 @@ Just ask me in natural language! What would you like to explore?`;
   }
   
   doResize(e) {
-    if (!this.isResizing) return;
+    if (!this.isResizing) {
+      return;
+    }
     
     const deltaX = e.clientX - this.startX;
     const deltaY = e.clientY - this.startY;
@@ -665,7 +675,9 @@ Just ask me in natural language! What would you like to explore?`;
   }
   
   stopResize() {
-    if (!this.isResizing) return;
+    if (!this.isResizing) {
+      return;
+    }
     
     this.isResizing = false;
     this.resizeDirection = null;
@@ -682,10 +694,10 @@ Just ask me in natural language! What would you like to explore?`;
   
   getCursorForDirection(direction) {
     switch (direction) {
-      case 'right': return 'ew-resize';
-      case 'bottom': return 'ns-resize';
-      case 'corner': return 'nw-resize';
-      default: return 'default';
+    case 'right': return 'ew-resize';
+    case 'bottom': return 'ns-resize';
+    case 'corner': return 'nw-resize';
+    default: return 'default';
     }
   }
   

@@ -11,3 +11,4 @@ __pycache__/
 # MITRE ATT&CK data (downloaded during workflows)
 data/enterprise-attack.json
 
+node_modules/

@@ -5,9 +5,8 @@ Improved duplicate detection using similarity algorithms.
 
 import os
 import re
-import json
 from pathlib import Path
-from typing import Dict, List, Any, Optional
+from typing import Dict, Any
 
 try:
     from openai import OpenAI
@@ -16,14 +15,7 @@ except ImportError:
     OPENAI_AVAILABLE = False
     OpenAI = None
 
-from hunt_parser_utils import (
-    find_hunt_files,
-    find_table_header_line,
-    extract_table_cells,
-    clean_markdown_formatting
-)
 from similarity_detector import get_similarity_detector
-from hypothesis_deduplicator import get_hypothesis_deduplicator
 from logger_config import get_logger
 from config_manager import get_config
 
@@ -40,12 +32,12 @@ def get_all_existing_hunts():
     """Retrieves all existing hunt files and extracts their key information."""
     hunt_directories = ["Flames", "Embers", "Alchemy"]
     existing_hunts = []
-    
+
     for directory_name in hunt_directories:
         directory_path = Path(directory_name)
         if not directory_path.exists():
             continue
-            
+
         hunt_files = directory_path.glob("*.md")
         for hunt_file in hunt_files:
             try:
@@ -55,21 +47,21 @@ def get_all_existing_hunts():
                     existing_hunts.append(hunt_information)
             except Exception as error:
                 logger.warning(f"Error reading {hunt_file}: {error}")
-    
+
     return existing_hunts
 
 
 def extract_hunt_info(content, filepath):
     """Extracts key information from a hunt file for comparison."""
     lines = content.splitlines()
-    
+
     # Extract hypothesis (first non-empty line)
     hypothesis = ""
     for line in lines:
         if line.strip() and not line.startswith('|') and not line.startswith('#'):
             hypothesis = line.strip()
             break
-    
+
     # Extract tactic from the table
     tactic = ""
     for line in lines:
@@ -83,14 +75,14 @@ def extract_hunt_info(content, filepath):
                     if len(cells) >= 3:  # Assuming tactic is in the 3rd column
                         tactic = cells[2]
             break
-    
+
     # Extract tags
     tags = []
     for line in lines:
         if '#' in line and any(tag in line.lower() for tag in ['#t', '#persistence', '#execution', '#defense-evasion', '#discovery', '#lateral-movement', '#collection', '#command-and-control', '#exfiltration', '#impact']):
             tag_matches = re.findall(r'#\w+', line)
             tags.extend(tag_matches)
-    
+
     return {
         'filepath': filepath,
         'filename': Path(filepath).name,
@@ -105,24 +97,24 @@ def check_duplicates_with_enhanced_similarity(new_hunt_info: Dict[str, Any]) -> 
     """Enhanced duplicate detection using similarity algorithms."""
     try:
         logger.info("Using enhanced similarity detection")
-        
+
         # Get similarity detector
         similarity_detector = get_similarity_detector()
-        
+
         # Load existing hunts
         existing_hunts = get_all_existing_hunts()
         logger.info(f"Checking against {len(existing_hunts)} existing hunts")
-        
+
         if not existing_hunts:
             return "✅ **Enhanced Duplicate Check Complete**\n\nNo existing hunts found to compare against. This appears to be a unique submission."
-        
+
         # Check hypothesis uniqueness
         hypothesis = new_hunt_info.get('hypothesis', '')
         tactic = new_hunt_info.get('tactic', '')
         tags = new_hunt_info.get('tags', [])
-        
+
         logger.info(f"Checking: {hypothesis[:100]}...")
-        
+
         # Create hunt object for new hypothesis
         new_hunt = {
             'title': hypothesis,
@@ -130,18 +122,18 @@ def check_duplicates_with_enhanced_similarity(new_hunt_info: Dict[str, Any]) -> 
             'tactic': tactic,
             'tags': tags
         }
-        
+
         # Find similar hunts using similarity detector
         threshold = getattr(config, 'similarity_threshold', 0.5)
         similar_hunts = similarity_detector.find_similar_hunts(new_hunt, existing_hunts, threshold)
-        
+
         logger.info(f"Found {len(similar_hunts)} similar hunts above {threshold:.1%} threshold")
-        
+
         # Generate enhanced comment
         comment = generate_enhanced_duplicate_comment(similar_hunts, new_hunt_info, threshold)
-        
+
         return comment
-        
+
     except Exception as error:
         logger.error(f"Error in enhanced similarity detection: {error}")
         # Fall back to basic analysis
@@ -154,22 +146,22 @@ def generate_enhanced_duplicate_comment(similar_hunts, new_hunt_info: Dict[str, 
         if not similar_hunts:
             comment = "✅ **Enhanced Duplicate Check Complete**\n\n"
             comment += "No significantly similar existing hunts found. This appears to be a unique submission.\n\n"
-            comment += f"**Analysis Details:**\n"
+            comment += "**Analysis Details:**\n"
             comment += f"- Similarity threshold: {threshold:.1%}\n"
-            comment += f"- Hunts analyzed: Multiple directories (Flames, Embers, Alchemy)\n\n"
+            comment += "- Hunts analyzed: Multiple directories (Flames, Embers, Alchemy)\n\n"
         else:
             comment = f"⚠️ **Enhanced Duplicate Check - {len(similar_hunts)} Similar Hunt(s) Found**\n\n"
-            comment += f"**Similarity Analysis:**\n"
+            comment += "**Similarity Analysis:**\n"
             comment += f"- Threshold: {threshold:.1%}\n\n"
-            
+
             # Sort by similarity and show top matches
             similar_hunts.sort(key=lambda x: x[1].overall_score, reverse=True)
-            
+
             comment += "**Similar Existing Hunts:**\n\n"
-            
+
             for i, (hunt, score) in enumerate(similar_hunts[:3], 1):  # Top 3
                 similarity_pct = score.overall_score * 100
-                
+
                 # Color code based on similarity
                 if similarity_pct >= 80:
                     emoji = "🔴"
@@ -180,27 +172,27 @@ def generate_enhanced_duplicate_comment(similar_hunts, new_hunt_info: Dict[str, 
                 else:
                     emoji = "🟢"
                     status = "LOW SIMILARITY"
-                
+
                 filename = hunt.get('filename', 'Unknown')
                 filepath = hunt.get('filepath', '')
-                
+
                 # Create GitHub file link if possible
                 repo_url = f"{os.getenv('GITHUB_SERVER_URL', 'https://github.com')}/{os.getenv('GITHUB_REPOSITORY')}"
                 branch = os.getenv('GITHUB_REF_NAME', 'main')
-                
+
                 if filepath:
                     file_url = f"{repo_url}/blob/{branch}/{filepath}"
                     comment += f"{emoji} **[{filename}]({file_url})** (Similarity: {similarity_pct:.1f}%)\n"
                 else:
                     comment += f"{emoji} **{filename}** (Similarity: {similarity_pct:.1f}%)\n"
-                
+
                 comment += f"   - **Status:** {status}\n"
                 comment += f"   - **Lexical:** {score.lexical_score:.1%}, **Semantic:** {score.semantic_score:.1%}, **Structural:** {score.structural_score:.1%}\n"
                 comment += f"   - **Tactic Match:** {hunt.get('tactic', 'Unknown')}\n\n"
-        
+
         # Add recommendation
         max_similarity = max([score.overall_score for _, score in similar_hunts], default=0.0)
-        
+
         if max_similarity >= 0.8:
             comment += "🚫 **Recommendation:** High similarity detected - please review for potential duplication before approval.\n\n"
         elif max_similarity >= 0.6:
@@ -209,7 +201,7 @@ def generate_enhanced_duplicate_comment(similar_hunts, new_hunt_info: Dict[str, 
             comment += "⚡ **Recommendation:** Some similarity detected but likely acceptable - review recommended.\n\n"
         else:
             comment += "✅ **Recommendation:** This hunt appears unique and can be approved.\n\n"
-        
+
         # Add methodology note
         comment += "---\n"
         comment += "*This analysis was performed using enhanced similarity detection with multiple algorithms:*\n"
@@ -217,11 +209,11 @@ def generate_enhanced_duplicate_comment(similar_hunts, new_hunt_info: Dict[str, 
         comment += "- Semantic similarity (Concept mapping, MITRE ATT&CK tactics)\n"
         comment += "- Structural similarity (Sentence patterns, Length analysis)\n"
         comment += "- Keyword overlap analysis\n\n"
-        
+
         comment += "*Please review manually before making final decisions.*"
-        
+
         return comment
-        
+
     except Exception as error:
         logger.error(f"Error generating enhanced comment: {error}")
         return f"❌ Error generating similarity analysis comment: {error}"
@@ -230,18 +222,18 @@ def generate_enhanced_duplicate_comment(similar_hunts, new_hunt_info: Dict[str, 
 def check_duplicates_for_new_submission(new_hunt_content, new_hunt_filename):
     """Main function to check for duplicates in a new submission."""
     logger.info("🔍 Starting enhanced duplicate detection...")
-    
+
     try:
         # Extract info from new hunt
         new_hunt_info = extract_hunt_info(new_hunt_content, new_hunt_filename)
         if not new_hunt_info:
             return "❌ Could not extract hunt information from submission."
-        
+
         logger.info(f"Extracted hunt info: {new_hunt_info.get('hypothesis', '')[:100]}...")
-        
+
         # Use enhanced similarity detection
         return check_duplicates_with_enhanced_similarity(new_hunt_info)
-            
+
     except Exception as error:
         logger.error(f"Error in duplicate detection: {error}")
         return f"❌ Duplicate detection failed: {error}"
@@ -264,6 +256,6 @@ Threat actors are using PowerShell's Invoke-WebRequest cmdlet to download encryp
 - [MITRE ATT&CK T1071.001](https://attack.mitre.org/techniques/T1071/001/)
 - [Source CTI Report](https://example.com)
 """
-    
+
     result = check_duplicates_for_new_submission(test_content, "test-hunt.md")
     print(result)

@@ -25,7 +25,7 @@ config = get_config().config
 @dataclass
 class DeduplicationResult:
     """Result of hypothesis deduplication check."""
-    
+
     is_duplicate: bool
     similarity_threshold: float
     max_similarity_score: float
@@ -33,7 +33,7 @@ class DeduplicationResult:
     similar_hunts: List[Dict[str, Any]]
     recommendation: str
     detailed_report: str
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
         return asdict(self)
@@ -42,7 +42,7 @@ class DeduplicationResult:
 @dataclass
 class GenerationAttempt:
     """Tracks a hypothesis generation attempt."""
-    
+
     attempt_id: str
     timestamp: float
     hypothesis: str
@@ -51,7 +51,7 @@ class GenerationAttempt:
     similarity_scores: List[float]
     is_approved: bool
     rejection_reason: Optional[str] = None
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
         return asdict(self)
@@ -59,25 +59,25 @@ class GenerationAttempt:
 
 class HypothesisDeduplicator:
     """Main service for preventing duplicate hypothesis generation."""
-    
+
     def __init__(self, similarity_threshold: float = 0.75):
         self.similarity_detector = HypothesisSimilarityDetector()
         self.cache = get_cache_manager()
         self.similarity_threshold = similarity_threshold
-        
+
         # Track generation attempts
         self.generation_history: List[GenerationAttempt] = []
         self.load_generation_history()
-    
-    def check_hypothesis_uniqueness(self, new_hypothesis: str, tactic: str = "", 
+
+    def check_hypothesis_uniqueness(self, new_hypothesis: str, tactic: str = "",
                                   tags: List[str] = None) -> DeduplicationResult:
         """Check if a new hypothesis is sufficiently unique."""
         try:
             logger.info(f"Checking uniqueness for hypothesis: {new_hypothesis[:100]}...")
-            
+
             # Load existing hunts
             existing_hunts = self._load_existing_hunts()
-            
+
             # Create hunt object for new hypothesis
             new_hunt = {
                 'title': new_hypothesis,
@@ -85,22 +85,22 @@ class HypothesisDeduplicator:
                 'tactic': tactic,
                 'tags': tags or []
             }
-            
+
             # Find similar hunts
             similar_hunts = self.similarity_detector.find_similar_hunts(
                 new_hunt, existing_hunts, self.similarity_threshold
             )
-            
+
             # Determine if it's a duplicate
             is_duplicate = len(similar_hunts) > 0
             max_similarity = max([score.overall_score for _, score in similar_hunts], default=0.0)
-            
+
             # Generate recommendation
             recommendation = self._generate_recommendation(is_duplicate, max_similarity, similar_hunts)
-            
+
             # Generate detailed report
             detailed_report = self.similarity_detector.generate_similarity_report(new_hunt, similar_hunts)
-            
+
             result = DeduplicationResult(
                 is_duplicate=is_duplicate,
                 similarity_threshold=self.similarity_threshold,
@@ -110,44 +110,44 @@ class HypothesisDeduplicator:
                 recommendation=recommendation,
                 detailed_report=detailed_report
             )
-            
+
             logger.info(f"Uniqueness check complete: {'DUPLICATE' if is_duplicate else 'UNIQUE'}")
             return result
-            
+
         except Exception as error:
             logger.error(f"Error checking hypothesis uniqueness: {error}")
             raise ValidationError("hypothesis", new_hypothesis, f"Uniqueness check failed: {error}")
-    
+
     def generate_unique_hypothesis(self, generation_prompt: str, max_attempts: int = 5,
                                  ai_generator_func: callable = None) -> Tuple[str, DeduplicationResult]:
         """Generate a unique hypothesis using iterative refinement."""
         try:
             if not ai_generator_func:
                 raise AIAnalysisError("AI generator function is required for hypothesis generation")
-            
+
             logger.info(f"Starting unique hypothesis generation with {max_attempts} max attempts")
-            
+
             for attempt in range(max_attempts):
                 logger.info(f"Generation attempt {attempt + 1}/{max_attempts}")
-                
+
                 # Generate hypothesis using AI
                 try:
                     generated_data = ai_generator_func(generation_prompt, attempt)
                     hypothesis = generated_data.get('hypothesis', '')
                     tactic = generated_data.get('tactic', '')
                     tags = generated_data.get('tags', [])
-                    
+
                     if not hypothesis:
                         logger.warning(f"Empty hypothesis generated on attempt {attempt + 1}")
                         continue
-                    
+
                 except Exception as ai_error:
                     logger.error(f"AI generation failed on attempt {attempt + 1}: {ai_error}")
                     continue
-                
+
                 # Check uniqueness
                 dedup_result = self.check_hypothesis_uniqueness(hypothesis, tactic, tags)
-                
+
                 # Record attempt
                 attempt_record = GenerationAttempt(
                     attempt_id=f"gen_{int(time.time())}_{attempt}",
@@ -155,7 +155,7 @@ class HypothesisDeduplicator:
                     hypothesis=hypothesis,
                     tactic=tactic,
                     tags=tags,
-                    similarity_scores=[score.overall_score for _, score in 
+                    similarity_scores=[score.overall_score for _, score in
                                      self.similarity_detector.find_similar_hunts(
                                          {'title': hypothesis, 'tactic': tactic, 'tags': tags},
                                          self._load_existing_hunts(),
