@@ -18,8 +18,9 @@ Everyone listed below has submitted ideas that have been added to HEARTH. This l
 | 12 | wikijm | 1 |
 | 13 | hu983r | 1 |
 | 14 | DarkWizardCatcher | 1 |
-| 15 | Cody Lunday | 1 |
-| 16 | Apramey "Apps" S | 1 |
-| 17 | Jon Perez | 1 |
-| 18 | Collin McClaine | 1 |
-| 19 | Claire Stromboe | 1 |
+| 15 | _(No response)_ | 1 |
+| 16 | Cody Lunday | 1 |
+| 17 | Apramey "Apps" S | 1 |
+| 18 | Jon Perez | 1 |
+| 19 | Collin McClaine | 1 |
+| 20 | Claire Stromboe | 1 |
