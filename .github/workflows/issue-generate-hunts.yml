@@ -108,29 +108,40 @@ jobs:
         run: |
           # Use a safer approach to handle the issue body with special characters
           echo "${{ github.event.issue.body }}" > /tmp/issue_body.txt
-          
+
           # Parse the content from the file instead of direct substitution
           file_url=$(grep -o 'https://github.com/.*/files/[0-9]*/.*' /tmp/issue_body.txt | head -n 1)
-          
+
           # Parse the source URL from the issue body
           source_url=$(awk 'f{if(NF){print;f=0}} /### Link to Original Source/{f=1}' /tmp/issue_body.txt | xargs)
-          
+
           # Parse submitter details
           submitter_name=$(awk 'f{if(NF){print;f=0}} /### Your Name \/ Handle/{f=1}' /tmp/issue_body.txt | xargs)
           profile_link=$(awk 'f{if(NF){print;f=0}} /### Link to Profile \(Optional\)/{f=1}' /tmp/issue_body.txt | xargs)
-          
+
           if [ -z "$submitter_name" ]; then
             submitter_name="A Helpful Contributor"
           fi
 
           # Check if we have a downloaded CTI file
           cti_file=".hearth/intel-drops/issue-${{ github.event.issue.number }}-cti.txt"
-          
+
+          # Check if the issue has manually pasted content (not the placeholder text)
+          has_manual_content="false"
+          if grep -q "### CTI Content" /tmp/issue_body.txt; then
+            # Check if it's not the placeholder or error message
+            if ! grep -q "This will be processed automatically by our system" /tmp/issue_body.txt && \
+               ! grep -q "Failed to retrieve or process content" /tmp/issue_body.txt; then
+              has_manual_content="true"
+            fi
+          fi
+
           echo "file_url=$file_url" >> $GITHUB_OUTPUT
           echo "source_url=$source_url" >> $GITHUB_OUTPUT
           echo "submitter_name=$submitter_name" >> $GITHUB_OUTPUT
           echo "profile_link=$profile_link" >> $GITHUB_OUTPUT
           echo "cti_file=$cti_file" >> $GITHUB_OUTPUT
+          echo "has_manual_content=$has_manual_content" >> $GITHUB_OUTPUT
 
       - name: "Prepare CTI file"
         id: prepare_cti
@@ -138,35 +149,60 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p .hearth/intel-drops
-          
+
           file_url="${{ steps.parse_issue.outputs.file_url }}"
           cti_file="${{ steps.parse_issue.outputs.cti_file }}"
           source_url="${{ steps.parse_issue.outputs.source_url }}"
+          has_manual_content="${{ steps.parse_issue.outputs.has_manual_content }}"
 
-          if [ -n "$file_url" ]; then
-            echo "Downloading CTI file from URL..."
-            # Preserve the original filename from the URL
-            filename=$(basename "$file_url")
-            curl -s -L -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/octet-stream" "$file_url" -o ".hearth/intel-drops/$filename"
-          elif [ -f "$cti_file" ]; then
-            echo "Using downloaded CTI file: $cti_file"
-            # The file is already downloaded and ready to use
-            cp "$cti_file" ".hearth/intel-drops/source_cti.txt"
-          elif [ -n "$source_url" ]; then
-            echo "CTI file not found, downloading from source URL: $source_url"
-            # Fallback: download the content directly in this workflow
-            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} ISSUE_NUMBER=${{ github.event.issue.number }} ISSUE_BODY="${{ github.event.issue.body }}" python .github/scripts/process_issue.py
-            # Check if the download was successful
-            if [ -f "$cti_file" ]; then
-              echo "Successfully downloaded CTI content"
+          # First check if user has manually pasted content
+          if [ "$has_manual_content" == "true" ]; then
+            echo "✅ Using manually pasted content from issue"
+            # Extract the CTI Content section and save it
+            awk '/### CTI Content/,/### Link to Original Source/' /tmp/issue_body.txt | \
+              sed '1d;$d' | sed '/^$/d' > "$cti_file"
+
+            if [ -s "$cti_file" ]; then
+              echo "Successfully extracted $(wc -l < "$cti_file") lines of manually pasted content"
               cp "$cti_file" ".hearth/intel-drops/source_cti.txt"
             else
-              echo "Failed to download CTI content from source URL"
+              echo "⚠️  Manual content section exists but appears empty"
+              # Continue to try other methods
+            fi
+          fi
+
+          # If we don't have a file yet, try other methods
+          if [ ! -f "$cti_file" ]; then
+            if [ -n "$file_url" ]; then
+              echo "Downloading CTI file from URL..."
+              # Preserve the original filename from the URL
+              filename=$(basename "$file_url")
+              curl -s -L -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/octet-stream" "$file_url" -o ".hearth/intel-drops/$filename"
+            elif [ -f "$cti_file" ]; then
+              echo "Using previously downloaded CTI file: $cti_file"
+              cp "$cti_file" ".hearth/intel-drops/source_cti.txt"
+            elif [ -n "$source_url" ]; then
+              echo "CTI file not found, downloading from source URL: $source_url"
+              # Fallback: download the content directly in this workflow
+              GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} GITHUB_REPOSITORY=${{ github.repository }} ISSUE_NUMBER=${{ github.event.issue.number }} ISSUE_BODY="${{ github.event.issue.body }}" python .github/scripts/process_issue.py
+              # Check if the download was successful
+              if [ -f "$cti_file" ]; then
+                echo "✅ Successfully downloaded CTI content"
+                cp "$cti_file" ".hearth/intel-drops/source_cti.txt"
+              else
+                echo "❌ Auto-download failed. Please check the issue for details."
+                echo "The script has updated issue #${{ github.event.issue.number }} with error information."
+                echo ""
+                echo "To proceed, please either:"
+                echo "  1. Paste the article content directly into the issue (replace the CTI Content section)"
+                echo "  2. Upload a text file with the content"
+                echo "  3. Fix the URL and remove then re-add the 'intel-submission' label"
+                exit 1
+              fi
+            else
+              echo "❌ No CTI content found."
               exit 1
             fi
-          else
-            echo "No CTI content found."
-            exit 1
           fi
 
       - name: "Get latest feedback comment from author or admin"

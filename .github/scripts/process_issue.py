@@ -30,12 +30,83 @@ def get_user_agent():
     ]
     return random.choice(user_agents)
 
+def get_medium_content(url):
+    """
+    Special handling for Medium articles which often block scrapers.
+    Tries multiple approaches to get the content.
+    """
+    # Try the ?format=json endpoint that Medium provides
+    if 'medium.com' in url:
+        try:
+            json_url = url.split('?')[0] + '?format=json'
+            headers = {
+                'User-Agent': get_user_agent(),
+                'Accept': 'application/json',
+            }
+            response = requests.get(json_url, timeout=15, headers=headers)
+            response.raise_for_status()
+
+            # Medium prefixes JSON with ])}while(1);</x>
+            json_text = response.text.replace('])}while(1);</x>', '', 1)
+            import json
+            data = json.loads(json_text)
+
+            # Extract the article content from the JSON
+            payload = data.get('payload', {})
+            value = payload.get('value', {})
+
+            # Get title
+            title = value.get('title', '')
+
+            # Get paragraphs from content
+            content = value.get('content', {})
+            body_model = content.get('bodyModel', {})
+            paragraphs_data = body_model.get('paragraphs', [])
+
+            paragraphs = []
+            if title:
+                paragraphs.append(f"# {title}\n")
+
+            for para in paragraphs_data:
+                para_text = para.get('text', '').strip()
+                para_type = para.get('type', '')
+
+                # Skip empty paragraphs
+                if not para_text:
+                    continue
+
+                # Format based on paragraph type
+                if para_type == 'H3':
+                    paragraphs.append(f"### {para_text}")
+                elif para_type == 'H4':
+                    paragraphs.append(f"#### {para_text}")
+                elif para_type in ['P', 'BLOCKQUOTE', 'PRE']:
+                    paragraphs.append(para_text)
+                elif para_type == 'OLI' or para_type == 'ULI':
+                    paragraphs.append(f"- {para_text}")
+                else:
+                    paragraphs.append(para_text)
+
+            if paragraphs:
+                print(f"✅ Successfully extracted content from Medium JSON API ({len(paragraphs)} paragraphs)")
+                return '\n\n'.join(paragraphs)
+        except Exception as e:
+            print(f"⚠️  Medium JSON API attempt failed: {e}, trying standard scraping...")
+
+    return None
+
 def get_cti_content(url):
     """
     Downloads and extracts text content from a given URL.
     Supports HTML (with JS rendering fallback), PDF, and DOCX formats.
     Handles Brotli (br) and Zstandard (zstd) compression.
     """
+    # Try Medium-specific approach first
+    if 'medium.com' in url:
+        medium_content = get_medium_content(url)
+        if medium_content:
+            return medium_content
+
     try:
         headers = {
             'User-Agent': get_user_agent(),
@@ -44,11 +115,15 @@ def get_cti_content(url):
             'Accept-Encoding': 'gzip, deflate, br, zstd',
             'DNT': '1',
             'Connection': 'keep-alive',
-            'Upgrade-Insecure-Requests': '1'
+            'Upgrade-Insecure-Requests': '1',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'none',
+            'Cache-Control': 'max-age=0',
         }
         # Explicitly allow automatic decompression
         # Note: requires 'brotli' and 'zstandard' packages for br/zstd compression
-        response = requests.get(url, timeout=15, headers=headers, stream=False)
+        response = requests.get(url, timeout=15, headers=headers, stream=False, allow_redirects=True)
         response.raise_for_status()
 
         # Debug: Check if content is compressed/binary
@@ -273,7 +348,16 @@ def main():
 
     # Check if content starts with "Error:" (our error messages, not content containing the word "error")
     if content.startswith("Error"):
-        final_content = f"### CTI Content\n\n❌ **Failed to retrieve or process content from the URL.**\n\n**Details:**\n```\n{content}\n```\n\n*Please check the URL and try again, or paste the content manually.*"
+        # Provide specific guidance based on the error type
+        guidance = ""
+        if "403" in content or "Forbidden" in content:
+            guidance = "\n\n**This appears to be a Medium article or site that blocks automated access.**\n\n**How to proceed:**\n1. **Manually copy the article content** and paste it in this section (replacing this message)\n2. Or **export the article as PDF** and attach it to this issue\n3. Or try accessing the article from a different URL (some Medium articles have multiple URLs)\n\n**Tips for copying Medium content:**\n- Open the article in your browser\n- Select all text (Ctrl+A or Cmd+A)\n- Copy and paste the full article text below, replacing this entire section"
+        elif "404" in content:
+            guidance = "\n\n**The URL appears to be incorrect or the article has been removed.**\n\nPlease verify the URL and update this issue with the correct link."
+        else:
+            guidance = "\n\n*Please check the URL and try again, or paste the content manually.*"
+
+        final_content = f"### CTI Content\n\n❌ **Failed to retrieve or process content from the URL.**\n\n**Details:**\n```\n{content}\n```{guidance}"
     else:
         # Save the full content to a file
         file_path = save_cti_content_to_file(content, issue_number)
