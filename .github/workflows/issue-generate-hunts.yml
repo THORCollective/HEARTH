@@ -105,9 +105,11 @@ jobs:
 
       - name: "Parse Issue Body"
         id: parse_issue
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
         run: |
-          # Use a safer approach to handle the issue body with special characters
-          echo "${{ github.event.issue.body }}" > /tmp/issue_body.txt
+          # Use environment variable to safely handle issue body with special characters
+          printf '%s' "$ISSUE_BODY" > /tmp/issue_body.txt
 
           # Parse the content from the file instead of direct substitution
           file_url=$(grep -o 'https://github.com/.*/files/[0-9]*/.*' /tmp/issue_body.txt | head -n 1)
@@ -158,9 +160,9 @@ jobs:
           # First check if user has manually pasted content
           if [ "$has_manual_content" == "true" ]; then
             echo "✅ Using manually pasted content from issue"
-            # Extract the CTI Content section and save it
+            # Extract the CTI Content section and save it (preserve all lines including empty ones)
             awk '/### CTI Content/,/### Link to Original Source/' /tmp/issue_body.txt | \
-              sed '1d;$d' | sed '/^$/d' > "$cti_file"
+              sed '1d;$d' > "$cti_file"
 
             if [ -s "$cti_file" ]; then
               echo "Successfully extracted $(wc -l < "$cti_file") lines of manually pasted content"
@@ -184,7 +186,9 @@ jobs:
             elif [ -n "$source_url" ]; then
               echo "CTI file not found, downloading from source URL: $source_url"
               # Fallback: download the content directly in this workflow
-              GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} GITHUB_REPOSITORY=${{ github.repository }} ISSUE_NUMBER=${{ github.event.issue.number }} ISSUE_BODY="${{ github.event.issue.body }}" python .github/scripts/process_issue.py
+              # Use environment variable to safely pass issue body
+              export ISSUE_BODY="$(cat /tmp/issue_body.txt)"
+              GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} GITHUB_REPOSITORY=${{ github.repository }} ISSUE_NUMBER=${{ github.event.issue.number }} python .github/scripts/process_issue.py
               # Check if the download was successful
               if [ -f "$cti_file" ]; then
                 echo "✅ Successfully downloaded CTI content"
