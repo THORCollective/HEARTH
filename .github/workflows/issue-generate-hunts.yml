@@ -205,6 +205,45 @@ jobs:
             fi
           fi
 
+      - name: "Post manual content instructions on failure"
+        if: failure() && steps.prepare_cti.conclusion == 'failure'
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.HEARTH_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            ## 📋 Manual Content Required
+
+            The automatic download failed because the website is blocking automated access.
+
+            **Please manually paste the article content to proceed:**
+
+            ### Steps:
+            1. **Open the article** in your browser: ${{ steps.parse_issue.outputs.source_url }}
+            2. **Select all the article text** (Ctrl+A or Cmd+A)
+            3. **Copy the content** (Ctrl+C or Cmd+C)
+            4. **Edit this issue** and replace the entire `### CTI Content` section with the copied article text
+            5. **Save the issue**
+            6. **Remove and re-add the `intel-submission` label** to re-trigger the workflow
+
+            ### Example of what to replace:
+            Replace this section:
+            ```
+            ### CTI Content
+
+            ❌ **Failed to retrieve or process content from the URL.**
+            ...
+            ```
+
+            With the actual article content:
+            ```
+            ### CTI Content
+
+            [PASTE THE FULL ARTICLE TEXT HERE - including title, headings, and all paragraphs]
+            ```
+
+            💡 **Tip:** For Medium articles, make sure to copy the entire article including all sections. The workflow will automatically detect and use your pasted content!
+
       - name: "Get latest feedback comment from author or admin"
         id: feedback
         uses: actions/github-script@v6
