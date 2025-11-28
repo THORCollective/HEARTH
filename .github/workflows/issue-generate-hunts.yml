@@ -316,9 +316,10 @@ jobs:
           git add Flames/*.md
           git commit -m "feat(draft): Update hunt from issue #${{ github.event.issue.number }}"
           git remote set-url origin https://x-access-token:${{ secrets.HEARTH_TOKEN }}@github.com/${{ github.repository }}
-          # Use --set-upstream for the initial push, and a simple push for subsequent regenerations.
+          # Use --set-upstream for the initial push, and force push for subsequent regenerations.
+          # Force push is safe for draft branches since they're meant to be overwritten during regeneration.
           if [ "${{ github.event.label.name }}" == "regenerate" ]; then
-            git push
+            git push --force
           else
             git push --set-upstream origin draft/issue-${{ github.event.issue.number }}
           fi
