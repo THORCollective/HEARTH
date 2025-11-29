@@ -9,10 +9,10 @@ Everyone listed below has submitted ideas that have been added to HEARTH. This l
 | 3 | Lauren Proehl | 4 |
 | 4 | Jamie Williams | 3 |
 | 5 | Jocko | 3 |
-| 6 | Bruce Breuer | 3 |
-| 7 | Joshua Hines | 2 |
-| 8 | Siddhant Mishra | 2 |
-| 9 | Azrara | 2 |
+| 6 | Azrara | 3 |
+| 7 | Bruce Breuer | 3 |
+| 8 | Joshua Hines | 2 |
+| 9 | Siddhant Mishra | 2 |
 | 10 | Audra Streetman | 2 |
 | 11 | Ryan Fetterman | 2 |
 | 12 | wikijm | 1 |
