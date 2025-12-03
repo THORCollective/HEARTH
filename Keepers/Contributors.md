@@ -15,12 +15,13 @@ Everyone listed below has submitted ideas that have been added to HEARTH. This l
 | 9 | Siddhant Mishra | 2 |
 | 10 | Audra Streetman | 2 |
 | 11 | Ryan Fetterman | 2 |
-| 12 | wikijm | 1 |
-| 13 | hu983r | 1 |
-| 14 | DarkWizardCatcher | 1 |
-| 15 | _(No response)_ | 1 |
-| 16 | Cody Lunday | 1 |
-| 17 | Apramey "Apps" S | 1 |
-| 18 | Jon Perez | 1 |
-| 19 | Collin McClaine | 1 |
-| 20 | Claire Stromboe | 1 |
+| 12 | Shaimon Weslley | 1 |
+| 13 | wikijm | 1 |
+| 14 | hu983r | 1 |
+| 15 | DarkWizardCatcher | 1 |
+| 16 | _(No response)_ | 1 |
+| 17 | Cody Lunday | 1 |
+| 18 | Apramey "Apps" S | 1 |
+| 19 | Jon Perez | 1 |
+| 20 | Collin McClaine | 1 |
+| 21 | Claire Stromboe | 1 |
