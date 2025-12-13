@@ -1334,6 +1334,27 @@ const HUNTS_DATA = [
     "file_path": "Flames/H058.md"
   },
   {
+    "id": "H059",
+    "category": "Flames",
+    "title": "Insiders may be using unauthorised AI chatbot platforms for exfiltration.",
+    "tactic": "Exfiltration",
+    "notes": "Identify and block unauthorized AI chatbot platforms used for data exfiltration.",
+    "tags": [
+      "Exfiltration",
+      "Insider",
+      "T1567",
+      "IF001.006",
+      "IF018.002"
+    ],
+    "submitter": {
+      "name": "@samuel-lucas6",
+      "link": ""
+    },
+    "why": "- Reckless sharing on AI chatbot platforms risks exposing sensitive data to the provider. This data could also potentially be used for training or made public via a breach/account compromise.\n- With an account, an insider can transfer sensitive data to a personal device, potentially bypassing other DLP controls (e.g., for email).",
+    "references": "- https://insiderthreatmatrix.org/articles/AR4/sections/IF001/subsections/IF001.006\n- https://insiderthreatmatrix.org/articles/AR4/sections/IF018/subsections/IF018.002\n- https://attack.mitre.org/techniques/T1567/\n- https://www.ncsc.gov.uk/blog-post/chatgpt-and-large-language-models-whats-the-risk\n- https://center-for-threat-informed-defense.github.io/insider-threat-ttp-kb/introduction/\n- https://www.cisa.gov/resources-tools/resources/insider-threat-mitigation-guide\n- https://www.ncsc.gov.uk/guidance/reducing-data-exfiltration-by-malicious-insiders",
+    "file_path": "Flames/H059.md"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
