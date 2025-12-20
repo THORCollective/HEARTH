@@ -17,13 +17,14 @@ Everyone listed below has submitted ideas that have been added to HEARTH. This l
 | 11 | Ryan Fetterman | 2 |
 | 12 | Shaimon Weslley | 1 |
 | 13 | Duc Viet Hoang | 1 |
-| 14 | @samuel-lucas6 | 1 |
-| 15 | wikijm | 1 |
-| 16 | hu983r | 1 |
-| 17 | DarkWizardCatcher | 1 |
-| 18 | _(No response)_ | 1 |
-| 19 | Cody Lunday | 1 |
-| 20 | Apramey "Apps" S | 1 |
-| 21 | Jon Perez | 1 |
-| 22 | Collin McClaine | 1 |
-| 23 | Claire Stromboe | 1 |
+| 14 | @tsof-smoky | 1 |
+| 15 | @samuel-lucas6 | 1 |
+| 16 | wikijm | 1 |
+| 17 | hu983r | 1 |
+| 18 | DarkWizardCatcher | 1 |
+| 19 | _(No response)_ | 1 |
+| 20 | Cody Lunday | 1 |
+| 21 | Apramey "Apps" S | 1 |
+| 22 | Jon Perez | 1 |
+| 23 | Collin McClaine | 1 |
+| 24 | Claire Stromboe | 1 |
