@@ -178,10 +178,21 @@ css/
   - Responsive mobile styles for smaller screens (from style.css:350-364)
 
 #### Button Components
-- [ ] Create `css/components/buttons.css`
-- [ ] Extract button base styles
-- [ ] Extract button variants (primary, secondary, etc.)
-- [ ] Extract button states (hover, active, disabled)
+- [x] Create `css/components/buttons.css`
+- [x] Extract button base styles
+- [x] Extract button variants (primary, secondary, etc.)
+- [x] Extract button states (hover, active, disabled)
+
+**Notes:** Created comprehensive buttons.css file including:
+  - Base button styles (.btn from style.css:1541-1564)
+  - Button variants: btn-accent, btn-ghost, btn-chip (from style.css:1566-1597)
+  - Legacy button styles: btn-primary, btn-secondary, submit-btn (from style.css:980-1014, 2182-2196)
+  - Specialized buttons: clear-btn, close button (from style.css:1325-1339, 1874-1888)
+  - Chat widget buttons: chat-size-btn, chat-send-btn, chat-toggle (from style.css:179-200, 302-348)
+  - Navigation buttons: pagination-btn, modal-nav-btn, preview-toggle (from style.css:1817-1839, 1904-1925, 1772-1788)
+  - All button states: hover, active, disabled, focus
+  - Light theme overrides for all buttons (from style.css:477-497, 511-537, 644-658)
+  - Responsive mobile styles (from style.css:2106-2108)
 
 #### Form Components
 - [ ] Create `css/components/forms.css`
