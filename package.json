@@ -7,7 +7,10 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "pytest tests/",
+    "test:unit": "pytest tests/unit/",
+    "test:integration": "pytest tests/integration/",
+    "test:coverage": "pytest --cov=scripts tests/"
   },
   "repository": {
     "type": "git",

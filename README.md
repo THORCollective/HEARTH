@@ -143,6 +143,45 @@ For more details on the technical implementation, see:
 
 ---
 
+## 🧪 Testing
+
+HEARTH includes a comprehensive test suite to ensure code quality and reliability.
+
+### Running Tests Locally
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run all tests
+pytest tests/
+
+# Run specific test suites
+pytest tests/unit/          # Unit tests only
+pytest tests/integration/   # Integration tests only
+
+# Run with coverage
+pytest --cov=scripts tests/
+```
+
+### Test Organization
+
+- **Unit Tests** (`tests/unit/`): Test individual functions and components in isolation
+- **Integration Tests** (`tests/integration/`): Test workflows and component interactions
+- **Fixtures** (`tests/fixtures/`): Sample hunt files, CTI reports, and mock data
+
+### Continuous Integration
+
+Tests run automatically on every push and pull request via GitHub Actions:
+- Python 3.9, 3.10, and 3.11 compatibility testing
+- Unit and integration test execution
+- Code coverage reporting
+- Linting with flake8
+
+For detailed testing documentation, see [tests/README.md](tests/README.md).
+
+---
+
 ## ⚙️ Configuration
 
 For maintainers and self-hosted instances, HEARTH can be configured using environment variables.
