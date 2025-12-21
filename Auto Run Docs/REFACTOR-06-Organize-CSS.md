@@ -94,10 +94,28 @@ css/
 ### Extract Component Styles
 
 #### Card Components
-- [ ] Create `css/components/cards.css`
-- [ ] Extract hunt card styles
-- [ ] Extract card layouts and animations
-- [ ] Extract hover effects
+- [x] Create `css/components/cards.css`
+- [x] Extract hunt card styles
+- [x] Extract card layouts and animations
+- [x] Extract hover effects
+
+**Notes:** Created comprehensive cards.css file including:
+  - Hunt cards grid system (from style.css:1622-1626)
+  - Hunt card base styles with gradient overlay (from style.css:1628-1660)
+  - Hunt card hover effects and animations
+  - Hunt card header layout and badges (hunt-id, hunt-category from style.css:1662-1686)
+  - Hunt title, tactic badges, tags container (from style.css:1688-1718)
+  - Hunt submitter info (from style.css:1720-1727)
+  - Expandable hunt preview section with smooth animations (from style.css:1729-1788)
+  - Preview elements (title, body, links, toggle button)
+  - Card footer layout (from style.css:1790-1803)
+  - Hunt search result cards for chat widget (from style.css:790-842)
+  - Hunt count badge (from style.css:1354)
+  - Hunt detail modal content styles (from style.css:1933-2019)
+  - Hunt detail header, ID, category, title, tactic, tags
+  - Hunt detail why/references sections with special styling
+  - JSON data display container styles (from style.css:1017-1028)
+  - Light theme overrides for all card components (from style.css:442-465, 467-472, 610-639, 749-753)
 
 #### Modal Components
 - [ ] Create `css/components/modals.css`
