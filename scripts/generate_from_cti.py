@@ -27,12 +27,12 @@ except ImportError:
     print("⚠️ MITRE ATT&CK data not available. Using fallback tactic matching.")
     MITRE_AVAILABLE = False
 
-# Import legacy duplicate detection as backup
+# Import unified duplicate detection module
 try:
-    from duplicate_detection import check_duplicates_for_new_submission
+    from duplicate_detector import check_duplicates_for_new_submission
     DUPLICATE_DETECTION_AVAILABLE = True
 except ImportError:
-    print("⚠️ Legacy duplicate detection module not available.")
+    print("⚠️ Duplicate detection module not available.")
     DUPLICATE_DETECTION_AVAILABLE = False
 
 load_dotenv()

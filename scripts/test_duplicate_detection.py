@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from duplicate_detection import check_duplicates_for_new_submission
+from duplicate_detector import check_duplicates_for_new_submission
 
 # Test with a sample hunt that might be similar to existing ones
 test_content = """

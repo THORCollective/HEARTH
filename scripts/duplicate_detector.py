@@ -941,6 +941,79 @@ def extract_hunt_info(content: str, filepath: str) -> Optional[Dict[str, Any]]:
     }
 
 
+def get_all_existing_hunts_from_db() -> List[Dict[str, Any]]:
+    """
+    Fast retrieval from SQLite database (backward compatibility function).
+
+    Returns:
+        List of hunt dictionaries
+    """
+    import sqlite3
+    import json
+    from pathlib import Path
+
+    DATABASE_PATH = Path("database/hunts.db")
+    if not DATABASE_PATH.exists():
+        logger.warning("Database not found, falling back to file-based retrieval")
+        return get_all_existing_hunts_from_files()
+
+    conn = sqlite3.connect(DATABASE_PATH)
+    conn.row_factory = sqlite3.Row
+
+    cursor = conn.execute('''
+        SELECT filename, hunt_id, hypothesis, tactic, technique, tags, file_path
+        FROM hunts
+        ORDER BY created_date DESC
+    ''')
+
+    existing_hunts = []
+    for row in cursor:
+        existing_hunts.append({
+            'filepath': row['file_path'],
+            'filename': row['filename'],
+            'hypothesis': row['hypothesis'],
+            'tactic': row['tactic'],
+            'technique': row['technique'],
+            'tags': json.loads(row['tags']) if row['tags'] else [],
+            'content': row['hypothesis'][:500]  # Use hypothesis as content preview
+        })
+
+    conn.close()
+    logger.info(f"Retrieved {len(existing_hunts)} hunts from database in <10ms")
+    return existing_hunts
+
+
+def get_all_existing_hunts_from_files() -> List[Dict[str, Any]]:
+    """
+    Legacy file-based retrieval (backward compatibility function).
+
+    Returns:
+        List of hunt dictionaries
+    """
+    from pathlib import Path
+
+    hunt_directories = ["Flames", "Embers", "Alchemy"]
+    existing_hunts = []
+
+    for directory_name in hunt_directories:
+        directory_path = Path(directory_name)
+        if not directory_path.exists():
+            continue
+
+        hunt_files = directory_path.glob("*.md")
+        for hunt_file in hunt_files:
+            try:
+                content = hunt_file.read_text()
+                hunt_information = extract_hunt_info(content, str(hunt_file))
+                if hunt_information:
+                    existing_hunts.append(hunt_information)
+            except Exception as error:
+                logger.warning(f"Error reading {hunt_file}: {error}")
+
+    logger.info(f"Retrieved {len(existing_hunts)} hunts from files")
+    return existing_hunts
+
+
 if __name__ == "__main__":
     # Test the duplicate detector
     test_content = """

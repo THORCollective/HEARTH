@@ -297,7 +297,7 @@ python scripts/test_database_speed.py
 ```bash
 # Test duplicate detection with database
 python3 << 'EOF'
-from scripts.duplicate_detection import check_duplicates_for_new_submission
+from scripts.duplicate_detector import check_duplicates_for_new_submission
 
 # Test hypothesis
 test_hypothesis = "Threat actors are using PowerShell to disable Windows Defender by modifying registry keys to evade detection on enterprise workstations."
@@ -432,7 +432,7 @@ fi
 # 6. Test duplicate detection
 echo -e "\n6️⃣  Testing duplicate detection..."
 python3 << 'PYTHON'
-from scripts.duplicate_detection import check_duplicates_for_new_submission
+from scripts.duplicate_detector import check_duplicates_for_new_submission
 
 hypothesis = "Threat actors are using malicious JavaScript files disguised as tax forms to deliver Brute Ratel malware via MSI installers."
 

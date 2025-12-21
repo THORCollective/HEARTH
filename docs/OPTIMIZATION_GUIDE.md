@@ -374,7 +374,7 @@ AI_PROVIDER=claude python scripts/generate_from_cti.py
 # Download MITRE ATT&CK data
 curl -o data/mitre-attack.json https://raw.githubusercontent.com/mitre/cti/master/enterprise-attack/enterprise-attack.json
 
-# Update duplicate_detection.py to use local data
+# Update duplicate_detector.py to use local data
 python scripts/update_mitre_data.py
 ```
 

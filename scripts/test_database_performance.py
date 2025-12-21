@@ -10,7 +10,7 @@ from pathlib import Path
 # Add scripts directory to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from duplicate_detection import get_all_existing_hunts_from_db, get_all_existing_hunts_from_files
+from duplicate_detector import get_all_existing_hunts_from_db, get_all_existing_hunts_from_files
 
 
 def test_database_performance():

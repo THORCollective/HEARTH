@@ -62,9 +62,22 @@ This phase merges two duplicate detection implementations into a single, well-st
 - Full test execution requires dependencies (python-dotenv, etc.) to be installed in environment
 
 ### Migration
-- [ ] Update GitHub Actions workflows to use new `duplicate_detector.py`
-- [ ] Update any scripts that import old duplicate detection modules
-- [ ] Delete old `duplicate_detection.py` and `duplicate_detection_improved.py`
+- [x] Update GitHub Actions workflows to use new `duplicate_detector.py`
+- [x] Update any scripts that import old duplicate detection modules
+- [x] Delete old `duplicate_detection.py` and `duplicate_detection_improved.py`
+
+**Migration Notes:**
+- Updated imports in:
+  - `scripts/generate_from_cti.py`: Changed from `duplicate_detection` to `duplicate_detector`
+  - `scripts/test_duplicate_detection.py`: Changed from `duplicate_detection` to `duplicate_detector`
+  - `scripts/test_database_performance.py`: Changed from `duplicate_detection` to `duplicate_detector`
+- Updated documentation:
+  - `docs/TESTING_GUIDE.md`: Updated import statements (2 occurrences)
+  - `docs/OPTIMIZATION_GUIDE.md`: Updated reference in comment
+- Added backward compatibility functions to `duplicate_detector.py`:
+  - `get_all_existing_hunts_from_db()`: Database retrieval with fallback
+  - `get_all_existing_hunts_from_files()`: Legacy file-based retrieval
+- GitHub Actions workflows don't need updates as they don't directly import duplicate detection modules (they're imported by scripts that have been updated)
 
 ### Cleanup
 - [ ] Commit changes with message: "refactor: consolidate duplicate detection into single module"
