@@ -1,0 +1,127 @@
+/* ============================================
+   Navigation Components
+   - Header styles
+   - Navigation menu styles
+   - Footer styles
+   - Logo and title section
+   - Header links/buttons
+   ============================================ */
+
+/* Header Container */
+header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(16px);
+    background: rgba(8, 9, 15, 0.85);
+    border-bottom: 1px solid rgba(138, 71, 255, 0.15);
+}
+
+/* Header Content Layout */
+.header-content {
+    max-width: min(1200px, 92vw);
+    margin: 0 auto;
+    padding: 1.75rem 0;
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Logo Section */
+.logo-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    color: inherit;
+}
+
+.logo {
+    width: clamp(56px, 6vw, 72px);
+    height: auto;
+    filter: drop-shadow(0 12px 24px rgba(138, 71, 255, 0.28));
+}
+
+/* Title Section */
+.title-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.title-section .eyebrow {
+    margin: 0;
+    font-size: 0.8rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.title-section h1 {
+    margin: 0;
+    font-size: clamp(2rem, 4vw, 2.9rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+}
+
+.title-section p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 1rem;
+}
+
+/* Header Links/Actions */
+.header-links {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+/* Footer Styles */
+footer {
+    margin-top: 3rem;
+    padding: 2rem 0;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+footer a {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+footer a:hover {
+    color: var(--accent);
+}
+
+/* ============================================
+   Light Theme Overrides
+   ============================================ */
+@media (prefers-color-scheme: light) {
+    header {
+        background: rgba(255, 255, 255, 0.98) !important;
+        border-bottom: 1px solid rgba(138, 71, 255, 0.12) !important;
+    }
+
+    .header-content {
+        background: transparent !important;
+    }
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 1.25rem;
+    }
+
+    .header-links {
+        justify-content: center;
+    }
+}
