@@ -116,9 +116,19 @@ This phase implements Anthropic's prompt caching to reduce API costs by ~67% and
   - **Global tracking**: `cache_stats` dict accumulates all metrics across session (line 68-77)
 
 ### Update Configuration
-- [ ] Add environment variable to enable/disable caching
-- [ ] Update `scripts/config_manager.py` with cache settings
-- [ ] Document cache configuration options
+- [x] Add environment variable to enable/disable caching
+  - **Implementation**: Added `ENABLE_PROMPT_CACHING` and `PROMPT_CACHE_TTL` environment variables
+  - **Default behavior**: Caching enabled by default with 5-minute TTL
+  - **Configuration options**: Can be disabled or extended to 1-hour TTL
+- [x] Update `scripts/config_manager.py` with cache settings
+  - **Added fields**: `enable_prompt_caching` (bool) and `cache_ttl` (str) to `HearthConfig` dataclass
+  - **Environment mapping**: Added `ENABLE_PROMPT_CACHING` and `PROMPT_CACHE_TTL` to env overrides
+  - **Type conversion**: Boolean parsing for enable flag with support for true/1/yes/on
+- [x] Document cache configuration options
+  - **Location**: README.md Configuration section
+  - **Documentation includes**: Environment variables table, benefits, how it works, configuration options, and monitoring
+  - **Updated scripts**: `generate_from_cti.py` now uses `get_cache_control()` helper function that reads config
+  - **Backward compatible**: Caching enabled by default, can be disabled via config
 
 ### Testing
 - [ ] Test hunt generation with caching enabled

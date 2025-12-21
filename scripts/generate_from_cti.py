@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from PyPDF2 import PdfReader
 from datetime import datetime
 from logger_config import get_logger
+from config_manager import get_config
 
 logger = get_logger()
 
@@ -75,6 +76,27 @@ cache_stats = {
     "output_tokens": 0,
     "total_cost_usd": 0.0
 }
+
+
+def get_cache_control():
+    """
+    Get cache control object based on configuration settings.
+
+    Returns:
+        dict or None: Cache control object if caching is enabled, None otherwise
+    """
+    config = get_config().config
+
+    if not config.enable_prompt_caching:
+        return None
+
+    cache_control = {"type": "ephemeral"}
+
+    # Add TTL if configured for 1 hour (5 minutes is default and doesn't need to be specified)
+    if config.cache_ttl == "1h":
+        cache_control["ttl"] = "1h"
+
+    return cache_control
 
 
 def log_cache_usage(response, operation_name: str):
@@ -391,17 +413,17 @@ def summarize_cti_with_map_reduce(text, model="gpt-4", max_tokens=128000):
                     "Focus on specific tools, techniques, vulnerabilities, and adversary procedures. "
                     "Your output will be combined with others, so be concise and clear."
                 )
+                # Build system message with optional caching
+                system_msg = {"type": "text", "text": instruction_text}
+                cache_control = get_cache_control()
+                if cache_control:
+                    system_msg["cache_control"] = cache_control
+
                 response = anthropic_client.messages.create(
                     model=CLAUDE_MODEL,
                     max_tokens=1024,
                     temperature=0.2,
-                    system=[
-                        {
-                            "type": "text",
-                            "text": instruction_text,
-                            "cache_control": {"type": "ephemeral"}
-                        }
-                    ],
+                    system=[system_msg],
                     messages=[{
                         "role": "user",
                         "content": f"--- CHUNK {i +1}/{len(chunks)} ---\n\n{chunk}"
@@ -440,17 +462,17 @@ def summarize_cti_with_map_reduce(text, model="gpt-4", max_tokens=128000):
                 "Remove redundancy and create a clear narrative of the adversary's actions. "
                 "The final output should be a comprehensive summary that can be used to generate a threat hunt."
             )
+            # Build system message with optional caching
+            system_msg = {"type": "text", "text": instruction_text}
+            cache_control = get_cache_control()
+            if cache_control:
+                system_msg["cache_control"] = cache_control
+
             final_response = anthropic_client.messages.create(
                 model=CLAUDE_MODEL,
                 max_tokens=2048,
                 temperature=0.2,
-                system=[
-                    {
-                        "type": "text",
-                        "text": instruction_text,
-                        "cache_control": {"type": "ephemeral"}
-                    }
-                ],
+                system=[system_msg],
                 messages=[{
                     "role": "user",
                     "content": f"--- COMBINED SUMMARIES ---\n\n{combined_summary}"
@@ -595,11 +617,11 @@ def generate_hunt_content_with_ttp_diversity(cti_text, cti_source_url, submitter
                 })
 
                 # Add cached template instructions (completely static)
-                user_content.append({
-                    "type": "text",
-                    "text": TEMPLATE_INSTRUCTIONS,
-                    "cache_control": {"type": "ephemeral"}
-                })
+                template_msg = {"type": "text", "text": TEMPLATE_INSTRUCTIONS}
+                cache_control = get_cache_control()
+                if cache_control:
+                    template_msg["cache_control"] = cache_control
+                user_content.append(template_msg)
 
                 # Add dynamic values after the cached template (not cached)
                 user_content.append({
@@ -607,17 +629,16 @@ def generate_hunt_content_with_ttp_diversity(cti_text, cti_source_url, submitter
                     "text": f"\nFor this hunt, use:\n- Submitter: {submitter_credit}\n- Source URL: {cti_source_url}"
                 })
 
+                # Build system message with optional caching
+                system_msg = {"type": "text", "text": SYSTEM_PROMPT}
+                if cache_control:
+                    system_msg["cache_control"] = cache_control
+
                 response = anthropic_client.messages.create(
                     model=CLAUDE_MODEL,
                     max_tokens=1200,
                     temperature=temperature,
-                    system=[
-                        {
-                            "type": "text",
-                            "text": SYSTEM_PROMPT,
-                            "cache_control": {"type": "ephemeral"}
-                        }
-                    ],
+                    system=[system_msg],
                     messages=[{
                         "role": "user",
                         "content": user_content
@@ -732,11 +753,11 @@ def generate_hunt_content_basic(cti_text, cti_source_url, submitter_credit, is_r
             })
 
             # Add cached template instructions (completely static)
-            user_content.append({
-                "type": "text",
-                "text": TEMPLATE_INSTRUCTIONS,
-                "cache_control": {"type": "ephemeral"}
-            })
+            template_msg = {"type": "text", "text": TEMPLATE_INSTRUCTIONS}
+            cache_control = get_cache_control()
+            if cache_control:
+                template_msg["cache_control"] = cache_control
+            user_content.append(template_msg)
 
             # Add dynamic values after the cached template (not cached)
             user_content.append({
@@ -744,17 +765,16 @@ def generate_hunt_content_basic(cti_text, cti_source_url, submitter_credit, is_r
                 "text": f"\nFor this hunt, use:\n- Submitter: {submitter_credit}\n- Source URL: {cti_source_url}"
             })
 
+            # Build system message with optional caching
+            system_msg = {"type": "text", "text": SYSTEM_PROMPT}
+            if cache_control:
+                system_msg["cache_control"] = cache_control
+
             response = anthropic_client.messages.create(
                 model=CLAUDE_MODEL,
                 max_tokens=1200,
                 temperature=temperature,
-                system=[
-                    {
-                        "type": "text",
-                        "text": SYSTEM_PROMPT,
-                        "cache_control": {"type": "ephemeral"}
-                    }
-                ],
+                system=[system_msg],
                 messages=[{
                     "role": "user",
                     "content": user_content

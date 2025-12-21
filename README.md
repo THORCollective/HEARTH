@@ -195,7 +195,35 @@ For maintainers and self-hosted instances, HEARTH can be configured using enviro
 | `ANTHROPIC_API_KEY` | API key for Claude (required if using Claude) | - | Yes (for Claude) |
 | `OPENAI_API_KEY` | API key for OpenAI (required if using OpenAI) | - | Yes (for OpenAI) |
 | `CLAUDE_MODEL` | Specific Claude model version to use | `claude-sonnet-4-5-20250929` | No |
+| `ENABLE_PROMPT_CACHING` | Enable Anthropic prompt caching for cost reduction | `true` | No |
+| `PROMPT_CACHE_TTL` | Cache time-to-live: `5m` (5 minutes) or `1h` (1 hour) | `5m` | No |
 | `LOG_LEVEL` | Logging verbosity level (`DEBUG`, `INFO`, `WARNING`, `ERROR`) | `INFO` | No |
+
+### Anthropic Prompt Caching
+
+HEARTH uses Anthropic's prompt caching feature to reduce API costs by up to 67% and improve response times. This feature is enabled by default and can be controlled via environment variables.
+
+**Benefits:**
+- **90% cost reduction** on cached tokens (reads cost only 10% of base input rate)
+- **Faster response times** by reusing previously processed content
+- **Estimated savings**: $50-150/year for typical usage
+
+**How it works:**
+- Static content (system prompts, hunt templates) is cached on first use
+- Subsequent requests reuse the cached content instead of re-processing
+- Caches automatically expire after the configured TTL (5 minutes by default)
+
+**Configuration:**
+- Set `ENABLE_PROMPT_CACHING=false` to disable caching (not recommended)
+- Set `PROMPT_CACHE_TTL=1h` for 1-hour cache duration (useful for batch processing)
+- Default 5-minute TTL is optimal for most use cases
+
+**Monitoring:**
+The system automatically logs cache performance metrics including:
+- Cache hit/miss rate
+- Token usage breakdown
+- Cost savings per API call
+- Total session savings
 
 ### GitHub Actions Configuration
 

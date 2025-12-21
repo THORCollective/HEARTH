@@ -41,6 +41,10 @@ class HearthConfig:
     ai_temperature: float = 0.2
     ai_max_tokens: int = 2000
 
+    # Anthropic prompt caching settings
+    enable_prompt_caching: bool = True
+    cache_ttl: str = "5m"  # "5m" for 5 minutes (default), "1h" for 1 hour
+
     # Similarity detection settings
     hypothesis_similarity_threshold: float = 0.75
     enable_similarity_checking: bool = True
@@ -100,7 +104,9 @@ class ConfigManager:
             'HEARTH_SIMILARITY_THRESHOLD': 'similarity_threshold',
             'OPENAI_MODEL': 'openai_model',
             'GITHUB_REPO_URL': 'github_repo_url',
-            'GITHUB_BRANCH': 'github_branch'
+            'GITHUB_BRANCH': 'github_branch',
+            'ENABLE_PROMPT_CACHING': 'enable_prompt_caching',
+            'PROMPT_CACHE_TTL': 'cache_ttl'
         }
 
         for env_var, config_attr in env_mappings.items():
@@ -112,6 +118,8 @@ class ConfigManager:
                     value = int(value)
                 elif config_attr in ['similarity_threshold', 'ai_temperature']:
                     value = float(value)
+                elif config_attr == 'enable_prompt_caching':
+                    value = value.lower() in ('true', '1', 'yes', 'on')
 
                 setattr(self._config, config_attr, value)
                 logger.debug(f"Applied environment override: {config_attr} = {value}")
