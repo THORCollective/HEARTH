@@ -234,10 +234,20 @@ css/
   - Responsive mobile styles for header layout (from style.css:2063-2072)
 
 ### Extract Utilities
-- [ ] Create `css/utilities.css`
-- [ ] Extract helper classes (.text-center, .hidden, etc.)
-- [ ] Extract spacing utilities
-- [ ] Extract display utilities
+- [x] Create `css/utilities.css`
+- [x] Extract helper classes (.text-center, .hidden, etc.)
+- [x] Extract spacing utilities
+- [x] Extract display utilities
+
+**Notes:** Created comprehensive utilities.css file including:
+  - Visibility utilities (.visually-hidden, .hidden from style.css:779-789, 346-348)
+  - Display state utilities (.open, .is-expanded, .is-open, .is-selected, .is-active from style.css:202-204, 1744-1748, 1465-1469, 1534-1539, 173-177)
+  - Interaction state utilities (.chat-resizing from style.css:206-212)
+  - Spacing utilities (.active-filters__empty from style.css:1403-1406)
+  - Icon utilities (.btn-icon, .search-icon from style.css:1562-1564, 1309-1311)
+  - Animation utilities (@keyframes spin, @keyframes typing from style.css:2041-2044, 915-918, 871-880)
+  - Text utilities (.hint, .eyebrow from style.css:1799-1803, 1127-1133)
+  - Content utilities (.hunt-detail-content from style.css:2006-2010)
 
 ### Create Main CSS File
 - [ ] Create `css/main.css`

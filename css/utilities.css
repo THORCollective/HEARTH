@@ -1,0 +1,225 @@
+/**
+ * Utilities
+ *
+ * Helper classes and utilities for common patterns.
+ * Includes visibility helpers, state classes, and reusable utilities.
+ */
+
+/* ===================================
+   Visibility Utilities
+   =================================== */
+
+/**
+ * Visually hide element while keeping it accessible to screen readers
+ * Extracted from style.css:779-789
+ */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/**
+ * Hide element completely from both visual and screen readers
+ * Used for chat toggle button (style.css:346-348)
+ */
+.hidden {
+    display: none;
+}
+
+/* ===================================
+   Display State Utilities
+   =================================== */
+
+/**
+ * Open state for expandable elements
+ * Used by chat widget (style.css:202-204)
+ */
+.open {
+    display: flex;
+}
+
+/**
+ * Expanded state for cards with preview
+ * Used by hunt cards (style.css:1744-1748)
+ */
+.is-expanded .hunt-preview {
+    max-height: 320px;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/**
+ * Open state for advanced filters panel
+ * Extracted from style.css:1465-1469
+ */
+.is-open {
+    max-height: 1200px;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/**
+ * Selected state for chips and filter elements
+ * Extracted from style.css:1534-1539
+ */
+.is-selected {
+    background: var(--accent);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 8px 18px rgba(138, 71, 255, 0.35);
+}
+
+/**
+ * Active state for theme swatches
+ * Extracted from style.css:173-177
+ */
+.is-active {
+    opacity: 1;
+    border-color: rgba(255, 255, 255, 0.8);
+    transform: translateY(-1px);
+}
+
+/* ===================================
+   Interaction State Utilities
+   =================================== */
+
+/**
+ * Resizing state for chat widget
+ * Disables transitions and pointer events during resize
+ * Extracted from style.css:206-212
+ */
+.chat-resizing {
+    transition: none !important;
+}
+
+.chat-resizing * {
+    pointer-events: none;
+}
+
+/* ===================================
+   Spacing Utilities
+   =================================== */
+
+/**
+ * Empty state helper for active filters
+ * Extracted from style.css:1403-1406
+ */
+.active-filters__empty {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* ===================================
+   Icon Utilities
+   =================================== */
+
+/**
+ * Button icon sizing
+ * Extracted from style.css:1562-1564
+ */
+.btn-icon {
+    font-size: 1rem;
+}
+
+/**
+ * Search icon sizing
+ * Extracted from style.css:1309-1311
+ */
+.search-icon {
+    font-size: 1.25rem;
+}
+
+/* ===================================
+   Animation Utilities
+   =================================== */
+
+/**
+ * Spinning animation for loading spinners
+ * Extracted from style.css:2041-2044, 915-918
+ */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/**
+ * Typing animation for chat typing indicator
+ * Extracted from style.css:871-880
+ */
+@keyframes typing {
+    0%, 60%, 100% {
+        transform: translateY(0px);
+        opacity: 0.4;
+    }
+    30% {
+        transform: translateY(-10px);
+        opacity: 1;
+    }
+}
+
+/* ===================================
+   Text Utilities
+   =================================== */
+
+/**
+ * Helper for card footer hints
+ * Extracted from style.css:1799-1803
+ */
+.hint {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+/**
+ * Eyebrow text style (small uppercase label)
+ * Extracted from style.css:1127-1133
+ */
+.eyebrow {
+    margin: 0;
+    font-size: 0.8rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+/* ===================================
+   Content Utilities
+   =================================== */
+
+/**
+ * Generic content wrapper for modal bodies and sections
+ * Provides consistent spacing for stacked content
+ * Based on patterns from style.css:1927-1931, 2006-2010
+ */
+.hunt-detail-content {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+
+/* ===================================
+   Notes
+   =================================== */
+
+/**
+ * UTILITY CLASS ORGANIZATION:
+ * - Visibility: .visually-hidden, .hidden
+ * - Display States: .open, .is-expanded, .is-open, .is-selected, .is-active
+ * - Interaction States: .chat-resizing
+ * - Spacing: .active-filters__empty
+ * - Icons: .btn-icon, .search-icon
+ * - Animations: @keyframes spin, @keyframes typing
+ * - Text: .hint, .eyebrow
+ * - Content: .hunt-detail-content
+ *
+ * These utility classes are extracted from the original style.css and provide
+ * reusable patterns for common UI states and behaviors throughout the application.
+ */
