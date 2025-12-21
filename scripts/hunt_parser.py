@@ -359,20 +359,20 @@ class HuntProcessor:
     def print_statistics(self, stats: Dict[str, Any]) -> None:
         """Print statistics to console."""
         try:
-            print(f"\nGenerated hunts-data.js with {stats['total_hunts']} hunts")
+            logger.info(f"Generated hunts-data.js with {stats['total_hunts']} hunts")
 
-            print("\nStatistics:")
+            logger.info("Statistics:")
             for category, count in stats['category_counts'].items():
-                print(f"  {category}: {count} hunts")
+                logger.info(f"{category}: {count} hunts")
 
-            print(f"\nUnique tactics: {stats['tactics_count']}")
+            logger.info(f"Unique tactics: {stats['tactics_count']}")
             for tactic in stats['unique_tactics']:
-                print(f"  - {tactic}")
+                logger.info(f"- {tactic}")
 
-            print(f"\nUnique tags: {stats['tags_count']}")
+            logger.info(f"Unique tags: {stats['tags_count']}")
             for tag in stats['unique_tags']:
-                print(f"  - #{tag}")
-                
+                logger.info(f"- #{tag}")
+
         except Exception as error:
             logger.error(f"Error printing statistics: {error}")
 

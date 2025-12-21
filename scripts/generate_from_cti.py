@@ -3,6 +3,9 @@ from pathlib import Path
 from dotenv import load_dotenv
 from PyPDF2 import PdfReader
 from datetime import datetime
+from logger_config import get_logger
+
+logger = get_logger()
 
 # Add Anthropic (Claude) support
 try:
@@ -16,7 +19,7 @@ try:
     from hypothesis_deduplicator import get_hypothesis_deduplicator
     TTP_DIVERSITY_AVAILABLE = True
 except ImportError:
-    print("⚠️ TTP diversity system not available. Skipping TTP diversity checks.")
+    logger.warning("TTP diversity system not available. Skipping TTP diversity checks.")
     TTP_DIVERSITY_AVAILABLE = False
 
 # Import MITRE ATT&CK data
@@ -24,7 +27,7 @@ try:
     from mitre_attack import get_mitre_attack
     MITRE_AVAILABLE = True
 except ImportError:
-    print("⚠️ MITRE ATT&CK data not available. Using fallback tactic matching.")
+    logger.warning("MITRE ATT&CK data not available. Using fallback tactic matching.")
     MITRE_AVAILABLE = False
 
 # Import unified duplicate detection module
@@ -32,7 +35,7 @@ try:
     from duplicate_detector import check_duplicates_for_new_submission
     DUPLICATE_DETECTION_AVAILABLE = True
 except ImportError:
-    print("⚠️ Duplicate detection module not available.")
+    logger.warning("Duplicate detection module not available.")
     DUPLICATE_DETECTION_AVAILABLE = False
 
 load_dotenv()
@@ -83,8 +86,8 @@ def extract_technique_and_tactic(content: str) -> tuple:
             if tech_data:
                 tactic = mitre.get_technique_tactic(tech_id)
                 if tactic:
-                    print(f"✅ Validated technique {tech_id}: {tech_data['name']}")
-                    print(f"   MITRE tactic: {tactic}")
+                    logger.info(f"Validated technique {tech_id}: {tech_data['name']}")
+                    logger.info(f"MITRE tactic: {tactic}")
                     return (tech_id, tactic, 1.0)  # 100% confidence from MITRE
 
     # Fallback: Extract from table in generated content
@@ -215,10 +218,10 @@ def summarize_cti_with_map_reduce(text, model="gpt-4", max_tokens=128000):
     text_token_count = len(text) / 4
 
     if text_token_count < max_tokens * 0.7:  # If text is well within the limit
-        print("✅ CTI content is within the context window. No summarization needed.")
+        logger.info("CTI content is within the context window. No summarization needed.")
         return text
 
-    print(f"⚠️ CTI content is too long ({int(text_token_count)} tokens). Starting map-reduce summarization.")
+    logger.warning(f"CTI content is too long ({int(text_token_count)} tokens). Starting map-reduce summarization.")
 
     # 1. Map: Split the document into overlapping chunks
     chunk_size = int(max_tokens * 0.6)  # Use 60% of the model's context for each chunk
@@ -231,12 +234,12 @@ def summarize_cti_with_map_reduce(text, model="gpt-4", max_tokens=128000):
         chunks.append(text[start:end])
         start += chunk_size - overlap
 
-    print(f"Split CTI into {len(chunks)} chunks.")
+    logger.info(f"Split CTI into {len(chunks)} chunks.")
 
     # 2. Summarize each chunk
     chunk_summaries = []
     for i, chunk in enumerate(chunks):
-        print(f"Summarizing chunk {i +1}/{len(chunks)}...")
+        logger.info(f"Summarizing chunk {i +1}/{len(chunks)}...")
         try:
             if AI_PROVIDER == "claude":
                 # Claude prompt format: system prompt, then user content
@@ -269,12 +272,12 @@ def summarize_cti_with_map_reduce(text, model="gpt-4", max_tokens=128000):
                 summary = response.choices[0].message.content.strip()
             chunk_summaries.append(summary)
         except Exception as e:
-            print(f"❌ Error summarizing chunk {i +1}: {e}")
+            logger.error(f"Error summarizing chunk {i +1}: {e}")
             # If a chunk fails, we just add a note and continue
             chunk_summaries.append(f"[Could not summarize chunk {i +1}]")
 
     # 3. Reduce: Create a final summary from the individual summaries
-    print("Creating final summary of all chunks...")
+    logger.info("Creating final summary of all chunks...")
     combined_summary = "\n\n---\n\n".join(chunk_summaries)
 
     try:
@@ -307,7 +310,7 @@ def summarize_cti_with_map_reduce(text, model="gpt-4", max_tokens=128000):
             )
             return final_response.choices[0].message.content.strip()
     except Exception as e:
-        print(f"❌ Error creating final summary: {e}")
+        logger.error(f"Error creating final summary: {e}")
         # Fallback: return the combined summaries if the final step fails
         return f"WARNING: Final summarization failed. Combined summaries provided below:\n\n{combined_summary}"
 
@@ -338,7 +341,7 @@ def cleanup_hunt_body(ai_content):
             break
 
     if first_content_index == -1:
-        print("⚠️ Could not find the start of the hypothesis. Returning raw content.")
+        logger.warning("Could not find the start of the hypothesis. Returning raw content.")
         return ai_content
 
     # The hypothesis might have a "Hypothesis:" label. Let's remove that specifically.
@@ -352,26 +355,26 @@ def cleanup_hunt_body(ai_content):
 def generate_hunt_content_with_ttp_diversity(cti_text, cti_source_url, submitter_credit, is_regeneration=False, max_attempts=5, user_feedback=None):
     """Generate hunt content with TTP diversity enforcement."""
     try:
-        print("Starting CTI summarization...")
+        logger.info("Starting CTI summarization...")
         summary = summarize_cti_with_map_reduce(cti_text)
-        print("CTI summarization complete.")
+        logger.info("CTI summarization complete.")
 
         # Initialize TTP diversity checker
         if TTP_DIVERSITY_AVAILABLE:
-            print("🎯 Using TTP diversity system for generation")
+            logger.info("Using TTP diversity system for generation")
             deduplicator = get_hypothesis_deduplicator()
 
             # Load existing hunts to build TTP context for this session
             if is_regeneration:
-                print("🔄 Loading existing hunts to build TTP diversity context...")
+                logger.info("Loading existing hunts to build TTP diversity context...")
                 _load_existing_hunts_for_ttp_context(deduplicator)
         else:
-            print("⚠️ TTP diversity system unavailable, using basic generation")
+            logger.warning("TTP diversity system unavailable, using basic generation")
             return generate_hunt_content_basic(summary, cti_source_url, submitter_credit, is_regeneration, user_feedback)
 
         # Attempt generation with TTP diversity
         for attempt in range(max_attempts):
-            print(f"🔄 Generation attempt {attempt + 1}/{max_attempts}")
+            logger.info(f"Generation attempt {attempt + 1}/{max_attempts}")
 
             regeneration_instruction = ""
             temperature = 0.2 + (attempt * 0.1)  # Increase temperature with attempts
@@ -429,7 +432,7 @@ def generate_hunt_content_with_ttp_diversity(cti_text, cti_source_url, submitter
                 hunt_content = response.choices[0].message.content.strip()
 
             if not hunt_content:
-                print(f"❌ Attempt {attempt + 1} failed: No content generated")
+                logger.error(f"Attempt {attempt + 1} failed: No content generated")
                 continue
 
             # Extract hypothesis for TTP diversity check
@@ -441,31 +444,31 @@ def generate_hunt_content_with_ttp_diversity(cti_text, cti_source_url, submitter
             # Extract technique ID and tactic using MITRE ATT&CK data
             technique_id, tactic, confidence = extract_technique_and_tactic(cleaned_content)
 
-            print(f"🔍 Generated hypothesis: {hypothesis[:80]}...")
-            print(f"🎯 Detected tactic: {tactic} (confidence: {confidence:.0%})")
+            logger.info(f"Generated hypothesis: {hypothesis[:80]}...")
+            logger.info(f"Detected tactic: {tactic} (confidence: {confidence:.0%})")
             if technique_id:
-                print(f"   Technique: {technique_id}")
+                logger.info(f"   Technique: {technique_id}")
 
             # Check TTP diversity
             ttp_result = deduplicator.check_hypothesis_uniqueness(hypothesis, tactic)
 
             if not ttp_result.is_duplicate:
-                print(f"✅ TTP diversity achieved on attempt {attempt + 1}")
-                print(f"   TTP overlap: {ttp_result.max_similarity_score:.1%}")
-                print(f"   Recommendation: {ttp_result.recommendation}")
+                logger.info(f"TTP diversity achieved on attempt {attempt + 1}")
+                logger.info(f"   TTP overlap: {ttp_result.max_similarity_score:.1%}")
+                logger.info(f"   Recommendation: {ttp_result.recommendation}")
                 return hunt_content
             else:
-                print(f"❌ Attempt {attempt + 1} rejected: TTP overlap {ttp_result.max_similarity_score:.1%}")
-                print(f"   Reason: {ttp_result.recommendation}")
+                logger.error(f"Attempt {attempt + 1} rejected: TTP overlap {ttp_result.max_similarity_score:.1%}")
+                logger.error(f"   Reason: {ttp_result.recommendation}")
                 if ttp_result.ttp_overlap:
-                    print(f"   Analysis: {ttp_result.ttp_overlap.explanation}")
+                    logger.error(f"   Analysis: {ttp_result.ttp_overlap.explanation}")
                 continue
 
-        print(f"⚠️ All {max_attempts} attempts had similar TTPs. Using last attempt with warning.")
+        logger.warning(f"All {max_attempts} attempts had similar TTPs. Using last attempt with warning.")
         return hunt_content
 
     except Exception as e:
-        print(f"❌ Error in TTP-diverse generation: {str(e)}")
+        logger.error(f"Error in TTP-diverse generation: {str(e)}")
         return None
 
 
@@ -475,7 +478,7 @@ def generate_hunt_content_basic(cti_text, cti_source_url, submitter_credit, is_r
         regeneration_instruction = ""
         temperature = 0.2
         if is_regeneration:
-            print("🔄 This is a regeneration. Requesting a new hypothesis.")
+            logger.info("This is a regeneration. Requesting a new hypothesis.")
 
             # Add user feedback constraints
             feedback_instruction = ""
@@ -516,7 +519,7 @@ def generate_hunt_content_basic(cti_text, cti_source_url, submitter_credit, is_r
             )
             return response.choices[0].message.content.strip()
     except Exception as e:
-        print(f"❌ Error generating hunt content: {str(e)}")
+        logger.error(f"Error generating hunt content: {str(e)}")
         return None
 
 # Alias for backward compatibility
@@ -534,12 +537,12 @@ def _load_existing_hunts_for_ttp_context(deduplicator):
 
         flames_dir = Path("Flames/")
         if not flames_dir.exists():
-            print("   No Flames directory found, starting with empty TTP context")
+            logger.info("   No Flames directory found, starting with empty TTP context")
             return
 
         hunt_files = list(flames_dir.glob("H-*.md"))
         if not hunt_files:
-            print("   No existing hunt files found, starting with empty TTP context")
+            logger.info("   No existing hunt files found, starting with empty TTP context")
             return
 
         # Load recent hunts (last 10) to build context without overloading
@@ -578,19 +581,19 @@ def _load_existing_hunts_for_ttp_context(deduplicator):
                 loaded_count += 1
 
             except Exception as e:
-                print(f"   Warning: Could not load {hunt_file.name}: {e}")
+                logger.warning(f"   Could not load {hunt_file.name}: {e}")
                 continue
 
-        print(f"   📚 Loaded {loaded_count} existing hunts for TTP context")
+        logger.info(f"   Loaded {loaded_count} existing hunts for TTP context")
 
         # Show current TTP diversity stats
         stats = deduplicator.ttp_checker.get_stats()
         if stats.get('total_attempts', 0) > 0:
-            print(f"   🎯 TTP Context: {stats['unique_tactics']} tactics, {stats['unique_techniques']} techniques")
-            print(f"   📋 Tactics in context: {', '.join(stats.get('tactics_used', [])[:5])}")
+            logger.info(f"   TTP Context: {stats['unique_tactics']} tactics, {stats['unique_techniques']} techniques")
+            logger.info(f"   Tactics in context: {', '.join(stats.get('tactics_used', [])[:5])}")
 
     except Exception as e:
-        print(f"   ⚠️ Error loading existing hunts: {e}")
+        logger.warning(f"   Error loading existing hunts: {e}")
 
 
 def read_file_content(file_path):
@@ -603,13 +606,13 @@ def read_file_content(file_path):
                 text += page.extract_text() + "\n"
             return text.strip()
         except Exception as e:
-            print(f"Error reading PDF {file_path}: {str(e)}")
+            logger.error(f"Error reading PDF {file_path}: {str(e)}")
             return None
     else:
         try:
             return file_path.read_text()
         except Exception as e:
-            print(f"Error reading file {file_path}: {str(e)}")
+            logger.error(f"Error reading file {file_path}: {str(e)}")
             return None
 
 
@@ -620,7 +623,7 @@ if __name__ == "__main__":
     if existing_hunt_path:
         out_md_path = Path(existing_hunt_path)
         hunt_id = out_md_path.stem
-        print(f"🔄 Regenerating hunt for {hunt_id} at {out_md_path}")
+        logger.info(f"Regenerating hunt for {hunt_id} at {out_md_path}")
     else:
         # Determine the next hunt number
         hunt_files = list(Path(".").glob("Flames/H*.md"))
@@ -642,12 +645,12 @@ if __name__ == "__main__":
         year = datetime.now().year
         hunt_id = f"H-{year}-{next_hunt_num:03d}"
         out_md_path = Path(f"Flames/{hunt_id}.md")
-        print(f"🌱 Generating new hunt: {hunt_id}")
+        logger.info(f"Generating new hunt: {hunt_id}")
 
     cti_source_url = os.getenv("CTI_SOURCE_URL")
     if not cti_source_url:
         # For programmatic submissions, this URL is still required for the references section.
-        print("⚠️ CTI_SOURCE_URL not found, reference link will be empty.")
+        logger.warning("CTI_SOURCE_URL not found, reference link will be empty.")
         cti_source_url = ""
 
     # SECURELY get CTI content from the file prepared by the workflow
@@ -656,7 +659,7 @@ if __name__ == "__main__":
         raise FileNotFoundError(f"❌ No CTI file found in the input directory '{CTI_INPUT_DIR}'.")
 
     cti_file_path = cti_files[0]
-    print(f"📄 Processing CTI file: {cti_file_path}")
+    logger.info(f"Processing CTI file: {cti_file_path}")
     cti_content = read_file_content(cti_file_path)
 
     # Get submitter info
@@ -697,7 +700,7 @@ if __name__ == "__main__":
             # 5. Save the hunt file
             with open(out_md_path, "w") as f:
                 f.write(final_content)
-            print(f"✅ Successfully wrote hunt to {out_md_path}")
+            logger.info(f"Successfully wrote hunt to {out_md_path}")
 
             # 6. Set the output for the GitHub Action
             if 'GITHUB_OUTPUT' in os.environ:
@@ -709,12 +712,12 @@ if __name__ == "__main__":
                     print('EOF', file=f)
 
             # 7. Run TTP diversity analysis and legacy duplicate detection
-            diversity_analysis = "✅ TTP diversity system used during generation"
+            diversity_analysis = "TTP diversity system used during generation"
             if TTP_DIVERSITY_AVAILABLE:
-                print("🎯 Getting TTP diversity statistics...")
+                logger.info("Getting TTP diversity statistics...")
                 deduplicator = get_hypothesis_deduplicator()
                 stats = deduplicator.ttp_checker.get_stats()
-                diversity_analysis = f"""🎯 TTP Diversity Analysis:
+                diversity_analysis = f"""TTP Diversity Analysis:
 - Total unique hypotheses in session: {stats.get('total_attempts', 0)}
 - Unique tactics covered: {stats.get('unique_tactics', 0)}
 - Unique techniques covered: {stats.get('unique_techniques', 0)}
@@ -722,9 +725,9 @@ if __name__ == "__main__":
 - Generated with TTP diversity enforcement to prevent similar TTPs"""
 
             if DUPLICATE_DETECTION_AVAILABLE:
-                print("🔍 Running legacy duplicate detection...")
+                logger.info("Running legacy duplicate detection...")
                 duplicate_analysis = check_duplicates_for_new_submission(final_content, out_md_path.name)
-                print("Legacy duplicate detection complete.")
+                logger.info("Legacy duplicate detection complete.")
             else:
                 duplicate_analysis = "⚠️ Legacy duplicate detection not available."
 
@@ -738,6 +741,6 @@ if __name__ == "__main__":
                     print(duplicate_analysis, file=f)
                     print('EOF', file=f)
         else:
-            print("Could not generate hunt content. Skipping file creation.")
+            logger.error("Could not generate hunt content. Skipping file creation.")
     else:
-        print("Could not retrieve CTI content. Skipping hunt generation.")
+        logger.error("Could not retrieve CTI content. Skipping hunt generation.")

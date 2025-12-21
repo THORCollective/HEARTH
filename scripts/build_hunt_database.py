@@ -18,6 +18,9 @@ from pathlib import Path
 from datetime import datetime
 import sys
 import hashlib
+from logger_config import get_logger
+
+logger = get_logger()
 
 
 def get_file_hash(filepath):
@@ -207,12 +210,12 @@ def scan_and_update_hunts(conn, hunt_directories, verbose=True):
         directory_path = Path(directory_name)
         if not directory_path.exists():
             if verbose:
-                print(f"⚠️  Directory {directory_name} not found, skipping...")
+                logger.warning(f"Directory {directory_name} not found, skipping...")
             continue
 
         hunt_files = list(directory_path.glob("*.md"))
         if verbose:
-            print(f"📁 Scanning {directory_name}/ ({len(hunt_files)} files)...")
+            logger.info(f"Scanning {directory_name}/ ({len(hunt_files)} files)...")
 
         for hunt_file in hunt_files:
             try:
@@ -235,7 +238,7 @@ def scan_and_update_hunts(conn, hunt_directories, verbose=True):
 
                     # File modified - update it
                     if verbose:
-                        print(f"  🔄 Updating {hunt_file.name}...")
+                        logger.info(f"Updating {hunt_file.name}...")
 
                     content = hunt_file.read_text()
                     hunt_info = extract_hunt_info(content, str(hunt_file))
@@ -265,7 +268,7 @@ def scan_and_update_hunts(conn, hunt_directories, verbose=True):
                 else:
                     # New file - insert it
                     if verbose:
-                        print(f"  ✅ Adding {hunt_file.name}...")
+                        logger.info(f"Adding {hunt_file.name}...")
 
                     content = hunt_file.read_text()
                     hunt_info = extract_hunt_info(content, str(hunt_file))
@@ -298,7 +301,7 @@ def scan_and_update_hunts(conn, hunt_directories, verbose=True):
             except Exception as e:
                 errors += 1
                 if verbose:
-                    print(f"  ❌ Error processing {hunt_file.name}: {e}")
+                    logger.error(f"Error processing {hunt_file.name}: {e}")
                 continue
 
     # Clean up deleted files
@@ -309,7 +312,7 @@ def scan_and_update_hunts(conn, hunt_directories, verbose=True):
     for filename, filepath in all_db_files:
         if not Path(filepath).exists():
             if verbose:
-                print(f"  🗑️  Removing deleted file: {filename}")
+                logger.info(f"Removing deleted file: {filename}")
             conn.execute('DELETE FROM hunts WHERE filename = ?', (filename,))
             deleted += 1
 
@@ -350,16 +353,16 @@ def print_statistics(conn):
     last_updated = cursor.fetchone()
     last_updated = last_updated[0] if last_updated else "Never"
 
-    print("\n📊 Database Statistics:")
-    print(f"   Total hunts: {total}")
-    print(f"   Unique tactics: {unique_tactics}")
-    print(f"   Unique techniques: {unique_techniques}")
-    print(f"   Last updated: {last_updated}")
+    logger.info("Database Statistics:")
+    logger.info(f"Total hunts: {total}")
+    logger.info(f"Unique tactics: {unique_tactics}")
+    logger.info(f"Unique techniques: {unique_techniques}")
+    logger.info(f"Last updated: {last_updated}")
 
     if top_tactics:
-        print("\n🔥 Top Tactics:")
+        logger.info("Top Tactics:")
         for tactic, count in top_tactics:
-            print(f"   {tactic}: {count} hunts")
+            logger.info(f"{tactic}: {count} hunts")
 
 
 def main():
@@ -381,16 +384,15 @@ def main():
     # Rebuild if requested
     if args.rebuild and db_path.exists():
         if verbose:
-            print("🔄 Rebuilding database from scratch...")
+            logger.info("Rebuilding database from scratch...")
         db_path.unlink()
 
     # Connect to database
     conn = sqlite3.connect(str(db_path))
 
     if verbose:
-        print("🗄️  HEARTH Hunt Database Builder")
-        print(f"   Database: {db_path}")
-        print()
+        logger.info("HEARTH Hunt Database Builder")
+        logger.info(f"Database: {db_path}")
 
     # Create schema
     create_database_schema(conn)
@@ -400,14 +402,14 @@ def main():
     stats = scan_and_update_hunts(conn, hunt_directories, verbose=verbose)
 
     if verbose:
-        print("\n✨ Update complete!")
-        print(f"   Processed: {stats['processed']} files")
-        print(f"   Added: {stats['added']} new hunts")
-        print(f"   Updated: {stats['updated']} modified hunts")
-        print(f"   Skipped: {stats['skipped']} unchanged hunts")
-        print(f"   Deleted: {stats['deleted']} removed hunts")
+        logger.info("Update complete!")
+        logger.info(f"Processed: {stats['processed']} files")
+        logger.info(f"Added: {stats['added']} new hunts")
+        logger.info(f"Updated: {stats['updated']} modified hunts")
+        logger.info(f"Skipped: {stats['skipped']} unchanged hunts")
+        logger.info(f"Deleted: {stats['deleted']} removed hunts")
         if stats['errors'] > 0:
-            print(f"   ⚠️  Errors: {stats['errors']} files failed")
+            logger.warning(f"Errors: {stats['errors']} files failed")
 
         print_statistics(conn)
     else:

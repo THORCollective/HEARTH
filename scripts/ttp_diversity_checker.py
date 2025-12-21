@@ -515,20 +515,20 @@ if __name__ == "__main__":
         "Malicious actors perform network scanning using Nmap for discovery"
     ]
 
-    print("Testing TTP Diversity Checker")
-    print("=" * 50)
+    logger.info("Testing TTP Diversity Checker")
+    logger.info("=" * 50)
 
     for i, hypothesis in enumerate(hypotheses, 1):
-        print(f"\nHypothesis {i}: {hypothesis}")
+        logger.info(f"Hypothesis {i}: {hypothesis}")
         overlap = checker.check_ttp_diversity(hypothesis)
-        print(f"Overlap Score: {overlap.overlap_score:.2%}")
-        print(f"Too Similar: {overlap.is_too_similar()}")
-        print(f"Explanation: {overlap.explanation}")
+        logger.info(f"Overlap Score: {overlap.overlap_score:.2%}")
+        logger.info(f"Too Similar: {overlap.is_too_similar()}")
+        logger.info(f"Explanation: {overlap.explanation}")
 
         if overlap.is_too_similar():
             suggestions = checker.get_diversity_suggestions(
                 checker.extractor.extract_ttps(hypothesis)
             )
-            print(f"Suggestions: {'; '.join(suggestions)}")
+            logger.info(f"Suggestions: {'; '.join(suggestions)}")
 
-    print(f"\nFinal Stats: {checker.get_stats()}")
+    logger.info(f"Final Stats: {checker.get_stats()}")

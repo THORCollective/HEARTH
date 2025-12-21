@@ -5,6 +5,9 @@ from hunt_parser_utils import (
     find_hunt_files,
     extract_submitter_info
 )
+from logger_config import get_logger
+
+logger = get_logger()
 
 
 def extract_contributor_name(cell_content):
@@ -70,14 +73,14 @@ def generate_leaderboard():
             if contributor_name and contributor_name != "hearth-auto-intel":
                 contributors.append(contributor_name)
         except Exception as e:
-            print(f"Could not process file {hunt_file}: {e}")
+            logger.error(f"Could not process file {hunt_file}: {e}")
 
     contribution_counts = Counter(contributors)
     sorted_contributors = sorted(contribution_counts.items(), key=lambda contributor_data: contributor_data[1], reverse=True)
 
     markdown_content = build_leaderboard_markdown(sorted_contributors)
     save_leaderboard_file(markdown_content)
-    print("✅ Successfully generated new Contributors.md")
+    logger.info("Successfully generated new Contributors.md")
 
 
 def build_leaderboard_markdown(sorted_contributors):

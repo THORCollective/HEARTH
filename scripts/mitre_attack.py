@@ -12,6 +12,9 @@ import json
 from pathlib import Path
 from typing import Dict, List, Optional
 import re
+from logger_config import get_logger
+
+logger = get_logger()
 
 
 class MITREAttack:
@@ -357,34 +360,34 @@ def search_techniques(query: str) -> List[Dict]:
 
 if __name__ == '__main__':
     # Test the MITRE ATT&CK manager
-    print("🔍 MITRE ATT&CK Data Manager Test\n")
+    logger.info("MITRE ATT&CK Data Manager Test")
 
     mitre = MITREAttack()
 
     # Test 1: Validate technique
-    print("1️⃣  Testing technique validation...")
+    logger.info("Testing technique validation...")
     tech = mitre.validate_technique("T1071.001")
     if tech:
-        print(f"   ✅ T1071.001: {tech['name']}")
-        print(f"      Tactics: {', '.join(tech['tactics'])}")
-        print(f"      Data Sources: {len(tech['data_sources'])}")
+        logger.info(f"T1071.001: {tech['name']}")
+        logger.info(f"Tactics: {', '.join(tech['tactics'])}")
+        logger.info(f"Data Sources: {len(tech['data_sources'])}")
     else:
-        print("   ❌ Validation failed")
+        logger.error("Validation failed")
 
     # Test 2: Search techniques
-    print("\n2️⃣  Searching for 'PowerShell' techniques...")
+    logger.info("Searching for 'PowerShell' techniques...")
     results = mitre.search_techniques_by_name("PowerShell")
-    print(f"   Found {len(results)} matches:")
+    logger.info(f"Found {len(results)} matches:")
     for result in results[:3]:
-        print(f"   - {result['id']}: {result['name']}")
+        logger.info(f"- {result['id']}: {result['name']}")
 
     # Test 3: Get techniques by tactic
-    print("\n3️⃣  Getting Command and Control techniques...")
+    logger.info("Getting Command and Control techniques...")
     c2_techniques = mitre.get_techniques_by_tactic("Command And Control")
-    print(f"   Found {len(c2_techniques)} techniques")
+    logger.info(f"Found {len(c2_techniques)} techniques")
 
     # Test 4: Statistics
-    print("\n📊 Statistics:")
-    print(f"   Total techniques: {len(mitre.techniques)}")
-    print(f"   Total tactics: {len(mitre.tactics)}")
-    print(f"   Tactics: {', '.join(sorted(mitre.tactics.keys()))}")
+    logger.info("Statistics:")
+    logger.info(f"Total techniques: {len(mitre.techniques)}")
+    logger.info(f"Total tactics: {len(mitre.tactics)}")
+    logger.info(f"Tactics: {', '.join(sorted(mitre.tactics.keys()))}")

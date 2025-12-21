@@ -3,9 +3,11 @@ from pathlib import Path
 from openai import OpenAI
 from dotenv import load_dotenv
 from datetime import datetime
+from logger_config import get_logger
 
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+logger = get_logger()
 
 SYSTEM_PROMPT = """You are an expert threat hunter, and your task is to reformat a manually submitted hunt idea into the official HEARTH markdown format.
 You will be given the raw components of a hunt from a GitHub issue.
@@ -158,7 +160,7 @@ if __name__ == "__main__":
     # 6. Save the file
     with open(out_md_path, "w") as f:
         f.write(final_content)
-    print(f"✅ Successfully wrote hunt to {out_md_path}")
+    logger.info(f"Successfully wrote hunt to {out_md_path}")
 
     # 7. Set output for the workflow
     if 'GITHUB_OUTPUT' in os.environ:

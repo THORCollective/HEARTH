@@ -411,20 +411,20 @@ if __name__ == "__main__":
         ("Malicious actors perform network scanning for discovery", "Discovery")  # Different TTP
     ]
 
-    print("Testing TTP-Aware Hypothesis Deduplicator")
-    print("=" * 60)
+    logger.info("Testing TTP-Aware Hypothesis Deduplicator")
+    logger.info("=" * 60)
 
     for i, (hypothesis, tactic) in enumerate(test_hypotheses, 1):
-        print(f"\nTest {i}: {hypothesis}")
-        print(f"Tactic: {tactic}")
+        logger.info(f"Test {i}: {hypothesis}")
+        logger.info(f"Tactic: {tactic}")
 
         result = deduplicator.check_hypothesis_uniqueness(hypothesis, tactic)
 
-        print(f"Is Duplicate: {result.is_duplicate}")
-        print(f"TTP Overlap: {result.max_similarity_score:.1%}")
-        print(f"Recommendation: {result.recommendation}")
+        logger.info(f"Is Duplicate: {result.is_duplicate}")
+        logger.info(f"TTP Overlap: {result.max_similarity_score:.1%}")
+        logger.info(f"Recommendation: {result.recommendation}")
 
         if result.ttp_overlap:
-            print(f"TTP Analysis: {result.ttp_overlap.explanation}")
+            logger.info(f"TTP Analysis: {result.ttp_overlap.explanation}")
 
-    print(f"\nFinal TTP Stats: {deduplicator.ttp_checker.get_stats()}")
+    logger.info(f"Final TTP Stats: {deduplicator.ttp_checker.get_stats()}")
