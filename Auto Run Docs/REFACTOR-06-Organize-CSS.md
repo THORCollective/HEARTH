@@ -29,15 +29,15 @@ css/
 ## Tasks
 
 ### Setup
-- [ ] Create `css/` directory
-- [ ] Create `css/components/` subdirectory
-- [ ] Read current `style.css` to understand organization
+- [x] Create `css/` directory
+- [x] Create `css/components/` subdirectory
+- [x] Read current `style.css` to understand organization
 
 ### Extract Variables
-- [ ] Create `css/variables.css`
-- [ ] Extract all CSS custom properties (--primary-color, etc.)
-- [ ] Organize by category (colors, spacing, typography, etc.)
-- [ ] Add comments documenting color schemes
+- [x] Create `css/variables.css`
+- [x] Extract all CSS custom properties (--primary-color, etc.)
+- [x] Organize by category (colors, spacing, typography, etc.)
+- [x] Add comments documenting color schemes
 
 ### Extract Reset Styles
 - [ ] Create `css/reset.css`

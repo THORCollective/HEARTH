@@ -1,0 +1,70 @@
+/* ========================================
+   CSS Custom Properties (Variables)
+   ======================================== */
+
+/* ===== Color Palette ===== */
+:root {
+    /* Primary Colors - Dark Theme */
+    --bg: radial-gradient(circle at top left, rgba(138, 71, 255, 0.25), transparent 55%),
+            radial-gradient(circle at bottom right, rgba(255, 76, 106, 0.15), transparent 60%),
+            #0f0f11;
+    --surface: rgba(28, 27, 31, 0.85);
+    --surface-glass: rgba(32, 33, 42, 0.7);
+    --surface-border: rgba(120, 122, 230, 0.25);
+
+    /* Text Colors */
+    --text-primary: #f7f5ff;
+    --text-muted: #a6a9c8;
+
+    /* Accent Colors */
+    --accent: #8a47ff;
+    --accent-soft: rgba(138, 71, 255, 0.2);
+    --accent-strong: #e457da;
+
+    /* Semantic Colors */
+    --success: #4bdca2;
+
+    /* Shadows */
+    --shadow-lg: 0 25px 60px rgba(14, 17, 35, 0.55);
+    --shadow-md: 0 16px 40px rgba(14, 17, 35, 0.35);
+
+    /* Border Radius */
+    --radius-lg: 28px;
+    --radius-md: 18px;
+    --radius-sm: 10px;
+
+    /* Spacing */
+    --grid-gap: clamp(1.5rem, 2vw, 2.5rem);
+
+    /* Transitions */
+    --transition: 220ms ease;
+}
+
+/* ===== Light Mode Color Scheme ===== */
+@media (prefers-color-scheme: light) {
+    :root {
+        /* Primary Colors - Light Theme */
+        --bg: radial-gradient(circle at top left, rgba(138, 71, 255, 0.06), transparent 55%),
+                radial-gradient(circle at bottom right, rgba(255, 76, 106, 0.04), transparent 60%),
+                #ffffff;
+        --surface: rgba(255, 255, 255, 1);
+        --surface-glass: rgba(255, 255, 255, 0.95);
+        --surface-border: rgba(138, 71, 255, 0.12);
+
+        /* Text Colors */
+        --text-primary: #1a1523;
+        --text-muted: #5a5c68;
+
+        /* Accent Colors */
+        --accent: #7a3ff2;
+        --accent-soft: rgba(122, 63, 242, 0.08);
+        --accent-strong: #d442c8;
+
+        /* Semantic Colors */
+        --success: #2eb87a;
+
+        /* Shadows */
+        --shadow-lg: 0 20px 40px rgba(33, 16, 62, 0.06);
+        --shadow-md: 0 8px 20px rgba(33, 16, 62, 0.04);
+    }
+}
