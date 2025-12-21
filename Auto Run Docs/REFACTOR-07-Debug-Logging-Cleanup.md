@@ -33,10 +33,17 @@ This phase removes or replaces debug logging statements with proper logging infr
   - Preserved print() statements that write to files (GitHub Actions output)
 
 ### JavaScript Logging Setup
-- [ ] Create `js/logger.js` module for structured logging
-- [ ] Implement log levels (debug, info, warn, error)
-- [ ] Add environment detection (dev vs production)
-- [ ] Disable debug logs in production
+- [x] Create `js/logger.js` module for structured logging
+- [x] Implement log levels (debug, info, warn, error)
+- [x] Add environment detection (dev vs production)
+- [x] Disable debug logs in production
+  - Created comprehensive logger module at js/logger.js
+  - Implements DEBUG, INFO, WARN, and ERROR log levels
+  - Auto-detects environment: localhost/file protocol = DEBUG mode, production = INFO mode
+  - Supports manual override via window.HEARTH_LOG_LEVEL or ?debug query parameter
+  - Provides getLogger(name) factory function for module-specific loggers
+  - Includes timestamp and module name in all log messages
+  - Debug logs automatically disabled in production environments
 
 ### JavaScript - Replace Console Logs
 - [ ] Search for all `console.log()` statements in JavaScript files
