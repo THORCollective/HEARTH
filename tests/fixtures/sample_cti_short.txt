@@ -1,0 +1,19 @@
+Security Alert: Chisel Tunneling Tool Abuse
+
+Recent observations indicate threat actors are deploying the Chisel tunneling tool to establish covert SOCKS proxies on compromised systems. This technique allows attackers to tunnel traffic through the victim's network, bypassing firewall restrictions and hiding command-and-control communications.
+
+Chisel is a legitimate open-source tool that creates TCP/UDP tunnels over HTTP, secured via SSH. In observed incidents, attackers used Chisel to:
+
+1. Establish reverse tunnels from compromised hosts back to attacker infrastructure (T1572 - Protocol Tunneling)
+2. Create SOCKS proxies for pivoting through the network (T1090 - Proxy)
+3. Bypass network segmentation controls
+
+Detection opportunities include monitoring for:
+- Unusual outbound HTTP connections with persistent connections
+- Processes named 'chisel' or 'chisel.exe' on endpoints
+- Command-line arguments containing 'client', 'server', 'socks', or reverse tunnel configurations
+- Network connections to unusual ports from non-standard applications
+
+Organizations should baseline normal tunneling tool usage and investigate any Chisel deployments outside approved IT operations.
+
+Reference: MITRE ATT&CK T1572, T1090

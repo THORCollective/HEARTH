@@ -26,10 +26,10 @@ This phase organizes the 23 scattered test files into a proper test suite with a
 - [x] Delete any obsolete or redundant test files (removed 7 duplicate/obsolete tests)
 
 ### Create Test Fixtures
-- [ ] Create sample hunt markdown files in `tests/fixtures/`
-- [ ] Create sample CTI content for testing
-- [ ] Create mock MITRE ATT&CK data if needed
-- [ ] Create shared test utilities in `tests/conftest.py`
+- [x] Create sample hunt markdown files in `tests/fixtures/` (created sample_flame.md, sample_ember.md, sample_alchemy.md with realistic hunt content)
+- [x] Create sample CTI content for testing (created sample_cti_article.txt with comprehensive CTI report and sample_cti_short.txt with brief alert)
+- [x] Create mock MITRE ATT&CK data if needed (created mock_mitre_attack.json with 22 techniques/tactics covering common test scenarios)
+- [x] Create shared test utilities in `tests/conftest.py` (added fixtures for all sample files, helper functions for validation, and utilities for creating temp test data)
 
 ### Configure Test Runner
 - [ ] Add pytest to `requirements.txt` if not present

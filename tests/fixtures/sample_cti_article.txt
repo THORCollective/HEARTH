@@ -1,0 +1,81 @@
+Sample CTI Article: Advanced Persistent Threat Using Living-off-the-Land Techniques
+
+Author: Security Researcher
+Date: 2024-01-15
+Source: https://example.com/cti-report
+
+Executive Summary
+
+A sophisticated threat actor group, tracked as APT-TEST, has been observed conducting targeted attacks against financial institutions using living-off-the-land binaries (LOLBins) to evade detection. This report details their tactics, techniques, and procedures (TTPs).
+
+Attack Overview
+
+The threat actor gains initial access through spear-phishing emails containing malicious Office documents. Once a user enables macros, the malware executes PowerShell commands to download additional payloads from attacker-controlled infrastructure.
+
+Key Techniques Observed
+
+1. Initial Access (T1566.001 - Spearphishing Attachment)
+The attackers send targeted emails with Excel documents containing malicious macros. The documents use social engineering themes related to urgent financial transactions to convince victims to enable macros.
+
+2. Execution (T1059.001 - PowerShell)
+Malicious macros execute obfuscated PowerShell commands that decode and run additional scripts. The PowerShell activity is designed to blend with normal administrative tasks.
+
+3. Defense Evasion (T1140 - Deobfuscate/Decode Files or Information)
+Payloads are heavily obfuscated using multiple layers of encoding including Base64, XOR, and custom encryption schemes. This makes static analysis difficult.
+
+4. Credential Access (T1003.001 - LSASS Memory)
+The threat actor uses custom tools to dump credentials from LSASS memory. They specifically target high-value accounts with domain administrator privileges.
+
+5. Lateral Movement (T1021.001 - Remote Desktop Protocol)
+Once credentials are obtained, attackers move laterally using RDP with stolen credentials. They disable NLA temporarily to avoid triggering alerts.
+
+6. Collection (T1114.001 - Email Collection)
+The attackers configure email forwarding rules to exfiltrate sensitive financial communications to external email addresses under their control.
+
+7. Exfiltration (T1041 - Exfiltration Over C2 Channel)
+Stolen data is compressed and encrypted before being exfiltrated over HTTPS to legitimate-looking cloud storage services.
+
+Indicators of Compromise
+
+File Hashes:
+- 5f4dcc3b5aa765d61d8327deb882cf99 (malicious Excel document)
+- 098f6bcd4621d373cade4e832627b4f6 (PowerShell payload)
+
+Domains:
+- malicious-finance-update.com
+- secure-banking-portal.net
+
+IP Addresses:
+- 192.0.2.100
+- 198.51.100.50
+
+Recommendations
+
+Organizations should implement the following defensive measures:
+
+1. Disable macros by default in Office applications
+2. Monitor PowerShell execution and maintain comprehensive logging
+3. Implement application whitelisting to prevent unauthorized executables
+4. Enable multi-factor authentication for all privileged accounts
+5. Monitor for suspicious RDP activity, especially from unexpected source IPs
+6. Review email forwarding rules regularly for unauthorized configurations
+7. Implement egress filtering to detect unusual data transfers
+
+Detection Strategies
+
+Hunt for the following suspicious activities:
+- Office documents spawning PowerShell with obfuscated commands
+- Unusual PowerShell download cradle patterns
+- LSASS memory access from non-system processes
+- RDP connections from service accounts or outside business hours
+- New email forwarding rules created programmatically
+- Large outbound HTTPS transfers to cloud storage during non-business hours
+
+Conclusion
+
+APT-TEST demonstrates sophisticated tradecraft by relying on built-in Windows utilities rather than custom malware. This living-off-the-land approach significantly reduces their detection footprint. Organizations must enhance their behavioral analytics and hunt programs to detect these techniques effectively.
+
+References
+- MITRE ATT&CK Framework: https://attack.mitre.org
+- Similar Campaign Analysis: https://example.com/previous-campaign
+- PowerShell Security Best Practices: https://example.com/powershell-security

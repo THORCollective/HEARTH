@@ -1,0 +1,373 @@
+{
+  "type": "bundle",
+  "id": "bundle--test-mock-data",
+  "spec_version": "2.0",
+  "objects": [
+    {
+      "type": "x-mitre-tactic",
+      "id": "x-mitre-tactic--test-initial-access",
+      "name": "Initial Access",
+      "description": "The adversary is trying to get into your network.",
+      "x_mitre_shortname": "initial-access"
+    },
+    {
+      "type": "x-mitre-tactic",
+      "id": "x-mitre-tactic--test-execution",
+      "name": "Execution",
+      "description": "The adversary is trying to run malicious code.",
+      "x_mitre_shortname": "execution"
+    },
+    {
+      "type": "x-mitre-tactic",
+      "id": "x-mitre-tactic--test-credential-access",
+      "name": "Credential Access",
+      "description": "The adversary is trying to steal account names and passwords.",
+      "x_mitre_shortname": "credential-access"
+    },
+    {
+      "type": "x-mitre-tactic",
+      "id": "x-mitre-tactic--test-defense-evasion",
+      "name": "Defense Evasion",
+      "description": "The adversary is trying to avoid being detected.",
+      "x_mitre_shortname": "defense-evasion"
+    },
+    {
+      "type": "x-mitre-tactic",
+      "id": "x-mitre-tactic--test-lateral-movement",
+      "name": "Lateral Movement",
+      "description": "The adversary is trying to move through your environment.",
+      "x_mitre_shortname": "lateral-movement"
+    },
+    {
+      "type": "x-mitre-tactic",
+      "id": "x-mitre-tactic--test-collection",
+      "name": "Collection",
+      "description": "The adversary is trying to gather data of interest.",
+      "x_mitre_shortname": "collection"
+    },
+    {
+      "type": "x-mitre-tactic",
+      "id": "x-mitre-tactic--test-exfiltration",
+      "name": "Exfiltration",
+      "description": "The adversary is trying to steal data.",
+      "x_mitre_shortname": "exfiltration"
+    },
+    {
+      "type": "x-mitre-tactic",
+      "id": "x-mitre-tactic--test-command-control",
+      "name": "Command and Control",
+      "description": "The adversary is trying to communicate with compromised systems.",
+      "x_mitre_shortname": "command-and-control"
+    },
+    {
+      "type": "attack-pattern",
+      "id": "attack-pattern--test-t1566-001",
+      "name": "Spearphishing Attachment",
+      "description": "Adversaries may send spearphishing emails with a malicious attachment.",
+      "kill_chain_phases": [
+        {
+          "kill_chain_name": "mitre-attack",
+          "phase_name": "initial-access"
+        }
+      ],
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1566.001"
+        }
+      ],
+      "x_mitre_data_sources": [
+        "Application Log: Application Log Content",
+        "Network Traffic: Network Traffic Content"
+      ]
+    },
+    {
+      "type": "attack-pattern",
+      "id": "attack-pattern--test-t1059-001",
+      "name": "PowerShell",
+      "description": "Adversaries may abuse PowerShell commands and scripts for execution.",
+      "kill_chain_phases": [
+        {
+          "kill_chain_name": "mitre-attack",
+          "phase_name": "execution"
+        }
+      ],
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1059.001"
+        }
+      ],
+      "x_mitre_data_sources": [
+        "Command: Command Execution",
+        "Process: Process Creation",
+        "Script: Script Execution"
+      ]
+    },
+    {
+      "type": "attack-pattern",
+      "id": "attack-pattern--test-t1110",
+      "name": "Brute Force",
+      "description": "Adversaries may use brute force techniques to gain access to accounts.",
+      "kill_chain_phases": [
+        {
+          "kill_chain_name": "mitre-attack",
+          "phase_name": "credential-access"
+        }
+      ],
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1110"
+        }
+      ],
+      "x_mitre_data_sources": [
+        "Application Log: Application Log Content",
+        "User Account: User Account Authentication"
+      ]
+    },
+    {
+      "type": "attack-pattern",
+      "id": "attack-pattern--test-t1003-001",
+      "name": "LSASS Memory",
+      "description": "Adversaries may attempt to access credential material stored in LSASS memory.",
+      "kill_chain_phases": [
+        {
+          "kill_chain_name": "mitre-attack",
+          "phase_name": "credential-access"
+        }
+      ],
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1003.001"
+        }
+      ],
+      "x_mitre_data_sources": [
+        "Process: Process Access",
+        "Command: Command Execution"
+      ]
+    },
+    {
+      "type": "attack-pattern",
+      "id": "attack-pattern--test-t1140",
+      "name": "Deobfuscate/Decode Files or Information",
+      "description": "Adversaries may use obfuscated files or information to hide artifacts.",
+      "kill_chain_phases": [
+        {
+          "kill_chain_name": "mitre-attack",
+          "phase_name": "defense-evasion"
+        }
+      ],
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1140"
+        }
+      ],
+      "x_mitre_data_sources": [
+        "File: File Metadata",
+        "Script: Script Execution"
+      ]
+    },
+    {
+      "type": "attack-pattern",
+      "id": "attack-pattern--test-t1055",
+      "name": "Process Injection",
+      "description": "Adversaries may inject code into processes to evade detection.",
+      "kill_chain_phases": [
+        {
+          "kill_chain_name": "mitre-attack",
+          "phase_name": "defense-evasion"
+        }
+      ],
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1055"
+        }
+      ],
+      "x_mitre_data_sources": [
+        "Process: Process Access",
+        "Process: OS API Execution"
+      ]
+    },
+    {
+      "type": "attack-pattern",
+      "id": "attack-pattern--test-t1021-001",
+      "name": "Remote Desktop Protocol",
+      "description": "Adversaries may use RDP to move laterally.",
+      "kill_chain_phases": [
+        {
+          "kill_chain_name": "mitre-attack",
+          "phase_name": "lateral-movement"
+        }
+      ],
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1021.001"
+        }
+      ],
+      "x_mitre_data_sources": [
+        "Network Traffic: Network Connection Creation",
+        "Logon Session: Logon Session Creation"
+      ]
+    },
+    {
+      "type": "attack-pattern",
+      "id": "attack-pattern--test-t1114-001",
+      "name": "Local Email Collection",
+      "description": "Adversaries may target user email to collect sensitive information.",
+      "kill_chain_phases": [
+        {
+          "kill_chain_name": "mitre-attack",
+          "phase_name": "collection"
+        }
+      ],
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1114.001"
+        }
+      ],
+      "x_mitre_data_sources": [
+        "Application Log: Application Log Content",
+        "Command: Command Execution"
+      ]
+    },
+    {
+      "type": "attack-pattern",
+      "id": "attack-pattern--test-t1041",
+      "name": "Exfiltration Over C2 Channel",
+      "description": "Adversaries may steal data by exfiltrating it over their C2 channel.",
+      "kill_chain_phases": [
+        {
+          "kill_chain_name": "mitre-attack",
+          "phase_name": "exfiltration"
+        }
+      ],
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1041"
+        }
+      ],
+      "x_mitre_data_sources": [
+        "Network Traffic: Network Traffic Content",
+        "Network Traffic: Network Traffic Flow",
+        "Command: Command Execution"
+      ]
+    },
+    {
+      "type": "attack-pattern",
+      "id": "attack-pattern--test-t1071-004",
+      "name": "DNS",
+      "description": "Adversaries may communicate using application layer protocol DNS.",
+      "kill_chain_phases": [
+        {
+          "kill_chain_name": "mitre-attack",
+          "phase_name": "command-and-control"
+        }
+      ],
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1071.004"
+        }
+      ],
+      "x_mitre_data_sources": [
+        "Network Traffic: Network Traffic Content",
+        "Network Traffic: Network Traffic Flow"
+      ]
+    },
+    {
+      "type": "attack-pattern",
+      "id": "attack-pattern--test-t1185",
+      "name": "Browser Session Hijacking",
+      "description": "Adversaries may take advantage of security vulnerabilities to hijack web browser sessions.",
+      "kill_chain_phases": [
+        {
+          "kill_chain_name": "mitre-attack",
+          "phase_name": "credential-access"
+        }
+      ],
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1185"
+        }
+      ],
+      "x_mitre_data_sources": [
+        "Process: Process Access",
+        "File: File Access"
+      ]
+    },
+    {
+      "type": "attack-pattern",
+      "id": "attack-pattern--test-t1219",
+      "name": "Remote Access Software",
+      "description": "Adversaries may use legitimate desktop support and remote access software.",
+      "kill_chain_phases": [
+        {
+          "kill_chain_name": "mitre-attack",
+          "phase_name": "command-and-control"
+        }
+      ],
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1219"
+        }
+      ],
+      "x_mitre_data_sources": [
+        "Process: Process Creation",
+        "Network Traffic: Network Connection Creation"
+      ]
+    },
+    {
+      "type": "attack-pattern",
+      "id": "attack-pattern--test-t1572",
+      "name": "Protocol Tunneling",
+      "description": "Adversaries may tunnel network communications to and from a victim system.",
+      "kill_chain_phases": [
+        {
+          "kill_chain_name": "mitre-attack",
+          "phase_name": "command-and-control"
+        }
+      ],
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1572"
+        }
+      ],
+      "x_mitre_data_sources": [
+        "Network Traffic: Network Traffic Content",
+        "Network Traffic: Network Traffic Flow"
+      ]
+    },
+    {
+      "type": "attack-pattern",
+      "id": "attack-pattern--test-t1090",
+      "name": "Proxy",
+      "description": "Adversaries may use a connection proxy to direct network traffic.",
+      "kill_chain_phases": [
+        {
+          "kill_chain_name": "mitre-attack",
+          "phase_name": "command-and-control"
+        }
+      ],
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1090"
+        }
+      ],
+      "x_mitre_data_sources": [
+        "Network Traffic: Network Connection Creation",
+        "Network Traffic: Network Traffic Flow"
+      ]
+    }
+  ]
+}
