@@ -137,6 +137,7 @@ Accurate technique and tactic validation using official data:
 For more details on the technical implementation, see:
 - [Database Architecture](database/README.md)
 - [Optimization Guide](docs/OPTIMIZATION_GUIDE.md) - Performance improvements and cost reduction strategies
+- [Prompt Caching Guide](docs/PROMPT_CACHING.md) - Anthropic prompt caching implementation and monitoring
 - [Testing Guide](docs/TESTING_GUIDE.md) - Local development and testing instructions
 - [Logging Guide](docs/LOGGING.md) - Logging infrastructure and debugging best practices
 - [Scripts Documentation](scripts/)
@@ -224,6 +225,8 @@ The system automatically logs cache performance metrics including:
 - Token usage breakdown
 - Cost savings per API call
 - Total session savings
+
+For complete details on prompt caching implementation, configuration, and troubleshooting, see the [Prompt Caching Guide](docs/PROMPT_CACHING.md).
 
 ### GitHub Actions Configuration
 
