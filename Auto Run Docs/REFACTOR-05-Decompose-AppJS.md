@@ -23,8 +23,8 @@ js/
 ## Tasks
 
 ### Setup
-- [ ] Create `js/` directory for modularized JavaScript files
-- [ ] Read current `app.js` to understand all functionality
+- [x] Create `js/` directory for modularized JavaScript files
+- [x] Read current `app.js` to understand all functionality
 
 ### Extract Hunt Filter Module
 - [ ] Create `js/hunt-filter.js`
