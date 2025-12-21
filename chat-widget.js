@@ -1,6 +1,10 @@
 // HEARTH Chat Widget - AI-powered hunt discovery assistant
 // Integrates with existing HEARTH hunts-data.js
 
+import { getLogger } from './js/logger.js';
+
+const logger = getLogger('ChatWidget');
+
 class HearthChatWidget {
   constructor() {
     this.huntsData = typeof HUNTS_DATA !== 'undefined' ? HUNTS_DATA : [];
@@ -204,7 +208,7 @@ What would you like to explore?`;
         return stored;
       }
     } catch (error) {
-      console.warn('Unable to load chat theme', error);
+      logger.warn('Unable to load chat theme', error);
     }
     return 'forge';
   }
@@ -219,7 +223,7 @@ What would you like to explore?`;
     try {
       window.localStorage.setItem(this.themeKey, chosenTheme);
     } catch (error) {
-      console.warn('Unable to persist chat theme', error);
+      logger.warn('Unable to persist chat theme', error);
     }
   }
 
@@ -781,7 +785,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (typeof HUNTS_DATA !== 'undefined') {
         window.hearthChatWidget = new HearthChatWidget();
       } else {
-        console.warn('HEARTH Chat Widget: HUNTS_DATA not available');
+        logger.warn('HEARTH Chat Widget: HUNTS_DATA not available');
       }
     }, 1000);
   }

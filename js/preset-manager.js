@@ -10,6 +10,10 @@
  * @module PresetManager
  */
 
+import { getLogger } from './logger.js';
+
+const logger = getLogger('PresetManager');
+
 /**
  * PresetManager class handles all filter preset operations
  */
@@ -81,7 +85,7 @@ export class PresetManager {
       const parsed = JSON.parse(raw);
       return Array.isArray(parsed) ? parsed : [];
     } catch (error) {
-      console.warn('Unable to load filter presets:', error);
+      logger.warn('Unable to load filter presets:', error);
       return [];
     }
   }
@@ -95,7 +99,7 @@ export class PresetManager {
       const customPresets = [...this.presets.values()].filter(preset => !preset.builtIn);
       window.localStorage.setItem(this.presetStorageKey, JSON.stringify(customPresets));
     } catch (error) {
-      console.warn('Unable to persist filter presets:', error);
+      logger.warn('Unable to persist filter presets:', error);
     }
   }
 

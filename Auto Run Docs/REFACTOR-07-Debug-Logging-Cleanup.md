@@ -46,11 +46,17 @@ This phase removes or replaces debug logging statements with proper logging infr
   - Debug logs automatically disabled in production environments
 
 ### JavaScript - Replace Console Logs
-- [ ] Search for all `console.log()` statements in JavaScript files
-- [ ] Categorize logs by purpose (debug, info, warn, error)
-- [ ] Replace with appropriate logger methods
-- [ ] Remove logs that are purely for debugging
-- [ ] Keep essential error logging with `logger.error()`
+- [x] Search for all `console.log()` statements in JavaScript files
+- [x] Categorize logs by purpose (debug, info, warn, error)
+- [x] Replace with appropriate logger methods
+- [x] Remove logs that are purely for debugging
+- [x] Keep essential error logging with `logger.error()`
+  - Replaced console statements in 4 JavaScript files
+  - Files updated: js/utils.js (1 error), chat-widget.js (3 warnings), js/preset-manager.js (2 warnings), js/notebook-generator.js (3 statements: 1 error, 2 warnings)
+  - Converted chat-widget.js to ES6 module for consistency with codebase standards
+  - Updated index.html and test-chat-widget.html to load chat-widget.js as a module
+  - All user-facing console statements now use the logger infrastructure
+  - Logger implementation in js/logger.js correctly uses console methods internally
 
 ### GitHub Actions Workflows
 - [ ] Review logging in workflow files

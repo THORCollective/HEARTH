@@ -8,6 +8,10 @@
  * @module NotebookGenerator
  */
 
+import { getLogger } from './logger.js';
+
+const logger = getLogger('NotebookGenerator');
+
 /**
  * NotebookGenerator class for creating PEAK framework-based Jupyter notebooks
  *
@@ -767,7 +771,7 @@ export class NotebookGenerator {
       }
 
     } catch (error) {
-      console.error('Error generating notebook:', error);
+      logger.error('Error generating notebook:', error);
 
       // Show error message
       modalBody.innerHTML = `
@@ -847,7 +851,7 @@ export class NotebookGenerator {
       try {
         successful = document.execCommand('copy');
       } catch (error) {
-        console.warn('Clipboard copy failed:', error);
+        logger.warn('Clipboard copy failed:', error);
       }
       document.body.removeChild(textarea);
       if (successful) {
@@ -866,7 +870,7 @@ export class NotebookGenerator {
           restoreLabel();
         })
         .catch((error) => {
-          console.warn('Clipboard API error, falling back to execCommand:', error);
+          logger.warn('Clipboard API error, falling back to execCommand:', error);
           fallbackCopy();
         });
     } else {

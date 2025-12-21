@@ -3,6 +3,10 @@
  * Shared utility functions used across the HEARTH application
  */
 
+import { getLogger } from './logger.js';
+
+const logger = getLogger('Utils');
+
 /**
  * Number formatter for consistent number display
  * @type {Intl.NumberFormat}
@@ -231,7 +235,7 @@ export function validateElements(elements) {
     .map(([name]) => name);
 
   if (missingElements.length > 0) {
-    console.error('Missing required elements:', missingElements);
+    logger.error('Missing required elements:', missingElements);
     throw new Error(`Required DOM elements not found: ${missingElements.join(', ')}`);
   }
 }
