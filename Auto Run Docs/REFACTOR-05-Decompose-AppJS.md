@@ -139,10 +139,22 @@ js/
 - Location: `/Users/sydney/code/07-other-projects/HEARTH/js/pagination.js`
 
 ### Extract Utilities Module
-- [ ] Create `js/utils.js`
-- [ ] Extract shared utility functions (debounce, throttle, etc.)
-- [ ] Export individual utility functions
-- [ ] Add JSDoc documentation
+- [x] Create `js/utils.js`
+- [x] Extract shared utility functions (debounce, throttle, etc.)
+- [x] Export individual utility functions
+- [x] Add JSDoc documentation
+
+**Implementation Notes:**
+- Created comprehensive utility module with shared helper functions
+- Includes number formatting with `formatNumber()` using Intl.NumberFormat
+- Provides data extraction utilities: `getUniqueValues()`, `getHuntTactics()`
+- Implements tactic grouping: `groupTactics()`, `resolveTacticGroup()` with configurable grouping
+- Adds performance utilities: `debounce()`, `throttle()`, `getNow()`
+- Includes DOM helpers: `validateElements()` for element validation
+- Provides data utilities: `sanitizeHtml()`, `deepClone()`, `isEmpty()`
+- Added complete JSDoc documentation for all exported functions
+- All functions are exported as ES modules for clean imports
+- Location: `/Users/sydney/code/07-other-projects/HEARTH/js/utils.js`
 
 ### Create New Main App
 - [ ] Rewrite `app.js` as a thin orchestrator (~200 lines)
