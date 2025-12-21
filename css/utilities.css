@@ -206,6 +206,183 @@
 }
 
 /* ===================================
+   Loading States
+   =================================== */
+
+/**
+ * Loading container with spinner
+ * Extracted from style.css:2023-2029
+ */
+.loading {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: rgba(12, 13, 24, 0.6);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(138, 71, 255, 0.12);
+}
+
+/**
+ * Spinner animation element
+ * Extracted from style.css:2031-2039
+ */
+.spinner {
+    border: 4px solid rgba(255, 255, 255, 0.08);
+    border-top: 4px solid var(--accent);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+/**
+ * Loading subtext helper
+ * Extracted from style.css:920-924
+ */
+.loading-subtext {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-top: 10px;
+}
+
+/* ===================================
+   Notebook States
+   =================================== */
+
+/**
+ * Notebook loading state
+ * Extracted from style.css:890-893
+ */
+.notebook-loading {
+    background-color: #1e1e1e;
+    border: 2px solid #4a4a4a;
+}
+
+/**
+ * Notebook success state
+ * Extracted from style.css:895-898
+ */
+.notebook-success {
+    background-color: #0d4f3c;
+    border: 2px solid #198754;
+}
+
+/**
+ * Notebook error state
+ * Extracted from style.css:900-903
+ */
+.notebook-error {
+    background-color: #4a1e1e;
+    border: 2px solid #dc3545;
+}
+
+/**
+ * Spinner variant for notebook loading
+ * Extracted from style.css:905-913
+ */
+.notebook-loading .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #4a4a4a;
+    border-top: 4px solid #6a0dad;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+/* ===================================
+   Error States
+   =================================== */
+
+/**
+ * Error actions button container
+ * Extracted from style.css:964-970
+ */
+.error-actions {
+    margin: 20px 0;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/**
+ * Error fallback container
+ * Extracted from style.css:972-978
+ */
+.error-fallback {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 5px;
+    margin: 20px 0;
+    text-align: left;
+}
+
+/* ===================================
+   Action Containers
+   =================================== */
+
+/**
+ * JSON data actions container
+ * Extracted from style.css:1041-1046
+ */
+.json-actions {
+    margin: 20px 0;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+/**
+ * Notebook actions container
+ * Extracted from style.css:926-932
+ */
+.notebook-actions {
+    margin: 20px 0;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ===================================
+   Info Containers
+   =================================== */
+
+/**
+ * Notebook info container
+ * Extracted from style.css:934-939
+ */
+.notebook-info {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 5px;
+    margin: 20px 0;
+    text-align: left;
+}
+
+/**
+ * Usage instructions container
+ * Extracted from style.css:1048-1053
+ */
+.usage-instructions {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 5px;
+    margin: 20px 0;
+}
+
+.usage-instructions h4 {
+    margin-top: 0;
+    color: #6a0dad;
+}
+
+.usage-instructions ol {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+/* ===================================
    Notes
    =================================== */
 
@@ -214,6 +391,11 @@
  * - Visibility: .visually-hidden, .hidden
  * - Display States: .open, .is-expanded, .is-open, .is-selected, .is-active
  * - Interaction States: .chat-resizing
+ * - Loading States: .loading, .spinner, .loading-subtext
+ * - Notebook States: .notebook-loading, .notebook-success, .notebook-error
+ * - Error States: .error-actions, .error-fallback
+ * - Action Containers: .json-actions, .notebook-actions
+ * - Info Containers: .notebook-info, .usage-instructions
  * - Spacing: .active-filters__empty
  * - Icons: .btn-icon, .search-icon
  * - Animations: @keyframes spin, @keyframes typing

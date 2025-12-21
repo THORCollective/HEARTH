@@ -205,7 +205,84 @@
 }
 
 
-/* Responsive Mobile Styles
+/* ==========================================================================
+   Submission Options Page Styles
+   ========================================================================== */
+
+/**
+ * Submission options page container
+ * Extracted from style.css:2228-2234
+ */
+.submission-options {
+    max-width: 800px;
+    margin: 40px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/**
+ * Individual submission option card
+ * Extracted from style.css:2236-2241
+ */
+.submission-option {
+    background-color: #1e1e1e;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/**
+ * Submission option headings
+ * Extracted from style.css:2243-2254
+ */
+.submission-option h3 {
+    margin-top: 0;
+    font-size: 24px;
+    color: #ae77d8;
+}
+
+.submission-option h4 {
+    color: #ccc;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+/**
+ * Submission option text and lists
+ * Extracted from style.css:2256-2274
+ */
+.submission-option p,
+.submission-option li {
+    line-height: 1.7;
+    color: #d0d0d0;
+}
+
+.submission-option ol,
+.submission-option ul {
+    padding-left: 25px;
+}
+
+.submission-option code {
+    background-color: #2a2a2a;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    color: #ff6b9d;
+}
+
+.submission-option a {
+    color: #ae77d8;
+    text-decoration: none;
+}
+
+.submission-option a:hover {
+    text-decoration: underline;
+}
+
+/* ==========================================================================
+   Responsive Mobile Styles
    ========================================================================== */
 
 @media (max-width: 768px) {

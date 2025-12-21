@@ -200,6 +200,16 @@ main {
    Hunts Grid Layout
    ========================================================================== */
 
+/**
+ * Hunts container wrapper
+ * Extracted from style.css:1616-1620
+ */
+.hunts-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
 .hunts-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
