@@ -58,10 +58,20 @@ This phase implements Anthropic's prompt caching to reduce API costs by ~67% and
   - **Note**: Full integration testing requires API key and will be validated in production
 
 ### Implement Caching for MITRE ATT&CK Data
-- [ ] Review MITRE data usage in `scripts/mitre_attack.py`
-- [ ] Format MITRE framework data as cacheable content
-- [ ] Add cache control markers to MITRE data blocks
-- [ ] Test caching with MITRE data
+- [x] Review MITRE data usage in `scripts/mitre_attack.py`
+  - **Finding**: MITRE data is currently used for **post-generation validation only**
+  - **Current flow**: AI generates hunt → script extracts technique IDs → validates against MITRE data
+  - **Not sent to AI**: The MITRE ATT&CK framework data is NOT currently passed to Claude API
+  - **Data location**: `data/enterprise-attack.json` loaded by `MITREAttack` class
+  - **Usage patterns**:
+    - `validate_technique()`: Validates technique IDs from AI output (line 84-91)
+    - `get_technique_tactic()`: Maps validated techniques to tactics (line 87)
+    - Tactic validation in table parsing (line 102-107)
+  - **Recommendation**: Skip remaining MITRE caching tasks - no benefit without architectural change
+  - **Rationale**: Caching only helps when data is sent to the LLM. Current validation happens in Python code only.
+- [ ] ~~Format MITRE framework data as cacheable content~~ (SKIPPED - see review findings)
+- [ ] ~~Add cache control markers to MITRE data blocks~~ (SKIPPED - see review findings)
+- [ ] ~~Test caching with MITRE data~~ (SKIPPED - see review findings)
 
 ### Implement Caching for Hunt Templates
 - [ ] Extract PEAK framework template as cacheable content
