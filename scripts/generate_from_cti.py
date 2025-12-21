@@ -64,6 +64,120 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
 
 
+# Cache monitoring statistics (accumulated across all API calls)
+cache_stats = {
+    "total_calls": 0,
+    "cache_hits": 0,
+    "cache_misses": 0,
+    "input_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "output_tokens": 0,
+    "total_cost_usd": 0.0
+}
+
+
+def log_cache_usage(response, operation_name: str):
+    """
+    Log cache usage statistics from an Anthropic API response.
+
+    Args:
+        response: Anthropic API response object with usage stats
+        operation_name: Human-readable name for the operation (e.g., "chunk summarization", "hunt generation")
+    """
+    if not hasattr(response, 'usage'):
+        return
+
+    usage = response.usage
+    cache_stats["total_calls"] += 1
+
+    # Track token usage
+    input_tokens = getattr(usage, 'input_tokens', 0)
+    cache_read_tokens = getattr(usage, 'cache_read_input_tokens', 0)
+    cache_creation_tokens = getattr(usage, 'cache_creation_input_tokens', 0)
+    output_tokens = getattr(usage, 'output_tokens', 0)
+
+    cache_stats["input_tokens"] += input_tokens
+    cache_stats["cache_read_tokens"] += cache_read_tokens
+    cache_stats["cache_creation_tokens"] += cache_creation_tokens
+    cache_stats["output_tokens"] += output_tokens
+
+    # Determine if this was a cache hit or miss
+    if cache_read_tokens > 0:
+        cache_stats["cache_hits"] += 1
+        cache_status = "HIT"
+    elif cache_creation_tokens > 0:
+        cache_stats["cache_misses"] += 1
+        cache_status = "MISS (cache created)"
+    else:
+        cache_status = "N/A (no cacheable content)"
+
+    # Calculate cost for this call (Claude Sonnet 4.5 pricing as of 2025)
+    # Input: $3 per million tokens
+    # Cache writes: $3.75 per million tokens (25% more than base)
+    # Cache reads: $0.30 per million tokens (90% discount)
+    # Output: $15 per million tokens
+    input_cost = (input_tokens / 1_000_000) * 3.00
+    cache_write_cost = (cache_creation_tokens / 1_000_000) * 3.75
+    cache_read_cost = (cache_read_tokens / 1_000_000) * 0.30
+    output_cost = (output_tokens / 1_000_000) * 15.00
+    call_cost = input_cost + cache_write_cost + cache_read_cost + output_cost
+
+    cache_stats["total_cost_usd"] += call_cost
+
+    # Calculate savings if cache was used
+    savings_info = ""
+    if cache_read_tokens > 0:
+        # What it would have cost without caching
+        uncached_cost = (cache_read_tokens / 1_000_000) * 3.00
+        savings = uncached_cost - cache_read_cost
+        savings_pct = (savings / uncached_cost * 100) if uncached_cost > 0 else 0
+        savings_info = f" | Saved: ${savings:.4f} ({savings_pct:.1f}%)"
+
+    logger.info(
+        f"Cache {cache_status} for {operation_name} | "
+        f"Tokens: {input_tokens} input, {cache_read_tokens} cached read, "
+        f"{cache_creation_tokens} cache write, {output_tokens} output | "
+        f"Cost: ${call_cost:.4f}{savings_info}"
+    )
+
+
+def log_cache_summary():
+    """Log cumulative cache statistics for the entire session."""
+    if cache_stats["total_calls"] == 0:
+        return
+
+    hit_rate = (cache_stats["cache_hits"] / cache_stats["total_calls"] * 100) if cache_stats["total_calls"] > 0 else 0
+
+    # Calculate total savings from caching
+    total_cached_tokens = cache_stats["cache_read_tokens"]
+    if total_cached_tokens > 0:
+        # What it would have cost without caching (at base input rate)
+        uncached_cost = (total_cached_tokens / 1_000_000) * 3.00
+        # What it actually cost (at cache read rate)
+        cached_cost = (total_cached_tokens / 1_000_000) * 0.30
+        total_savings = uncached_cost - cached_cost
+        savings_pct = (total_savings / (cache_stats["total_cost_usd"] + total_savings) * 100) if cache_stats["total_cost_usd"] > 0 else 0
+    else:
+        total_savings = 0.0
+        savings_pct = 0.0
+
+    logger.info("=" * 80)
+    logger.info("CACHE PERFORMANCE SUMMARY")
+    logger.info("=" * 80)
+    logger.info(f"Total API calls: {cache_stats['total_calls']}")
+    logger.info(f"Cache hits: {cache_stats['cache_hits']} | Cache misses: {cache_stats['cache_misses']}")
+    logger.info(f"Cache hit rate: {hit_rate:.1f}%")
+    logger.info(f"Total tokens - Input: {cache_stats['input_tokens']:,} | "
+                f"Cache read: {cache_stats['cache_read_tokens']:,} | "
+                f"Cache write: {cache_stats['cache_creation_tokens']:,} | "
+                f"Output: {cache_stats['output_tokens']:,}")
+    logger.info(f"Total cost: ${cache_stats['total_cost_usd']:.4f}")
+    if total_savings > 0:
+        logger.info(f"Total savings from caching: ${total_savings:.4f} ({savings_pct:.1f}% reduction)")
+    logger.info("=" * 80)
+
+
 def extract_technique_and_tactic(content: str) -> tuple:
     """
     Extract technique ID and tactic from generated hunt content.
@@ -293,6 +407,7 @@ def summarize_cti_with_map_reduce(text, model="gpt-4", max_tokens=128000):
                         "content": f"--- CHUNK {i +1}/{len(chunks)} ---\n\n{chunk}"
                     }]
                 )
+                log_cache_usage(response, f"chunk summarization {i+1}/{len(chunks)}")
                 summary = response.content[0].text.strip()
             else:
                 response = client.chat.completions.create(
@@ -341,6 +456,7 @@ def summarize_cti_with_map_reduce(text, model="gpt-4", max_tokens=128000):
                     "content": f"--- COMBINED SUMMARIES ---\n\n{combined_summary}"
                 }]
             )
+            log_cache_usage(final_response, "final CTI synthesis")
             return final_response.content[0].text.strip()
         else:
             final_response = client.chat.completions.create(
@@ -507,6 +623,7 @@ def generate_hunt_content_with_ttp_diversity(cti_text, cti_source_url, submitter
                         "content": user_content
                     }]
                 )
+                log_cache_usage(response, "hunt generation (with TTP diversity)")
                 hunt_content = response.content[0].text.strip()
             else:
                 # OpenAI fallback (no caching support)
@@ -643,6 +760,7 @@ def generate_hunt_content_basic(cti_text, cti_source_url, submitter_credit, is_r
                     "content": user_content
                 }]
             )
+            log_cache_usage(response, "hunt generation (basic)")
             return response.content[0].text.strip()
         else:
             # OpenAI fallback (no caching support)
@@ -886,3 +1004,7 @@ if __name__ == "__main__":
             logger.error("Could not generate hunt content. Skipping file creation.")
     else:
         logger.error("Could not retrieve CTI content. Skipping hunt generation.")
+
+    # Log cache performance summary if Claude was used
+    if AI_PROVIDER == "claude":
+        log_cache_summary()

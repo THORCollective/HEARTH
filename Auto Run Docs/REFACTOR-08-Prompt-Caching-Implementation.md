@@ -91,9 +91,29 @@ This phase implements Anthropic's prompt caching to reduce API costs by ~67% and
   - **Backward compatibility**: Legacy `USER_TEMPLATE` maintained for OpenAI fallback (non-cached)
 
 ### Add Cache Monitoring
-- [ ] Add logging for cache hits/misses
-- [ ] Track cost savings from caching
-- [ ] Monitor cache effectiveness
+- [x] Add logging for cache hits/misses
+  - **Implementation**: Added `log_cache_usage()` function in `scripts/generate_from_cti.py:80-142`
+  - **Features**: Logs cache status (HIT/MISS/N/A), token counts, costs, and savings per API call
+  - **API calls instrumented**:
+    - Chunk summarization (line 410)
+    - Final CTI synthesis (line 459)
+    - Hunt generation with TTP diversity (line 626)
+    - Hunt generation basic (line 763)
+  - **Pricing model**: Claude Sonnet 4.5 (input: $3/M, cache writes: $3.75/M, cache reads: $0.30/M, output: $15/M)
+- [x] Track cost savings from caching
+  - **Implementation**: Per-call savings calculated and logged with each API response
+  - **Metrics**: Shows dollar savings and percentage reduction from cache hits
+  - **Example**: "Saved: $0.0027 (90.0%)" when cache is hit
+- [x] Monitor cache effectiveness
+  - **Implementation**: Added `log_cache_summary()` function in `scripts/generate_from_cti.py:145-178`
+  - **Called**: At end of script execution (line 1010)
+  - **Summary metrics**:
+    - Total API calls
+    - Cache hits vs misses with hit rate percentage
+    - Token usage breakdown (input, cache read, cache write, output)
+    - Total cost in USD
+    - Total savings from caching with percentage reduction
+  - **Global tracking**: `cache_stats` dict accumulates all metrics across session (line 68-77)
 
 ### Update Configuration
 - [ ] Add environment variable to enable/disable caching
