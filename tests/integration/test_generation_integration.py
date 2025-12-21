@@ -7,6 +7,11 @@ import sys
 import os
 import tempfile
 from pathlib import Path
+
+# Set up environment for testing before imports
+os.environ['ANTHROPIC_API_KEY'] = 'test-api-key-for-testing'
+os.environ['AI_PROVIDER'] = 'claude'
+
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'scripts'))
 
 from generate_from_cti import generate_hunt_content_with_ttp_diversity
