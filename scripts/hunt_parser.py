@@ -55,4 +55,344 @@ class HuntFileReader:
         self.validator = validator or HuntValidator()
 
     def read_file(self, file_path: Path) -> str:
-        \"\"\"Read file content safely.\n        \n        Args:\n            file_path: Path to the file.\n            \n        Returns:\n            File content as string.\n            \n        Raises:\n            FileProcessingError: If file cannot be read.\n        \"\"\"\n        try:\n            self.validator.validate_file_path(file_path, must_exist=True)\n            \n            with open(file_path, 'r', encoding='utf-8') as file:\n                content = file.read()\n            \n            if not content.strip():\n                logger.warning(f\"File is empty: {file_path}\")\n            \n            logger.debug(f\"Successfully read file: {file_path}\")\n            return content\n            \n        except Exception as error:\n            logger.error(f\"Error reading file {file_path}: {error}\")\n            raise FileProcessingError(str(file_path), f\"Failed to read file: {error}\")\n    \n    def parse_hunt_file(self, file_path: Path, category: str) -> Optional[HuntData]:\n        \"\"\"Parse a single hunt file.\n        \n        Args:\n            file_path: Path to the hunt file.\n            category: Hunt category.\n            \n        Returns:\n            Parsed HuntData object or None if parsing fails.\n            \n        Raises:\n            MarkdownParsingError: If parsing fails.\n        \"\"\"\n        try:\n            content = self.read_file(file_path)\n            hunt_id = file_path.stem\n            \n            # Skip excluded files\n            if hunt_id.lower() in [f.lower().replace('.md', '') for f in config.excluded_files]:\n                logger.debug(f\"Skipping excluded file: {file_path}\")\n                return None\n            \n            table_data = self._extract_table_data(content, file_path)\n            sections = self._extract_content_sections(content)\n            submitter_info = extract_submitter_info(table_data.get('submitter', ''))\n            \n            hunt_data = HuntData(\n                id=table_data.get('hunt_id', hunt_id),\n                category=category,\n                title=table_data.get('idea', ''),\n                tactic=table_data.get('tactic', ''),\n                notes=table_data.get('notes', ''),\n                tags=parse_tag_list(table_data.get('tags', '')),\n                submitter=submitter_info,\n                why=sections.get('why', ''),\n                references=sections.get('references', ''),\n                file_path=str(file_path.relative_to(Path(__file__).parent.parent))\n            )\n            \n            # Validate the parsed data\n            validated_hunt = hunt_data.validate()\n            \n            logger.debug(f\"Successfully parsed hunt: {validated_hunt.id}\")\n            return validated_hunt\n            \n        except Exception as error:\n            logger.error(f\"Error parsing hunt file {file_path}: {error}\")\n            # Don't re-raise to allow processing to continue\n            return None\n    \n    def _extract_table_data(self, content: str, file_path: Path) -> Dict[str, str]:\n        \"\"\"Extract data from markdown table.\"\"\"\n        try:\n            lines = content.split('\\n')\n            table_start_index = find_table_header_line(lines)\n            \n            if table_start_index is None:\n                logger.warning(f\"No table header found in {file_path}\")\n                return self._get_empty_table_data()\n            \n            cells = extract_table_cells(lines, table_start_index)\n            \n            if len(cells) >= 6:\n                return {\n                    'hunt_id': clean_markdown_formatting(cells[0]),\n                    'idea': clean_markdown_formatting(cells[1]),\n                    'tactic': clean_markdown_formatting(cells[2]),\n                    'notes': clean_markdown_formatting(cells[3]),\n                    'tags': clean_markdown_formatting(cells[4]),\n                    'submitter': clean_markdown_formatting(cells[5])\n                }\n            else:\n                logger.warning(f\"Insufficient table cells in {file_path}: {len(cells)}\")\n                return self._get_empty_table_data()\n                \n        except Exception as error:\n            logger.error(f\"Error extracting table data from {file_path}: {error}\")\n            return self._get_empty_table_data()\n    \n    def _extract_content_sections(self, content: str) -> Dict[str, str]:\n        \"\"\"Extract Why and References sections.\"\"\"\n        try:\n            return {\n                'why': extract_content_section(content, 'Why'),\n                'references': extract_content_section(content, 'References')\n            }\n        except Exception as error:\n            logger.error(f\"Error extracting content sections: {error}\")\n            return {'why': '', 'references': ''}\n    \n    def _get_empty_table_data(self) -> Dict[str, str]:\n        \"\"\"Return empty table data structure.\"\"\"\n        return {\n            'hunt_id': '',\n            'idea': '',\n            'tactic': '',\n            'notes': '',\n            'tags': '',\n            'submitter': ''\n        }\n\n\nclass HuntExporter(ABC):\n    \"\"\"Abstract base class for hunt data exporters.\"\"\"\n    \n    @abstractmethod\n    def export(self, hunts: List[HuntData], output_path: Path) -> None:\n        \"\"\"Export hunt data to specified format.\"\"\"\n        pass\n\n\nclass JSONExporter(HuntExporter):\n    \"\"\"Exports hunt data to JSON format.\"\"\"\n    \n    def export(self, hunts: List[HuntData], output_path: Path) -> None:\n        \"\"\"Export hunts to JSON file.\n        \n        Args:\n            hunts: List of hunt data objects.\n            output_path: Output file path.\n            \n        Raises:\n            DataExportError: If export fails.\n        \"\"\"\n        try:\n            # Convert to dictionaries and sort by ID\n            hunt_dicts = [hunt.to_dict() for hunt in hunts]\n            hunt_dicts.sort(key=lambda x: x['id'])\n            \n            with open(output_path, 'w', encoding='utf-8') as file:\n                json.dump(hunt_dicts, file, indent=2, ensure_ascii=False)\n            \n            logger.info(f\"Exported {len(hunts)} hunts to JSON: {output_path}\")\n            \n        except Exception as error:\n            logger.error(f\"Error exporting to JSON: {error}\")\n            raise DataExportError(str(output_path), f\"JSON export failed: {error}\")\n\n\nclass JavaScriptExporter(HuntExporter):\n    \"\"\"Exports hunt data to JavaScript format.\"\"\"\n    \n    def export(self, hunts: List[HuntData], output_path: Path) -> None:\n        \"\"\"Export hunts to JavaScript file.\n        \n        Args:\n            hunts: List of hunt data objects.\n            output_path: Output file path.\n            \n        Raises:\n            DataExportError: If export fails.\n        \"\"\"\n        try:\n            # Convert to dictionaries and sort by ID\n            hunt_dicts = [hunt.to_dict() for hunt in hunts]\n            hunt_dicts.sort(key=lambda x: x['id'])\n            \n            with open(output_path, 'w', encoding='utf-8') as file:\n                file.write('// Auto-generated hunt data from markdown files\\n')\n                file.write('const HUNTS_DATA = ')\n                json.dump(hunt_dicts, file, indent=2, ensure_ascii=False)\n                file.write(';\\n')\n            \n            logger.info(f\"Exported {len(hunts)} hunts to JavaScript: {output_path}\")\n            \n        except Exception as error:\n            logger.error(f\"Error exporting to JavaScript: {error}\")\n            raise DataExportError(str(output_path), f\"JavaScript export failed: {error}\")\n\n\nclass HuntProcessor:\n    \"\"\"Main processor for hunt files.\"\"\"\n    \n    def __init__(self, reader: Optional[HuntFileReader] = None, \n                 exporter: Optional[HuntExporter] = None):\n        self.reader = reader or HuntFileReader()\n        self.exporter = exporter or JavaScriptExporter()\n    \n    def process_all_hunts(self, base_directory: Optional[str] = None) -> List[HuntData]:\n        \"\"\"Process all hunt files and return parsed data.\n        \n        Args:\n            base_directory: Base directory to search. Defaults to config value.\n            \n        Returns:\n            List of successfully parsed hunt data.\n        \"\"\"\n        try:\n            hunt_files = find_hunt_files(base_directory)\n            all_hunts = []\n            \n            for hunt_file in hunt_files:\n                try:\n                    # Determine category from parent directory\n                    category = hunt_file.parent.name\n                    \n                    if category not in config.hunt_directories:\n                        logger.warning(f\"Unknown category {category} for file {hunt_file}\")\n                        continue\n                    \n                    hunt_data = self.reader.parse_hunt_file(hunt_file, category)\n                    if hunt_data:\n                        all_hunts.append(hunt_data)\n                        logger.debug(f\"Processed hunt: {hunt_data.id}\")\n                    \n                except Exception as error:\n                    logger.error(f\"Error processing {hunt_file}: {error}\")\n                    continue\n            \n            logger.info(f\"Successfully processed {len(all_hunts)} hunts\")\n            return all_hunts\n            \n        except Exception as error:\n            logger.error(f\"Error processing hunts: {error}\")\n            raise FileProcessingError(str(base_directory), f\"Hunt processing failed: {error}\")\n    \n    def export_hunts(self, hunts: List[HuntData], output_path: Optional[Path] = None) -> None:\n        \"\"\"Export hunt data using configured exporter.\n        \n        Args:\n            hunts: List of hunt data to export.\n            output_path: Output file path. Defaults to config value.\n        \"\"\"\n        try:\n            if not output_path:\n                base_dir = Path(config.base_directory)\n                output_path = base_dir / config.hunts_data_filename\n            \n            self.exporter.export(hunts, output_path)\n            \n        except Exception as error:\n            logger.error(f\"Error exporting hunts: {error}\")\n            raise DataExportError(str(output_path), f\"Export failed: {error}\")\n    \n    def generate_statistics(self, hunts: List[HuntData]) -> Dict[str, Any]:\n        \"\"\"Generate statistics about hunts.\n        \n        Args:\n            hunts: List of hunt data.\n            \n        Returns:\n            Dictionary with statistics.\n        \"\"\"\n        try:\n            category_counts = {}\n            all_tactics = set()\n            all_tags = set()\n            \n            for hunt in hunts:\n                # Category counts\n                category_counts[hunt.category] = category_counts.get(hunt.category, 0) + 1\n                \n                # Collect tactics\n                if hunt.tactic:\n                    tactics = [t.strip() for t in hunt.tactic.split(',') if t.strip()]\n                    all_tactics.update(tactics)\n                \n                # Collect tags\n                all_tags.update(hunt.tags)\n            \n            stats = {\n                'total_hunts': len(hunts),\n                'category_counts': category_counts,\n                'unique_tactics': sorted(list(all_tactics)),\n                'unique_tags': sorted(list(all_tags)),\n                'tactics_count': len(all_tactics),\n                'tags_count': len(all_tags)\n            }\n            \n            logger.info(f\"Generated statistics for {len(hunts)} hunts\")\n            return stats\n            \n        except Exception as error:\n            logger.error(f\"Error generating statistics: {error}\")\n            return {}\n    \n    def print_statistics(self, stats: Dict[str, Any]) -> None:\n        \"\"\"Print statistics to console.\"\"\"\n        try:\n            print(f\"\\nGenerated hunts-data.js with {stats['total_hunts']} hunts\")\n            \n            print(\"\\nStatistics:\")\n            for category, count in stats['category_counts'].items():\n                print(f\"  {category}: {count} hunts\")\n            \n            print(f\"\\nUnique tactics: {stats['tactics_count']}\")\n            for tactic in stats['unique_tactics']:\n                print(f\"  - {tactic}\")\n            \n            print(f\"\\nUnique tags: {stats['tags_count']}\")\n            for tag in stats['unique_tags']:\n                print(f\"  - #{tag}\")\n                \n        except Exception as error:\n            logger.error(f\"Error printing statistics: {error}\")\n\n\ndef main():\n    \"\"\"Main function to process all hunts.\"\"\"\n    try:\n        processor = HuntProcessor()\n        \n        # Process all hunts\n        hunts = processor.process_all_hunts()\n        \n        if not hunts:\n            logger.warning(\"No hunts were successfully processed\")\n            return\n        \n        # Export hunts\n        processor.export_hunts(hunts)\n        \n        # Generate and print statistics\n        stats = processor.generate_statistics(hunts)\n        processor.print_statistics(stats)\n        \n        logger.info(\"Hunt processing completed successfully\")\n        \n    except Exception as error:\n        logger.error(f\"Hunt processing failed: {error}\")\n        raise\n\n\nif __name__ == \"__main__\":\n    main()
+        """Read file content safely.
+        Args:
+            file_path: Path to the file.
+
+        Returns:
+            File content as string.
+
+        Raises:
+            FileProcessingError: If file cannot be read.
+        """
+        try:
+            self.validator.validate_file_path(file_path, must_exist=True)
+            
+            with open(file_path, 'r', encoding='utf-8') as file:
+                content = file.read()
+            
+            if not content.strip():
+                logger.warning(f"File is empty: {file_path}")
+            
+            logger.debug(f"Successfully read file: {file_path}")
+            return content
+            
+        except Exception as error:
+            logger.error(f"Error reading file {file_path}: {error}")
+            raise FileProcessingError(str(file_path), f"Failed to read file: {error}")
+    
+    def parse_hunt_file(self, file_path: Path, category: str) -> Optional[HuntData]:
+        """Parse a single hunt file.
+        Args:
+            file_path: Path to the hunt file.
+            category: Hunt category.
+
+        Returns:
+            Parsed HuntData object or None if parsing fails.
+
+        Raises:
+            MarkdownParsingError: If parsing fails.
+        """
+        try:
+            content = self.read_file(file_path)
+            hunt_id = file_path.stem
+            
+            # Skip excluded files
+            if hunt_id.lower() in [f.lower().replace('.md', '') for f in config.excluded_files]:
+                logger.debug(f"Skipping excluded file: {file_path}")
+                return None
+            
+            table_data = self._extract_table_data(content, file_path)
+            sections = self._extract_content_sections(content)
+            submitter_info = extract_submitter_info(table_data.get('submitter', ''))
+            
+            hunt_data = HuntData(
+                id=table_data.get('hunt_id', hunt_id),
+                category=category,
+                title=table_data.get('idea', ''),
+                tactic=table_data.get('tactic', ''),
+                notes=table_data.get('notes', ''),
+                tags=parse_tag_list(table_data.get('tags', '')),
+                submitter=submitter_info,
+                why=sections.get('why', ''),
+                references=sections.get('references', ''),
+                file_path=str(file_path.relative_to(Path(__file__).parent.parent))
+            )
+            
+            # Validate the parsed data
+            validated_hunt = hunt_data.validate()
+            
+            logger.debug(f"Successfully parsed hunt: {validated_hunt.id}")
+            return validated_hunt
+            
+        except Exception as error:
+            logger.error(f"Error parsing hunt file {file_path}: {error}")
+            # Don't re-raise to allow processing to continue
+            return None
+    
+    def _extract_table_data(self, content: str, file_path: Path) -> Dict[str, str]:
+        """Extract data from markdown table."""
+        try:
+            lines = content.split('\n')
+            table_start_index = find_table_header_line(lines)
+            
+            if table_start_index is None:
+                logger.warning(f"No table header found in {file_path}")
+                return self._get_empty_table_data()
+            
+            cells = extract_table_cells(lines, table_start_index)
+            
+            if len(cells) >= 6:
+                return {
+                    'hunt_id': clean_markdown_formatting(cells[0]),
+                    'idea': clean_markdown_formatting(cells[1]),
+                    'tactic': clean_markdown_formatting(cells[2]),
+                    'notes': clean_markdown_formatting(cells[3]),
+                    'tags': clean_markdown_formatting(cells[4]),
+                    'submitter': clean_markdown_formatting(cells[5])
+                }
+            else:
+                logger.warning(f"Insufficient table cells in {file_path}: {len(cells)}")
+                return self._get_empty_table_data()
+                
+        except Exception as error:
+            logger.error(f"Error extracting table data from {file_path}: {error}")
+            return self._get_empty_table_data()
+    
+    def _extract_content_sections(self, content: str) -> Dict[str, str]:
+        """Extract Why and References sections."""
+        try:
+            return {
+                'why': extract_content_section(content, 'Why'),
+                'references': extract_content_section(content, 'References')
+            }
+        except Exception as error:
+            logger.error(f"Error extracting content sections: {error}")
+            return {'why': '', 'references': ''}
+    
+    def _get_empty_table_data(self) -> Dict[str, str]:
+        """Return empty table data structure."""
+        return {
+            'hunt_id': '',
+            'idea': '',
+            'tactic': '',
+            'notes': '',
+            'tags': '',
+            'submitter': ''
+        }
+
+
+class HuntExporter(ABC):
+    """Abstract base class for hunt data exporters."""
+    @abstractmethod
+    def export(self, hunts: List[HuntData], output_path: Path) -> None:
+        """Export hunt data to specified format."""
+        pass
+
+
+class JSONExporter(HuntExporter):
+    """Exports hunt data to JSON format."""
+    def export(self, hunts: List[HuntData], output_path: Path) -> None:
+        """Export hunts to JSON file.
+        Args:
+            hunts: List of hunt data objects.
+            output_path: Output file path.
+
+        Raises:
+            DataExportError: If export fails.
+        """
+        try:
+            # Convert to dictionaries and sort by ID
+            hunt_dicts = [hunt.to_dict() for hunt in hunts]
+            hunt_dicts.sort(key=lambda x: x['id'])
+            
+            with open(output_path, 'w', encoding='utf-8') as file:
+                json.dump(hunt_dicts, file, indent=2, ensure_ascii=False)
+            
+            logger.info(f"Exported {len(hunts)} hunts to JSON: {output_path}")
+            
+        except Exception as error:
+            logger.error(f"Error exporting to JSON: {error}")
+            raise DataExportError(str(output_path), f"JSON export failed: {error}")
+
+
+class JavaScriptExporter(HuntExporter):
+    """Exports hunt data to JavaScript format."""
+    def export(self, hunts: List[HuntData], output_path: Path) -> None:
+        """Export hunts to JavaScript file.
+        Args:
+            hunts: List of hunt data objects.
+            output_path: Output file path.
+
+        Raises:
+            DataExportError: If export fails.
+        """
+        try:
+            # Convert to dictionaries and sort by ID
+            hunt_dicts = [hunt.to_dict() for hunt in hunts]
+            hunt_dicts.sort(key=lambda x: x['id'])
+            
+            with open(output_path, 'w', encoding='utf-8') as file:
+                file.write('// Auto-generated hunt data from markdown files\n')
+                file.write('const HUNTS_DATA = ')
+                json.dump(hunt_dicts, file, indent=2, ensure_ascii=False)
+                file.write(';\n')
+            
+            logger.info(f"Exported {len(hunts)} hunts to JavaScript: {output_path}")
+            
+        except Exception as error:
+            logger.error(f"Error exporting to JavaScript: {error}")
+            raise DataExportError(str(output_path), f"JavaScript export failed: {error}")
+
+
+class HuntProcessor:
+    """Main processor for hunt files."""
+    def __init__(self, reader: Optional[HuntFileReader] = None, 
+                 exporter: Optional[HuntExporter] = None):
+        self.reader = reader or HuntFileReader()
+        self.exporter = exporter or JavaScriptExporter()
+    
+    def process_all_hunts(self, base_directory: Optional[str] = None) -> List[HuntData]:
+        """Process all hunt files and return parsed data.
+        Args:
+            base_directory: Base directory to search. Defaults to config value.
+
+        Returns:
+            List of successfully parsed hunt data.
+        """
+        try:
+            hunt_files = find_hunt_files(base_directory)
+            all_hunts = []
+            
+            for hunt_file in hunt_files:
+                try:
+                    # Determine category from parent directory
+                    category = hunt_file.parent.name
+                    
+                    if category not in config.hunt_directories:
+                        logger.warning(f"Unknown category {category} for file {hunt_file}")
+                        continue
+                    
+                    hunt_data = self.reader.parse_hunt_file(hunt_file, category)
+                    if hunt_data:
+                        all_hunts.append(hunt_data)
+                        logger.debug(f"Processed hunt: {hunt_data.id}")
+                    
+                except Exception as error:
+                    logger.error(f"Error processing {hunt_file}: {error}")
+                    continue
+            
+            logger.info(f"Successfully processed {len(all_hunts)} hunts")
+            return all_hunts
+            
+        except Exception as error:
+            logger.error(f"Error processing hunts: {error}")
+            raise FileProcessingError(str(base_directory), f"Hunt processing failed: {error}")
+    
+    def export_hunts(self, hunts: List[HuntData], output_path: Optional[Path] = None) -> None:
+        """Export hunt data using configured exporter.
+        Args:
+            hunts: List of hunt data to export.
+            output_path: Output file path. Defaults to config value.
+        """
+        try:
+            if not output_path:
+                base_dir = Path(config.base_directory)
+                output_path = base_dir / config.hunts_data_filename
+            
+            self.exporter.export(hunts, output_path)
+            
+        except Exception as error:
+            logger.error(f"Error exporting hunts: {error}")
+            raise DataExportError(str(output_path), f"Export failed: {error}")
+    
+    def generate_statistics(self, hunts: List[HuntData]) -> Dict[str, Any]:
+        """Generate statistics about hunts.
+        Args:
+            hunts: List of hunt data.
+
+        Returns:
+            Dictionary with statistics.
+        """
+        try:
+            category_counts = {}
+            all_tactics = set()
+            all_tags = set()
+            
+            for hunt in hunts:
+                # Category counts
+                category_counts[hunt.category] = category_counts.get(hunt.category, 0) + 1
+                
+                # Collect tactics
+                if hunt.tactic:
+                    tactics = [t.strip() for t in hunt.tactic.split(',') if t.strip()]
+                    all_tactics.update(tactics)
+                
+                # Collect tags
+                all_tags.update(hunt.tags)
+            
+            stats = {
+                'total_hunts': len(hunts),
+                'category_counts': category_counts,
+                'unique_tactics': sorted(list(all_tactics)),
+                'unique_tags': sorted(list(all_tags)),
+                'tactics_count': len(all_tactics),
+                'tags_count': len(all_tags)
+            }
+            
+            logger.info(f"Generated statistics for {len(hunts)} hunts")
+            return stats
+            
+        except Exception as error:
+            logger.error(f"Error generating statistics: {error}")
+            return {}
+    
+    def print_statistics(self, stats: Dict[str, Any]) -> None:
+        """Print statistics to console."""
+        try:
+            print(f"\nGenerated hunts-data.js with {stats['total_hunts']} hunts")
+
+            print("\nStatistics:")
+            for category, count in stats['category_counts'].items():
+                print(f"  {category}: {count} hunts")
+
+            print(f"\nUnique tactics: {stats['tactics_count']}")
+            for tactic in stats['unique_tactics']:
+                print(f"  - {tactic}")
+
+            print(f"\nUnique tags: {stats['tags_count']}")
+            for tag in stats['unique_tags']:
+                print(f"  - #{tag}")
+                
+        except Exception as error:
+            logger.error(f"Error printing statistics: {error}")
+
+
+def main():
+    """Main function to process all hunts."""
+    try:
+        processor = HuntProcessor()
+        
+        # Process all hunts
+        hunts = processor.process_all_hunts()
+        
+        if not hunts:
+            logger.warning("No hunts were successfully processed")
+            return
+        
+        # Export hunts
+        processor.export_hunts(hunts)
+        
+        # Generate and print statistics
+        stats = processor.generate_statistics(hunts)
+        processor.print_statistics(stats)
+        
+        logger.info("Hunt processing completed successfully")
+        
+    except Exception as error:
+        logger.error(f"Hunt processing failed: {error}")
+        raise
+
+
+if __name__ == "__main__":
+    main()
