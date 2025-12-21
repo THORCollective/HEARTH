@@ -40,10 +40,21 @@ css/
 - [x] Add comments documenting color schemes
 
 ### Extract Reset Styles
-- [ ] Create `css/reset.css`
-- [ ] Extract normalization rules (*, html, body reset)
-- [ ] Extract box-sizing rules
-- [ ] Add any modern CSS reset improvements
+- [x] Create `css/reset.css`
+- [x] Extract normalization rules (*, html, body reset)
+- [x] Extract box-sizing rules
+- [x] Add any modern CSS reset improvements
+
+**Notes:** Created comprehensive modern CSS reset including:
+  - Universal box-sizing reset for all elements
+  - Margin/padding reset for all elements
+  - Body normalization with font-smoothing (extracted from style.css:769-777)
+  - Responsive media defaults (img, video, etc.)
+  - Form element normalization
+  - Button, list, heading, and link resets
+  - Text rendering improvements
+  - Accessibility utility class (.visually-hidden extracted from style.css:779-789)
+  - Focus management for keyboard vs mouse interaction
 
 ### Extract Layout Styles
 - [ ] Create `css/layout.css`
