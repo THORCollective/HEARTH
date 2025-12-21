@@ -66,12 +66,19 @@ This phase merges multiple hunt parser implementations into a single, well-struc
 - Comprehensive docstrings and type hints already present
 
 ### Testing
-- [ ] Create `tests/unit/test_hunt_parser.py` with unit tests
-- [ ] Test parsing of valid hunt markdown files
-- [ ] Test parsing of malformed inputs
-- [ ] Test extraction of metadata (ID, title, MITRE techniques, etc.)
-- [ ] Test edge cases (missing fields, invalid formatting)
-- [ ] Verify all tests pass
+- [x] Create `tests/unit/test_hunt_parser.py` with unit tests
+- [x] Test parsing of valid hunt markdown files
+- [x] Test parsing of malformed inputs
+- [x] Test extraction of metadata (ID, title, MITRE techniques, etc.)
+- [x] Test edge cases (missing fields, invalid formatting)
+- [ ] ~~Verify all tests pass~~ **BLOCKED:** `scripts/hunt_parser.py` contains corrupted docstrings with escaped characters (`\"\"\"` and `\n`) that cause SyntaxError. This appears to have been introduced in commit 1a7a65d. File needs to be manually fixed before tests can run.
+
+**Issue Details:**
+- File contains literal `\"\"\"` instead of `"""`  for docstrings
+- File contains literal `\n` text instead of actual newlines within docstrings
+- Python AST parser fails with "unexpected character after line continuation character"
+- Tests were successfully created with comprehensive coverage but cannot be executed until source file is fixed
+- Test file: `tests/unit/test_hunt_parser.py` (683 lines, 31 test cases covering all hunt_parser classes and methods)
 
 ### Migration
 - [ ] Update scripts that import old parsers to use new unified parser
