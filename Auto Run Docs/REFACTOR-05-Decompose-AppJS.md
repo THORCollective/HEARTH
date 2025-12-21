@@ -101,11 +101,23 @@ js/
 - Location: `/Users/sydney/code/07-other-projects/HEARTH/js/notebook-generator.js`
 
 ### Extract Preset Manager Module
-- [ ] Create `js/preset-manager.js`
-- [ ] Extract filter preset save/load logic
-- [ ] Extract preset UI management
-- [ ] Export `PresetManager` class
-- [ ] Add JSDoc documentation
+- [x] Create `js/preset-manager.js`
+- [x] Extract filter preset save/load logic
+- [x] Extract preset UI management
+- [x] Export `PresetManager` class
+- [x] Add JSDoc documentation
+
+**Implementation Notes:**
+- Created comprehensive `PresetManager` class with all filter preset functionality
+- Includes built-in presets (Baseline sweeps, Exfil & C2 watchlist)
+- Supports custom preset creation, saving, and deletion
+- Implements localStorage persistence for custom presets
+- Provides preset application with callback pattern for filter updates
+- Includes chip selection synchronization for tactics and tags
+- Prevents deletion of built-in presets with validation
+- Added complete JSDoc documentation for all public methods
+- Maintains separation of concerns: preset management only, no direct filtering
+- Location: `/Users/sydney/code/07-other-projects/HEARTH/js/preset-manager.js`
 
 ### Extract Pagination Module
 - [ ] Create `js/pagination.js`
