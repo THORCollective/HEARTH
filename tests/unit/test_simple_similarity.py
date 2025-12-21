@@ -5,7 +5,7 @@ Simple test for similarity detection components.
 
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'scripts'))
 
 try:
     from similarity_detector import HypothesisSimilarityDetector

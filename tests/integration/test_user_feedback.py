@@ -6,7 +6,7 @@ Test user feedback integration in hunt generation.
 import os
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'scripts'))
 
 
 def test_user_feedback_integration():

@@ -5,7 +5,7 @@ Comprehensive test of TTP diversity system for hypothesis regeneration.
 
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'scripts'))
 
 from hypothesis_deduplicator import get_hypothesis_deduplicator
 from ttp_diversity_checker import get_ttp_diversity_checker

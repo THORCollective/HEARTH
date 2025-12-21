@@ -12,7 +12,7 @@ from typing import List, Dict, Any
 from unittest.mock import Mock, patch, MagicMock
 
 import sys
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'scripts'))
 
 from similarity_detector import (
     HypothesisSimilarityDetector, SimilarityScore, TextPreprocessor,

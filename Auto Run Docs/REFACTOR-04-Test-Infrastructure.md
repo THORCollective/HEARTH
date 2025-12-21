@@ -11,19 +11,19 @@ This phase organizes the 23 scattered test files into a proper test suite with a
 ## Tasks
 
 ### Create Test Directory Structure
-- [ ] Create `tests/` directory in project root
-- [ ] Create `tests/unit/` subdirectory for unit tests
-- [ ] Create `tests/integration/` subdirectory for integration tests
-- [ ] Create `tests/fixtures/` subdirectory for test data
-- [ ] Create `tests/conftest.py` for pytest configuration
+- [x] Create `tests/` directory in project root (already existed)
+- [x] Create `tests/unit/` subdirectory for unit tests (already existed)
+- [x] Create `tests/integration/` subdirectory for integration tests
+- [x] Create `tests/fixtures/` subdirectory for test data
+- [x] Create `tests/conftest.py` for pytest configuration
 
 ### Organize Existing Tests
-- [ ] Identify all test files in `scripts/` directory
-- [ ] Categorize tests as unit vs integration tests
-- [ ] Move unit tests to `tests/unit/` with proper naming (`test_*.py`)
-- [ ] Move integration tests to `tests/integration/`
-- [ ] Update import paths in moved test files
-- [ ] Delete any obsolete or redundant test files
+- [x] Identify all test files in `scripts/` directory (found 17 test files)
+- [x] Categorize tests as unit vs integration tests (4 unit, 6 integration, 7 obsolete/duplicate)
+- [x] Move unit tests to `tests/unit/` with proper naming (`test_*.py`)
+- [x] Move integration tests to `tests/integration/`
+- [x] Update import paths in moved test files
+- [x] Delete any obsolete or redundant test files (removed 7 duplicate/obsolete tests)
 
 ### Create Test Fixtures
 - [ ] Create sample hunt markdown files in `tests/fixtures/`

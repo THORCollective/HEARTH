@@ -5,7 +5,7 @@ Test the duplicate detection functionality.
 
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'scripts'))
 
 from duplicate_detector import check_duplicates_for_new_submission
 

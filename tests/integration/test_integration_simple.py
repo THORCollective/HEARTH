@@ -5,7 +5,7 @@ Simple test to validate TTP diversity integration is properly set up.
 
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'scripts'))
 
 
 def test_integration_setup():

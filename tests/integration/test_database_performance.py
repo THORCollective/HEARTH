@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 # Add scripts directory to path
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'scripts'))
 
 from duplicate_detector import get_all_existing_hunts_from_db, get_all_existing_hunts_from_files
 
