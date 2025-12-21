@@ -27,11 +27,19 @@ js/
 - [x] Read current `app.js` to understand all functionality
 
 ### Extract Hunt Filter Module
-- [ ] Create `js/hunt-filter.js`
-- [ ] Extract filtering logic (applyFilters, filterHunts, etc.)
-- [ ] Extract search functionality
-- [ ] Export `HuntFilter` class
-- [ ] Add JSDoc documentation
+- [x] Create `js/hunt-filter.js`
+- [x] Extract filtering logic (applyFilters, filterHunts, etc.)
+- [x] Extract search functionality
+- [x] Export `HuntFilter` class
+- [x] Add JSDoc documentation
+
+**Implementation Notes:**
+- Created comprehensive `HuntFilter` class with all filtering logic
+- Includes text search across multiple fields (id, title, tactic, notes, tags, submitter)
+- Supports category, tactic (multi-select), and tag (multi-select) filtering
+- Implements search result caching for performance optimization
+- Added complete JSDoc documentation for all public methods
+- Location: `/Users/sydney/code/07-other-projects/HEARTH/js/hunt-filter.js`
 
 ### Extract Hunt Renderer Module
 - [ ] Create `js/hunt-renderer.js`
