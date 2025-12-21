@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Logger Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .console-output {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>JavaScript Logger Test</h1>
+
+    <div class="info-box">
+        <strong>Current Environment:</strong> <span id="env-info"></span><br>
+        <strong>Log Level:</strong> <span id="log-level"></span><br>
+        <strong>Hostname:</strong> <span id="hostname"></span>
+    </div>
+
+    <div class="test-section">
+        <h2>Log Level Tests</h2>
+        <p>Click the buttons to test different log levels:</p>
+        <button onclick="testAllLevels()">Test All Log Levels</button>
+        <button onclick="testDebugLevel()">Test Debug Only</button>
+        <button onclick="testErrorLevel()">Test Error Only</button>
+        <button onclick="clearConsole()">Clear Console</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Log Level Control</h2>
+        <button onclick="setLogLevel('DEBUG')">Set to DEBUG</button>
+        <button onclick="setLogLevel('INFO')">Set to INFO</button>
+        <button onclick="setLogLevel('WARN')">Set to WARN</button>
+        <button onclick="setLogLevel('ERROR')">Set to ERROR</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Console Output</h2>
+        <p>Open your browser's Developer Console (F12) to see the actual log output.</p>
+        <div class="console-output" id="console-output">
+            Console output will appear in your browser's Developer Tools console.
+            This is a simulation of what you should see there.
+        </div>
+    </div>
+
+    <script type="module">
+        import { getLogger, LogLevel } from '../../js/logger.js';
+
+        const logger = getLogger('LoggerTest');
+
+        // Display environment info
+        document.getElementById('env-info').textContent =
+            (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === '')
+            ? 'Development (localhost)'
+            : 'Production';
+        document.getElementById('log-level').textContent = logger.getLevel();
+        document.getElementById('hostname').textContent = window.location.hostname || '(file protocol)';
+
+        // Make functions available globally
+        window.testAllLevels = function() {
+            logger.debug('This is a DEBUG message - only visible in DEBUG mode');
+            logger.info('This is an INFO message - visible in INFO and DEBUG modes');
+            logger.warn('This is a WARN message - visible in WARN, INFO, and DEBUG modes');
+            logger.error('This is an ERROR message - always visible');
+        };
+
+        window.testDebugLevel = function() {
+            logger.debug('Debug message test');
+        };
+
+        window.testErrorLevel = function() {
+            logger.error('Error message test');
+        };
+
+        window.setLogLevel = function(level) {
+            logger.setLevel(level);
+            document.getElementById('log-level').textContent = logger.getLevel();
+            logger.info(`Log level changed to ${level}`);
+        };
+
+        window.clearConsole = function() {
+            console.clear();
+        };
+
+        // Run initial test
+        logger.info('Logger test page loaded successfully');
+        logger.debug('If you see this, debug logging is enabled');
+    </script>
+</body>
+</html>
