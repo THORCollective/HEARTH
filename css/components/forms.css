@@ -1,0 +1,219 @@
+/* ==========================================================================
+   Form Components
+   ========================================================================== */
+
+/* Form Groups & Labels
+   ========================================================================== */
+
+/* Form group containers (from style.css:2134-2136) */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #ccc;
+}
+
+/* Quick filter labels (from style.css:1421-1426) */
+.quick-filter label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+}
+
+
+/* Text Inputs & Textareas
+   ========================================================================== */
+
+/* Chat input field (from style.css:286-300) */
+.chat-input {
+    flex: 1;
+    padding: 10px 14px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 10px;
+    color: #fff;
+    font-size: 0.95rem;
+}
+
+.chat-input:focus {
+    outline: none;
+    border-color: var(--chat-accent);
+    box-shadow: 0 0 0 2px var(--chat-accent-soft);
+}
+
+/* Search input field (from style.css:1313-1323) */
+.search-input {
+    flex: 1 1 auto;
+    background: transparent;
+    border: none;
+    color: inherit;
+    font-size: 1rem;
+}
+
+.search-input:focus {
+    outline: none;
+}
+
+/* Submission form inputs (from style.css:2145-2170) */
+.form-group input[type="text"],
+.form-group input[type="url"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #333;
+    background: #222;
+    color: #fff;
+    font-size: 1rem;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="url"]:focus,
+.form-group input[type="email"]:focus,
+.form-group input[type="password"]:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #6a0dad;
+}
+
+/* Textarea specific styles (from style.css:2177-2180) */
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+
+/* Select Dropdowns
+   ========================================================================== */
+
+/* Filter select dropdowns (from style.css:1428-1444) */
+.filter-select {
+    appearance: none;
+    padding: 0.7rem 2.2rem 0.7rem 0.9rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(15, 17, 25, 0.65) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white"><path d="M4 6l4 4 4-4z"/></svg>') right 0.75rem center/12px no-repeat;
+    color: inherit;
+    min-width: 180px;
+    cursor: pointer;
+    transition: border var(--transition), box-shadow var(--transition);
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: rgba(138, 71, 255, 0.4);
+    box-shadow: 0 0 0 3px rgba(138, 71, 255, 0.18);
+}
+
+/* Preset row filter select (from style.css:1611-1613) */
+.preset-row .filter-select {
+    min-width: 220px;
+}
+
+/* Multi-select styling (from style.css:2172-2175) */
+.form-group select[multiple] {
+    height: 150px;
+    padding: 10px;
+}
+
+
+/* Form Containers & Wrappers
+   ========================================================================== */
+
+/* Search wrapper container (from style.css:1292-1307) */
+.search-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-radius: var(--radius-md);
+    padding: 0.85rem 1.1rem;
+    background: rgba(14, 16, 28, 0.65);
+    border: 1px solid transparent;
+    transition: border var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+
+.search-wrapper:focus-within {
+    border-color: rgba(138, 71, 255, 0.45);
+    box-shadow: 0 0 0 3px rgba(138, 71, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+/* Submission form container (from style.css:2125-2132) */
+.submission-form {
+    max-width: 800px;
+    margin: 40px auto;
+    background-color: #1e1e1e;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+
+/* Light Theme Overrides
+   ========================================================================== */
+
+@media (prefers-color-scheme: light) {
+    /* Search input light mode (from style.css:405-413) */
+    .search-input {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(138, 71, 255, 0.15);
+        color: var(--text-primary);
+    }
+
+    .search-input::placeholder {
+        color: var(--text-muted);
+    }
+
+    /* Filter select light mode (from style.css:415-419, 599-607) */
+    .filter-select {
+        background: rgba(255, 255, 255, 0.9) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%234a4b68"><path d="M4 6l4 4 4-4z"/></svg>') right 0.75rem center/12px no-repeat;
+        border: 1px solid rgba(138, 71, 255, 0.15);
+        color: var(--text-primary);
+    }
+
+    .filter-select {
+        background: white url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%235a5c68"><path d="M4 6l4 4 4-4z"/></svg>') right 0.75rem center/12px no-repeat !important;
+        color: var(--text-primary) !important;
+    }
+
+    .filter-select option {
+        background: white !important;
+        color: var(--text-primary) !important;
+    }
+
+    /* Search wrapper light mode (from style.css:589-596) */
+    .search-wrapper {
+        background: white !important;
+        border: 1px solid rgba(138, 71, 255, 0.15) !important;
+    }
+
+    .search-input {
+        background: white !important;
+        color: var(--text-primary) !important;
+    }
+}
+
+
+/* Responsive Mobile Styles
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    /* Mobile filter and input sizing (from style.css:2103-2108) */
+    .quick-filter,
+    .filter-select,
+    .search-wrapper,
+    .btn {
+        width: 100%;
+    }
+}
