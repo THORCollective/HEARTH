@@ -12,10 +12,28 @@ This phase merges multiple hunt parser implementations into a single, well-struc
 ## Tasks
 
 ### Analysis
-- [ ] Read all hunt parser files to understand their purposes
-- [ ] Identify which parser is used in production workflows
-- [ ] Map out all parsing functions and their unique features
-- [ ] Check dependencies - what imports these parsers?
+- [x] Read all hunt parser files to understand their purposes
+- [x] Identify which parser is used in production workflows
+- [x] Map out all parsing functions and their unique features
+- [x] Check dependencies - what imports these parsers?
+
+**Analysis Notes:**
+- `parse_hunts.py` (190 lines): Simple production parser used by `update-hunts.yml`, generates `hunts-data.js`
+- `hunt_parser.py` (340+ lines): Object-oriented parser with HuntData dataclass, validators, exporters (JSON/JS), used by tests and leaderboard
+- `hunt_parser_utils.py` (189 lines): Shared utilities used by both parsers - table parsing, submitter extraction, tag parsing
+- `simple_hunt_parser.py` (30 lines): Test file only, imports logger/config for testing, not used in production
+
+**Dependencies:**
+- Production: `parse_hunts.py` → `hunt_parser_utils.py`
+- Leaderboard: `generate_leaderboard.py` → `hunt_parser_utils.py`
+- Tests: `test_runner.py` → `hunt_parser.py` → `hunt_parser_utils.py`
+- Both main parsers share `hunt_parser_utils.py`
+
+**Recommendation:**
+- Keep `hunt_parser.py` as the unified implementation (already well-structured with OOP, validation, error handling)
+- Migrate `parse_hunts.py` usage to `hunt_parser.py`
+- Keep `hunt_parser_utils.py` as shared utilities
+- Delete `simple_hunt_parser.py` (test-only file)
 
 ### Design
 - [ ] Design unified `HuntParser` class with clear API
