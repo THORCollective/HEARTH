@@ -106,6 +106,15 @@ class HuntFileReader:
             sections = self._extract_content_sections(content)
             submitter_info = extract_submitter_info(table_data.get('submitter', ''))
             
+            # Calculate relative path from base directory
+            base_dir = Path(config.base_directory).resolve()
+            abs_file_path = file_path.resolve()
+            try:
+                rel_path = abs_file_path.relative_to(base_dir)
+            except ValueError:
+                # If file is not under base_dir, use absolute path
+                rel_path = abs_file_path
+
             hunt_data = HuntData(
                 id=table_data.get('hunt_id', hunt_id),
                 category=category,
@@ -116,7 +125,7 @@ class HuntFileReader:
                 submitter=submitter_info,
                 why=sections.get('why', ''),
                 references=sections.get('references', ''),
-                file_path=str(file_path.relative_to(Path(__file__).parent.parent))
+                file_path=str(rel_path)
             )
             
             # Validate the parsed data

@@ -82,9 +82,17 @@ This phase merges multiple hunt parser implementations into a single, well-struc
 - Test file: `tests/unit/test_hunt_parser.py` (683 lines, 32 test cases covering all hunt_parser classes and methods)
 
 ### Migration
-- [ ] Update scripts that import old parsers to use new unified parser
-- [ ] Update GitHub Actions workflows if needed
-- [ ] Delete old parser files after migration is complete
+- [x] Update scripts that import old parsers to use new unified parser
+- [x] Update GitHub Actions workflows if needed
+- [x] Delete old parser files after migration is complete
+
+**Migration Notes:**
+- Updated `.github/workflows/update-hunts.yml` to use `hunt_parser.py` instead of `parse_hunts.py`
+- Fixed path calculation issue in `hunt_parser.py` to use `config.base_directory` instead of `__file__`
+- Updated validator to accept all hunt ID prefixes (H, F, B, M, A) for backwards compatibility
+- Removed 'tactics' transformation in validator to maintain compatibility with HuntData dataclass
+- Tested locally: successfully processed all 78 hunt files and generated `hunts-data.js`
+- Deleted old parser files: `parse_hunts.py`, `simple_hunt_parser.py`
 
 ### Cleanup
 - [ ] Commit changes with message: "refactor: consolidate hunt parsers into single module"

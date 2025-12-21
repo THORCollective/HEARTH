@@ -22,7 +22,7 @@ jobs:
           python-version: '3.x'
 
       - name: Run script to update hunt data
-        run: python3 scripts/parse_hunts.py
+        run: python3 scripts/hunt_parser.py
 
       - name: Commit and push if there are changes
         run: |

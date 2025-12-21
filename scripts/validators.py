@@ -31,14 +31,14 @@ class HuntValidator:
             if not hunt_id or not isinstance(hunt_id, str):
                 raise ValidationError("hunt_id", str(hunt_id), "Hunt ID must be a non-empty string")
 
-            # Check format: Category prefix + number (e.g., "F001", "E042", "A123")
-            expected_prefix = category[0].upper() if category else "H"
-            pattern = f"^{expected_prefix}\\d{{3,4}}$"
+            # Accept any letter prefix + 3-4 digits (e.g., "H001", "F042", "B123", "M001")
+            # This is backwards compatible with all existing hunt formats
+            pattern = r"^[A-Z]\d{3,4}$"
 
             if not re.match(pattern, hunt_id):
                 raise ValidationError(
                     "hunt_id", hunt_id,
-                    f"Hunt ID must match pattern {pattern} (e.g., {expected_prefix}001)"
+                    f"Hunt ID must match pattern {pattern} (e.g., H001, F001, B001, M001)"
                 )
 
             logger.debug(f"Hunt ID {hunt_id} validated")
@@ -177,8 +177,8 @@ class HuntValidator:
 
             HuntValidator.validate_hunt_id(validated_data['id'], validated_data['category'])
 
-            if 'tactic' in validated_data:
-                validated_data['tactics'] = HuntValidator.validate_tactics(validated_data['tactic'])
+            # Keep tactic as is (singular) for compatibility with HuntData dataclass
+            # The old parser didn't transform this field
 
             if 'tags' in validated_data:
                 validated_data['tags'] = HuntValidator.validate_tags(validated_data['tags'])

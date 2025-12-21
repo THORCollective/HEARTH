@@ -84,10 +84,10 @@ const HUNTS_DATA = [
     "tactic": "Execution, Defense Evasion",
     "notes": "The scope of this hunt could become too wide without defining an area of focus. For one hunt, it might be best to pursue one category of visibility such as command,k process, or module monitoring.",
     "tags": [
-      "Execution",
-      "DefenseEvasion",
-      "LOLBIN",
-      "Rundll32"
+      "execution",
+      "defenseevasion",
+      "lolbin",
+      "rundll32"
     ],
     "submitter": {
       "name": "Claire Stromboe",
@@ -104,9 +104,9 @@ const HUNTS_DATA = [
     "tactic": "Collection, Exfiltration",
     "notes": "The scope of this hunt could become too wide without defining what is considered known good browser extensions. Consider focusing your first baseline on a subsection of the business, specific browser, or by excluding allowed extensions.",
     "tags": [
-      "Collection",
-      "Exfiltration",
-      "BrowserExtensions"
+      "collection",
+      "exfiltration",
+      "browserextensions"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -123,10 +123,10 @@ const HUNTS_DATA = [
     "tactic": "Collection, Exfiltration",
     "notes": "Email forwarding rules may be disabled in your organization, it may be beneficial to see what rules were setup regardless of success to identify potential malicious activity.",
     "tags": [
-      "Collection",
-      "Exfiltration",
-      "Email",
-      "MailForwarding"
+      "collection",
+      "exfiltration",
+      "email",
+      "mailforwarding"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -162,10 +162,10 @@ const HUNTS_DATA = [
     "tactic": "Defense Evasion (TA0005), Trusted Developer Utilities Proxy Execution (T1127), Masquerading (T1036), Exploitation for Defense Evasion (T1211)",
     "notes": "Awareness should be raised about the flagging of Firefox Nightly.app by EDRs and the necessity for validating all dependencies associated with testing frameworks.",
     "tags": [
-      "DefenseEvasion",
-      "Masquerading",
-      "TrustedDeveloperUtilities",
-      "ProxyExecution"
+      "defenseevasion",
+      "masquerading",
+      "trusteddeveloperutilities",
+      "proxyexecution"
     ],
     "submitter": {
       "name": "Joshua Hines",
@@ -182,7 +182,7 @@ const HUNTS_DATA = [
     "tactic": "Lateral Movement",
     "notes": "Explore typical peering requests, initiators, unusual IPs, and connection events.",
     "tags": [
-      "LateralMovement"
+      "lateralmovement"
     ],
     "submitter": {
       "name": "Bruce Breuer",
@@ -199,8 +199,8 @@ const HUNTS_DATA = [
     "tactic": "Initial Access",
     "notes": "Indicators of Xcode usage can be found in EDR telemetry and potential for detection if Xcode is not utilized/approved in the environment.",
     "tags": [
-      "InitialAccess",
-      "Baseline"
+      "initialaccess",
+      "baseline"
     ],
     "submitter": {
       "name": "Collin McClaine",
@@ -347,8 +347,8 @@ const HUNTS_DATA = [
     "tactic": "Persistence",
     "notes": "Domain Accounts can cover user, administrator, and service accounts.",
     "tags": [
-      "Persistence",
-      "ActiveDirectory"
+      "persistence",
+      "activedirectory"
     ],
     "submitter": {
       "name": "Audra Streetman",
@@ -365,8 +365,8 @@ const HUNTS_DATA = [
     "tactic": "Defense Evasion",
     "notes": "Data requirements: Windows Sysmon, EDR telemetry, Proxy logs",
     "tags": [
-      "DefenseEvasion",
-      "SystemBinaryProxyExecutionMshta"
+      "defenseevasion",
+      "systembinaryproxyexecutionmshta"
     ],
     "submitter": {
       "name": "Azrara",
@@ -384,7 +384,7 @@ const HUNTS_DATA = [
     "notes": "<ul><li>Data requirements: EDR telemetry, Windows event logs id 5140</li></br><li>Implementation examples in SIGMA:</li></br>Title: Suspicious Network Share Enumeration and Access</br>Id:xxxxx</br>Status: test</br>Description: Detects commands used for network share enumeration and correlates with Event ID 5140 for access to shared resources.</br>Author: Your Name</br>Date:2024/11/14</br>Tags:</br><ul><li>attack.discovery</br><li>attack.t1135</li></ul></br>logsource:</br>category: process_creation</br>product:windows</br>detection:</br>selection_cmd:</br>Image&#124;endswith:</br><ul><li>'\\cmd.exe'</br><li>'\\powershell.exe'</br>ComandLine&#124;contains&#124;all:</br><li>'net view'</br><li>'&bsol;'</br>selection_event:</br>EventID: 5140</br>condition: selection_cmd or selection_event</br>falsepositives:</br><li>Legitimate administrative tasks</br><li>Regular file-sharing activities</br>level: medium",
     "tags": [
       "collection",
-      "DatafromNetworkSharedDrive"
+      "datafromnetworkshareddrive"
     ],
     "submitter": {
       "name": "Azrara",
@@ -401,10 +401,10 @@ const HUNTS_DATA = [
     "tactic": "Persistence, Privilege Escalation, Defense Evasion",
     "notes": "Limitations: There are no such limitations other than non-availability of required logs. Sometimes, we tend to not collect \"Module Load\" events due to their huge volume. In such case we would not be able to perform this hunt. Also, for correlation of data we need advance query language such as SQL, KQL or better enough if we can use Pandas.</br></br>Assumption: Assuming that threat actor is using standard user rights and is using a DLL that has unverifiable digital signature (DLL is signed but certificates are not verified).</br></br>Data sets required: EDR logs - \"File Creation\" and \"Module Load\" events.</br></br>Query creation steps:</br></br>1. Select .dll File Creation Events: From the \"File Creation\" logs, select all .dll file creation events. Ensure that the folder path of the newly created .dll file is not among the following: c:\\windows\\system32, c:\\windows\\syswow64, and c:\\windows\\sxs. Additionally, the verification status of the .dll file should be \"Not Verified\".</br></br>2. Select .exe File Creation Events: Next, from the \"File Creation\" logs, select all .exe file creation events. The condition for selection is that the folder path of the .exe file matches the folder path of the .dll files identified in the previous step. Furthermore, the absolute time difference between the .dll file creation event and the .exe file creation event should be less than one minute.</br></br>3. Select DLL Load Events: Finally, from the \"Module Load\" logs, select all DLL load events where the file name and path of the loaded DLL and the file name and path of the EXE loading that DLL match the names and paths of the .dll and .exe files identified in the previous steps. Additionally, the time of the module load event should be greater than the time of the DLL creation event.",
     "tags": [
-      "Persistence",
-      "Privilege",
-      "Defense",
-      "DLLSideloading"
+      "persistence",
+      "privilege",
+      "defense",
+      "dllsideloading"
     ],
     "submitter": {
       "name": "hu983r",
@@ -421,9 +421,9 @@ const HUNTS_DATA = [
     "tactic": "Exfiltration",
     "notes": "Attackers are interested in finding unmonitored communication channels to evade detection.",
     "tags": [
-      "DNS",
-      "Tunneling",
-      "Exfiltration"
+      "dns",
+      "tunneling",
+      "exfiltration"
     ],
     "submitter": {
       "name": "Cody Lunday",
@@ -440,11 +440,11 @@ const HUNTS_DATA = [
     "tactic": "Execution",
     "notes": "Below are key implementation notes to guide this process: <br></br>1. Sysmon Configuration<br></br>Event ID 1 (Process Creation): Configure Sysmon to capture detailed information about process creations, focusing on powershell.exe executions. Ensure that command-line arguments are logged to detect potentially malicious scripts or commands.<br></br>Event ID 4104 (PowerShell Script Block Logging): While Sysmon does not natively capture PowerShell script block logging, enabling this feature in PowerShell settings can provide visibility into the content of executed scripts. This requires configuring PowerShell to log detailed script blocks to the Windows Event Log.<br></br>2. Detection Logic and Filtering<br></br>Baseline Normal Activity: Establish a baseline of normal PowerShell usage within the environment to differentiate between legitimate administrative activities and potential malicious behavior.<br></br>Anomaly Detection: Develop detection rules to identify anomalies, such as unusual command-line arguments, execution times, or user contexts that deviate from the established baseline.<br></br>Filtering Noise: Apply filters to exclude known legitimate PowerShell activities to reduce false positives and focus on suspicious events.<br></br>Limitations and Assumptions<br></br>Encrypted or Obfuscated Scripts: Attackers may use obfuscation or encryption to evade detection. Regularly update detection mechanisms to recognize and alert on such techniques.",
     "tags": [
-      "Powershell",
-      "Sysmon",
-      "Execution",
-      "TA0002",
-      "T1059.001"
+      "powershell",
+      "sysmon",
+      "execution",
+      "ta0002",
+      "t1059.001"
     ],
     "submitter": {
       "name": "Siddhant Mishra",
@@ -461,11 +461,11 @@ const HUNTS_DATA = [
     "tactic": "Command and Control",
     "notes": "<ul> <li>Named Pipes as C2 Channels: Named pipes are inter-process communication mechanisms in Windows environments. Adversaries exploit them to create covert C2 channels, enabling stealthy communication between compromised systems.</li><br><li>Detection Strategy: Monitor Sysmon Event ID 17 (Pipe Creation) for the creation of suspicious named pipes. Correlate these events with process creation logs (Event ID 1) to identify unusual parent-child process relationships, which may indicate malicious activity.</li><br><li>Reference List: Utilize a curated list of named pipes commonly associated with adversary techniques to aid in identifying potential threats.</li></br>",
     "tags": [
-      "CobaltStrike",
-      "NamedPipes",
-      "CommandAndControl",
-      "Sysmon",
-      "ThreatHunting"
+      "cobaltstrike",
+      "namedpipes",
+      "commandandcontrol",
+      "sysmon",
+      "threathunting"
     ],
     "submitter": {
       "name": "Siddhant Mishra",
@@ -482,10 +482,10 @@ const HUNTS_DATA = [
     "tactic": "Defense Evasion",
     "notes": "<ul> <li><strong>Assumptions:</strong></li><ul><li>If done with local admin right, the attack creates new registry values in the registry key HKLM\\System\\CurrentControlSet\\Services\\Dnscache\\Parameters\\DnsPolicyConfig{UUID</li><li>Value of registry key listed upper contains a domain related to a cybersecurity tool, such as .endpoint.security.microsoft.com</li><li>Add-DnsClientNrptRule Powershell function can be used to reach such purpose</ul></li><li><strong>Data Requirements:</strong><ul><li>Works only on Windows 7 and later operating systems</li><li>Requires to log registry key changes and/or any way to log command execution</ul></li><li><strong>Notes on Limitation:</strong><ul><li>Defenders must have multiple ways to log registry key changes and/or command execution to detect the attack once it was executed by attacker, as it aims to silence cybersecurity tool(s)</ul></li></ul>",
     "tags": [
-      "Registry",
-      "EDR",
-      "DNS",
-      "DefenseEvasion"
+      "registry",
+      "edr",
+      "dns",
+      "defenseevasion"
     ],
     "submitter": {
       "name": "wikijm",
@@ -502,9 +502,9 @@ const HUNTS_DATA = [
     "tactic": "Initial Access",
     "notes": "Based on ATT&CK technique T1078, using compromised credentials.",
     "tags": [
-      "InitialAccess",
-      "T1078",
-      "SonicWall"
+      "initialaccess",
+      "t1078",
+      "sonicwall"
     ],
     "submitter": {
       "name": "hearth-auto-intel",
@@ -562,7 +562,7 @@ const HUNTS_DATA = [
       "persistence",
       "initialaccess",
       "userexecution",
-      "ELF"
+      "elf"
     ],
     "submitter": {
       "name": "hearth-auto-intel",
@@ -579,9 +579,9 @@ const HUNTS_DATA = [
     "tactic": "Execution",
     "notes": "Based on ATT&CK technique T1047, using WMI for execution of PowerShell commands.",
     "tags": [
-      "Execution",
-      "T1047",
-      "WMI"
+      "execution",
+      "t1047",
+      "wmi"
     ],
     "submitter": {
       "name": "hearth-auto-intel",
@@ -600,7 +600,7 @@ const HUNTS_DATA = [
     "tags": [
       "defenseevasion",
       "t1562.001",
-      "WSC"
+      "wsc"
     ],
     "submitter": {
       "name": "hearth-auto-intel",
@@ -618,7 +618,7 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1110. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "credentialaccess",
-      "T1110",
+      "t1110",
       "socialengineering"
     ],
     "submitter": {
@@ -636,9 +636,9 @@ const HUNTS_DATA = [
     "tactic": "Defense Evasion",
     "notes": "Based on ATT&CK technique T1564. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
-      "DefenseEvasion",
-      "T1564",
-      "AttribCommand"
+      "defenseevasion",
+      "t1564",
+      "attribcommand"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -695,7 +695,7 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1070.004. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defenseevasion",
-      "T1070.004",
+      "t1070.004",
       "cipher.exe"
     ],
     "submitter": {
@@ -714,7 +714,7 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1566.002. BlueNoroff campaign targeting Web3 organizations using deepfake meetings and fake Zoom extensions.",
     "tags": [
       "initialaccess",
-      "T1566.002",
+      "t1566.002",
       "applescript",
       "bluenoroff"
     ],
@@ -734,7 +734,7 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1497.003. Using display state awareness to time malicious activities when users are away from their systems.",
     "tags": [
       "defenseevasion",
-      "T1497.003",
+      "t1497.003",
       "evasion",
       "macos"
     ],
@@ -754,7 +754,7 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1055. Using debugger entitlements for process injection with task_for_pid and mach_vm APIs on macOS.",
     "tags": [
       "defenseevasion",
-      "T1055",
+      "t1055",
       "processinjection",
       "macos"
     ],
@@ -774,7 +774,7 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1543.004. Creating LaunchDaemon persistence using legitimate service names with suspicious execution paths.",
     "tags": [
       "persistence",
-      "T1543.004",
+      "t1543.004",
       "launchdaemon",
       "macos"
     ],
@@ -794,7 +794,7 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1005. Automated collection of cryptocurrency wallet data from browser extensions including MetaMask, Phantom, Keplr, and others.",
     "tags": [
       "collection",
-      "T1005",
+      "t1005",
       "cryptocurrency",
       "bluenoroff"
     ],
@@ -1117,10 +1117,10 @@ const HUNTS_DATA = [
     "tactic": "Defense Evasion (TA0005), Execution (TA0002), Masquerading (T1036), Signed Binary Proxy Execution (T1218), Ingress Tool Transfer (T1105)",
     "notes": "The legitimacy of the Cisco vpndownloader can be verified by identifying the running process and capturing command-line information.",
     "tags": [
-      "DefenseEvasion",
-      "Execution",
-      "Masquerading",
-      "ProxyExecution"
+      "defenseevasion",
+      "execution",
+      "masquerading",
+      "proxyexecution"
     ],
     "submitter": {
       "name": "Joshua Hines",
@@ -1137,9 +1137,9 @@ const HUNTS_DATA = [
     "tactic": "Defense Evasion, Collection, Initial Access",
     "notes": "Apply a multi-faceted approach to detect malicious mailbox rules.",
     "tags": [
-      "DefenseEvasion",
-      "Phishing",
-      "Collection"
+      "defenseevasion",
+      "phishing",
+      "collection"
     ],
     "submitter": {
       "name": "Bruce Breuer",
@@ -1156,10 +1156,10 @@ const HUNTS_DATA = [
     "tactic": "Credential Access",
     "notes": "DC sync attacks leave behind a variety of indicators.",
     "tags": [
-      "CredentialAccess",
-      "ActiveDirectory",
-      "Identity",
-      "Secretsdump"
+      "credentialaccess",
+      "activedirectory",
+      "identity",
+      "secretsdump"
     ],
     "submitter": {
       "name": "Bruce Breuer",
@@ -1177,7 +1177,7 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1219. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "commandandcontrol",
-      "T1219",
+      "t1219",
       "hvnc",
       "remoteaccess",
       "glassworm"
@@ -1198,7 +1198,7 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1219. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "command_and_control",
-      "T1219",
+      "t1219",
       "backconnect",
       "vnc",
       "dllhost"
@@ -1220,7 +1220,7 @@ const HUNTS_DATA = [
     "tags": [
       "discovery",
       "networkscan",
-      "AI-powered"
+      "ai-powered"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -1238,7 +1238,7 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1553.001. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defense_evasion",
-      "T1553_001",
+      "t1553_001",
       "macos",
       "gatekeeper",
       "applescript"
@@ -1259,7 +1259,7 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1082. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "discovery",
-      "T1082",
+      "t1082",
       "gootloader",
       "powershell",
       "systeminfo"
@@ -1280,7 +1280,7 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1550.001. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defense-evasion",
-      "T1550.001",
+      "t1550.001",
       "oauth",
       "session-hijacking"
     ],
@@ -1300,7 +1300,7 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1135. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "discovery",
-      "T1135",
+      "t1135",
       "financial",
       "powershell"
     ],
@@ -1320,9 +1320,9 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1068. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "privilege_escalation",
-      "T1068",
-      "BYOVD",
-      "EDR_killer",
+      "t1068",
+      "byovd",
+      "edr_killer",
       "ransomware"
     ],
     "submitter": {
@@ -1340,11 +1340,11 @@ const HUNTS_DATA = [
     "tactic": "Exfiltration",
     "notes": "Identify and block unauthorized AI chatbot platforms used for data exfiltration.",
     "tags": [
-      "Exfiltration",
-      "Insider",
-      "T1567",
-      "IF001.006",
-      "IF018.002"
+      "exfiltration",
+      "insider",
+      "t1567",
+      "if001.006",
+      "if018.002"
     ],
     "submitter": {
       "name": "@samuel-lucas6",
@@ -1353,6 +1353,27 @@ const HUNTS_DATA = [
     "why": "- Reckless sharing on AI chatbot platforms risks exposing sensitive data to the provider. This data could also potentially be used for training or made public via a breach/account compromise.\n- With an account, an insider can transfer sensitive data to a personal device, potentially bypassing other DLP controls (e.g., for email).",
     "references": "- https://insiderthreatmatrix.org/articles/AR4/sections/IF001/subsections/IF001.006\n- https://insiderthreatmatrix.org/articles/AR4/sections/IF018/subsections/IF018.002\n- https://attack.mitre.org/techniques/T1567/\n- https://www.ncsc.gov.uk/blog-post/chatgpt-and-large-language-models-whats-the-risk\n- https://center-for-threat-informed-defense.github.io/insider-threat-ttp-kb/introduction/\n- https://www.cisa.gov/resources-tools/resources/insider-threat-mitigation-guide\n- https://www.ncsc.gov.uk/guidance/reducing-data-exfiltration-by-malicious-insiders",
     "file_path": "Flames/H059.md"
+  },
+  {
+    "id": "H060",
+    "category": "Flames",
+    "title": "Threat actors may abuse netsh.exe or PowerShell to create, modify, or delete Windows Firewall rules or profiles in order to weaken host-based defenses, permit inbound or outbound communication for malicious tooling, or remove restrictions on command-and-control (C2) traffic. By excluding System integrity level processes, this hypothesis focuses on firewall changes initiated from user or elevated contexts, which are less common during normal operations and more indicative of defense evasion or persistence-related activity.",
+    "tactic": "Tactic: Defense Evasion (TA0005) - Technique: Impair Defenses: Disable or Modify System Firewall (T1562.004)",
+    "notes": "The hunt focuses on detecting firewall modifications initiated from user or elevated contexts, assuming these are less common during normal operations and more indicative of defense evasion or persistence-related activity.",
+    "tags": [
+      "netsh",
+      "powershell",
+      "ta0005",
+      "t1562.004",
+      "firewall"
+    ],
+    "submitter": {
+      "name": "@tsof-smoky",
+      "link": ""
+    },
+    "why": "This hunt matters because attackers can temporarily weaken host-based firewall protections to enable command-and-control or payload delivery while leaving little to no persistent evidence. By detecting the act of firewall manipulation rather than the final rule state, defenders can identify stealthy defense-evasion techniques that traditional audits miss. Catching this behavior early helps prevent unauthorized network access, lateral movement, and data exfiltration, reducing overall breach impact.",
+    "references": "- https://attack.mitre.org/techniques/T1562/004/\n- https://attack.mitre.org/tactics/TA0005/\n- https://thedfirreport.com/2022/03/21/phosphorus-automates-initial-access-using-proxyshell/\n- https://www.cisa.gov/news-events/cybersecurity-advisories/aa25-071a",
+    "file_path": "Flames/H060.md"
   },
   {
     "id": "M001",
@@ -1437,8 +1458,8 @@ const HUNTS_DATA = [
     "tactic": "Defense Evasion",
     "notes": "Adversaries can use Base64 encoded commands and scripts in a variety of interpreters, such as PowerShell, Windows Command Shell, and Bash.",
     "tags": [
-      "DefenseEvasion",
-      "Obfuscation"
+      "defenseevasion",
+      "obfuscation"
     ],
     "submitter": {
       "name": "Audra Streetman",
@@ -1455,9 +1476,7 @@ const HUNTS_DATA = [
     "tactic": "Command and Control",
     "notes": "<ul><li>Deploying a model-based detection against a high-volume logging source like web traffic can be costly and resource-intensive. For this task, I recommend a retroactive hunt using a deduplicated list of domains, enabling a quick and efficient M-ATH method for finding threats, or at least reducing our dataset for hunting.</br><li>This is an evolving research area. Efficacy of a model may be heavily tied to the timeliness of the data, or the inclusion of the target malware family in the underlying training set.</br><li>Sample data and pre-trained models are available for this hunt, however it is also possible to generate new data by modifying the reverse-engineered DGA algorithms [here](https://github.com/baderj/domain_generation_algorithms).</br><li>False positives may be caused by Content Delivery Networks, Ad-tracking mechanisms.",
     "tags": [
-      "CommandandControl,",
-      "T1568.002,",
-      "DGA"
+      "dga"
     ],
     "submitter": {
       "name": "Ryan Fetterman",
@@ -1474,8 +1493,8 @@ const HUNTS_DATA = [
     "tactic": "Command and Control, Execution",
     "notes": "<ul><li>Data Collection and Preparation: Gather and encode data into numerical formats to support analysis (e.g., text vectorization or image hashing).</br><li>Similarity Analysis: Use similarity metrics (e.g., Levenshtein, cosine, or hash-based) to find related patterns or anomalies.</br><li>Clustering: Apply clustering (e.g., K-means) to group similar items, visualizing patterns and outliers.</br><li>Prioritization and Investigation: Flag clusters or anomalies for deeper analysis, focusing on items of interest or risk.",
     "tags": [
-      "T1071.001",
-      "T1203"
+      "t1071.001",
+      "t1203"
     ],
     "submitter": {
       "name": "Ryan Fetterman",
