@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HEARTH App Test Suite</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #555;
+            margin-top: 0;
+        }
+        .test-section {
+            margin-bottom: 30px;
+        }
+        .test-item {
+            padding: 10px;
+            margin: 8px 0;
+            border-left: 4px solid #ddd;
+            background: #f9f9f9;
+        }
+        .test-item.pass {
+            border-left-color: #4CAF50;
+            background: #f1f8f4;
+        }
+        .test-item.fail {
+            border-left-color: #f44336;
+            background: #fef5f5;
+        }
+        .test-item.pending {
+            border-left-color: #ff9800;
+            background: #fff8f0;
+        }
+        .status {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .status.pass { color: #4CAF50; }
+        .status.fail { color: #f44336; }
+        .status.pending { color: #ff9800; }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        #results {
+            margin-top: 20px;
+        }
+        .summary {
+            font-size: 18px;
+            font-weight: bold;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .summary.pass {
+            background: #4CAF50;
+            color: white;
+        }
+        .summary.fail {
+            background: #f44336;
+            color: white;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .error-details {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔥 HEARTH Refactored App Test Suite</h1>
+        <p>This test suite validates the modularized application structure.</p>
+
+        <div class="test-section">
+            <h2>Test Controls</h2>
+            <button onclick="runAllTests()">Run All Tests</button>
+            <button onclick="clearResults()">Clear Results</button>
+        </div>
+
+        <div id="results"></div>
+    </div>
+
+    <!-- Load test dependencies in same order as index.html -->
+    <script src="hunts-data.js"></script>
+    <script type="module">
+        import { HuntFilter } from './js/hunt-filter.js';
+        import { HuntRenderer } from './js/hunt-renderer.js';
+        import { ModalManager } from './js/modal-manager.js';
+        import { NotebookGenerator } from './js/notebook-generator.js';
+        import { PresetManager } from './js/preset-manager.js';
+        import { Pagination } from './js/pagination.js';
+        import {
+            validateElements,
+            debounce,
+            getNow,
+            formatNumber,
+            getUniqueValues,
+            groupTactics,
+            sanitizeHtml,
+            deepClone
+        } from './js/utils.js';
+
+        // Make modules available globally for testing
+        window.testModules = {
+            HuntFilter,
+            HuntRenderer,
+            ModalManager,
+            NotebookGenerator,
+            PresetManager,
+            Pagination,
+            utils: {
+                validateElements,
+                debounce,
+                getNow,
+                formatNumber,
+                getUniqueValues,
+                groupTactics,
+                sanitizeHtml,
+                deepClone
+            }
+        };
+
+        // Test runner
+        class TestRunner {
+            constructor() {
+                this.tests = [];
+                this.results = [];
+            }
+
+            test(name, fn) {
+                this.tests.push({ name, fn });
+            }
+
+            async runAll() {
+                this.results = [];
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = '<h2>Running Tests...</h2>';
+
+                for (const test of this.tests) {
+                    try {
+                        await test.fn();
+                        this.results.push({ name: test.name, status: 'pass', error: null });
+                    } catch (error) {
+                        this.results.push({ name: test.name, status: 'fail', error: error.message });
+                    }
+                }
+
+                this.displayResults();
+            }
+
+            displayResults() {
+                const resultsDiv = document.getElementById('results');
+                const passed = this.results.filter(r => r.status === 'pass').length;
+                const failed = this.results.filter(r => r.status === 'fail').length;
+                const total = this.results.length;
+
+                let html = `
+                    <div class="summary ${failed === 0 ? 'pass' : 'fail'}">
+                        ${passed}/${total} tests passed ${failed > 0 ? `(${failed} failed)` : '✓'}
+                    </div>
+                `;
+
+                this.results.forEach(result => {
+                    html += `
+                        <div class="test-item ${result.status}">
+                            <span class="status ${result.status}">${result.status === 'pass' ? '✓' : '✗'}</span>
+                            <strong>${result.name}</strong>
+                            ${result.error ? `<div class="error-details">Error: ${result.error}</div>` : ''}
+                        </div>
+                    `;
+                });
+
+                resultsDiv.innerHTML = html;
+            }
+        }
+
+        const runner = new TestRunner();
+
+        // === MODULE EXISTENCE TESTS ===
+        runner.test('HuntFilter module exists', () => {
+            if (!window.testModules.HuntFilter) throw new Error('HuntFilter not loaded');
+        });
+
+        runner.test('HuntRenderer module exists', () => {
+            if (!window.testModules.HuntRenderer) throw new Error('HuntRenderer not loaded');
+        });
+
+        runner.test('ModalManager module exists', () => {
+            if (!window.testModules.ModalManager) throw new Error('ModalManager not loaded');
+        });
+
+        runner.test('NotebookGenerator module exists', () => {
+            if (!window.testModules.NotebookGenerator) throw new Error('NotebookGenerator not loaded');
+        });
+
+        runner.test('PresetManager module exists', () => {
+            if (!window.testModules.PresetManager) throw new Error('PresetManager not loaded');
+        });
+
+        runner.test('Pagination module exists', () => {
+            if (!window.testModules.Pagination) throw new Error('Pagination not loaded');
+        });
+
+        runner.test('Utils module exists', () => {
+            if (!window.testModules.utils) throw new Error('Utils not loaded');
+        });
+
+        // === HUNT FILTER TESTS ===
+        runner.test('HuntFilter - can be instantiated', () => {
+            const filter = new HuntFilter(HUNTS_DATA);
+            if (!filter) throw new Error('Failed to create HuntFilter instance');
+        });
+
+        runner.test('HuntFilter - filters by search term', () => {
+            const filter = new HuntFilter(HUNTS_DATA);
+            const results = filter.filterHunts('baseline', '');
+            if (results.length === 0) throw new Error('Search filter returned no results');
+        });
+
+        runner.test('HuntFilter - filters by category', () => {
+            const filter = new HuntFilter(HUNTS_DATA);
+            const results = filter.filterHunts('', 'Flames');
+            if (results.length === 0) throw new Error('Category filter returned no results');
+            if (results.some(h => h.category !== 'Flames')) throw new Error('Category filter returned incorrect results');
+        });
+
+        runner.test('HuntFilter - gets unique values', () => {
+            const filter = new HuntFilter(HUNTS_DATA);
+            const tactics = filter.getUniqueValues('tactic');
+            if (tactics.length === 0) throw new Error('No unique tactics found');
+        });
+
+        runner.test('HuntFilter - toggles tactic selection', () => {
+            const filter = new HuntFilter(HUNTS_DATA);
+            const isSelected = filter.toggleTactic('Persistence');
+            if (!isSelected) throw new Error('Failed to select tactic');
+            const isDeselected = filter.toggleTactic('Persistence');
+            if (isDeselected) throw new Error('Failed to deselect tactic');
+        });
+
+        runner.test('HuntFilter - toggles tag selection', () => {
+            const filter = new HuntFilter(HUNTS_DATA);
+            const isSelected = filter.toggleTag('LOLBIN');
+            if (!isSelected) throw new Error('Failed to select tag');
+            const isDeselected = filter.toggleTag('LOLBIN');
+            if (isDeselected) throw new Error('Failed to deselect tag');
+        });
+
+        // === PAGINATION TESTS ===
+        runner.test('Pagination - can be instantiated', () => {
+            const pagination = new Pagination({ onPageChange: () => {} });
+            if (!pagination) throw new Error('Failed to create Pagination instance');
+        });
+
+        runner.test('Pagination - initializes with total items', () => {
+            const pagination = new Pagination({ onPageChange: () => {} });
+            pagination.initialize(100);
+            if (pagination.getTotalPages() === 0) throw new Error('Pagination did not initialize correctly');
+        });
+
+        runner.test('Pagination - navigates to next page', () => {
+            const pagination = new Pagination({ onPageChange: () => {} });
+            pagination.initialize(100);
+            const initialPage = pagination.getCurrentPage();
+            pagination.nextPage();
+            if (pagination.getCurrentPage() === initialPage) throw new Error('Failed to navigate to next page');
+        });
+
+        runner.test('Pagination - navigates to previous page', () => {
+            const pagination = new Pagination({ onPageChange: () => {} });
+            pagination.initialize(100);
+            pagination.changePage(2);
+            const initialPage = pagination.getCurrentPage();
+            pagination.prevPage();
+            if (pagination.getCurrentPage() >= initialPage) throw new Error('Failed to navigate to previous page');
+        });
+
+        runner.test('Pagination - gets page items correctly', () => {
+            const pagination = new Pagination({ onPageChange: () => {} });
+            pagination.initialize(100);
+            const testData = Array.from({ length: 100 }, (_, i) => ({ id: i }));
+            const pageItems = pagination.getPageItems(testData);
+            if (pageItems.length === 0) throw new Error('Failed to get page items');
+            if (pageItems.length > pagination.pageSize) throw new Error('Returned too many items');
+        });
+
+        // === PRESET MANAGER TESTS ===
+        runner.test('PresetManager - can be instantiated', () => {
+            const presetManager = new PresetManager();
+            if (!presetManager) throw new Error('Failed to create PresetManager instance');
+        });
+
+        runner.test('PresetManager - initializes with built-in presets', () => {
+            const presetManager = new PresetManager();
+            presetManager.initialize();
+            const presets = presetManager.getPresets();
+            if (presets.length === 0) throw new Error('No built-in presets found');
+        });
+
+        runner.test('PresetManager - saves custom preset', () => {
+            const presetManager = new PresetManager();
+            presetManager.initialize();
+            const filters = { category: 'Flames', tactics: ['Persistence'], tags: [] };
+            const saved = presetManager.saveCurrentPreset(filters);
+            if (!saved) throw new Error('Failed to save custom preset');
+        });
+
+        // === UTILS TESTS ===
+        runner.test('Utils - formatNumber works', () => {
+            const formatted = window.testModules.utils.formatNumber(1000);
+            if (formatted !== '1,000') throw new Error(`Expected '1,000', got '${formatted}'`);
+        });
+
+        runner.test('Utils - getUniqueValues works', () => {
+            const testData = [{ tags: ['a', 'b'] }, { tags: ['b', 'c'] }];
+            const unique = window.testModules.utils.getUniqueValues(testData, 'tags');
+            if (unique.length !== 3) throw new Error(`Expected 3 unique values, got ${unique.length}`);
+        });
+
+        runner.test('Utils - deepClone works', () => {
+            const obj = { a: 1, b: { c: 2 } };
+            const cloned = window.testModules.utils.deepClone(obj);
+            if (cloned === obj) throw new Error('deepClone returned same reference');
+            if (cloned.b === obj.b) throw new Error('deepClone did not deep clone nested objects');
+        });
+
+        runner.test('Utils - sanitizeHtml removes scripts', () => {
+            const dirty = '<script>alert("xss")</script><p>Hello</p>';
+            const clean = window.testModules.utils.sanitizeHtml(dirty);
+            if (clean.includes('<script>')) throw new Error('sanitizeHtml did not remove script tags');
+        });
+
+        runner.test('Utils - debounce creates debounced function', () => {
+            const fn = () => {};
+            const debounced = window.testModules.utils.debounce(fn, 100);
+            if (typeof debounced !== 'function') throw new Error('debounce did not return a function');
+        });
+
+        // === NOTEBOOK GENERATOR TESTS ===
+        runner.test('NotebookGenerator - can be instantiated', () => {
+            const generator = new NotebookGenerator();
+            if (!generator) throw new Error('Failed to create NotebookGenerator instance');
+        });
+
+        // === INTEGRATION TESTS ===
+        runner.test('Integration - HuntFilter and Pagination work together', () => {
+            const filter = new HuntFilter(HUNTS_DATA);
+            const pagination = new Pagination({ onPageChange: () => {} });
+
+            const filtered = filter.filterHunts('persistence', '');
+            pagination.updateTotalItems(filtered.length);
+            const pageItems = pagination.getPageItems(filtered);
+
+            if (pageItems.length === 0) throw new Error('Integration test failed: no page items');
+        });
+
+        runner.test('Integration - HUNTS_DATA is loaded and valid', () => {
+            if (!window.HUNTS_DATA) throw new Error('HUNTS_DATA not loaded');
+            if (!Array.isArray(HUNTS_DATA)) throw new Error('HUNTS_DATA is not an array');
+            if (HUNTS_DATA.length === 0) throw new Error('HUNTS_DATA is empty');
+
+            // Validate structure of first hunt
+            const hunt = HUNTS_DATA[0];
+            const requiredFields = ['id', 'title', 'category'];
+            for (const field of requiredFields) {
+                if (!(field in hunt)) throw new Error(`Hunt missing required field: ${field}`);
+            }
+        });
+
+        // Make test runner available globally
+        window.testRunner = runner;
+        window.runAllTests = () => runner.runAll();
+        window.clearResults = () => {
+            document.getElementById('results').innerHTML = '';
+        };
+
+        console.log('✓ Test suite loaded successfully');
+        console.log(`✓ ${runner.tests.length} tests registered`);
+    </script>
+</body>
+</html>
