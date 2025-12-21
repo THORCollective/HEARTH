@@ -1,0 +1,310 @@
+/**
+ * Layout Styles
+ *
+ * This file contains all layout-related CSS including:
+ * - Grid and flexbox systems
+ * - Container and wrapper styles
+ * - Responsive layout rules
+ * - Page-level structure
+ *
+ * Extracted from style.css (lines 1097-2122)
+ */
+
+/* ==========================================================================
+   Header Layout
+   ========================================================================== */
+
+.header-content {
+    max-width: min(1200px, 92vw);
+    margin: 0 auto;
+    padding: 1.75rem 0;
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    color: inherit;
+}
+
+.title-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.header-links {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+/* ==========================================================================
+   Main Layout
+   ========================================================================== */
+
+main {
+    max-width: min(1200px, 92vw);
+    margin: 0 auto;
+    padding: clamp(2.5rem, 4vw, 4rem) 0 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--grid-gap);
+}
+
+/* ==========================================================================
+   Intro Section Layout
+   ========================================================================== */
+
+.intro-content {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 1rem;
+}
+
+.intro-highlights {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.highlight-card {
+    position: relative;
+    display: grid;
+    gap: 0.35rem;
+}
+
+.intro-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+/* ==========================================================================
+   Controls Section Layout
+   ========================================================================== */
+
+.controls {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: clamp(1.75rem, 3vw, 2.5rem);
+    box-shadow: var(--shadow-md);
+    display: grid;
+    gap: 2rem;
+}
+
+.controls-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+}
+
+.search-container {
+    flex: 1 1 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.search-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    text-align: right;
+}
+
+.active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    align-items: center;
+    min-height: 1.5rem;
+}
+
+.active-filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.active-filter-chip span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.controls-middle {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.quick-filter {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+/* ==========================================================================
+   Section Header Layout
+   ========================================================================== */
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* ==========================================================================
+   Chip Group Layout
+   ========================================================================== */
+
+.chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.chip-group__cluster {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    min-width: 180px;
+    flex: 1 1 220px;
+}
+
+.chip-group__cluster .cluster-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+/* ==========================================================================
+   Hunts Grid Layout
+   ========================================================================== */
+
+.hunts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: clamp(1.25rem, 2vw, 2rem);
+}
+
+.hunt-card {
+    position: relative;
+    display: grid;
+    gap: 1rem;
+}
+
+.hunt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.hunt-tactic {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.hunt-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+/* ==========================================================================
+   Pagination Layout
+   ========================================================================== */
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+}
+
+.pagination-btn {
+    display: grid;
+    place-items: center;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 1.25rem;
+    }
+
+    .header-links {
+        justify-content: center;
+    }
+
+    main {
+        padding-top: 2rem;
+    }
+
+    .controls {
+        padding: 1.5rem;
+        gap: 1.5rem;
+    }
+
+    .controls-top {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+
+    .stats {
+        text-align: left;
+        align-items: flex-start;
+    }
+
+    .controls-middle {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #toggleAdvancedFilters {
+        align-self: stretch;
+    }
+
+    .quick-filter,
+    .filter-select,
+    .search-wrapper,
+    .btn {
+        width: 100%;
+    }
+
+    .hunts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pagination {
+        flex-direction: column;
+    }
+}

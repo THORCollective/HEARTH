@@ -57,11 +57,22 @@ css/
   - Focus management for keyboard vs mouse interaction
 
 ### Extract Layout Styles
-- [ ] Create `css/layout.css`
-- [ ] Extract grid system styles
-- [ ] Extract flexbox layouts
-- [ ] Extract container and wrapper styles
-- [ ] Extract responsive layout rules
+- [x] Create `css/layout.css`
+- [x] Extract grid system styles
+- [x] Extract flexbox layouts
+- [x] Extract container and wrapper styles
+- [x] Extract responsive layout rules
+
+**Notes:** Created comprehensive layout.css file including:
+  - Header layout (header-content, logo-link, title-section from style.css:1097-1152)
+  - Main layout container (main from style.css:1154-1161)
+  - Intro section grid layout (intro-content, intro-highlights from style.css:1181-1193)
+  - Controls section layouts (controls, controls-top, search-container from style.css:1268-1417)
+  - Stats and filters layouts (stats, active-filters from style.css:1347-1406)
+  - Section headers and chip groups (section-header, chip-group from style.css:1484-1516)
+  - Hunts grid system (hunts-grid with auto-fill grid from style.css:1622-1710)
+  - Pagination layout (pagination from style.css:1805-1845)
+  - Responsive breakpoints (@media max-width: 768px from style.css:2062-2122)
 
 ### Extract Typography Styles
 - [ ] Create `css/typography.css`
