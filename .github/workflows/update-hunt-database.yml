@@ -33,23 +33,26 @@ jobs:
 
       - name: Update hunt database
         run: |
+          echo "::group::Update hunt database"
           python scripts/build_hunt_database.py
-          echo "Database updated successfully"
+          echo "::notice::Database updated successfully"
+          echo "::endgroup::"
 
       - name: Check for database changes
         id: check_changes
         run: |
           if git diff --quiet database/hunts.db; then
             echo "changed=false" >> $GITHUB_OUTPUT
-            echo "No changes to database"
+            echo "::debug::No changes to database"
           else
             echo "changed=true" >> $GITHUB_OUTPUT
-            echo "Database has changes"
+            echo "::notice::Database has changes"
           fi
 
       - name: Commit and push database
         if: steps.check_changes.outputs.changed == 'true'
         run: |
+          echo "::group::Commit and push database"
           git config user.name "hearthbot"
           git config user.email "hearthbot@users.noreply.github.com"
           git add database/hunts.db
@@ -62,14 +65,20 @@ jobs:
           # Retry push with rebase in case of concurrent updates
           for i in 1 2 3; do
             git push && break
-            echo "Push failed (attempt $i), pulling and retrying..."
+            echo "::warning::Push failed (attempt $i), pulling and retrying..."
             git pull --rebase origin main
             sleep 2
           done
+          echo "::notice::Database committed and pushed successfully"
+          echo "::endgroup::"
 
       - name: Database statistics
         run: |
-          echo "📊 Database Statistics:"
-          sqlite3 database/hunts.db "SELECT COUNT(*) as 'Total Hunts' FROM hunts"
-          sqlite3 database/hunts.db "SELECT COUNT(DISTINCT tactic) as 'Unique Tactics' FROM hunts WHERE tactic IS NOT NULL"
-          sqlite3 database/hunts.db "SELECT COUNT(DISTINCT technique) as 'Unique Techniques' FROM hunts WHERE technique IS NOT NULL"
+          echo "::group::Database Statistics"
+          TOTAL_HUNTS=$(sqlite3 database/hunts.db "SELECT COUNT(*) FROM hunts")
+          UNIQUE_TACTICS=$(sqlite3 database/hunts.db "SELECT COUNT(DISTINCT tactic) FROM hunts WHERE tactic IS NOT NULL")
+          UNIQUE_TECHNIQUES=$(sqlite3 database/hunts.db "SELECT COUNT(DISTINCT technique) FROM hunts WHERE technique IS NOT NULL")
+          echo "::notice::Total Hunts: $TOTAL_HUNTS"
+          echo "::notice::Unique Tactics: $UNIQUE_TACTICS"
+          echo "::notice::Unique Techniques: $UNIQUE_TECHNIQUES"
+          echo "::endgroup::"

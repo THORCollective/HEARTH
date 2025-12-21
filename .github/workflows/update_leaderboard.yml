@@ -22,10 +22,20 @@ jobs:
       
       - name: "Commit and push if changed"
         run: |
+          echo "::group::Commit and push leaderboard"
           git config --global user.name 'hearthbot'
           git config --global user.email 'hearthbot@users.noreply.github.com'
           git add Keepers/Contributors.md
           # The following command will fail if there are no changes, which is fine.
           # We use `|| true` to ensure the workflow doesn't fail if the commit is empty.
-          git commit -m "chore: update contributor leaderboard" || true
-          git push origin main || true 
+          if git commit -m "chore: update contributor leaderboard"; then
+            echo "::notice::Committed leaderboard changes"
+            if git push origin main; then
+              echo "::notice::Leaderboard pushed successfully"
+            else
+              echo "::warning::Failed to push leaderboard changes"
+            fi
+          else
+            echo "::debug::No changes to commit"
+          fi
+          echo "::endgroup::" 

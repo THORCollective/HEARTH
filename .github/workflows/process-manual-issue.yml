@@ -29,8 +29,11 @@ jobs:
 
       - name: "Install dependencies"
         run: |
+          echo "::group::Install dependencies"
           python -m pip install --upgrade pip
           pip install openai python-dotenv anthropic
+          echo "::notice::Dependencies installed successfully"
+          echo "::endgroup::"
 
       - name: "Run HEARTH manual processor"
         id: generate_draft_file
@@ -44,12 +47,15 @@ jobs:
 
       - name: "Commit and push generated hunt"
         run: |
+          echo "::group::Commit and push generated hunt"
           git config --global user.name 'hearthbot'
           git config --global user.email 'hearthbot@users.noreply.github.com'
           git add Flames/*.md
           git commit -m "feat(draft): Create manual hunt from issue #${{ github.event.issue.number }}"
           git remote set-url origin https://x-access-token:${{ secrets.HEARTH_TOKEN }}@github.com/${{ github.repository }}
           git push --set-upstream origin draft/issue-${{ github.event.issue.number }}
+          echo "::notice::Hunt drafted and pushed to draft/issue-${{ github.event.issue.number }}"
+          echo "::endgroup::"
 
       - name: "Comment on issue with draft link"
         uses: peter-evans/create-or-update-comment@v4

@@ -32,10 +32,12 @@ jobs:
                 repo: context.repo.repo,
                 name: 'needs-triage'
               });
+              core.info("Removed 'needs-triage' label");
             } catch (error) {
               if (error.status === 404) {
-                console.log("Label 'needs-triage' not found, which is fine.");
+                core.debug("Label 'needs-triage' not found, which is fine.");
               } else {
+                core.error(`Failed to remove label: ${error.message}`);
                 throw error;
               }
             }
@@ -46,9 +48,10 @@ jobs:
         with:
           github-token: ${{ secrets.HEARTH_TOKEN }}
           script: |
+            core.startGroup('Create Pull Request');
             const issueNumber = context.issue.number;
             const branchName = `draft/issue-${issueNumber}`;
-            
+
             try {
               // Get the full issue details to ensure we have the user object
               const { data: issue } = await github.rest.issues.get({
@@ -57,6 +60,7 @@ jobs:
                 issue_number: issueNumber,
               });
               const submitterLogin = issue.user.login;
+              core.debug(`Submitter: ${submitterLogin}`);
 
               // Check if the branch exists and has differences from main
               const { data: compareData } = await github.rest.repos.compareCommits({
@@ -65,12 +69,15 @@ jobs:
                 base: 'main',
                 head: branchName
               });
-              
+
               if (compareData.ahead_by === 0) {
+                core.error(`Branch ${branchName} has no differences from main. Cannot create PR.`);
                 core.setFailed(`Branch ${branchName} has no differences from main. Cannot create PR.`);
+                core.endGroup();
                 return;
               }
-              
+              core.debug(`Branch ${branchName} is ${compareData.ahead_by} commit(s) ahead of main`);
+
               // Create the pull request
               const { data: pr } = await github.rest.pulls.create({
                 owner: context.repo.owner,
@@ -80,7 +87,7 @@ jobs:
                 head: branchName,
                 base: 'main'
               });
-              
+
               // Add labels and assignees
               await github.rest.issues.addLabels({
                 owner: context.repo.owner,
@@ -88,20 +95,24 @@ jobs:
                 issue_number: pr.number,
                 labels: ['needs-review', 'automated-pr']
               });
-              
+              core.debug('Added labels to PR');
+
               await github.rest.issues.addAssignees({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: pr.number,
                 assignees: [submitterLogin]
               });
-              
+              core.debug(`Assigned PR to ${submitterLogin}`);
+
               core.setOutput('pull-request-number', pr.number);
-              console.log(`✅ Created PR #${pr.number} from branch ${branchName}`);
-              
+              core.notice(`Created PR #${pr.number} from branch ${branchName}`);
+              core.endGroup();
+
             } catch (error) {
-              console.error('Error creating PR:', error);
+              core.error(`Error creating PR: ${error.message}`);
               core.setFailed(`Failed to create PR: ${error.message}`);
+              core.endGroup();
             }
 
       - name: "Comment on issue with PR link"

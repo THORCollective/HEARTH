@@ -59,9 +59,17 @@ This phase removes or replaces debug logging statements with proper logging infr
   - Logger implementation in js/logger.js correctly uses console methods internally
 
 ### GitHub Actions Workflows
-- [ ] Review logging in workflow files
-- [ ] Ensure proper use of GitHub Actions logging (::debug, ::notice, ::warning, ::error)
-- [ ] Add log groups for better organization
+- [x] Review logging in workflow files
+- [x] Ensure proper use of GitHub Actions logging (::debug, ::notice, ::warning, ::error)
+- [x] Add log groups for better organization
+  - Updated 8 workflow files with proper GitHub Actions logging commands
+  - Files updated: issue-generate-hunts.yml, pr-from-approval.yml, update-hunt-database.yml, tests.yml, update_leaderboard.yml, generate-notebook.yml, process-manual-issue.yml
+  - Replaced echo statements with ::notice::, ::debug::, ::warning::, ::error:: commands
+  - Replaced console.log in github-script actions with core.info(), core.debug(), core.error()
+  - Added ::group:: and ::endgroup:: commands to organize output into collapsible sections
+  - Improved error handling with proper error logging in JavaScript actions
+  - Added contextual debug messages for better troubleshooting
+  - All workflows now follow GitHub Actions logging best practices
 
 ### Testing
 - [ ] Verify essential information is still logged

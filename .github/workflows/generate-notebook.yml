@@ -62,10 +62,13 @@ jobs:
 
       - name: Install notebook generator dependencies
         run: |
+          echo "::group::Install notebook generator dependencies"
           cd notebook-generator
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install nbformat jupyter
+          echo "::notice::Notebook generator dependencies installed"
+          echo "::endgroup::"
 
       - name: Prepare hunt data
         id: prepare-data
@@ -130,11 +133,14 @@ jobs:
 
       - name: Generate notebook
         run: |
+          echo "::group::Generate notebook"
           cd notebook-generator
           python -m src.main \
             --input ../temp-hunt-data/hunt_article.md \
             --output ../generated_notebooks/${{ steps.prepare-data.outputs.hunt_id }}_threat_hunting_notebook.ipynb \
             --verbose
+          echo "::notice::Notebook generated successfully for hunt ${{ steps.prepare-data.outputs.hunt_id }}"
+          echo "::endgroup::"
 
       - name: Upload notebook artifact
         uses: actions/upload-artifact@v3

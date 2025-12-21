@@ -25,16 +25,17 @@ jobs:
         with:
           github-token: ${{secrets.HEARTH_TOKEN}}
           script: |
+            core.startGroup('Check Regeneration Count');
             const { data: authenticatedUser } = await github.rest.users.getAuthenticated();
             const botUsername = authenticatedUser.login;
-            console.log(`Searching for comments by user: ${botUsername}`);
+            core.debug(`Searching for comments by user: ${botUsername}`);
 
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
             });
-            const regenComment = comments.reverse().find(comment => 
+            const regenComment = comments.reverse().find(comment =>
               comment.user.login === botUsername && /Attempt \d+\/5/.test(comment.body)
             );
             let attempt = 0;
@@ -44,8 +45,9 @@ jobs:
                 attempt = parseInt(match[1], 10);
               }
             }
-            console.log(`Last attempt was: ${attempt}`);
+            core.info(`Last attempt was: ${attempt}`);
             core.setOutput('attempt_count', attempt);
+            core.endGroup();
       
       - name: "Halt if Max Regenerations Reached"
         if: steps.check_regen.outputs.attempt_count >= 5
@@ -84,9 +86,11 @@ jobs:
 
       - name: "Download MITRE ATT&CK data"
         run: |
+          echo "::group::Download MITRE ATT&CK data"
           mkdir -p data
           curl -s -o data/enterprise-attack.json https://raw.githubusercontent.com/mitre/cti/master/enterprise-attack/enterprise-attack.json
-          echo "✅ Downloaded MITRE ATT&CK Enterprise data ($(du -h data/enterprise-attack.json | cut -f1))"
+          echo "::notice::Downloaded MITRE ATT&CK Enterprise data ($(du -h data/enterprise-attack.json | cut -f1))"
+          echo "::endgroup::"
 
       - name: "Setup Git Branch"
         run: |
@@ -150,6 +154,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          echo "::group::Prepare CTI file"
           mkdir -p .hearth/intel-drops
 
           file_url="${{ steps.parse_issue.outputs.file_url }}"
@@ -159,16 +164,16 @@ jobs:
 
           # First check if user has manually pasted content
           if [ "$has_manual_content" == "true" ]; then
-            echo "✅ Using manually pasted content from issue"
+            echo "::notice::Using manually pasted content from issue"
             # Extract the CTI Content section and save it (preserve all lines including empty ones)
             awk '/### CTI Content/,/### Link to Original Source/' /tmp/issue_body.txt | \
               sed '1d;$d' > "$cti_file"
 
             if [ -s "$cti_file" ]; then
-              echo "Successfully extracted $(wc -l < "$cti_file") lines of manually pasted content"
+              echo "::notice::Successfully extracted $(wc -l < "$cti_file") lines of manually pasted content"
               cp "$cti_file" ".hearth/intel-drops/source_cti.txt"
             else
-              echo "⚠️  Manual content section exists but appears empty"
+              echo "::warning::Manual content section exists but appears empty"
               # Continue to try other methods
             fi
           fi
@@ -176,38 +181,41 @@ jobs:
           # If we don't have a file yet, try other methods
           if [ ! -f "$cti_file" ]; then
             if [ -n "$file_url" ]; then
-              echo "Downloading CTI file from URL..."
+              echo "::debug::Downloading CTI file from URL..."
               # Preserve the original filename from the URL
               filename=$(basename "$file_url")
               curl -s -L -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/octet-stream" "$file_url" -o ".hearth/intel-drops/$filename"
             elif [ -f "$cti_file" ]; then
-              echo "Using previously downloaded CTI file: $cti_file"
+              echo "::debug::Using previously downloaded CTI file: $cti_file"
               cp "$cti_file" ".hearth/intel-drops/source_cti.txt"
             elif [ -n "$source_url" ]; then
-              echo "CTI file not found, downloading from source URL: $source_url"
+              echo "::debug::CTI file not found, downloading from source URL: $source_url"
               # Fallback: download the content directly in this workflow
               # Use environment variable to safely pass issue body
               export ISSUE_BODY="$(cat /tmp/issue_body.txt)"
               GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} GITHUB_REPOSITORY=${{ github.repository }} ISSUE_NUMBER=${{ github.event.issue.number }} python .github/scripts/process_issue.py
               # Check if the download was successful
               if [ -f "$cti_file" ]; then
-                echo "✅ Successfully downloaded CTI content"
+                echo "::notice::Successfully downloaded CTI content"
                 cp "$cti_file" ".hearth/intel-drops/source_cti.txt"
               else
-                echo "❌ Auto-download failed. Please check the issue for details."
-                echo "The script has updated issue #${{ github.event.issue.number }} with error information."
+                echo "::error::Auto-download failed. Please check the issue for details."
+                echo "::error::The script has updated issue #${{ github.event.issue.number }} with error information."
                 echo ""
                 echo "To proceed, please either:"
                 echo "  1. Paste the article content directly into the issue (replace the CTI Content section)"
                 echo "  2. Upload a text file with the content"
                 echo "  3. Fix the URL and remove then re-add the 'intel-submission' label"
+                echo "::endgroup::"
                 exit 1
               fi
             else
-              echo "❌ No CTI content found."
+              echo "::error::No CTI content found."
+              echo "::endgroup::"
               exit 1
             fi
           fi
+          echo "::endgroup::"
 
       - name: "Post manual content instructions on failure"
         if: failure() && steps.prepare_cti.conclusion == 'failure'
@@ -361,10 +369,12 @@ jobs:
                 repo: context.repo.repo,
                 name: 'needs-triage'
               });
+              core.info("Removed 'needs-triage' label");
             } catch (error) {
               if (error.status === 404) {
-                console.log("Label 'needs-triage' not found, which is fine.");
+                core.debug("Label 'needs-triage' not found, which is fine.");
               } else {
+                core.error(`Failed to remove label: ${error.message}`);
                 throw error;
               }
             }

@@ -25,20 +25,29 @@ jobs:
 
     - name: Install dependencies
       run: |
+        echo "::group::Install dependencies"
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        echo "::notice::Dependencies installed successfully"
+        echo "::endgroup::"
 
     - name: Run unit tests
       run: |
+        echo "::group::Run unit tests"
         pytest tests/unit/ -v
+        echo "::endgroup::"
 
     - name: Run integration tests
       run: |
+        echo "::group::Run integration tests"
         pytest tests/integration/ -v
+        echo "::endgroup::"
 
     - name: Run all tests with coverage
       run: |
+        echo "::group::Run all tests with coverage"
         pytest --cov=scripts --cov-report=xml --cov-report=term tests/
+        echo "::endgroup::"
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
@@ -63,13 +72,18 @@ jobs:
 
     - name: Install dependencies
       run: |
+        echo "::group::Install linting dependencies"
         python -m pip install --upgrade pip
         pip install flake8 pylint
+        echo "::notice::Linting dependencies installed successfully"
+        echo "::endgroup::"
 
     - name: Lint with flake8
       run: |
+        echo "::group::Lint with flake8"
         # Stop the build if there are Python syntax errors or undefined names
         flake8 scripts/ --count --select=E9,F63,F7,F82 --show-source --statistics
         # Exit-zero treats all errors as warnings
         flake8 scripts/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        echo "::endgroup::"
       continue-on-error: true
