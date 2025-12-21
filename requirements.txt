@@ -2,7 +2,7 @@
 # Install with: pip install -r requirements.txt
 
 # AI Providers
-anthropic>=0.18.0
+anthropic>=0.34.0  # Required for prompt caching support
 openai>=1.0.0
 
 # Web Scraping & Content Extraction

@@ -242,19 +242,28 @@ def summarize_cti_with_map_reduce(text, model="gpt-4", max_tokens=128000):
         logger.info(f"Summarizing chunk {i +1}/{len(chunks)}...")
         try:
             if AI_PROVIDER == "claude":
-                # Claude prompt format: system prompt, then user content
-                prompt = (
-                    f"\n\nHuman: This is one part of a larger threat intelligence report. "
+                # Claude prompt format with prompt caching
+                instruction_text = (
+                    "This is one part of a larger threat intelligence report. "
                     "Extract the key actionable intelligence from this section. "
                     "Focus on specific tools, techniques, vulnerabilities, and adversary procedures. "
-                    "Your output will be combined with others, so be concise and clear.\n\n"
-                    f"--- CHUNK {i +1}/{len(chunks)} ---\n\n{chunk}\n\nAssistant:"
+                    "Your output will be combined with others, so be concise and clear."
                 )
                 response = anthropic_client.messages.create(
                     model=CLAUDE_MODEL,
                     max_tokens=1024,
                     temperature=0.2,
-                    messages=[{"role": "user", "content": prompt}]
+                    system=[
+                        {
+                            "type": "text",
+                            "text": instruction_text,
+                            "cache_control": {"type": "ephemeral"}
+                        }
+                    ],
+                    messages=[{
+                        "role": "user",
+                        "content": f"--- CHUNK {i +1}/{len(chunks)} ---\n\n{chunk}"
+                    }]
                 )
                 summary = response.content[0].text.strip()
             else:
@@ -282,18 +291,27 @@ def summarize_cti_with_map_reduce(text, model="gpt-4", max_tokens=128000):
 
     try:
         if AI_PROVIDER == "claude":
-            prompt = (
-                "\n\nHuman: The following are summaries of different parts of a long threat intelligence report. "
+            instruction_text = (
+                "The following are summaries of different parts of a long threat intelligence report. "
                 "Synthesize them into a single, coherent, and actionable report. "
                 "Remove redundancy and create a clear narrative of the adversary's actions. "
-                "The final output should be a comprehensive summary that can be used to generate a threat hunt.\n\n"
-                f"--- COMBINED SUMMARIES ---\n\n{combined_summary}\n\nAssistant:"
+                "The final output should be a comprehensive summary that can be used to generate a threat hunt."
             )
             final_response = anthropic_client.messages.create(
                 model=CLAUDE_MODEL,
                 max_tokens=2048,
                 temperature=0.2,
-                messages=[{"role": "user", "content": prompt}]
+                system=[
+                    {
+                        "type": "text",
+                        "text": instruction_text,
+                        "cache_control": {"type": "ephemeral"}
+                    }
+                ],
+                messages=[{
+                    "role": "user",
+                    "content": f"--- COMBINED SUMMARIES ---\n\n{combined_summary}"
+                }]
             )
             return final_response.content[0].text.strip()
         else:
@@ -413,12 +431,23 @@ def generate_hunt_content_with_ttp_diversity(cti_text, cti_source_url, submitter
             # Generate content
             hunt_content = None
             if AI_PROVIDER == "claude":
-                full_prompt = f"\n\nHuman: {SYSTEM_PROMPT}\n\n{prompt}\n\nAssistant:"
+                # Use prompt caching for SYSTEM_PROMPT (large, static content)
+                # Cache the system prompt and the user template separately
                 response = anthropic_client.messages.create(
                     model=CLAUDE_MODEL,
                     max_tokens=1200,
                     temperature=temperature,
-                    messages=[{"role": "user", "content": full_prompt}]
+                    system=[
+                        {
+                            "type": "text",
+                            "text": SYSTEM_PROMPT,
+                            "cache_control": {"type": "ephemeral"}
+                        }
+                    ],
+                    messages=[{
+                        "role": "user",
+                        "content": prompt
+                    }]
                 )
                 hunt_content = response.content[0].text.strip()
             else:
@@ -501,12 +530,22 @@ def generate_hunt_content_basic(cti_text, cti_source_url, submitter_credit, is_r
             submitter_credit=submitter_credit
         )
         if AI_PROVIDER == "claude":
-            full_prompt = f"\n\nHuman: {SYSTEM_PROMPT}\n\n{prompt}\n\nAssistant:"
+            # Use prompt caching for SYSTEM_PROMPT
             response = anthropic_client.messages.create(
                 model=CLAUDE_MODEL,
                 max_tokens=1200,
                 temperature=temperature,
-                messages=[{"role": "user", "content": full_prompt}]
+                system=[
+                    {
+                        "type": "text",
+                        "text": SYSTEM_PROMPT,
+                        "cache_control": {"type": "ephemeral"}
+                    }
+                ],
+                messages=[{
+                    "role": "user",
+                    "content": prompt
+                }]
             )
             return response.content[0].text.strip()
         else:

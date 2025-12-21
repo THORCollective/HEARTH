@@ -28,9 +28,21 @@ This phase implements Anthropic's prompt caching to reduce API costs by ~67% and
   - **Future consideration**: 1-hour TTL if we see frequent regenerations within the same hour
 
 ### Update API Client
-- [ ] Locate Anthropic API client code in Python scripts
-- [ ] Update to use latest Anthropic SDK version supporting caching
-- [ ] Add cache control parameters to API requests
+- [x] Locate Anthropic API client code in Python scripts
+  - **Location**: `scripts/generate_from_cti.py` (primary usage)
+  - **API calls**: Hunt generation, CTI summarization (map-reduce), and chunk processing
+  - **Import**: Uses `anthropic.Anthropic` client initialized on line 55
+- [x] Update to use latest Anthropic SDK version supporting caching
+  - **Updated**: `requirements.txt` now requires `anthropic>=0.34.0` (supports prompt caching)
+  - **Previous**: Was `anthropic>=0.18.0`
+- [x] Add cache control parameters to API requests
+  - **Implementation**: Updated all Claude API calls to use new Messages API format with `system` parameter
+  - **Cached content**: SYSTEM_PROMPT (141 lines, ~1000 tokens) marked with `cache_control: {"type": "ephemeral"}`
+  - **Updated functions**:
+    - `summarize_cti_with_map_reduce()` - caches instruction text for chunk summarization
+    - `generate_hunt_content_with_ttp_diversity()` - caches SYSTEM_PROMPT
+    - `generate_hunt_content_basic()` - caches SYSTEM_PROMPT
+  - **Format**: Changed from legacy `\n\nHuman:...\n\nAssistant:` to Messages API with separate system/user content
 
 ### Implement Caching for System Prompts
 - [ ] Identify static system prompts in `generate_from_cti.py`
