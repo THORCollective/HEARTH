@@ -32,11 +32,11 @@ This phase organizes the 23 scattered test files into a proper test suite with a
 - [x] Create shared test utilities in `tests/conftest.py` (added fixtures for all sample files, helper functions for validation, and utilities for creating temp test data)
 
 ### Configure Test Runner
-- [ ] Add pytest to `requirements.txt` if not present
-- [ ] Add pytest-cov for coverage reporting
-- [ ] Create `pytest.ini` configuration file
-- [ ] Configure test discovery patterns
-- [ ] Set up coverage reporting
+- [x] Add pytest to `requirements.txt` if not present
+- [x] Add pytest-cov for coverage reporting
+- [x] Create `pytest.ini` configuration file
+- [x] Configure test discovery patterns
+- [x] Set up coverage reporting
 
 ### Update Package Configuration
 - [ ] Update `package.json` to add test scripts:
