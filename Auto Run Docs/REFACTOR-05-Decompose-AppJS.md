@@ -61,11 +61,24 @@ js/
 - Location: `/Users/sydney/code/07-other-projects/HEARTH/js/hunt-renderer.js`
 
 ### Extract Modal Manager Module
-- [ ] Create `js/modal-manager.js`
-- [ ] Extract modal opening/closing logic
-- [ ] Extract modal content generation
-- [ ] Export `ModalManager` class
-- [ ] Add JSDoc documentation
+- [x] Create `js/modal-manager.js`
+- [x] Extract modal opening/closing logic
+- [x] Extract modal content generation
+- [x] Export `ModalManager` class
+- [x] Add JSDoc documentation
+
+**Implementation Notes:**
+- Created comprehensive `ModalManager` class with all modal dialog functionality
+- Includes modal creation with toolbar (prev/next navigation, counter)
+- Supports keyboard navigation (Escape to close, Arrow keys to navigate)
+- Handles modal open/close with body scroll management
+- Generates hunt detail content (header, sections, footer)
+- Implements hunt detail sections: tactic, notes, tags, submitter, why, references
+- Provides navigation between hunts in modal view
+- Uses callback pattern for integration with main app
+- Added complete JSDoc documentation for all public methods
+- Maintains separation of concerns: modal management only, no filtering or data manipulation
+- Location: `/Users/sydney/code/07-other-projects/HEARTH/js/modal-manager.js`
 
 ### Extract Notebook Generator Module
 - [ ] Create `js/notebook-generator.js`
