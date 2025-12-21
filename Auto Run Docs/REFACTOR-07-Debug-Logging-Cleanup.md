@@ -10,9 +10,13 @@ This phase removes or replaces debug logging statements with proper logging infr
 ## Tasks
 
 ### Python Logging Setup
-- [ ] Verify `scripts/logger_config.py` is properly configured
-- [ ] Ensure logger is using appropriate levels (DEBUG, INFO, WARNING, ERROR)
-- [ ] Add environment variable to control log level (default: INFO for production)
+- [x] Verify `scripts/logger_config.py` is properly configured
+- [x] Ensure logger is using appropriate levels (DEBUG, INFO, WARNING, ERROR)
+- [x] Add environment variable to control log level (default: INFO for production)
+  - Added LOG_LEVEL environment variable support (defaults to INFO)
+  - Logger now supports DEBUG, INFO, WARNING, ERROR, and CRITICAL levels
+  - Console handler respects environment variable setting
+  - File handler always logs DEBUG and above for complete records
 
 ### Python Scripts - Replace Debug Prints
 - [ ] Search for all `print()` statements in `scripts/` directory

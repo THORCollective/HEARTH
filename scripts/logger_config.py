@@ -5,6 +5,7 @@ Centralized logging configuration for HEARTH scripts.
 
 import logging
 import sys
+import os
 from pathlib import Path
 from datetime import datetime
 from typing import Optional
@@ -28,7 +29,11 @@ class HearthLogger:
     def _setup_logger(self) -> None:
         """Setup the logger with appropriate handlers and formatters."""
         self._logger = logging.getLogger('hearth')
-        self._logger.setLevel(logging.INFO)
+
+        # Get log level from environment variable, default to INFO
+        log_level_str = os.environ.get('LOG_LEVEL', 'INFO').upper()
+        log_level = getattr(logging, log_level_str, logging.INFO)
+        self._logger.setLevel(log_level)
 
         # Prevent duplicate handlers
         if self._logger.handlers:
@@ -47,7 +52,7 @@ class HearthLogger:
 
         # Console handler
         console_handler = logging.StreamHandler(sys.stdout)
-        console_handler.setLevel(logging.INFO)
+        console_handler.setLevel(log_level)
         console_handler.setFormatter(console_formatter)
         self._logger.addHandler(console_handler)
 
