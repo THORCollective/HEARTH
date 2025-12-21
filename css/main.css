@@ -1,0 +1,35 @@
+/**
+ * Main CSS Entry Point
+ *
+ * This file imports all CSS modules in the proper cascade order:
+ * 1. Variables - CSS custom properties used throughout the site
+ * 2. Reset - Browser normalization and base element resets
+ * 3. Typography - Font definitions, heading styles, and text formatting
+ * 4. Layout - Grid systems, containers, and structural layouts
+ * 5. Components - Individual UI component styles
+ * 6. Utilities - Helper classes and overrides (loaded last for highest specificity)
+ */
+
+/* 1. CSS Custom Properties - Define design tokens first */
+@import url('variables.css');
+
+/* 2. Reset & Normalization - Establish consistent baseline across browsers */
+@import url('reset.css');
+
+/* 3. Typography - Base text styles and font definitions */
+@import url('typography.css');
+
+/* 4. Layout - Structural styles and responsive grid systems */
+@import url('layout.css');
+
+/* 5. Components - Individual UI component styles */
+@import url('components/cards.css');
+@import url('components/modals.css');
+@import url('components/filters.css');
+@import url('components/chat-widget.css');
+@import url('components/buttons.css');
+@import url('components/forms.css');
+@import url('components/navigation.css');
+
+/* 6. Utilities - Helper classes with highest specificity (loaded last) */
+@import url('utilities.css');
