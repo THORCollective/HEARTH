@@ -10,13 +10,22 @@ This phase implements Anthropic's prompt caching to reduce API costs by ~67% and
 ## Tasks
 
 ### Research & Planning
-- [ ] Read Anthropic prompt caching documentation
-- [ ] Identify cacheable content in current implementation:
-  - Static system prompts
-  - MITRE ATT&CK framework data
-  - Hunt templates (PEAK framework)
-  - CTI extraction instructions
-- [ ] Determine cache TTL requirements (5 minutes default)
+- [x] Read Anthropic prompt caching documentation
+  - **Key findings**: Supports Claude 3.5 Sonnet, 3 Opus, 3 Haiku with 200K context
+  - **Pricing**: Cache write costs 25% more, cache read costs only 10% of base rate
+  - **Implementation**: Use `cache_control: {"type": "ephemeral"}` parameter
+  - **TTL options**: 5 minutes (default) or 1 hour with `"ttl": "1h"`
+  - **Breakpoints**: Up to 4 cache breakpoints per request
+- [x] Identify cacheable content in current implementation:
+  - **Static system prompts**: `SYSTEM_PROMPT` in `generate_from_cti.py` (141 lines, ~1000 tokens) ✅
+  - **MITRE ATT&CK framework data**: Currently not directly passed to AI, used for validation only ⚠️
+  - **Hunt templates (PEAK framework)**: `USER_TEMPLATE` format (30 lines, ~200 tokens) ✅
+  - **CTI extraction instructions**: Part of summarization prompts in `summarize_cti_with_map_reduce()` ✅
+  - **Note**: Main cacheable content is the large SYSTEM_PROMPT and USER_TEMPLATE
+- [x] Determine cache TTL requirements (5 minutes default)
+  - **Decision**: Use 5-minute default TTL for most prompts (no additional cost)
+  - **Rationale**: System prompt is static, unlikely to change within a session
+  - **Future consideration**: 1-hour TTL if we see frequent regenerations within the same hour
 
 ### Update API Client
 - [ ] Locate Anthropic API client code in Python scripts
