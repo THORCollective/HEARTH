@@ -118,10 +118,22 @@ css/
   - Light theme overrides for all card components (from style.css:442-465, 467-472, 610-639, 749-753)
 
 #### Modal Components
-- [ ] Create `css/components/modals.css`
-- [ ] Extract modal dialog styles
-- [ ] Extract overlay/backdrop styles
-- [ ] Extract modal animations
+- [x] Create `css/components/modals.css`
+- [x] Extract modal dialog styles
+- [x] Extract overlay/backdrop styles
+- [x] Extract modal animations
+
+**Notes:** Created comprehensive modals.css file including:
+  - Modal overlay/backdrop with blur effect (from style.css:1849-1858)
+  - Modal content container with responsive width (from style.css:1860-1872)
+  - Close button with hover effects (from style.css:1874-1888)
+  - Modal toolbar and navigation controls (from style.css:1890-1895)
+  - Modal counter display (from style.css:1897-1902)
+  - Modal navigation buttons with disabled states (from style.css:1904-1925)
+  - Modal body container layout (from style.css:1927-1931)
+  - Light theme overrides for modals, overlays, and notebook modals (from style.css:498-505, 712-723)
+  - Responsive mobile styles (from style.css:2118-2121)
+  - Documentation noting transitions handled via --transition variable
 
 #### Filter Components
 - [ ] Create `css/components/filters.css`

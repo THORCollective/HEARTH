@@ -1,0 +1,165 @@
+/**
+ * Modal Component Styles
+ * Includes modal dialogs, overlays, backdrops, and animations
+ */
+
+/* ============================================================================
+   Modal Base Styles
+   ============================================================================ */
+
+/* Modal Overlay/Backdrop (style.css:1849-1858) */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(7, 8, 15, 0.85);
+  backdrop-filter: blur(18px);
+  padding: 2rem 1rem;
+  overflow-y: auto;
+}
+
+/* Modal Content Container (style.css:1860-1872) */
+.modal-content {
+  margin: auto;
+  width: min(880px, 92vw);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--surface-border);
+  box-shadow: var(--shadow-lg);
+  padding: clamp(1.75rem, 3vw, 2.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+}
+
+/* ============================================================================
+   Modal Controls
+   ============================================================================ */
+
+/* Close Button (style.css:1874-1888) */
+.close {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.8rem;
+  cursor: pointer;
+  transition: color var(--transition), transform var(--transition);
+}
+
+.close:hover,
+.close:focus {
+  color: var(--text-primary);
+  transform: scale(1.05);
+}
+
+/* ============================================================================
+   Modal Navigation
+   ============================================================================ */
+
+/* Modal Toolbar (style.css:1890-1895) */
+.modal-toolbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Modal Counter (style.css:1897-1902) */
+.modal-counter {
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+/* Modal Navigation Buttons (style.css:1904-1925) */
+.modal-nav-btn {
+  background: rgba(138, 71, 255, 0.18);
+  border: 1px solid transparent;
+  color: white;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.modal-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.modal-nav-btn:not(:disabled):hover {
+  border-color: rgba(138, 71, 255, 0.4);
+  box-shadow: 0 12px 25px rgba(138, 71, 255, 0.25);
+}
+
+/* ============================================================================
+   Modal Body
+   ============================================================================ */
+
+/* Modal Body Container (style.css:1927-1931) */
+#modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ============================================================================
+   Light Theme Overrides
+   ============================================================================ */
+
+/* Light theme modal styles (style.css:498-505, 712-723) */
+[data-theme="light"] .modal,
+[data-theme="light"] .overlay,
+[data-theme="light"] .popup {
+  background: rgba(255, 255, 255, 0.98) !important;
+}
+
+[data-theme="light"] .modal-content {
+  background: white !important;
+  border: 1px solid rgba(138, 71, 255, 0.15) !important;
+}
+
+[data-theme="light"] .modal-content * {
+  background-color: transparent;
+}
+
+/* Notebook generation modal */
+[data-theme="light"] .notebook-success,
+[data-theme="light"] .notebook-actions,
+[data-theme="light"] .notebook-modal,
+[data-theme="light"] [class*="notebook"] {
+  background: white !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="light"] .notebook-success h3 {
+  color: var(--success) !important;
+}
+
+/* ============================================================================
+   Responsive Design
+   ============================================================================ */
+
+/* Mobile-friendly modal (style.css:2118-2121) */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 100%;
+    padding: 1.75rem;
+  }
+}
+
+/* ============================================================================
+   Modal Animations
+   ============================================================================ */
+
+/* Note: No specific modal animations were found in style.css.
+ * Transitions are handled via the --transition variable on individual elements.
+ * If modal entry/exit animations are needed, they can be added here in the future.
+ */
