@@ -81,11 +81,24 @@ js/
 - Location: `/Users/sydney/code/07-other-projects/HEARTH/js/modal-manager.js`
 
 ### Extract Notebook Generator Module
-- [ ] Create `js/notebook-generator.js`
-- [ ] Extract Jupyter notebook generation logic
-- [ ] Extract download functionality
-- [ ] Export `NotebookGenerator` class
-- [ ] Add JSDoc documentation
+- [x] Create `js/notebook-generator.js`
+- [x] Extract Jupyter notebook generation logic
+- [x] Extract download functionality
+- [x] Export `NotebookGenerator` class
+- [x] Add JSDoc documentation
+
+**Implementation Notes:**
+- Created comprehensive `NotebookGenerator` class with all Jupyter notebook generation functionality
+- Includes PEAK framework structure (Prepare, Execute, Act with Knowledge)
+- Generates complete notebooks with hunt metadata, hypothesis, and analysis templates
+- Supports notebook download as .ipynb files with proper MIME type
+- Implements JSON data export for advanced notebook generation tools
+- Provides clipboard copy functionality with visual feedback
+- Uses async/await pattern for notebook generation workflow
+- Includes extensive helper methods for creating notebook cells (markdown and code)
+- Added complete JSDoc documentation for all public and private methods
+- Maintains separation of concerns: notebook generation only, no filtering or data manipulation
+- Location: `/Users/sydney/code/07-other-projects/HEARTH/js/notebook-generator.js`
 
 ### Extract Preset Manager Module
 - [ ] Create `js/preset-manager.js`
