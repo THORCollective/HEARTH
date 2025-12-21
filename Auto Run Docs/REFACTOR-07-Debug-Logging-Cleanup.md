@@ -91,9 +91,14 @@ This phase removes or replaces debug logging statements with proper logging infr
     - test_error_logging.py (Error logging verification)
 
 ### Documentation
-- [ ] Document logging strategy in README or docs
-- [ ] Document how to enable debug logging for development
-- [ ] Document log levels and when to use each
+- [x] Document logging strategy in README or docs
+- [x] Document how to enable debug logging for development
+- [x] Document log levels and when to use each
+  - Created comprehensive logging guide at docs/LOGGING.md
+  - Documents Python, JavaScript, and GitHub Actions logging
+  - Includes environment detection, log levels, best practices, and troubleshooting
+  - Added reference to logging guide in README.md
+  - Added LOG_LEVEL environment variable to Configuration section
 
 ### Cleanup
 - [ ] Commit changes with message: "refactor: replace debug logging with proper logging infrastructure"

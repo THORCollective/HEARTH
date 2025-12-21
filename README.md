@@ -138,6 +138,7 @@ For more details on the technical implementation, see:
 - [Database Architecture](database/README.md)
 - [Optimization Guide](docs/OPTIMIZATION_GUIDE.md) - Performance improvements and cost reduction strategies
 - [Testing Guide](docs/TESTING_GUIDE.md) - Local development and testing instructions
+- [Logging Guide](docs/LOGGING.md) - Logging infrastructure and debugging best practices
 - [Scripts Documentation](scripts/)
 - [Workflow Configurations](.github/workflows/)
 
@@ -194,6 +195,7 @@ For maintainers and self-hosted instances, HEARTH can be configured using enviro
 | `ANTHROPIC_API_KEY` | API key for Claude (required if using Claude) | - | Yes (for Claude) |
 | `OPENAI_API_KEY` | API key for OpenAI (required if using OpenAI) | - | Yes (for OpenAI) |
 | `CLAUDE_MODEL` | Specific Claude model version to use | `claude-sonnet-4-5-20250929` | No |
+| `LOG_LEVEL` | Logging verbosity level (`DEBUG`, `INFO`, `WARNING`, `ERROR`) | `INFO` | No |
 
 ### GitHub Actions Configuration
 
