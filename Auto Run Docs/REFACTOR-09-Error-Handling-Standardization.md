@@ -31,17 +31,32 @@ This phase standardizes error handling across the codebase with a consistent err
   10. Inconsistent error propagation (raise vs return) - both
 
 ### Enhance Python Exception Hierarchy
-- [ ] Expand `scripts/exceptions.py` with comprehensive error classes:
-  - `HearthError` (base exception)
-  - `ParsingError` (hunt parsing failures)
-  - `ValidationError` (validation failures)
-  - `APIError` (AI API failures)
-  - `DatabaseError` (SQLite errors)
-  - `DuplicateError` (duplicate detection errors)
-  - `MITREError` (MITRE ATT&CK errors)
-- [ ] Add meaningful error messages
-- [ ] Add error codes for programmatic handling
-- [ ] Add contextual information (file paths, line numbers, etc.)
+- [x] Expand `scripts/exceptions.py` with comprehensive error classes:
+  - `HearthError` (base exception) ✓
+  - `ParsingError` (hunt parsing failures) ✓
+  - `MarkdownParsingError` (markdown parsing) ✓
+  - `JSONParsingError` (JSON parsing) ✓
+  - `ValidationError` (validation failures) ✓
+  - `APIError` (AI API failures) ✓
+  - `AIAnalysisError` (AI analysis failures) ✓
+  - `DatabaseError` (SQLite errors) ✓
+  - `DuplicateError` (duplicate detection errors) ✓
+  - `MITREError` (MITRE ATT&CK errors) ✓
+  - `FileProcessingError` (file I/O errors) ✓
+  - `ConfigurationError` (config errors) ✓
+  - `NetworkError` (network failures) ✓
+  - `DataExportError` (export failures) ✓
+- [x] Add meaningful error messages
+- [x] Add error codes for programmatic handling (HE-1xxx through HE-9xxx ranges)
+- [x] Add contextual information (file paths, line numbers, etc.)
+
+**Implementation Notes:**
+- Created comprehensive exception hierarchy with 14 exception classes
+- Implemented error code system with ranges (HE-1xxx for parsing, HE-2xxx for validation, etc.)
+- Each exception captures relevant context (file paths, line numbers, operation types, etc.)
+- All exceptions include detailed docstrings explaining when to use them
+- Created comprehensive test suite with 60 passing tests in `tests/unit/test_exceptions.py`
+- Tests cover error codes, context information, message formatting, and inheritance hierarchy
 
 ### Create JavaScript Error Classes
 - [ ] Create `js/errors.js` module
