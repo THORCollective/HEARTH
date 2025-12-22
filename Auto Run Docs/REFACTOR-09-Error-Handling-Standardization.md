@@ -59,14 +59,25 @@ This phase standardizes error handling across the codebase with a consistent err
 - Tests cover error codes, context information, message formatting, and inheritance hierarchy
 
 ### Create JavaScript Error Classes
-- [ ] Create `js/errors.js` module
-- [ ] Define error hierarchy:
+- [x] Create `js/errors.js` module
+- [x] Define error hierarchy:
   - `HearthError` (base class)
   - `FilterError` (filtering failures)
   - `RenderError` (rendering failures)
   - `APIError` (API request failures)
   - `ValidationError` (input validation)
-- [ ] Add error codes and messages
+  - `ParsingError` (parsing failures)
+  - `NetworkError` (network failures)
+- [x] Add error codes and messages
+
+**Implementation Notes:**
+- Created comprehensive JavaScript error hierarchy with 7 error classes
+- Each class follows the same pattern as Python exceptions with error codes (HE-1xxx through HE-9xxx)
+- Added helper functions: `getUserFriendlyMessage()` and `logError()` for consistent error handling
+- All error classes include detailed JSDoc documentation
+- Implemented comprehensive test suite with 30 passing tests in `tests/unit/test_errors_js.mjs`
+- Tests cover error codes, context information, inheritance, and helper functions
+- Updated `package.json` to `"type": "module"` to support ES6 imports
 
 ### Standardize Python Error Handling
 - [ ] Update `generate_from_cti.py` to use custom exceptions
