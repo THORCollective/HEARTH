@@ -81,7 +81,7 @@ This phase standardizes error handling across the codebase with a consistent err
 
 ### Standardize Python Error Handling
 - [x] Update `generate_from_cti.py` to use custom exceptions
-- [ ] Update parsers to throw `ParsingError` with context
+- [x] Update parsers to throw `ParsingError` with context
 - [ ] Update validators to throw `ValidationError`
 - [ ] Update MITRE integration to throw `MITREError`
 - [ ] Update database operations to throw `DatabaseError`
@@ -94,6 +94,28 @@ This phase standardizes error handling across the codebase with a consistent err
 - Added proper exception re-raising to avoid wrapping custom exceptions multiple times
 - All error handlers now include contextual information (file paths, operation types, causes)
 - Verified syntax correctness and exception imports
+
+**Implementation Notes (Parsers):**
+- Updated `hunt_parser_utils.py`:
+  - Enhanced `find_hunt_files()` to raise `FileProcessingError` with operation context for directory scanning errors
+  - Added error handling to `clean_markdown_formatting()` to raise `MarkdownParsingError` on AttributeError/TypeError
+  - Added error handling to `extract_submitter_info()` to raise `MarkdownParsingError` on regex/parsing errors
+  - Enhanced `extract_content_section()` with validation and proper `MarkdownParsingError` raising
+  - Added error handling to `parse_tag_list()` to raise `MarkdownParsingError` on parsing failures
+- Updated `hunt_parser.py`:
+  - Modified `parse_hunt_file()` to re-raise custom exceptions and wrap unexpected errors in `MarkdownParsingError`
+  - Enhanced `_extract_table_data()` to raise `MarkdownParsingError` when table header missing or insufficient cells
+  - Updated `_extract_content_sections()` to properly propagate custom exceptions
+  - Removed `_get_empty_table_data()` method (no longer needed with exception-based error handling)
+  - Enhanced `process_all_hunts()` to track and log parsing errors while continuing to process remaining files
+  - Added `parse_errors` list to collect errors during batch processing with summary logging
+  - Added import for `ValidationError` to handle validation exceptions properly
+- Updated test suite (`test_hunt_parser.py`):
+  - Modified `test_parse_hunt_file_with_error` to expect `MarkdownParsingError` instead of `None`
+  - Updated `test_extract_table_data_no_table` to expect `MarkdownParsingError` exception
+  - Added `test_extract_table_data_insufficient_cells` to test insufficient cell error handling
+  - Updated `test_process_all_hunts_with_errors` to use `MarkdownParsingError` in mock
+- All parser error tests passing; parser works correctly with production data (78 hunt files processed successfully)
 
 ### Standardize JavaScript Error Handling
 - [ ] Update hunt filtering to use custom errors

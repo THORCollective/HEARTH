@@ -51,16 +51,27 @@ def find_hunt_files(base_directory: Optional[str] = None) -> List[Path]:
                 hunt_files.extend(filtered_files)
                 logger.debug(f"Found {len(filtered_files)} hunt files in {directory_path}")
 
-            except Exception as error:
+            except OSError as error:
                 logger.error(f"Error scanning directory {directory_path}: {error}")
-                continue
+                raise FileProcessingError(
+                    str(directory_path),
+                    f"Failed to scan directory: {error}",
+                    operation="scan"
+                )
 
         logger.info(f"Found total of {len(hunt_files)} hunt files")
         return hunt_files
 
+    except FileProcessingError:
+        # Re-raise custom exceptions without wrapping
+        raise
     except Exception as error:
         logger.error(f"Error finding hunt files: {error}")
-        raise FileProcessingError(str(base_directory or config.base_directory), str(error))
+        raise FileProcessingError(
+            str(base_directory or config.base_directory),
+            f"Failed to find hunt files: {error}",
+            operation="search"
+        )
 
 
 def find_table_header_line(content_lines: List[str]) -> Optional[int]:
@@ -135,43 +146,117 @@ def extract_table_cells(content_lines: List[str], header_line_index: int) -> Lis
 
 
 def clean_markdown_formatting(text):
-    """Remove common markdown formatting from text."""
+    """Remove common markdown formatting from text.
+
+    Args:
+        text: Text to clean.
+
+    Returns:
+        Cleaned text without markdown formatting.
+    """
     if not text:
         return ""
-    return text.replace('**', '').replace('*', '').strip()
+    try:
+        return text.replace('**', '').replace('*', '').strip()
+    except (AttributeError, TypeError) as error:
+        raise MarkdownParsingError(
+            "",
+            "text_formatting",
+            f"Failed to clean markdown formatting: {error}"
+        )
 
 
 def extract_submitter_info(submitter_text):
-    """Extract submitter name and link from markdown text."""
+    """Extract submitter name and link from markdown text.
+
+    Args:
+        submitter_text: Text containing submitter information.
+
+    Returns:
+        Dictionary with 'name' and 'link' keys.
+
+    Raises:
+        MarkdownParsingError: If submitter text parsing fails.
+    """
     if not submitter_text:
         return {'name': '', 'link': ''}
 
-    # Look for markdown link format [name](url)
-    link_pattern = r'\[([^\]]+)\]\(([^)]+)\)'
-    link_match = re.search(link_pattern, submitter_text)
+    try:
+        # Look for markdown link format [name](url)
+        link_pattern = r'\[([^\]]+)\]\(([^)]+)\)'
+        link_match = re.search(link_pattern, submitter_text)
 
-    if link_match:
-        return {
-            'name': link_match.group(1).strip(),
-            'link': link_match.group(2).strip()
-        }
+        if link_match:
+            return {
+                'name': link_match.group(1).strip(),
+                'link': link_match.group(2).strip()
+            }
 
-    return {'name': submitter_text.strip(), 'link': ''}
+        return {'name': submitter_text.strip(), 'link': ''}
+
+    except (AttributeError, TypeError, re.error) as error:
+        raise MarkdownParsingError(
+            "",
+            "submitter_info",
+            f"Failed to extract submitter info: {error}"
+        )
 
 
 def extract_content_section(content, section_name):
-    """Extract a specific section (like 'Why' or 'References') from markdown content."""
-    pattern = rf'## {section_name}\s*\n(.*?)(?=\n##|\n$)'
-    match = re.search(pattern, content, re.MULTILINE | re.DOTALL)
-    return match.group(1).strip() if match else ''
+    """Extract a specific section (like 'Why' or 'References') from markdown content.
+
+    Args:
+        content: Markdown content to parse.
+        section_name: Name of section to extract.
+
+    Returns:
+        Extracted section content or empty string if not found.
+
+    Raises:
+        MarkdownParsingError: If section extraction fails.
+    """
+    if not content:
+        return ''
+
+    if not section_name:
+        raise ValidationError("section_name", None, "Section name cannot be empty")
+
+    try:
+        pattern = rf'## {section_name}\s*\n(.*?)(?=\n##|\n$)'
+        match = re.search(pattern, content, re.MULTILINE | re.DOTALL)
+        return match.group(1).strip() if match else ''
+
+    except (re.error, AttributeError, TypeError) as error:
+        raise MarkdownParsingError(
+            "",
+            section_name,
+            f"Failed to extract section '{section_name}': {error}"
+        )
 
 
 def parse_tag_list(tags_text):
-    """Parse a space-separated list of hashtags into a clean list."""
+    """Parse a space-separated list of hashtags into a clean list.
+
+    Args:
+        tags_text: Text containing hashtags.
+
+    Returns:
+        List of tag strings without '#' prefix.
+
+    Raises:
+        MarkdownParsingError: If tag parsing fails.
+    """
     if not tags_text:
         return []
 
-    return [tag.lstrip('#') for tag in tags_text.split() if tag.startswith('#')]
+    try:
+        return [tag.lstrip('#') for tag in tags_text.split() if tag.startswith('#')]
+    except (AttributeError, TypeError) as error:
+        raise MarkdownParsingError(
+            "",
+            "tags",
+            f"Failed to parse tag list: {error}"
+        )
 
 
 def find_submitter_column_index(header_line):

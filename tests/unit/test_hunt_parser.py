@@ -213,13 +213,15 @@ PowerShell is commonly abused by attackers to download payloads.
     @patch.object(HuntFileReader, 'read_file')
     def test_parse_hunt_file_with_error(self, mock_read):
         """Test parsing file that raises an error."""
+        from exceptions import MarkdownParsingError
+
         mock_read.side_effect = Exception("Parse error")
 
         test_path = Path("/test/Flames/F001.md")
-        hunt_data = self.reader.parse_hunt_file(test_path, "Flames")
 
-        # Should return None on error, not raise exception
-        self.assertIsNone(hunt_data)
+        # Should raise MarkdownParsingError on unexpected error
+        with self.assertRaises(MarkdownParsingError):
+            self.reader.parse_hunt_file(test_path, "Flames")
 
     def test_extract_table_data_success(self):
         """Test extracting table data from markdown."""
@@ -234,12 +236,14 @@ PowerShell is commonly abused by attackers to download payloads.
 
     def test_extract_table_data_no_table(self):
         """Test extracting table data when no table exists."""
+        from exceptions import MarkdownParsingError
+
         content = "# No table here\nJust some content"
         test_path = Path("/test/F001.md")
 
-        result = self.reader._extract_table_data(content, test_path)
-
-        self.assertEqual(result, self.reader._get_empty_table_data())
+        # Should raise MarkdownParsingError when no table header found
+        with self.assertRaises(MarkdownParsingError):
+            self.reader._extract_table_data(content, test_path)
 
     def test_extract_content_sections(self):
         """Test extracting Why and References sections."""
@@ -250,17 +254,20 @@ PowerShell is commonly abused by attackers to download payloads.
         self.assertIn('references', result)
         self.assertIn('PowerShell', result['why'])
 
-    def test_get_empty_table_data(self):
-        """Test getting empty table data structure."""
-        result = self.reader._get_empty_table_data()
+    def test_extract_table_data_insufficient_cells(self):
+        """Test extracting table data with insufficient cells."""
+        from exceptions import MarkdownParsingError
 
-        self.assertIsInstance(result, dict)
-        self.assertEqual(result['hunt_id'], '')
-        self.assertEqual(result['idea'], '')
-        self.assertEqual(result['tactic'], '')
-        self.assertEqual(result['notes'], '')
-        self.assertEqual(result['tags'], '')
-        self.assertEqual(result['submitter'], '')
+        content = """# Hunt
+| Hunt # | Idea |
+|--------|------|
+| F001 | Test |
+"""
+        test_path = Path("/test/F001.md")
+
+        # Should raise MarkdownParsingError when insufficient cells
+        with self.assertRaises(MarkdownParsingError):
+            self.reader._extract_table_data(content, test_path)
 
 
 class TestJSONExporter(unittest.TestCase):
@@ -467,6 +474,8 @@ class TestHuntProcessor(unittest.TestCase):
     @patch('hunt_parser.get_config')
     def test_process_all_hunts_with_errors(self, mock_config, mock_parse, mock_find):
         """Test processing hunts when some fail to parse."""
+        from exceptions import MarkdownParsingError
+
         mock_config_obj = Mock()
         mock_config_obj.config.hunt_directories = ['Flames']
         mock_config.return_value = mock_config_obj
@@ -477,18 +486,18 @@ class TestHuntProcessor(unittest.TestCase):
         ]
         mock_find.return_value = test_files
 
-        # First succeeds, second returns None (parse error)
+        # First succeeds, second raises MarkdownParsingError
         mock_parse.side_effect = [
             HuntData(
                 id='F001', category='Flames', title='Hunt 1', tactic='T',
                 notes='N', tags=[], submitter={}, why='W', references='R', file_path='F001.md'
             ),
-            None  # Parse error
+            MarkdownParsingError('/test/Flames/F002.md', 'table_header', 'No table header found')
         ]
 
         hunts = self.processor.process_all_hunts()
 
-        # Should only include successful parse
+        # Should only include successful parse and continue processing
         self.assertEqual(len(hunts), 1)
         self.assertEqual(hunts[0].id, 'F001')
 
