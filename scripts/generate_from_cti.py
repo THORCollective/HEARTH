@@ -5,6 +5,13 @@ from PyPDF2 import PdfReader
 from datetime import datetime
 from logger_config import get_logger
 from config_manager import get_config
+from exceptions import (
+    ConfigurationError,
+    APIError,
+    AIAnalysisError,
+    FileProcessingError,
+    ParsingError
+)
 
 logger = get_logger()
 
@@ -49,10 +56,18 @@ CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-5-20250929")
 
 if AI_PROVIDER == "claude":
     if not CLAUDE_AVAILABLE:
-        raise ImportError("Anthropic (Claude) client not installed. Please install 'anthropic' Python package.")
+        raise ConfigurationError(
+            "Anthropic (Claude) client not installed. Please install 'anthropic' Python package.",
+            config_key="AI_PROVIDER",
+            error_code="HE-8001"
+        )
     ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
     if not ANTHROPIC_API_KEY:
-        raise ValueError("ANTHROPIC_API_KEY not set in environment.")
+        raise ConfigurationError(
+            "ANTHROPIC_API_KEY not set in environment.",
+            config_key="ANTHROPIC_API_KEY",
+            error_code="HE-8002"
+        )
     anthropic_client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 else:
     from openai import OpenAI
@@ -447,8 +462,11 @@ def summarize_cti_with_map_reduce(text, model="gpt-4", max_tokens=128000):
             chunk_summaries.append(summary)
         except Exception as e:
             logger.error(f"Error summarizing chunk {i +1}: {e}")
-            # If a chunk fails, we just add a note and continue
-            chunk_summaries.append(f"[Could not summarize chunk {i +1}]")
+            # Wrap generic exceptions in AIAnalysisError
+            raise AIAnalysisError(
+                f"Failed to summarize chunk {i +1} of CTI content",
+                cause=e
+            )
 
     # 3. Reduce: Create a final summary from the individual summaries
     logger.info("Creating final summary of all chunks...")
@@ -495,8 +513,10 @@ def summarize_cti_with_map_reduce(text, model="gpt-4", max_tokens=128000):
             return final_response.choices[0].message.content.strip()
     except Exception as e:
         logger.error(f"Error creating final summary: {e}")
-        # Fallback: return the combined summaries if the final step fails
-        return f"WARNING: Final summarization failed. Combined summaries provided below:\n\n{combined_summary}"
+        raise AIAnalysisError(
+            "Failed to create final summary of CTI content",
+            cause=e
+        )
 
 
 def cleanup_hunt_body(ai_content):
@@ -699,9 +719,15 @@ def generate_hunt_content_with_ttp_diversity(cti_text, cti_source_url, submitter
         logger.warning(f"All {max_attempts} attempts had similar TTPs. Using last attempt with warning.")
         return hunt_content
 
+    except AIAnalysisError:
+        # Re-raise AIAnalysisError without wrapping
+        raise
     except Exception as e:
         logger.error(f"Error in TTP-diverse generation: {str(e)}")
-        return None
+        raise AIAnalysisError(
+            "Failed to generate hunt content with TTP diversity",
+            cause=e
+        )
 
 
 def generate_hunt_content_basic(cti_text, cti_source_url, submitter_credit, is_regeneration=False, user_feedback=None):
@@ -798,9 +824,15 @@ def generate_hunt_content_basic(cti_text, cti_source_url, submitter_credit, is_r
                 max_tokens=800
             )
             return response.choices[0].message.content.strip()
+    except AIAnalysisError:
+        # Re-raise AIAnalysisError without wrapping
+        raise
     except Exception as e:
         logger.error(f"Error generating hunt content: {str(e)}")
-        return None
+        raise AIAnalysisError(
+            "Failed to generate basic hunt content",
+            cause=e
+        )
 
 # Alias for backward compatibility
 
@@ -887,13 +919,23 @@ def read_file_content(file_path):
             return text.strip()
         except Exception as e:
             logger.error(f"Error reading PDF {file_path}: {str(e)}")
-            return None
+            raise FileProcessingError(
+                file_path=str(file_path),
+                message=f"Failed to read PDF file: {str(e)}",
+                operation="read",
+                error_code="HE-7002"
+            )
     else:
         try:
             return file_path.read_text()
         except Exception as e:
             logger.error(f"Error reading file {file_path}: {str(e)}")
-            return None
+            raise FileProcessingError(
+                file_path=str(file_path),
+                message=f"Failed to read text file: {str(e)}",
+                operation="read",
+                error_code="HE-7003"
+            )
 
 
 if __name__ == "__main__":
@@ -936,7 +978,12 @@ if __name__ == "__main__":
     # SECURELY get CTI content from the file prepared by the workflow
     cti_files = list(CTI_INPUT_DIR.glob("*"))
     if not cti_files:
-        raise FileNotFoundError(f"❌ No CTI file found in the input directory '{CTI_INPUT_DIR}'.")
+        raise FileProcessingError(
+            file_path=str(CTI_INPUT_DIR),
+            message="No CTI file found in the input directory",
+            operation="read",
+            error_code="HE-7004"
+        )
 
     cti_file_path = cti_files[0]
     logger.info(f"Processing CTI file: {cti_file_path}")

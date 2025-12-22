@@ -80,12 +80,20 @@ This phase standardizes error handling across the codebase with a consistent err
 - Updated `package.json` to `"type": "module"` to support ES6 imports
 
 ### Standardize Python Error Handling
-- [ ] Update `generate_from_cti.py` to use custom exceptions
+- [x] Update `generate_from_cti.py` to use custom exceptions
 - [ ] Update parsers to throw `ParsingError` with context
 - [ ] Update validators to throw `ValidationError`
 - [ ] Update MITRE integration to throw `MITREError`
 - [ ] Update database operations to throw `DatabaseError`
 - [ ] Add try/except blocks with proper error propagation
+
+**Implementation Notes (generate_from_cti.py):**
+- Replaced generic `ImportError` and `ValueError` with `ConfigurationError` for missing dependencies and API keys (HE-8001, HE-8002)
+- Replaced generic `Exception` catches in AI operations with `AIAnalysisError` for chunk summarization, final summary generation, and hunt content generation
+- Replaced generic exceptions in file operations with `FileProcessingError` for PDF reading (HE-7002), text file reading (HE-7003), and missing CTI files (HE-7004)
+- Added proper exception re-raising to avoid wrapping custom exceptions multiple times
+- All error handlers now include contextual information (file paths, operation types, causes)
+- Verified syntax correctness and exception imports
 
 ### Standardize JavaScript Error Handling
 - [ ] Update hunt filtering to use custom errors
