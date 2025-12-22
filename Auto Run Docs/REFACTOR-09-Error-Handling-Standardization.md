@@ -82,7 +82,7 @@ This phase standardizes error handling across the codebase with a consistent err
 ### Standardize Python Error Handling
 - [x] Update `generate_from_cti.py` to use custom exceptions
 - [x] Update parsers to throw `ParsingError` with context
-- [ ] Update validators to throw `ValidationError`
+- [x] Update validators to throw `ValidationError`
 - [ ] Update MITRE integration to throw `MITREError`
 - [ ] Update database operations to throw `DatabaseError`
 - [ ] Add try/except blocks with proper error propagation
@@ -116,6 +116,30 @@ This phase standardizes error handling across the codebase with a consistent err
   - Added `test_extract_table_data_insufficient_cells` to test insufficient cell error handling
   - Updated `test_process_all_hunts_with_errors` to use `MarkdownParsingError` in mock
 - All parser error tests passing; parser works correctly with production data (78 hunt files processed successfully)
+
+**Implementation Notes (Validators):**
+- Enhanced `validators.py` with specific error codes for each validation scenario:
+  - HE-2001: Hunt ID is empty or not a string
+  - HE-2002: Hunt ID format is invalid (doesn't match pattern)
+  - HE-2003: Tactics must be string or list
+  - HE-2004: Tags must be string or list
+  - HE-2005: URL is empty or not a string
+  - HE-2006: URL missing scheme or netloc
+  - HE-2007: URL scheme must be http or https
+  - HE-2008: File path is empty
+  - HE-2009: File does not exist
+  - HE-2010: Hunt data must be a dictionary
+  - HE-2011: Required field is missing or empty
+  - HE-2099: Generic validation error (for unexpected errors)
+- Fixed regex bug in `validate_tags()`: changed `r'#?\\w+'` to `r'#?\w+'` to correctly parse tags
+- All validation methods now include proper error codes and contextual information
+- Created comprehensive test suite with 42 passing tests in `tests/unit/test_validators.py`:
+  - Tests for all validation methods (hunt_id, tactics, tags, url, file_path, hunt_data)
+  - Tests for error code uniqueness and proper HE-2xxx range
+  - Tests for edge cases and error conditions
+  - Tests for context information in exceptions
+- All validators already used `ValidationError` exceptions; enhancement focused on adding specific error codes
+- Validators work correctly with production data and all tests pass
 
 ### Standardize JavaScript Error Handling
 - [ ] Update hunt filtering to use custom errors

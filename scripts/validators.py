@@ -29,7 +29,11 @@ class HuntValidator:
         """Validate hunt ID format."""
         try:
             if not hunt_id or not isinstance(hunt_id, str):
-                raise ValidationError("hunt_id", str(hunt_id), "Hunt ID must be a non-empty string")
+                raise ValidationError(
+                    "hunt_id", str(hunt_id),
+                    "Hunt ID must be a non-empty string",
+                    error_code="HE-2001"
+                )
 
             # Accept any letter prefix + 3-4 digits (e.g., "H001", "F042", "B123", "M001")
             # This is backwards compatible with all existing hunt formats
@@ -38,7 +42,8 @@ class HuntValidator:
             if not re.match(pattern, hunt_id):
                 raise ValidationError(
                     "hunt_id", hunt_id,
-                    f"Hunt ID must match pattern {pattern} (e.g., H001, F001, B001, M001)"
+                    f"Hunt ID must match pattern {pattern} (e.g., H001, F001, B001, M001)",
+                    error_code="HE-2002"
                 )
 
             logger.debug(f"Hunt ID {hunt_id} validated")
@@ -48,7 +53,11 @@ class HuntValidator:
             raise
         except Exception as error:
             logger.error(f"Unexpected error validating hunt ID: {error}")
-            raise ValidationError("hunt_id", hunt_id, f"Validation failed: {error}")
+            raise ValidationError(
+                "hunt_id", hunt_id,
+                f"Validation failed: {error}",
+                error_code="HE-2099"
+            )
 
     @staticmethod
     def validate_tactics(tactics: Union[str, List[str]]) -> List[str]:
@@ -59,7 +68,11 @@ class HuntValidator:
             elif isinstance(tactics, list):
                 tactic_list = [str(t).strip() for t in tactics if str(t).strip()]
             else:
-                raise ValidationError("tactics", str(tactics), "Tactics must be string or list")
+                raise ValidationError(
+                    "tactics", str(tactics),
+                    "Tactics must be string or list",
+                    error_code="HE-2003"
+                )
 
             invalid_tactics = []
             valid_tactics = []
@@ -80,18 +93,26 @@ class HuntValidator:
             raise
         except Exception as error:
             logger.error(f"Error validating tactics: {error}")
-            raise ValidationError("tactics", str(tactics), f"Validation failed: {error}")
+            raise ValidationError(
+                "tactics", str(tactics),
+                f"Validation failed: {error}",
+                error_code="HE-2099"
+            )
 
     @staticmethod
     def validate_tags(tags: Union[str, List[str]]) -> List[str]:
         """Validate and normalize tags."""
         try:
             if isinstance(tags, str):
-                tag_list = re.findall(r'#?\\w+', tags)
+                tag_list = re.findall(r'#?\w+', tags)
             elif isinstance(tags, list):
                 tag_list = [str(tag) for tag in tags]
             else:
-                raise ValidationError("tags", str(tags), "Tags must be string or list")
+                raise ValidationError(
+                    "tags", str(tags),
+                    "Tags must be string or list",
+                    error_code="HE-2004"
+                )
 
             normalized_tags = []
             for tag in tag_list:
@@ -110,22 +131,38 @@ class HuntValidator:
             raise
         except Exception as error:
             logger.error(f"Error validating tags: {error}")
-            raise ValidationError("tags", str(tags), f"Validation failed: {error}")
+            raise ValidationError(
+                "tags", str(tags),
+                f"Validation failed: {error}",
+                error_code="HE-2099"
+            )
 
     @staticmethod
     def validate_url(url: str, field_name: str = "url") -> bool:
         """Validate URL format."""
         try:
             if not url or not isinstance(url, str):
-                raise ValidationError(field_name, str(url), "URL must be a non-empty string")
+                raise ValidationError(
+                    field_name, str(url),
+                    "URL must be a non-empty string",
+                    error_code="HE-2005"
+                )
 
             parsed = urlparse(url)
 
             if not parsed.scheme or not parsed.netloc:
-                raise ValidationError(field_name, url, "URL must have scheme and netloc")
+                raise ValidationError(
+                    field_name, url,
+                    "URL must have scheme and netloc",
+                    error_code="HE-2006"
+                )
 
             if parsed.scheme not in ['http', 'https']:
-                raise ValidationError(field_name, url, "URL scheme must be http or https")
+                raise ValidationError(
+                    field_name, url,
+                    "URL scheme must be http or https",
+                    error_code="HE-2007"
+                )
 
             logger.debug(f"URL {url} validated")
             return True
@@ -134,19 +171,31 @@ class HuntValidator:
             raise
         except Exception as error:
             logger.error(f"Error validating URL: {error}")
-            raise ValidationError(field_name, url, f"URL validation failed: {error}")
+            raise ValidationError(
+                field_name, url,
+                f"URL validation failed: {error}",
+                error_code="HE-2099"
+            )
 
     @staticmethod
     def validate_file_path(file_path: Union[str, Path], must_exist: bool = True) -> Path:
         """Validate file path."""
         try:
             if not file_path:
-                raise ValidationError("file_path", str(file_path), "File path cannot be empty")
+                raise ValidationError(
+                    "file_path", str(file_path),
+                    "File path cannot be empty",
+                    error_code="HE-2008"
+                )
 
             path_obj = Path(file_path)
 
             if must_exist and not path_obj.exists():
-                raise ValidationError("file_path", str(file_path), "File does not exist")
+                raise ValidationError(
+                    "file_path", str(file_path),
+                    "File does not exist",
+                    error_code="HE-2009"
+                )
 
             resolved_path = path_obj.resolve()
             if '..' in str(resolved_path):
@@ -159,19 +208,31 @@ class HuntValidator:
             raise
         except Exception as error:
             logger.error(f"Error validating file path: {error}")
-            raise ValidationError("file_path", str(file_path), f"Path validation failed: {error}")
+            raise ValidationError(
+                "file_path", str(file_path),
+                f"Path validation failed: {error}",
+                error_code="HE-2099"
+            )
 
     @staticmethod
     def validate_hunt_data(hunt_data: Dict[str, Any]) -> Dict[str, Any]:
         """Validate complete hunt data structure."""
         try:
             if not isinstance(hunt_data, dict):
-                raise ValidationError("hunt_data", str(type(hunt_data)), "Hunt data must be a dictionary")
+                raise ValidationError(
+                    "hunt_data", str(type(hunt_data)),
+                    "Hunt data must be a dictionary",
+                    error_code="HE-2010"
+                )
 
             required_fields = ['id', 'category', 'title', 'tactic']
             for field in required_fields:
                 if field not in hunt_data or not hunt_data[field]:
-                    raise ValidationError(field, str(hunt_data.get(field)), f"Required field {field} is missing or empty")
+                    raise ValidationError(
+                        field, str(hunt_data.get(field)),
+                        f"Required field {field} is missing or empty",
+                        error_code="HE-2011"
+                    )
 
             validated_data = hunt_data.copy()
 
@@ -195,4 +256,8 @@ class HuntValidator:
             raise
         except Exception as error:
             logger.error(f"Error validating hunt data: {error}")
-            raise ValidationError("hunt_data", str(hunt_data), f"Hunt data validation failed: {error}")
+            raise ValidationError(
+                "hunt_data", str(hunt_data),
+                f"Hunt data validation failed: {error}",
+                error_code="HE-2099"
+            )
