@@ -83,7 +83,7 @@ This phase standardizes error handling across the codebase with a consistent err
 - [x] Update `generate_from_cti.py` to use custom exceptions
 - [x] Update parsers to throw `ParsingError` with context
 - [x] Update validators to throw `ValidationError`
-- [ ] Update MITRE integration to throw `MITREError`
+- [x] Update MITRE integration to throw `MITREError`
 - [ ] Update database operations to throw `DatabaseError`
 - [ ] Add try/except blocks with proper error propagation
 
@@ -140,6 +140,31 @@ This phase standardizes error handling across the codebase with a consistent err
   - Tests for context information in exceptions
 - All validators already used `ValidationError` exceptions; enhancement focused on adding specific error codes
 - Validators work correctly with production data and all tests pass
+
+**Implementation Notes (MITRE Integration):**
+- Updated `scripts/mitre_attack.py` to use `MITREError` exceptions with specific error codes (HE-6xxx range):
+  - HE-6001: MITRE ATT&CK data file not found
+  - HE-6002: Failed to parse MITRE ATT&CK JSON data
+  - HE-6003: Failed to load MITRE ATT&CK data (generic load error)
+  - HE-6004: Failed to process MITRE ATT&CK data (processing error)
+  - HE-6005: Technique ID must be a string (type validation)
+  - HE-6006: Search query must be a string (type validation)
+  - HE-6007: Search query cannot be empty (value validation)
+  - HE-6008: Tactic must be a string (type validation)
+  - HE-6009: Tactic cannot be empty (value validation)
+  - HE-6010: Description must be a string for inference (type validation)
+  - HE-6011: Description cannot be empty for inference (value validation)
+- Replaced `FileNotFoundError` in `_load_data()` with `MITREError` (HE-6001) with operation context
+- Added comprehensive error handling for JSON parsing and data processing in `_load_data()`
+- Added input validation to `validate_technique()`, `search_techniques_by_name()`, `get_techniques_by_tactic()`, and `infer_technique_from_description()`
+- All error messages include contextual information (technique IDs, tactics, operations, etc.)
+- Created comprehensive test suite with 20 passing tests in `tests/unit/test_mitre_attack.py`:
+  - Tests for all error scenarios (missing file, invalid JSON, type errors, empty values)
+  - Tests for error code uniqueness and proper HE-6xxx range
+  - Tests for context information in exceptions
+  - Tests for functional behavior with valid data
+- Manual integration testing confirms MITRE module works correctly with production data (45MB enterprise-attack.json)
+- All error handling maintains backward compatibility (invalid formats return None, only truly exceptional cases raise exceptions)
 
 ### Standardize JavaScript Error Handling
 - [ ] Update hunt filtering to use custom errors

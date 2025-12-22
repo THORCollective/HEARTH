@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 import re
 from logger_config import get_logger
+from exceptions import MITREError
 
 logger = get_logger()
 
@@ -46,23 +47,47 @@ class MITREAttack:
     def _load_data(self):
         """Load and parse MITRE ATT&CK data."""
         if not self.data_path.exists():
-            raise FileNotFoundError(
-                f"MITRE ATT&CK data not found at {self.data_path}. "
-                "Run: curl -o data/enterprise-attack.json "
-                "https://raw.githubusercontent.com/mitre/cti/master/enterprise-attack/enterprise-attack.json"
+            raise MITREError(
+                message=(
+                    f"MITRE ATT&CK data not found at {self.data_path}. "
+                    "Run: curl -o data/enterprise-attack.json "
+                    "https://raw.githubusercontent.com/mitre/cti/master/enterprise-attack/enterprise-attack.json"
+                ),
+                operation="load_data",
+                error_code="HE-6001"
             )
 
-        with open(self.data_path, 'r') as f:
-            data = json.load(f)
+        try:
+            with open(self.data_path, 'r') as f:
+                data = json.load(f)
+        except json.JSONDecodeError as e:
+            raise MITREError(
+                message=f"Failed to parse MITRE ATT&CK JSON data: {str(e)}",
+                operation="load_data",
+                error_code="HE-6002"
+            )
+        except Exception as e:
+            raise MITREError(
+                message=f"Failed to load MITRE ATT&CK data: {str(e)}",
+                operation="load_data",
+                error_code="HE-6003"
+            )
 
         # Process all objects
-        for obj in data.get('objects', []):
-            obj_type = obj.get('type')
+        try:
+            for obj in data.get('objects', []):
+                obj_type = obj.get('type')
 
-            if obj_type == 'attack-pattern':
-                self._process_technique(obj)
-            elif obj_type == 'x-mitre-tactic':
-                self._process_tactic(obj)
+                if obj_type == 'attack-pattern':
+                    self._process_technique(obj)
+                elif obj_type == 'x-mitre-tactic':
+                    self._process_tactic(obj)
+        except Exception as e:
+            raise MITREError(
+                message=f"Failed to process MITRE ATT&CK data: {str(e)}",
+                operation="process_data",
+                error_code="HE-6004"
+            )
 
     def _process_technique(self, obj: Dict):
         """Process a technique object."""
@@ -134,7 +159,18 @@ class MITREAttack:
 
         Returns:
             Dictionary with technique details if valid, None otherwise
+
+        Raises:
+            MITREError: If technique_id is not a string
         """
+        if not isinstance(technique_id, str):
+            raise MITREError(
+                message=f"Technique ID must be a string, got {type(technique_id).__name__}",
+                technique_id=str(technique_id),
+                operation="validate_technique",
+                error_code="HE-6005"
+            )
+
         # Normalize technique ID
         technique_id = technique_id.upper().strip()
 
@@ -186,7 +222,24 @@ class MITREAttack:
 
         Returns:
             List of matching techniques
+
+        Raises:
+            MITREError: If query is not a string or is empty
         """
+        if not isinstance(query, str):
+            raise MITREError(
+                message=f"Search query must be a string, got {type(query).__name__}",
+                operation="search_techniques",
+                error_code="HE-6006"
+            )
+
+        if not query.strip():
+            raise MITREError(
+                message="Search query cannot be empty",
+                operation="search_techniques",
+                error_code="HE-6007"
+            )
+
         query_lower = query.lower()
         results = []
 
@@ -206,7 +259,25 @@ class MITREAttack:
 
         Returns:
             List of technique IDs
+
+        Raises:
+            MITREError: If tactic is not a string or is empty
         """
+        if not isinstance(tactic, str):
+            raise MITREError(
+                message=f"Tactic must be a string, got {type(tactic).__name__}",
+                tactic=str(tactic),
+                operation="get_techniques_by_tactic",
+                error_code="HE-6008"
+            )
+
+        if not tactic.strip():
+            raise MITREError(
+                message="Tactic cannot be empty",
+                operation="get_techniques_by_tactic",
+                error_code="HE-6009"
+            )
+
         return self.tactic_to_techniques.get(tactic, [])
 
     def suggest_alternative_techniques(
@@ -298,7 +369,24 @@ class MITREAttack:
 
         Returns:
             List of matching techniques, sorted by relevance
+
+        Raises:
+            MITREError: If description is not a string or is empty
         """
+        if not isinstance(description, str):
+            raise MITREError(
+                message=f"Description must be a string, got {type(description).__name__}",
+                operation="infer_technique",
+                error_code="HE-6010"
+            )
+
+        if not description.strip():
+            raise MITREError(
+                message="Description cannot be empty",
+                operation="infer_technique",
+                error_code="HE-6011"
+            )
+
         description_lower = description.lower()
         matches = []
 
