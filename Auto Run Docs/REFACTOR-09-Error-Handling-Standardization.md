@@ -84,7 +84,7 @@ This phase standardizes error handling across the codebase with a consistent err
 - [x] Update parsers to throw `ParsingError` with context
 - [x] Update validators to throw `ValidationError`
 - [x] Update MITRE integration to throw `MITREError`
-- [ ] Update database operations to throw `DatabaseError`
+- [x] Update database operations to throw `DatabaseError`
 - [ ] Add try/except blocks with proper error propagation
 
 **Implementation Notes (generate_from_cti.py):**
@@ -165,6 +165,35 @@ This phase standardizes error handling across the codebase with a consistent err
   - Tests for functional behavior with valid data
 - Manual integration testing confirms MITRE module works correctly with production data (45MB enterprise-attack.json)
 - All error handling maintains backward compatibility (invalid formats return None, only truly exceptional cases raise exceptions)
+
+**Implementation Notes (Database Operations):**
+- Updated `scripts/build_hunt_database.py` to use `DatabaseError` exceptions with specific error codes (HE-4xxx range):
+  - HE-4000: Failed to connect to database
+  - HE-4001: Failed to create database schema
+  - HE-4002: Failed to query hunt file (SELECT)
+  - HE-4003: Failed to update hunt record (UPDATE)
+  - HE-4004: Duplicate hunt record (integrity constraint violated)
+  - HE-4005: Failed to insert hunt record (INSERT)
+  - HE-4006: Failed to retrieve hunt records for cleanup (SELECT)
+  - HE-4007: Failed to delete hunt record (DELETE)
+  - HE-4008: Failed to commit transaction (COMMIT)
+  - HE-4009: Failed to update metadata (INSERT OR REPLACE)
+  - HE-4010: Failed to retrieve database statistics (SELECT)
+- Enhanced `create_database_schema()` with comprehensive error handling for schema creation, index creation, and commits
+- Enhanced `scan_and_update_hunts()` with separate error handling for SELECT, UPDATE, and INSERT operations
+- Distinguished between `IntegrityError` (HE-4004) for duplicate records and generic `Error` (HE-4005) for other INSERT failures
+- Added error handling to cleanup section for SELECT and DELETE operations
+- Enhanced `print_statistics()` with error handling for all statistics queries
+- Added proper exception re-raising to maintain `DatabaseError` context while still catching generic exceptions
+- All database operations include contextual information (database path, query snippets, operation types)
+- Created comprehensive test suite with 11 passing tests in `tests/unit/test_build_hunt_database.py`:
+  - Tests for successful schema creation and statistics retrieval
+  - Tests for all error scenarios (connection, schema, queries, transactions)
+  - Tests for error code uniqueness and proper HE-4xxx range
+  - Tests for context information in exceptions
+  - Tests for query truncation (long queries limited to 200 characters)
+  - Tests for functional behavior (hash consistency, hunt info extraction, integrity constraints)
+- Manual integration testing confirms database operations work correctly with production data (79 hunt files processed successfully)
 
 ### Standardize JavaScript Error Handling
 - [ ] Update hunt filtering to use custom errors

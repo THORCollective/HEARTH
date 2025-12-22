@@ -19,6 +19,7 @@ from datetime import datetime
 import sys
 import hashlib
 from logger_config import get_logger
+from exceptions import DatabaseError
 
 logger = get_logger()
 
@@ -126,41 +127,55 @@ def extract_hunt_info(content, filepath):
 
 
 def create_database_schema(conn):
-    """Create the database schema if it doesn't exist."""
-    conn.execute('''
-        CREATE TABLE IF NOT EXISTS hunts (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            filename TEXT UNIQUE NOT NULL,
-            hunt_id TEXT NOT NULL,
-            hypothesis TEXT NOT NULL,
-            tactic TEXT,
-            technique TEXT,
-            tags TEXT,
-            submitter TEXT,
-            file_path TEXT NOT NULL,
-            file_hash TEXT NOT NULL,
-            created_date TEXT,
-            last_modified TEXT,
+    """Create the database schema if it doesn't exist.
 
-            UNIQUE(filename)
-        )
-    ''')
+    Args:
+        conn: SQLite database connection
 
-    # Create indexes for fast lookups
-    conn.execute('CREATE INDEX IF NOT EXISTS idx_tactic ON hunts(tactic)')
-    conn.execute('CREATE INDEX IF NOT EXISTS idx_technique ON hunts(technique)')
-    conn.execute('CREATE INDEX IF NOT EXISTS idx_hunt_id ON hunts(hunt_id)')
-    conn.execute('CREATE INDEX IF NOT EXISTS idx_created_date ON hunts(created_date)')
+    Raises:
+        DatabaseError: If schema creation fails
+    """
+    try:
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS hunts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                filename TEXT UNIQUE NOT NULL,
+                hunt_id TEXT NOT NULL,
+                hypothesis TEXT NOT NULL,
+                tactic TEXT,
+                technique TEXT,
+                tags TEXT,
+                submitter TEXT,
+                file_path TEXT NOT NULL,
+                file_hash TEXT NOT NULL,
+                created_date TEXT,
+                last_modified TEXT,
 
-    # Create metadata table for tracking database state
-    conn.execute('''
-        CREATE TABLE IF NOT EXISTS metadata (
-            key TEXT PRIMARY KEY,
-            value TEXT
-        )
-    ''')
+                UNIQUE(filename)
+            )
+        ''')
 
-    conn.commit()
+        # Create indexes for fast lookups
+        conn.execute('CREATE INDEX IF NOT EXISTS idx_tactic ON hunts(tactic)')
+        conn.execute('CREATE INDEX IF NOT EXISTS idx_technique ON hunts(technique)')
+        conn.execute('CREATE INDEX IF NOT EXISTS idx_hunt_id ON hunts(hunt_id)')
+        conn.execute('CREATE INDEX IF NOT EXISTS idx_created_date ON hunts(created_date)')
+
+        # Create metadata table for tracking database state
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS metadata (
+                key TEXT PRIMARY KEY,
+                value TEXT
+            )
+        ''')
+
+        conn.commit()
+    except sqlite3.Error as e:
+        raise DatabaseError(
+            message=f"Failed to create database schema: {e}",
+            operation="CREATE_SCHEMA",
+            error_code="HE-4001"
+        ) from e
 
 
 def get_git_dates(filepath):
@@ -223,11 +238,20 @@ def scan_and_update_hunts(conn, hunt_directories, verbose=True):
                 current_hash = get_file_hash(hunt_file)
 
                 # Check if file exists in database
-                cursor = conn.execute(
-                    'SELECT id, file_hash FROM hunts WHERE filename = ?',
-                    (hunt_file.name,)
-                )
-                existing = cursor.fetchone()
+                try:
+                    cursor = conn.execute(
+                        'SELECT id, file_hash FROM hunts WHERE filename = ?',
+                        (hunt_file.name,)
+                    )
+                    existing = cursor.fetchone()
+                except sqlite3.Error as e:
+                    raise DatabaseError(
+                        message=f"Failed to query hunt file: {e}",
+                        database_path=str(Path('database/hunts.db')),
+                        query='SELECT id, file_hash FROM hunts WHERE filename = ?',
+                        operation="SELECT",
+                        error_code="HE-4002"
+                    ) from e
 
                 if existing:
                     # File exists - check if it's been modified
@@ -245,24 +269,33 @@ def scan_and_update_hunts(conn, hunt_directories, verbose=True):
 
                     created_date, last_modified = get_git_dates(hunt_file)
 
-                    conn.execute('''
-                        UPDATE hunts
-                        SET hunt_id = ?, hypothesis = ?, tactic = ?, technique = ?,
-                            tags = ?, submitter = ?, file_path = ?, file_hash = ?,
-                            last_modified = ?
-                        WHERE id = ?
-                    ''', (
-                        hunt_info['hunt_id'],
-                        hunt_info['hypothesis'],
-                        hunt_info['tactic'],
-                        hunt_info['technique'],
-                        json.dumps(hunt_info['tags']),
-                        hunt_info['submitter'],
-                        str(hunt_file),
-                        current_hash,
-                        last_modified,
-                        db_id
-                    ))
+                    try:
+                        conn.execute('''
+                            UPDATE hunts
+                            SET hunt_id = ?, hypothesis = ?, tactic = ?, technique = ?,
+                                tags = ?, submitter = ?, file_path = ?, file_hash = ?,
+                                last_modified = ?
+                            WHERE id = ?
+                        ''', (
+                            hunt_info['hunt_id'],
+                            hunt_info['hypothesis'],
+                            hunt_info['tactic'],
+                            hunt_info['technique'],
+                            json.dumps(hunt_info['tags']),
+                            hunt_info['submitter'],
+                            str(hunt_file),
+                            current_hash,
+                            last_modified,
+                            db_id
+                        ))
+                    except sqlite3.Error as e:
+                        raise DatabaseError(
+                            message=f"Failed to update hunt record: {e}",
+                            database_path=str(Path('database/hunts.db')),
+                            query='UPDATE hunts SET ...',
+                            operation="UPDATE",
+                            error_code="HE-4003"
+                        ) from e
 
                     updated += 1
                 else:
@@ -275,29 +308,49 @@ def scan_and_update_hunts(conn, hunt_directories, verbose=True):
 
                     created_date, last_modified = get_git_dates(hunt_file)
 
-                    conn.execute('''
-                        INSERT INTO hunts
-                        (filename, hunt_id, hypothesis, tactic, technique, tags, submitter,
-                         file_path, file_hash, created_date, last_modified)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    ''', (
-                        hunt_file.name,
-                        hunt_info['hunt_id'],
-                        hunt_info['hypothesis'],
-                        hunt_info['tactic'],
-                        hunt_info['technique'],
-                        json.dumps(hunt_info['tags']),
-                        hunt_info['submitter'],
-                        str(hunt_file),
-                        current_hash,
-                        created_date,
-                        last_modified
-                    ))
+                    try:
+                        conn.execute('''
+                            INSERT INTO hunts
+                            (filename, hunt_id, hypothesis, tactic, technique, tags, submitter,
+                             file_path, file_hash, created_date, last_modified)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        ''', (
+                            hunt_file.name,
+                            hunt_info['hunt_id'],
+                            hunt_info['hypothesis'],
+                            hunt_info['tactic'],
+                            hunt_info['technique'],
+                            json.dumps(hunt_info['tags']),
+                            hunt_info['submitter'],
+                            str(hunt_file),
+                            current_hash,
+                            created_date,
+                            last_modified
+                        ))
+                    except sqlite3.IntegrityError as e:
+                        raise DatabaseError(
+                            message=f"Duplicate hunt record (integrity constraint violated): {e}",
+                            database_path=str(Path('database/hunts.db')),
+                            query='INSERT INTO hunts ...',
+                            operation="INSERT",
+                            error_code="HE-4004"
+                        ) from e
+                    except sqlite3.Error as e:
+                        raise DatabaseError(
+                            message=f"Failed to insert hunt record: {e}",
+                            database_path=str(Path('database/hunts.db')),
+                            query='INSERT INTO hunts ...',
+                            operation="INSERT",
+                            error_code="HE-4005"
+                        ) from e
 
                     added += 1
 
                 processed += 1
 
+            except DatabaseError:
+                # Re-raise DatabaseError to maintain context
+                raise
             except Exception as e:
                 errors += 1
                 if verbose:
@@ -305,25 +358,61 @@ def scan_and_update_hunts(conn, hunt_directories, verbose=True):
                 continue
 
     # Clean up deleted files
-    cursor = conn.execute('SELECT filename, file_path FROM hunts')
-    all_db_files = cursor.fetchall()
+    try:
+        cursor = conn.execute('SELECT filename, file_path FROM hunts')
+        all_db_files = cursor.fetchall()
+    except sqlite3.Error as e:
+        raise DatabaseError(
+            message=f"Failed to retrieve hunt records for cleanup: {e}",
+            database_path=str(Path('database/hunts.db')),
+            query='SELECT filename, file_path FROM hunts',
+            operation="SELECT",
+            error_code="HE-4006"
+        ) from e
+
     deleted = 0
 
     for filename, filepath in all_db_files:
         if not Path(filepath).exists():
             if verbose:
                 logger.info(f"Removing deleted file: {filename}")
-            conn.execute('DELETE FROM hunts WHERE filename = ?', (filename,))
+            try:
+                conn.execute('DELETE FROM hunts WHERE filename = ?', (filename,))
+            except sqlite3.Error as e:
+                raise DatabaseError(
+                    message=f"Failed to delete hunt record: {e}",
+                    database_path=str(Path('database/hunts.db')),
+                    query='DELETE FROM hunts WHERE filename = ?',
+                    operation="DELETE",
+                    error_code="HE-4007"
+                ) from e
             deleted += 1
 
-    conn.commit()
+    try:
+        conn.commit()
+    except sqlite3.Error as e:
+        raise DatabaseError(
+            message=f"Failed to commit transaction: {e}",
+            database_path=str(Path('database/hunts.db')),
+            operation="COMMIT",
+            error_code="HE-4008"
+        ) from e
 
     # Update metadata
-    conn.execute('''
-        INSERT OR REPLACE INTO metadata (key, value)
-        VALUES ('last_updated', ?)
-    ''', (datetime.now().isoformat(),))
-    conn.commit()
+    try:
+        conn.execute('''
+            INSERT OR REPLACE INTO metadata (key, value)
+            VALUES ('last_updated', ?)
+        ''', (datetime.now().isoformat(),))
+        conn.commit()
+    except sqlite3.Error as e:
+        raise DatabaseError(
+            message=f"Failed to update metadata: {e}",
+            database_path=str(Path('database/hunts.db')),
+            query='INSERT OR REPLACE INTO metadata ...',
+            operation="INSERT",
+            error_code="HE-4009"
+        ) from e
 
     return {
         'processed': processed,
@@ -336,22 +425,37 @@ def scan_and_update_hunts(conn, hunt_directories, verbose=True):
 
 
 def print_statistics(conn):
-    """Print database statistics."""
-    cursor = conn.execute('SELECT COUNT(*) FROM hunts')
-    total = cursor.fetchone()[0]
+    """Print database statistics.
 
-    cursor = conn.execute('SELECT COUNT(DISTINCT tactic) FROM hunts WHERE tactic IS NOT NULL')
-    unique_tactics = cursor.fetchone()[0]
+    Args:
+        conn: SQLite database connection
 
-    cursor = conn.execute('SELECT COUNT(DISTINCT technique) FROM hunts WHERE technique IS NOT NULL')
-    unique_techniques = cursor.fetchone()[0]
+    Raises:
+        DatabaseError: If statistics queries fail
+    """
+    try:
+        cursor = conn.execute('SELECT COUNT(*) FROM hunts')
+        total = cursor.fetchone()[0]
 
-    cursor = conn.execute('SELECT tactic, COUNT(*) as count FROM hunts WHERE tactic IS NOT NULL GROUP BY tactic ORDER BY count DESC LIMIT 5')
-    top_tactics = cursor.fetchall()
+        cursor = conn.execute('SELECT COUNT(DISTINCT tactic) FROM hunts WHERE tactic IS NOT NULL')
+        unique_tactics = cursor.fetchone()[0]
 
-    cursor = conn.execute('SELECT value FROM metadata WHERE key = "last_updated"')
-    last_updated = cursor.fetchone()
-    last_updated = last_updated[0] if last_updated else "Never"
+        cursor = conn.execute('SELECT COUNT(DISTINCT technique) FROM hunts WHERE technique IS NOT NULL')
+        unique_techniques = cursor.fetchone()[0]
+
+        cursor = conn.execute('SELECT tactic, COUNT(*) as count FROM hunts WHERE tactic IS NOT NULL GROUP BY tactic ORDER BY count DESC LIMIT 5')
+        top_tactics = cursor.fetchall()
+
+        cursor = conn.execute('SELECT value FROM metadata WHERE key = "last_updated"')
+        last_updated = cursor.fetchone()
+        last_updated = last_updated[0] if last_updated else "Never"
+    except sqlite3.Error as e:
+        raise DatabaseError(
+            message=f"Failed to retrieve database statistics: {e}",
+            database_path=str(Path('database/hunts.db')),
+            operation="SELECT",
+            error_code="HE-4010"
+        ) from e
 
     logger.info("Database Statistics:")
     logger.info(f"Total hunts: {total}")
@@ -388,7 +492,15 @@ def main():
         db_path.unlink()
 
     # Connect to database
-    conn = sqlite3.connect(str(db_path))
+    try:
+        conn = sqlite3.connect(str(db_path))
+    except sqlite3.Error as e:
+        raise DatabaseError(
+            message=f"Failed to connect to database: {e}",
+            database_path=str(db_path),
+            operation="CONNECT",
+            error_code="HE-4000"
+        ) from e
 
     if verbose:
         logger.info("HEARTH Hunt Database Builder")
