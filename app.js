@@ -48,10 +48,13 @@ class HearthApp {
     ];
     this.currentModalIndex = 0;
     this.numberFormatter = new Intl.NumberFormat('en-US');
-
+    
+    // Initialize elements first
+    this.initializeElements();
+    
+    // Now update page size based on window dimensions
     this.updatePageSize();
 
-    this.initializeElements();
     this.setupEventListeners();
     this.initializeApp();
   }
@@ -99,7 +102,13 @@ class HearthApp {
   }
 
   updatePageSize() {
-    const width = typeof window !== 'undefined' ? window.innerWidth : 1280;
+    // Ensure window object exists (for SSR or testing)
+    if (typeof window === 'undefined') {
+      this.pageSize = 9;
+      return;
+    }
+    
+    const width = window.innerWidth;
     if (width < 640) {
       this.pageSize = 6;
     } else if (width < 1024) {
@@ -110,6 +119,12 @@ class HearthApp {
   }
   
   createModal() {
+    // Clean up existing modal if present
+    const existingModal = document.querySelector('.modal');
+    if (existingModal) {
+      existingModal.remove();
+    }
+
     const modal = document.createElement('div');
     modal.className = 'modal';
     modal.innerHTML = `
@@ -134,6 +149,10 @@ class HearthApp {
     const closeModal = () => {
       modal.style.display = 'none';
       document.body.style.overflow = 'auto'; // Re-enable scrolling
+      // Remove focus from modal elements
+      if (document.activeElement && modal.contains(document.activeElement)) {
+        document.activeElement.blur();
+      }
     };
 
     closeBtn.onclick = closeModal;
@@ -144,7 +163,7 @@ class HearthApp {
     };
 
     // Keyboard navigation
-    document.addEventListener('keydown', (e) => {
+    const handleKeyDown = (e) => {
       if (modal.style.display === 'block') {
         if (e.key === 'Escape') {
           closeModal();
@@ -154,10 +173,35 @@ class HearthApp {
           this.navigateModal(1);
         }
       }
-    });
+    };
+
+    // Store reference for cleanup
+    this.modalKeyDownHandler = handleKeyDown;
+    document.addEventListener('keydown', this.modalKeyDownHandler);
 
     prevBtn.addEventListener('click', () => this.navigateModal(-1));
     nextBtn.addEventListener('click', () => this.navigateModal(1));
+
+    // Focus trap for accessibility
+    const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    const firstFocusable = focusableElements[0];
+    const lastFocusable = focusableElements[focusableElements.length - 1];
+
+    modal.addEventListener('keydown', (e) => {
+      if (e.key !== 'Tab') return;
+
+      if (e.shiftKey) {
+        if (document.activeElement === firstFocusable) {
+          e.preventDefault();
+          lastFocusable.focus();
+        }
+      } else {
+        if (document.activeElement === lastFocusable) {
+          e.preventDefault();
+          firstFocusable.focus();
+        }
+      }
+    });
 
     this.modal = modal;
     this.modalBody = modalBody;
@@ -198,6 +242,13 @@ class HearthApp {
     
     const result = Array.from(uniqueValues).filter(Boolean).sort();
     this.searchCache.set(cacheKey, result);
+    
+    // Limit cache size
+    if (this.searchCache.size > 50) {
+      const firstKey = this.searchCache.keys().next().value;
+      this.searchCache.delete(firstKey);
+    }
+    
     return result;
   }
 
@@ -469,11 +520,24 @@ class HearthApp {
   }
 
   showHuntDetails(hunt) {
+    // Ensure modal is created
+    if (!this.modal || !this.modalBody) {
+      this.createModal();
+    }
+    
     const modalContent = this.buildHuntDetailContent(hunt);
     this.modalBody.innerHTML = modalContent;
     this.modal.style.display = 'block';
     document.body.style.overflow = 'hidden'; // Prevent background scrolling
     this.updateModalNavigation();
+    
+    // Focus first focusable element in modal for accessibility
+    setTimeout(() => {
+      const focusable = this.modal.querySelector('button, [href], input, [tabindex]:not([tabindex="-1"])');
+      if (focusable) {
+        focusable.focus();
+      }
+    }, 10);
   }
 
   // Build hunt detail content
@@ -637,7 +701,7 @@ class HearthApp {
     const filters = [];
 
     if (searchTerm) {
-      filters.push({ type: 'search', value: searchTerm, label: `Search “${searchTerm}”` });
+      filters.push({ type: 'search', value: searchTerm, label: `Search "${searchTerm}"` });
     }
 
     if (category) {
@@ -965,9 +1029,12 @@ class HearthApp {
   // Filter and sort hunts
   filterAndSortHunts(options = {}) {
     const { preservePage = false } = options;
-    const getNow = () => (typeof performance !== 'undefined' && typeof performance.now === 'function')
-      ? performance.now()
-      : Date.now();
+    const getNow = () => {
+      // Use consistent timing source
+      return typeof performance !== 'undefined' && typeof performance.now === 'function'
+        ? performance.now()
+        : Date.now();
+    };
     const start = getNow();
     const searchTerm = (this.elements.searchInput.value || '').toLowerCase();
     const selectedCategory = this.elements.categoryFilter.value;
@@ -1013,7 +1080,7 @@ class HearthApp {
     return !category || hunt.category === category;
   }
 
-  // Tactic matching
+  // Tactic matching - FIXED: Changed from AND (.every) to OR (.some) logic
   matchesTactic(hunt) {
     if (!this.selectedTactics.size) {
       return true;
@@ -1022,10 +1089,11 @@ class HearthApp {
     if (!huntTactics.length) {
       return false;
     }
-    return [...this.selectedTactics].every(tactic => huntTactics.includes(tactic));
+    // Return true if ANY selected tactic matches the hunt tactics
+    return [...this.selectedTactics].some(tactic => huntTactics.includes(tactic));
   }
 
-  // Tag matching
+  // Tag matching - FIXED: Changed from AND (.every) to OR (.some) logic
   matchesTag(hunt) {
     if (!this.selectedTags.size) {
       return true;
@@ -1034,7 +1102,26 @@ class HearthApp {
     if (!tags.length) {
       return false;
     }
-    return [...this.selectedTags].every(tag => tags.includes(tag));
+    // Return true if ANY selected tag matches the hunt tags
+    return [...this.selectedTags].some(tag => tags.includes(tag));
+  }
+
+  // Cleanup method
+  cleanup() {
+    // Remove event listeners
+    if (this.modalKeyDownHandler) {
+      document.removeEventListener('keydown', this.modalKeyDownHandler);
+    }
+    
+    // Clear timers
+    if (this.debounceTimer) {
+      clearTimeout(this.debounceTimer);
+    }
+    
+    // Remove resize listener
+    if (this.resizeHandler) {
+      window.removeEventListener('resize', this.resizeHandler);
+    }
   }
 
   // Setup event listeners
@@ -1075,7 +1162,8 @@ class HearthApp {
     this.elements.prevPage.addEventListener('click', () => this.changePage(this.currentPage - 1));
     this.elements.nextPage.addEventListener('click', () => this.changePage(this.currentPage + 1));
 
-    window.addEventListener('resize', () => {
+    // Store resize handler reference for cleanup
+    this.resizeHandler = () => {
       const previousPageSize = this.pageSize;
       this.updatePageSize();
       if (previousPageSize !== this.pageSize) {
@@ -1083,7 +1171,9 @@ class HearthApp {
       } else {
         this.renderHunts(this.sortedHunts);
       }
-    });
+    };
+    
+    window.addEventListener('resize', this.resizeHandler);
   }
 
   // Initialize the application
@@ -1105,10 +1195,27 @@ class HearthApp {
   }
 }
 
+// Global notebook generation lock to prevent race conditions
+let notebookGenerationLock = false;
+
 // Generate notebook content based on PEAK framework
 async function generateNotebookContent(huntData) {
+  // Ensure huntData has all required properties
+  const safeHuntData = {
+    id: huntData.id || 'UNKNOWN',
+    title: huntData.title || huntData.notes || 'Untitled Hunt',
+    category: huntData.category || 'Unknown',
+    hypothesis: huntData.notes || huntData.title || 'No hypothesis provided',
+    tactic: huntData.tactic || '',
+    tags: huntData.tags || [],
+    references: huntData.references || '',
+    why: huntData.why || '',
+    submitter: huntData.submitter || 'Unknown',
+    file_path: huntData.file_path || ''
+  };
+  
   const timestamp = new Date().toISOString();
-  const huntTitle = huntData.title || 'Threat Hunting Notebook';
+  const huntTitle = safeHuntData.title;
   
   // Create Jupyter notebook structure
   const notebook = {
@@ -1129,8 +1236,8 @@ async function generateNotebookContent(huntData) {
           '\n',
           '# Threat Hunting Report - PEAK Framework\n',
           '\n',
-          `## Hunt ID: ${huntData.id}\n`,
-          `*(${huntData.category} - ${huntData.category === 'Flames' ? 'Hypothesis-driven' : huntData.category === 'Embers' ? 'Baseline' : 'Model-Assisted'})*\n`,
+          `## Hunt ID: ${safeHuntData.id}\n`,
+          `*(${safeHuntData.category} - ${safeHuntData.category === 'Flames' ? 'Hypothesis-driven' : safeHuntData.category === 'Embers' ? 'Baseline' : 'Model-Assisted'})*\n`,
           '\n',
           `## Hunt Title: ${huntTitle}`
         ]
@@ -1145,7 +1252,7 @@ async function generateNotebookContent(huntData) {
           '\n',
           '| **Hunt Information**            | **Details** |\n',
           '|----------------------------------|-------------|\n',
-          `| **Hypothesis**                  | ${huntData.hypothesis} |\n`,
+          `| **Hypothesis**                  | ${safeHuntData.hypothesis} |\n`,
           '| **Threat Hunter Name**          | [Your Name] |\n',
           `| **Date**                        | ${new Date().toLocaleDateString()} |\n`,
           '| **Requestor**                   | [Requestor Name] |\n',
@@ -1174,12 +1281,12 @@ async function generateNotebookContent(huntData) {
           '\n',
           '## **Threat Intel & Research**\n',
           '- **MITRE ATT&CK Techniques:**\n',
-          `  - \`${huntData.tactic || 'TAxxxx - Tactic Name'}\`\n`,
+          `  - \`${safeHuntData.tactic || 'TAxxxx - Tactic Name'}\`\n`,
           '  - `Txxxx - Technique Name`\n',
           '- **Related Reports, Blogs, or Threat Intel Sources:**\n',
-          `  - ${huntData.references || '[Link to references]'}\n`,
+          `  - ${safeHuntData.references || '[Link to references]'}\n`,
           '- **Historical Prevalence & Relevance:**\n',
-          `  - ${huntData.why || '*(Has this been observed before in your environment? Are there any detections/mitigations for this activity already in place?)*'}\n`,
+          `  - ${safeHuntData.why || '*(Has this been observed before in your environment? Are there any detections/mitigations for this activity already in place?)*'}\n`,
           '\n',
           '---'
         ]
@@ -1206,9 +1313,9 @@ async function generateNotebookContent(huntData) {
           'plt.rcParams[\'figure.figsize\'] = (12, 8)\n',
           '\n',
           '# Hunt tracking variables\n',
-          `hunt_id = "${huntData.id}"\n`,
+          `hunt_id = "${safeHuntData.id}"\n`,
           `hunt_title = "${huntTitle}"\n`,
-          `hunt_hypothesis = "${huntData.hypothesis}"\n`,
+          `hunt_hypothesis = "${safeHuntData.hypothesis.replace(/"/g, '\\"')}"\n`,
           'hunt_start_time = datetime.now()\n',
           '\n',
           '# Helper functions for hunt analysis\n',
@@ -1420,7 +1527,7 @@ async function generateNotebookContent(huntData) {
           '### Hunt Review Template\n',
           '\n',
           '### **Hypothesis / Topic**\n',
-          `*(Restate the hypothesis and topic of the investigation: ${huntData.hypothesis})*\n`,
+          `*(Restate the hypothesis and topic of the investigation: ${safeHuntData.hypothesis})*\n`,
           '\n',
           '### **Executive Summary**\n',
           '**Key Points:**\n',
@@ -1519,7 +1626,7 @@ async function generateNotebookContent(huntData) {
           '  - [ ] Share relevant insights with stakeholders, vendors, or industry communities if applicable.\n',
           '\n',
           '### **References**\n',
-          `- ${huntData.references || '[Insert link to related documentation, reports, or sources]'}\n`,
+          `- ${safeHuntData.references || '[Insert link to related documentation, reports, or sources]'}\n`,
           '- [Insert link to any external references or articles]\n',
           '\n',
           '---'
@@ -1680,7 +1787,7 @@ function copyToClipboard(event, text) {
   }
 
   const trigger = event?.currentTarget || event?.target || null;
-  const originalLabel = trigger ? trigger.textContent : '';
+  const originalLabel = trigger ? trigger.textContent : 'Copy';
 
   const restoreLabel = () => {
     if (!trigger) {
@@ -1701,26 +1808,46 @@ function copyToClipboard(event, text) {
   };
 
   const fallbackCopy = () => {
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    textarea.setAttribute('readonly', '');
-    textarea.style.position = 'absolute';
-    textarea.style.left = '-9999px';
-    document.body.appendChild(textarea);
-    textarea.select();
-    let successful = false;
     try {
-      successful = document.execCommand('copy');
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.setAttribute('readonly', '');
+      textarea.style.position = 'absolute';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      
+      // Select text
+      const selection = document.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(textarea);
+      selection.removeAllRanges();
+      selection.addRange(range);
+      
+      // Execute copy
+      let successful = false;
+      try {
+        successful = document.execCommand('copy');
+      } catch (error) {
+        console.warn('Clipboard copy failed:', error);
+      }
+      
+      // Cleanup
+      selection.removeAllRanges();
+      document.body.removeChild(textarea);
+      
+      if (successful) {
+        applySuccessState();
+        restoreLabel();
+      } else if (trigger) {
+        trigger.textContent = 'Copy failed';
+        restoreLabel();
+      }
     } catch (error) {
-      console.warn('Clipboard copy failed:', error);
-    }
-    document.body.removeChild(textarea);
-    if (successful) {
-      applySuccessState();
-      restoreLabel();
-    } else if (trigger) {
-      trigger.textContent = 'Copy failed';
-      restoreLabel();
+      console.warn('Fallback copy failed:', error);
+      if (trigger) {
+        trigger.textContent = 'Copy failed';
+        restoreLabel();
+      }
     }
   };
 
@@ -1741,7 +1868,15 @@ function copyToClipboard(event, text) {
 
 // Generate notebook function
 async function generateNotebook(huntId) {
+  // Prevent multiple simultaneous notebook generations
+  if (notebookGenerationLock) {
+    console.warn('Notebook generation already in progress');
+    return;
+  }
+
   try {
+    notebookGenerationLock = true;
+    
     // Show loading indicator
     const loadingHtml = `
       <div class="notebook-loading">
@@ -1778,7 +1913,7 @@ async function generateNotebook(huntId) {
     };
     
     // Simulate processing delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 1000));
     
     // Generate notebook content using the threat-hunting-notebook-generator approach
     const notebookContent = await generateNotebookContent(huntData);
@@ -1787,13 +1922,18 @@ async function generateNotebook(huntId) {
     const blob = new Blob([notebookContent], { type: 'application/json' });
     const downloadUrl = URL.createObjectURL(blob);
     
+    // Create download link
+    const downloadLink = document.createElement('a');
+    downloadLink.href = downloadUrl;
+    downloadLink.download = `${huntData.id}_threat_hunting_notebook.ipynb`;
+    
     // Show success message with download link
     modalBody.innerHTML = `
       <div class="notebook-success">
         <h3>✅ Notebook Generated Successfully!</h3>
         <p>Your threat hunting notebook has been generated based on the PEAK framework.</p>
         <div class="notebook-actions">
-          <a href="${downloadUrl}" class="btn btn-primary" download="${huntData.id}_threat_hunting_notebook.ipynb">
+          <a href="#" class="btn btn-primary notebook-download-link" download="${huntData.id}_threat_hunting_notebook.ipynb">
             Download Notebook (.ipynb)
           </a>
           <button class="btn btn-secondary" onclick="generateNotebook('${huntData.id}')">
@@ -1821,6 +1961,17 @@ async function generateNotebook(huntId) {
       </div>
     `;
     
+    // Set up download link
+    const downloadBtn = modalBody.querySelector('.notebook-download-link');
+    if (downloadBtn) {
+      downloadBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        downloadLink.click();
+        // Clean up URL object
+        setTimeout(() => URL.revokeObjectURL(downloadUrl), 100);
+      });
+    }
+    
   } catch (error) {
     console.error('Error generating notebook:', error);
     
@@ -1847,10 +1998,19 @@ async function generateNotebook(huntId) {
         </div>
       `;
     }
+  } finally {
+    notebookGenerationLock = false;
   }
 }
 
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   window.hearthApp = new HearthApp();
-}); 
+});
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', () => {
+  if (window.hearthApp && typeof window.hearthApp.cleanup === 'function') {
+    window.hearthApp.cleanup();
+  }
+});
