@@ -11,4 +11,28 @@ __pycache__/
 # MITRE ATT&CK data (downloaded during workflows)
 data/enterprise-attack.json
 
+# Node.js
 node_modules/
+npm-debug.log*
+
+# Vite build output
+dist/
+.vite/
+
+# TypeScript
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

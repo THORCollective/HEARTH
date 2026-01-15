@@ -4,20 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HEARTH - Threat Hunting Exchange</title>
-    <!-- Google Analytics -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-B4FE1Q174V"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
+    
       gtag('config', 'G-B4FE1Q174V');
     </script>
 </head>
 <body>
     <header>
         <div class="header-content">
-            <a href="index-new.html" class="logo-link">
-                <img src="/Assets/HEARTH-logo.png" alt="HEARTH Logo" class="logo"/>
+            <a href="index.html" class="logo-link">
+                <img src="Assets/HEARTH-logo.png" alt="HEARTH Logo" class="logo"/>
                 <div class="title-section">
                     <p class="eyebrow">THOR Collective</p>
                     <h1>HEARTH</h1>
@@ -30,7 +32,7 @@
             </div>
         </div>
     </header>
-
+    
     <main>
         <section class="intro">
             <div class="intro-content">
@@ -68,7 +70,7 @@
                     <div class="search-wrapper">
                         <span class="search-icon">🔍</span>
                         <input type="text" id="searchInput" placeholder="Search hunts by title, tactic, tags, or submitter..." class="search-input" autocomplete="off">
-                        <button id="clearSearch" class="clear-btn" type="button" style="display: none;">Clear</button>
+                        <button id="clearSearch" class="clear-btn" type="button">Clear</button>
                     </div>
                     <p class="search-hint">Tip: try "persistence baseline" or "LOLBIN"</p>
                 </div>
@@ -79,7 +81,8 @@
                 </div>
             </div>
 
-            <!-- Filter Panel -->
+            <div class="active-filters" id="activeFilters" aria-live="polite"></div>
+
             <div class="controls-middle">
                 <div class="quick-filter">
                     <label for="categoryFilter">Category</label>
@@ -95,42 +98,73 @@
                     <select id="sortHunts" class="filter-select">
                         <option value="id-desc">Newest hunts</option>
                         <option value="id-asc">Oldest hunts</option>
-                        <option value="title-asc">Title A-Z</option>
-                        <option value="title-desc">Title Z-A</option>
+                        <option value="title-asc">Title A → Z</option>
+                        <option value="title-desc">Title Z → A</option>
+                        <option value="category-asc">Category A → Z</option>
                     </select>
                 </div>
+                <button id="toggleAdvancedFilters" class="btn btn-ghost" type="button">
+                    <span class="btn-icon">⚙️</span> Advanced filters
+                </button>
             </div>
 
-            <!-- Advanced Filters -->
-            <div class="advanced-filters">
-                <div class="filter-section">
-                    <div class="filter-section__header">
-                        <h3 class="filter-section__title">Tactics</h3>
-                        <button id="clearTactics" class="clear-filters-btn" style="display: none;">Clear</button>
+            <div class="advanced-filters" id="advancedFilters">
+                <div class="advanced-filters__section">
+                    <div class="section-header">
+                        <h3>Tactics</h3>
+                        <button class="btn btn-chip" id="clearTactics" type="button">Clear</button>
                     </div>
-                    <div id="tacticChips" class="filter-chips"></div>
+                    <div id="tacticChips" class="chip-group" role="group" aria-label="Filter by tactic"></div>
                 </div>
-
-                <div class="filter-section">
-                    <div class="filter-section__header">
-                        <h3 class="filter-section__title">Popular Tags</h3>
-                        <button id="clearTags" class="clear-filters-btn" style="display: none;">Clear</button>
+                <div class="advanced-filters__section">
+                    <div class="section-header">
+                        <h3>Tags</h3>
+                        <button class="btn btn-chip" id="clearTags" type="button">Clear</button>
                     </div>
-                    <div id="tagChips" class="filter-chips"></div>
+                    <div id="tagChips" class="chip-group" role="group" aria-label="Filter by tag"></div>
+                </div>
+                <div class="advanced-filters__section presets">
+                    <div class="section-header">
+                        <h3>Saved views</h3>
+                        <div class="preset-actions">
+                            <button class="btn btn-chip" id="savePreset" type="button">Save current</button>
+                            <button class="btn btn-chip" id="deletePreset" type="button">Delete</button>
+                        </div>
+                    </div>
+                    <div class="preset-row">
+                        <label for="presetSelect" class="visually-hidden">Saved filter presets</label>
+                        <select id="presetSelect" class="filter-select">
+                            <option value="">Select a preset...</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Loading indicator -->
-        <div id="loading" class="loading">
-            <p>Loading hunt database...</p>
-        </div>
+        <section class="hunts-container">
+            <div id="huntsGrid" class="hunts-grid">
+                <!-- Hunts will be loaded here dynamically -->
+            </div>
+        </section>
 
-        <!-- Hunt grid (populated by TypeScript) -->
-        <div id="huntsGrid" class="hunts-grid"></div>
+        <nav class="pagination" id="pagination" aria-label="Hunt results pagination">
+            <button class="pagination-btn" id="prevPage" type="button" aria-label="Previous page">◀</button>
+            <span id="paginationInfo" class="pagination-info"></span>
+            <button class="pagination-btn" id="nextPage" type="button" aria-label="Next page">▶</button>
+        </nav>
+
+        <section class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Loading hunts...</p>
+        </section>
     </main>
 
-    <!-- Vite injects module script here during dev, bundle during build -->
-    <script type="module" src="/src/main.ts"></script>
+    <footer>
+        <p>&copy; 2025 THOR Collective | <a href="https://github.com/THORCollective/HEARTH">GitHub Repository</a></p>
+    </footer>
+
+    <script src="hunts-data.js"></script>
+    <script src="app.js"></script>
+    <script src="chat-widget.js"></script>
 </body>
 </html>

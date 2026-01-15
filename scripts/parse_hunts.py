@@ -5,7 +5,7 @@ Script to parse HEARTH hunt markdown files and generate JSON data for the web in
 
 import json
 from pathlib import Path
-from hunt_parser_utils import (
+from hearth.utils.markdown import (
     find_table_header_line,
     clean_markdown_formatting,
     extract_submitter_info,
@@ -150,13 +150,10 @@ def main():
     all_hunts.sort(key=lambda x: x['id'])
 
     # Generate JSON file
-    output_file = base_dir / 'hunts-data.js'
+    output_file = base_dir / 'public' / 'hunts-data.json'
 
     with open(output_file, 'w', encoding='utf-8') as f:
-        f.write('// Auto-generated hunt data from markdown files\n')
-        f.write('const HUNTS_DATA = ')
         json.dump(all_hunts, f, indent=2, ensure_ascii=False)
-        f.write(';\n')
 
     print(f"\nGenerated {output_file} with {len(all_hunts)} hunts")
 
