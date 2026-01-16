@@ -82,6 +82,9 @@ def update_state(issue_body: str, updates: Dict[str, Any]) -> str:
     Returns:
         Updated issue body with new state
     """
+    if not isinstance(issue_body, str):
+        raise ValueError("issue_body must be a string")
+
     # Read current state
     current_state = read_state(issue_body)
 
@@ -95,11 +98,11 @@ def update_state(issue_body: str, updates: Dict[str, Any]) -> str:
     new_comment = format_state_comment(current_state)
 
     # Check if state marker exists
-    pattern = rf'<!-- {STATE_MARKER}.+?-->'
+    pattern = rf'<!-- {STATE_MARKER}\n.+?\n-->'
 
     if re.search(pattern, issue_body, re.DOTALL):
         # Replace existing state
-        new_body = re.sub(pattern, new_comment, issue_body, flags=re.DOTALL)
+        new_body = re.sub(pattern, new_comment, issue_body, count=1, flags=re.DOTALL)
     else:
         # Append new state
         new_body = issue_body.rstrip() + "\n\n" + new_comment

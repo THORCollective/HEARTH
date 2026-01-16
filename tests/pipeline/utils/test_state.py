@@ -158,3 +158,20 @@ def test_update_state_adds_timestamp():
     assert '"updated_at"' in new_body
     # ISO format timestamp
     assert "T" in new_body  # ISO format includes T separator
+
+
+def test_update_state_with_empty_updates():
+    """Updating with empty dict still adds timestamp."""
+    issue_body = "Test content"
+    updates = {}
+
+    new_body = update_state(issue_body, updates)
+
+    assert "Test content" in new_body
+    assert '"updated_at"' in new_body
+
+
+def test_update_state_validates_input():
+    """Passing None raises ValueError."""
+    with pytest.raises(ValueError, match="issue_body must be a string"):
+        update_state(None, {"stage": "validate"})
