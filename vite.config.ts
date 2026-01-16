@@ -34,7 +34,8 @@ export default defineConfig({
 
   server: {
     port: 3000,
-    open: true,
+    host: '0.0.0.0', // Allow access from external devices (mobile)
+    open: false, // Don't auto-open browser on server
 
     // Proxy API requests if needed in future
     // proxy: {

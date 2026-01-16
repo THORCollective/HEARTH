@@ -1,0 +1,105 @@
+/* Submit Page Specific Styles */
+
+.submission-options {
+  display: grid;
+  gap: var(--space-xl);
+  margin-top: var(--space-2xl);
+}
+
+.submission-option {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-xl);
+}
+
+.submission-option h3 {
+  color: var(--color-primary);
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--space-md);
+}
+
+.submission-option p {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-lg);
+  line-height: var(--line-height-relaxed);
+}
+
+/* Form Styles */
+#ctiSubmissionForm {
+  margin-top: var(--space-xl);
+}
+
+.form-group {
+  margin-bottom: var(--space-lg);
+}
+
+.form-group label {
+  display: block;
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-sm);
+  font-weight: 500;
+}
+
+.form-group input {
+  width: 100%;
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-md);
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+  transition: border-color var(--transition-fast);
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.form-group input::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.submit-btn {
+  margin-top: var(--space-md);
+}
+
+/* Footer */
+footer {
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-xl);
+  text-align: center;
+  margin-top: var(--space-2xl);
+}
+
+footer p {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+footer a {
+  color: var(--color-primary);
+  transition: opacity var(--transition-fast);
+}
+
+footer a:hover {
+  opacity: 0.8;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .submission-options {
+    gap: var(--space-lg);
+  }
+
+  .submission-option {
+    padding: var(--space-lg);
+  }
+
+  .submission-option h3 {
+    font-size: var(--font-size-lg);
+  }
+}

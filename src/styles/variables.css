@@ -1,16 +1,16 @@
 /* CSS Custom Properties - Design System */
 :root {
-  /* Brand Colors */
-  --color-primary: #ff6b35;
-  --color-accent: #f7931e;
-  --color-background: #1a1a1a;
-  --color-surface: #2d2d2d;
-  --color-surface-hover: #3a3a3a;
-  --color-text: #ffffff;
-  --color-text-secondary: #b0b0b0;
-  --color-border: #404040;
+  /* Brand Colors - Match original HEARTH theme */
+  --color-primary: #8a47ff;
+  --color-accent: #e457da;
+  --color-background: #0f0f11;
+  --color-surface: rgba(28, 27, 31, 0.85);
+  --color-surface-hover: rgba(32, 33, 42, 0.9);
+  --color-text: #f7f5ff;
+  --color-text-secondary: #a6a9c8;
+  --color-border: rgba(120, 122, 230, 0.25);
   --color-error: #ef4444;
-  --color-success: #10b981;
+  --color-success: #4bdca2;
 
   /* Spacing Scale (8px base) */
   --space-xs: 0.25rem;    /* 4px */

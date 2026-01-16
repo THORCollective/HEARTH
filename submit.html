@@ -3,39 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submission Options - HEARTH</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Submit a Hunt - HEARTH</title>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-B4FE1Q174V"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-B4FE1Q174V');
+    </script>
 </head>
 <body>
     <header>
         <div class="header-content">
-            <div class="logo-section">
-                <a href="index.html" class="logo-link">
-                    <img src="Assets/HEARTH-logo.png" alt="HEARTH Logo" class="logo"/>
-                    <div class="title-section">
-                        <h1>HEARTH</h1>
-                        <p>Hunting Exchange and Research Threat Hub</p>
-                    </div>
-                </a>
-            </div>
+            <a href="index.html" class="logo-link">
+                <img src="/Assets/HEARTH-logo.png" alt="HEARTH Logo" class="logo"/>
+                <div class="title-section">
+                    <p class="eyebrow">THOR Collective</p>
+                    <h1>HEARTH</h1>
+                    <p>Hunting Exchange and Research Threat Hub</p>
+                </div>
+            </a>
             <div class="header-links">
-                <a href="index.html" class="btn">View Hunts</a>
-                <a href="https://github.com/THORCollective/HEARTH" target="_blank" class="btn">View on GitHub</a>
+                <a href="index.html" class="btn btn-primary"><span class="btn-icon">🔍</span>View Hunts</a>
+                <a href="https://github.com/THORCollective/HEARTH" target="_blank" class="btn btn-ghost"><span class="btn-icon">🌐</span>GitHub</a>
             </div>
         </div>
     </header>
 
     <main>
         <section class="intro">
-            <h2>Submission Options</h2>
-            <p>Choose your preferred method to contribute a threat hunt to the community.</p>
+            <div class="intro-content">
+                <h2>Submit a Threat Hunt</h2>
+                <p>Choose your preferred method to contribute a threat hunt to the community.</p>
+            </div>
         </section>
 
         <section class="submission-options">
             <div class="submission-option">
                 <h3>Option 1: Automated CTI Submission (Recommended)</h3>
                 <p>Submit a link to a CTI report, and our system will automatically generate a threat hunt hypothesis.</p>
-                
+
                 <form id="ctiSubmissionForm">
                     <div class="form-group">
                         <label for="ctiUrl" style="font-weight: bold;">CTI Report URL</label>
@@ -49,41 +57,21 @@
                         <label for="submitterLink">Link to Profile (Optional)</label>
                         <input type="text" id="submitterLink" name="submitterLink" placeholder="e.g., Twitter, LinkedIn, or GitHub profile">
                     </div>
-                    <button type="submit" class="btn submit-btn">Submit CTI Link</button>
+                    <button type="submit" class="btn btn-accent">Submit CTI Link</button>
                 </form>
 
                 <p style="margin-top: 30px;">Alternatively, you can manually create an issue using our template:</p>
-                <a href="https://github.com/THORCollective/HEARTH/issues/new?template=cti_submission.yml" target="_blank" class="btn submit-btn">Create CTI Issue on GitHub</a>
+                <a href="https://github.com/THORCollective/HEARTH/issues/new?template=cti_submission.yml" target="_blank" class="btn btn-primary">Create CTI Issue on GitHub</a>
             </div>
             <div class="submission-option">
                 <h3>Option 2: Manual Submission</h3>
                 <p>If you have a fully-formed hunt idea and want to fill out the details manually, you can use our traditional submission form.</p>
-                <a href="https://github.com/THORCollective/HEARTH/issues/new?template=hunt_template.yaml" target="_blank" class="btn submit-btn" style="margin-top: 20px; display: inline-block;">Submit Manually</a>
+                <a href="https://github.com/THORCollective/HEARTH/issues/new?template=hunt_template.yaml" target="_blank" class="btn btn-accent" style="margin-top: 20px; display: inline-block;">Submit Manually</a>
             </div>
         </section>
     </main>
 
-    <footer>
-        <p>&copy; 2025 THOR Collective | <a href="https://github.com/THORCollective/HEARTH">GitHub Repository</a></p>
-    </footer>
-
-    <script>
-        document.getElementById('ctiSubmissionForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const ctiUrl = document.getElementById('ctiUrl').value;
-            const submitterName = document.getElementById('submitterName').value;
-            const submitterLink = document.getElementById('submitterLink').value;
-
-            const repoUrl = 'https://github.com/THORCollective/HEARTH/issues/new';
-            const template = 'cti_submission.yml';
-            
-            const title = `CTI Submission: ${ctiUrl.substring(0, 50)}...`;
-
-            const issueUrl = `${repoUrl}?template=${template}&title=${encodeURIComponent(title)}&cti-source=${encodeURIComponent(ctiUrl)}&submitter-name=${encodeURIComponent(submitterName)}&submitter-link=${encodeURIComponent(submitterLink)}`;
-            
-            window.open(issueUrl, '_blank');
-        });
-    </script>
-
+    <!-- Vite injects module script here during dev, bundle during build -->
+    <script type="module" src="/src/submit.ts"></script>
 </body>
 </html> 
