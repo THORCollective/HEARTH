@@ -1,6 +1,6 @@
 """Retry logic with exponential backoff."""
 import time
-from typing import Callable, TypeVar, Any
+from typing import Callable, TypeVar
 from hearth.utils.logging import get_logger
 
 logger = get_logger()
