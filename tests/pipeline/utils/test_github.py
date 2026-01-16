@@ -21,7 +21,14 @@ def test_get_github_client(mock_github_class):
         client = get_github_client()
 
     assert client == mock_client
-    mock_github_class.assert_called_once_with('fake-token')
+    mock_github_class.assert_called_once()
+
+
+def test_get_github_client_missing_token():
+    """Raise ValueError when GITHUB_TOKEN not set."""
+    with patch.dict('os.environ', {}, clear=True):
+        with pytest.raises(ValueError, match="GITHUB_TOKEN"):
+            get_github_client()
 
 
 @patch('scripts.pipeline.utils.github.Github')

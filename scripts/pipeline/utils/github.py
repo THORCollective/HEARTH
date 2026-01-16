@@ -1,6 +1,7 @@
 """GitHub API helper functions."""
 import os
-from github import Github
+from github import Github, GithubException, BadCredentialsException, UnknownObjectException
+from github.Auth import Token
 from github.Issue import Issue
 from hearth.utils.logging import get_logger
 
@@ -10,6 +11,9 @@ logger = get_logger()
 def get_github_client() -> Github:
     """
     Get authenticated GitHub client.
+
+    Note: Caller is responsible for managing client lifecycle.
+    For long-running processes, consider caching the client.
 
     Returns:
         Authenticated Github client
@@ -21,7 +25,7 @@ def get_github_client() -> Github:
     if not token:
         raise ValueError("GITHUB_TOKEN environment variable not set")
 
-    return Github(token)
+    return Github(auth=Token(token))
 
 
 def get_issue(repo_name: str, issue_number: int) -> Issue:
@@ -34,13 +38,28 @@ def get_issue(repo_name: str, issue_number: int) -> Issue:
 
     Returns:
         GitHub Issue object
-    """
-    client = get_github_client()
-    repo = client.get_repo(repo_name)
-    issue = repo.get_issue(issue_number)
 
-    logger.debug(f"Retrieved issue #{issue_number} from {repo_name}")
-    return issue
+    Raises:
+        UnknownObjectException: If repository or issue not found
+        BadCredentialsException: If GITHUB_TOKEN is invalid
+        GithubException: For other GitHub API errors
+    """
+    try:
+        client = get_github_client()
+        repo = client.get_repo(repo_name)
+        issue = repo.get_issue(issue_number)
+
+        logger.debug(f"Retrieved issue #{issue_number} from {repo_name}")
+        return issue
+    except UnknownObjectException as e:
+        logger.error(f"Repository {repo_name} or issue #{issue_number} not found")
+        raise
+    except BadCredentialsException as e:
+        logger.error("Invalid or expired GITHUB_TOKEN")
+        raise
+    except GithubException as e:
+        logger.error(f"GitHub API error: {e}")
+        raise
 
 
 def update_issue_body(repo_name: str, issue_number: int, new_body: str) -> None:
