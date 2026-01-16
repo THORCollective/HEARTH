@@ -1,6 +1,6 @@
 """Tests for pipeline state management."""
 import pytest
-from scripts.pipeline.utils.state import read_state, STATE_MARKER
+from scripts.pipeline.utils.state import read_state, update_state, format_state_comment, STATE_MARKER
 
 
 def test_read_state_no_marker_returns_default():
@@ -81,3 +81,80 @@ def test_read_state_validates_required_fields():
     assert state["version"] == "1.0"
     assert "created_at" in state
     assert "updated_at" in state
+
+
+def test_format_state_comment():
+    """Format state dict as HTML comment."""
+    state = {
+        "version": "1.0",
+        "stage": "validate",
+        "status": "completed"
+    }
+
+    comment = format_state_comment(state)
+
+    assert comment.startswith("<!-- HEARTH-PIPELINE-STATE\n")
+    assert comment.endswith("\n-->")
+    assert '"version": "1.0"' in comment
+    assert '"stage": "validate"' in comment
+
+
+def test_update_state_adds_marker_when_missing():
+    """When issue has no state, append new state comment."""
+    issue_body = "Original issue content."
+    updates = {"stage": "validate", "status": "completed"}
+
+    new_body = update_state(issue_body, updates)
+
+    # Original content preserved
+    assert "Original issue content." in new_body
+    # New state added
+    assert "<!-- HEARTH-PIPELINE-STATE" in new_body
+    # Updated fields present
+    assert '"stage": "validate"' in new_body
+    assert '"status": "completed"' in new_body
+
+
+def test_update_state_replaces_existing_marker():
+    """When issue has state, replace it with updated state."""
+    issue_body = """
+Original content.
+
+<!-- HEARTH-PIPELINE-STATE
+{
+  "version": "1.0",
+  "stage": "extract",
+  "status": "pending"
+}
+-->
+
+More content.
+"""
+
+    updates = {"stage": "validate", "status": "completed"}
+
+    new_body = update_state(issue_body, updates)
+
+    # Only one state marker
+    assert new_body.count("<!-- HEARTH-PIPELINE-STATE") == 1
+    # Updated values
+    assert '"stage": "validate"' in new_body
+    assert '"status": "completed"' in new_body
+    # Version preserved (not in updates)
+    assert '"version": "1.0"' in new_body
+    # Original content preserved
+    assert "Original content." in new_body
+    assert "More content." in new_body
+
+
+def test_update_state_adds_timestamp():
+    """Updated state includes updated_at timestamp."""
+    issue_body = "Test"
+    updates = {"stage": "validate"}
+
+    new_body = update_state(issue_body, updates)
+
+    # Timestamp added
+    assert '"updated_at"' in new_body
+    # ISO format timestamp
+    assert "T" in new_body  # ISO format includes T separator

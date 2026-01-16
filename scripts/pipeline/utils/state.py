@@ -55,3 +55,53 @@ def read_state(issue_body: str) -> Dict[str, Any]:
     except json.JSONDecodeError:
         # Malformed JSON - return default
         return default_state
+
+
+def format_state_comment(state: Dict[str, Any]) -> str:
+    """
+    Format state dict as HTML comment.
+
+    Args:
+        state: State dictionary to format
+
+    Returns:
+        Formatted HTML comment string
+    """
+    json_str = json.dumps(state, indent=2, ensure_ascii=False)
+    return f"<!-- {STATE_MARKER}\n{json_str}\n-->"
+
+
+def update_state(issue_body: str, updates: Dict[str, Any]) -> str:
+    """
+    Update pipeline state in issue body.
+
+    Args:
+        issue_body: Current GitHub issue body
+        updates: Dictionary of fields to update
+
+    Returns:
+        Updated issue body with new state
+    """
+    # Read current state
+    current_state = read_state(issue_body)
+
+    # Merge updates
+    current_state.update(updates)
+
+    # Add timestamp
+    current_state["updated_at"] = datetime.now().isoformat()
+
+    # Format as comment
+    new_comment = format_state_comment(current_state)
+
+    # Check if state marker exists
+    pattern = rf'<!-- {STATE_MARKER}.+?-->'
+
+    if re.search(pattern, issue_body, re.DOTALL):
+        # Replace existing state
+        new_body = re.sub(pattern, new_comment, issue_body, flags=re.DOTALL)
+    else:
+        # Append new state
+        new_body = issue_body.rstrip() + "\n\n" + new_comment
+
+    return new_body
