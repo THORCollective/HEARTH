@@ -1,0 +1,155 @@
+name: Intel Submission Pipeline
+
+on:
+  issues:
+    types: [labeled, unlabeled]
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to process'
+        required: true
+        type: number
+      force_stage:
+        description: 'Force specific stage (extract/validate/generate/review/commit)'
+        required: false
+        type: string
+
+jobs:
+  determine_stage:
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.check.outputs.should_run }}
+      current_stage: ${{ steps.check.outputs.stage }}
+      issue_number: ${{ steps.check.outputs.issue_number }}
+      repo_name: ${{ steps.check.outputs.repo_name }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check trigger and read state
+        id: check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Determine if we should run based on trigger
+            let shouldRun = false;
+            let issueNumber = null;
+
+            // Trigger 1: intel-submission label added
+            if (context.payload.action === 'labeled' &&
+                context.payload.label.name === 'intel-submission') {
+              shouldRun = true;
+              issueNumber = context.payload.issue.number;
+              core.info('Triggered by intel-submission label');
+            }
+
+            // Trigger 2: Reaction added (for approval in review stage)
+            if (context.eventName === 'issue_comment' &&
+                context.payload.action === 'created') {
+              // TODO: Check if this is an approval reaction
+              shouldRun = true;
+              issueNumber = context.payload.issue.number;
+              core.info('Triggered by issue comment');
+            }
+
+            // Trigger 3: Manual workflow dispatch
+            if (context.eventName === 'workflow_dispatch') {
+              shouldRun = true;
+              issueNumber = context.payload.inputs.issue_number;
+              core.info('Triggered by manual dispatch');
+            }
+
+            if (!shouldRun) {
+              core.info('Not triggered by relevant event, skipping');
+              core.setOutput('should_run', 'false');
+              return;
+            }
+
+            // Read pipeline state from issue body
+            const issue = await github.rest.issues.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber
+            });
+
+            const stateMatch = issue.data.body.match(/<!-- HEARTH-PIPELINE-STATE\n(.+?)\n-->/s);
+            let stage = 'extract';  // Default initial stage
+
+            if (stateMatch) {
+              try {
+                const state = JSON.parse(stateMatch[1]);
+                stage = state.stage;
+                core.info(`Current pipeline stage: ${stage}`);
+              } catch (e) {
+                core.warning(`Failed to parse state: ${e.message}`);
+              }
+            } else {
+              core.info('No pipeline state found, starting at extract stage');
+            }
+
+            // Override stage if manual dispatch with force_stage
+            if (context.payload.inputs && context.payload.inputs.force_stage) {
+              stage = context.payload.inputs.force_stage;
+              core.info(`Stage forced to: ${stage}`);
+            }
+
+            core.setOutput('should_run', 'true');
+            core.setOutput('stage', stage);
+            core.setOutput('issue_number', issueNumber);
+            core.setOutput('repo_name', `${context.repo.owner}/${context.repo.repo}`);
+
+  # Stage jobs will be added in future tasks
+  # For now, just log what would happen
+
+  stage_extract:
+    needs: determine_stage
+    if: needs.determine_stage.outputs.should_run == 'true' &&
+        needs.determine_stage.outputs.current_stage == 'extract'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Placeholder for Stage 1 - Extract
+        run: |
+          echo "Would run Stage 1 (Extract) for issue #${{ needs.determine_stage.outputs.issue_number }}"
+          echo "Repo: ${{ needs.determine_stage.outputs.repo_name }}"
+
+  stage_validate:
+    needs: determine_stage
+    if: needs.determine_stage.outputs.should_run == 'true' &&
+        needs.determine_stage.outputs.current_stage == 'validate'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Placeholder for Stage 2 - Validate
+        run: |
+          echo "Would run Stage 2 (Validate) for issue #${{ needs.determine_stage.outputs.issue_number }}"
+
+  stage_generate:
+    needs: determine_stage
+    if: needs.determine_stage.outputs.should_run == 'true' &&
+        needs.determine_stage.outputs.current_stage == 'generate'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Placeholder for Stage 3 - Generate
+        run: |
+          echo "Would run Stage 3 (Generate) for issue #${{ needs.determine_stage.outputs.issue_number }}"
+
+  stage_review:
+    needs: determine_stage
+    if: needs.determine_stage.outputs.should_run == 'true' &&
+        needs.determine_stage.outputs.current_stage == 'review'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Placeholder for Stage 4 - Review
+        run: |
+          echo "Would run Stage 4 (Review) for issue #${{ needs.determine_stage.outputs.issue_number }}"
+
+  stage_commit:
+    needs: determine_stage
+    if: needs.determine_stage.outputs.should_run == 'true' &&
+        needs.determine_stage.outputs.current_stage == 'commit'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Placeholder for Stage 5 - Commit
+        run: |
+          echo "Would run Stage 5 (Commit) for issue #${{ needs.determine_stage.outputs.issue_number }}"
