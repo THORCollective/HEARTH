@@ -9,11 +9,11 @@ def test_read_state_no_marker_returns_default():
 
     state = read_state(issue_body)
 
-    assert state == {
-        "stage": "extract",
-        "status": "pending",
-        "version": "1.0"
-    }
+    assert state["stage"] == "extract"
+    assert state["status"] == "pending"
+    assert state["version"] == "1.0"
+    assert "created_at" in state
+    assert "updated_at" in state
 
 
 def test_read_state_with_marker_returns_parsed_state():
@@ -55,8 +55,29 @@ def test_read_state_handles_malformed_json():
 
     state = read_state(issue_body)
 
-    assert state == {
-        "stage": "extract",
-        "status": "pending",
-        "version": "1.0"
-    }
+    assert state["stage"] == "extract"
+    assert state["status"] == "pending"
+    assert state["version"] == "1.0"
+    assert "created_at" in state
+    assert "updated_at" in state
+
+
+def test_read_state_validates_required_fields():
+    """When state JSON is valid but missing required fields, return default."""
+    issue_body = """
+<!-- HEARTH-PIPELINE-STATE
+{
+  "foo": "bar",
+  "baz": 123
+}
+-->
+"""
+
+    state = read_state(issue_body)
+
+    # Should return default because required fields missing
+    assert state["stage"] == "extract"
+    assert state["status"] == "pending"
+    assert state["version"] == "1.0"
+    assert "created_at" in state
+    assert "updated_at" in state

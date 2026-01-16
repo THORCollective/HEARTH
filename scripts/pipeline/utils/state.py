@@ -34,7 +34,9 @@ def read_state(issue_body: str) -> Dict[str, Any]:
     default_state = {
         "stage": "extract",
         "status": "pending",
-        "version": "1.0"
+        "version": "1.0",
+        "created_at": datetime.now().isoformat(),
+        "updated_at": datetime.now().isoformat()
     }
 
     # Look for state comment
@@ -46,6 +48,9 @@ def read_state(issue_body: str) -> Dict[str, Any]:
 
     try:
         state = json.loads(match.group(1))
+        # Validate required fields exist
+        if not all(key in state for key in ["stage", "status", "version"]):
+            return default_state
         return state
     except json.JSONDecodeError:
         # Malformed JSON - return default
