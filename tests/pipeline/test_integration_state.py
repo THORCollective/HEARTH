@@ -22,7 +22,7 @@ sys.path.insert(0, str(scripts_dir))
 from pipeline.utils.state import read_state, update_state
 
 
-def test_state_management_integration():
+def test_full_pipeline_state_flow():
     """Test complete state progression through pipeline stages."""
 
     # Initial issue body (no state)
