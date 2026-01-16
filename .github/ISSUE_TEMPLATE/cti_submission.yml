@@ -44,6 +44,19 @@ body:
     validations:
       required: false
 
+  - type: dropdown
+    id: hunt-category
+    attributes:
+      label: "Hunt Category"
+      description: "Select the maturity level for this hunt (defaults to Flames if not specified)"
+      options:
+        - "Flames (Default - New/Unvalidated hunts)"
+        - "Embers (Partially validated)"
+        - "Alchemy (Fully validated/Production-ready)"
+      default: 0
+    validations:
+      required: false
+
   - type: markdown
     attributes:
       value: |
