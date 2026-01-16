@@ -20,5 +20,8 @@ python-docx>=1.0.0
 # Utilities
 python-dotenv>=1.0.0
 
+# GitHub API
+PyGithub>=2.1.0
+
 # Optional: For local GitHub Actions testing
 # act (install via brew or binary, not pip)
