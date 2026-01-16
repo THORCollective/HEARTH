@@ -116,10 +116,25 @@ jobs:
         needs.determine_stage.outputs.current_stage == 'extract'
     runs-on: ubuntu-latest
     steps:
-      - name: Placeholder for Stage 1 - Extract
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
         run: |
-          echo "Would run Stage 1 (Extract) for issue #${{ needs.determine_stage.outputs.issue_number }}"
-          echo "Repo: ${{ needs.determine_stage.outputs.repo_name }}"
+          pip install -r requirements.txt
+
+      - name: Run Stage 1 - Extract
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python scripts/pipeline/stages/stage_extract.py \
+            --repo "${{ needs.determine_stage.outputs.repo_name }}" \
+            --issue "${{ needs.determine_stage.outputs.issue_number }}"
 
   stage_validate:
     needs: determine_stage
