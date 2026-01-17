@@ -20,13 +20,8 @@ export default defineConfig({
     // Output configuration
     assetsDir: 'assets',
 
-    // Minification
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true, // Remove console.log in production
-      },
-    },
+    // Minification (using esbuild for reliability)
+    minify: 'esbuild',
 
     // Source maps for debugging
     sourcemap: false, // Disable in production for smaller bundle
