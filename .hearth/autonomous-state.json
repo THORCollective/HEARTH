@@ -1,0 +1,28 @@
+{
+  "last_run": "2026-01-27T08:21:26.022223",
+  "processed_items": [
+    {
+      "hash": "2d9c37aa2db02c35",
+      "source": "CISA Known Exploited Vulnerabilities",
+      "title": "CISA KEV: CVE-2018-14634 - Linux Kernel Integer Overflow Vulnerability",
+      "processed_at": "2026-01-27T08:21:34.312137",
+      "hunt_id": null,
+      "success": false,
+      "error": "Traceback (most recent call last):\n  File \"/home/sydney/projects/HEARTH/scripts/generate_from_cti.py\", line 51, in <module>\n    raise ValueError(\"ANTHROPIC_API_KEY not set in environment.\")\nValueError: ANTHROPIC_API_KEY not set in environment.\n"
+    },
+    {
+      "hash": "8dc6c7871d7f4953",
+      "source": "CISA Known Exploited Vulnerabilities",
+      "title": "CISA KEV: CVE-2025-52691 - SmarterTools SmarterMail Unrestricted Upload of File with Dangerous Type Vulnerability",
+      "processed_at": "2026-01-27T08:21:34.554233",
+      "hunt_id": null,
+      "success": false,
+      "error": "Traceback (most recent call last):\n  File \"/home/sydney/projects/HEARTH/scripts/generate_from_cti.py\", line 51, in <module>\n    raise ValueError(\"ANTHROPIC_API_KEY not set in environment.\")\nValueError: ANTHROPIC_API_KEY not set in environment.\n"
+    }
+  ],
+  "stats": {
+    "total_runs": 1,
+    "total_hunts_generated": 0,
+    "total_failures": 2
+  }
+}
