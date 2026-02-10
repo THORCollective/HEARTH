@@ -3,6 +3,7 @@ import { SearchBar } from './components/SearchBar';
 import { FilterPanel } from './components/FilterPanel';
 import { HuntGrid } from './components/HuntGrid';
 import { Pagination } from './components/Pagination';
+import { Modal } from './components/Modal';
 import type { Hunt } from './types/Hunt';
 import './styles/main.css';
 
@@ -66,10 +67,13 @@ async function initApp(): Promise<void> {
     // Initialize state
     const state = new AppState(hunts);
 
+    // Initialize modal (must be created before HuntGrid)
+    const modal = new Modal(state);
+
     // Initialize components (order matters for dependencies)
     new SearchBar(state);
     new FilterPanel(state);
-    new HuntGrid(state);
+    new HuntGrid(state, modal);
     new Pagination(state);
 
     // Hide loading indicator

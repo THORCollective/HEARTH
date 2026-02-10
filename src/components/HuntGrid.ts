@@ -1,20 +1,23 @@
 import type { AppState } from '../state/AppState';
 import type { Observer } from '../types/Observer';
 import type { Hunt } from '../types/Hunt';
+import type { Modal } from './Modal';
 
 /**
  * HuntGrid component - renders hunt cards in a grid layout
  */
 export class HuntGrid implements Observer {
   private gridElement: HTMLElement;
+  private modal: Modal;
 
-  constructor(state: AppState) {
+  constructor(state: AppState, modal: Modal) {
     // Get grid element
     const element = document.getElementById('huntsGrid');
     if (!element) {
       throw new Error('HuntGrid: Required element #huntsGrid not found');
     }
     this.gridElement = element;
+    this.modal = modal;
 
     // Subscribe to state changes
     state.subscribe(this);
@@ -94,10 +97,9 @@ export class HuntGrid implements Observer {
       </div>
     `;
 
-    // Add click handler for modal (will implement in Week 3)
+    // Add click handler to open modal
     card.addEventListener('click', () => {
-      console.log('Hunt clicked:', hunt.id);
-      // TODO: Open modal with hunt details
+      this.modal.open(hunt);
     });
 
     return card;
