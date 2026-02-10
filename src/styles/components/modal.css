@@ -184,6 +184,10 @@
 }
 
 .modal__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
   margin-top: var(--space-2xl);
   padding-top: var(--space-lg);
   border-top: 1px solid var(--color-border);
@@ -201,6 +205,28 @@
 
 .modal__submitter a:hover {
   opacity: 0.8;
+}
+
+.modal__github-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-sm);
+  color: var(--color-accent);
+  text-decoration: none;
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.modal__github-link:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-accent);
+}
+
+.modal__github-icon {
+  font-size: var(--font-size-base);
 }
 
 .modal__nav {
@@ -245,6 +271,11 @@
 
   .modal__body {
     padding: var(--space-xl) var(--space-md);
+  }
+
+  .modal__footer {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .modal__nav {

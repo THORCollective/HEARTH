@@ -178,6 +178,12 @@ export class Modal {
             : this.escapeHtml(hunt.submitter.name)
           }
         </div>
+        <div class="modal__github">
+          <a href="https://github.com/THORCollective/HEARTH/blob/main/${this.escapeHtml(hunt.file_path)}" target="_blank" rel="noopener" class="modal__github-link">
+            <span class="modal__github-icon">📄</span>
+            View on GitHub
+          </a>
+        </div>
       </div>
     `;
   }
