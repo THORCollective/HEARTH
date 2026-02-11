@@ -35,11 +35,11 @@ export class AppState {
   private updatePageSize(): void {
     const width = window.innerWidth;
     if (width < 768) {
-      this.pageSize = 3; // Mobile
+      this.pageSize = 15; // Mobile
     } else if (width < 1024) {
-      this.pageSize = 6; // Tablet
+      this.pageSize = 20; // Tablet
     } else {
-      this.pageSize = 9; // Desktop
+      this.pageSize = 25; // Desktop
     }
   }
 

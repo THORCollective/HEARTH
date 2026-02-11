@@ -2,22 +2,9 @@
 
 .hunts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: 1fr;
   gap: var(--space-lg);
   margin-top: var(--space-xl);
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .hunts-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (min-width: 769px) and (max-width: 1024px) {
-  .hunts-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
 }
 
 .hunts-grid--empty {
