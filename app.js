@@ -12,7 +12,7 @@ class HearthApp {
     this.selectedTactics = new Set();
     this.selectedTags = new Set();
     this.currentPage = 1;
-    this.pageSize = 9;
+    this.pageSize = 25;
     this.totalHunts = this.huntsData.length;
     this.sortedHunts = [...this.huntsData];
     this.presets = new Map();
@@ -101,11 +101,11 @@ class HearthApp {
   updatePageSize() {
     const width = typeof window !== 'undefined' ? window.innerWidth : 1280;
     if (width < 640) {
-      this.pageSize = 6;
+      this.pageSize = 15;
     } else if (width < 1024) {
-      this.pageSize = 8;
+      this.pageSize = 20;
     } else {
-      this.pageSize = 9;
+      this.pageSize = 25;
     }
   }
   
