@@ -206,9 +206,32 @@ const HUNTS_DATA = [
       "name": "Collin McClaine",
       "link": ""
     },
-    "why": "- Xcode projects can be infected and the malware can propagate when Xcode projects are shared by developers.",
+    "why": "- Xcode projects can be infected and the malware can propagate when Xcode projects are shared by developers. \n\n- Potential to uncover shadow IT use of Xcode in an environment to develop unapproved applications. This Also leaves developers at risk to interacting with infected Xcode projects. \n\n- Understand exposure to potential infected Xcode project by knowing where Xcode is utilized in the environment.",
     "references": "https://attack.mitre.org/software/S0658/\nhttps://www.microsoft.com/en-us/security/blog/2025/09/25/xcsset-evolves-again-analyzing-the-latest-updates-to-xcssets-inventory/\nhttps://attack.mitre.org/techniques/T1195/001/\nhttps://attack.mitre.org/tactics/TA0001/",
     "file_path": "Embers/B011.md"
+  },
+  {
+    "id": "B012",
+    "category": "Embers",
+    "title": "Baseline all non-human identities associated with AI agents, automation frameworks, and agentic tools across the environment to identify orphaned service accounts from decommissioned agents that retain active permissions.",
+    "tactic": "Persistence",
+    "notes": "AI agent deployments are accelerating but no lifecycle management standard exists for their identities. Orphaned agent accounts with API keys, OAuth tokens, and service principals persist long after the agent is decommissioned — retaining permissions with no owner and no monitoring.",
+    "tags": [
+      "persistence",
+      "T1078_004",
+      "non_human_identity",
+      "service_account",
+      "ai_agent",
+      "orphan_account",
+      "lifecycle"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- AI agents are provisioned with service accounts, API keys, and OAuth tokens that often carry broad permissions — but unlike human accounts, they are rarely included in offboarding or access review processes when the agent is retired\n- Orphaned agent identities are attractive targets for adversaries because they have established permissions, generate no regular user activity to compare against, and are unlikely to trigger password rotation or MFA challenges\n- Baselining agent identities requires correlating across identity providers, cloud IAM, SaaS platforms, and CI/CD systems to build a complete inventory — most organizations have no single view of how many agent identities exist or who owns them\n- Establishing this baseline enables detection of dormant account reactivation, permission escalation on unowned accounts, and identifies accounts that should be decommissioned to reduce the organization's attack surface",
+    "references": "- [MITRE ATT&CK T1078.004 - Valid Accounts: Cloud Accounts](https://attack.mitre.org/techniques/T1078/004/)\n- [The Hacker News - How to Gain Control of AI Agents and Non-Human Identities (Sep 2025)](https://thehackernews.com/2025/09/how-to-gain-control-of-ai-agents-and.html)\n- [BleepingComputer - AI Agent Identity Management: A New Security Control Plane for CISOs (Feb 2026)](https://www.bleepingcomputer.com/news/security/ai-agent-identity-management-a-new-security-control-plane-for-cisos/)\n- [Okta - What Are Non-Human Identities and How to Secure Them (Aug 2025)](https://www.okta.com/identity-101/what-are-non-human-identities/)",
+    "file_path": "Embers/B012.md"
   },
   {
     "id": "H001",
@@ -336,7 +359,7 @@ const HUNTS_DATA = [
       "name": "Jamie Williams",
       "link": "https://x.com/jamieantisocial"
     },
-    "why": "- Adversaries often abuse accessible terminal/shell applications to execute post-compromise tasks\n- Malicious command execution may be identifiable by characteristics of the:\n  - command (e.g., `whoami` or other rare [Discovery](https://attack.mitre.org/tactics/TA0007/) activity) as well as attempts to obfuscate executed commands ([T1027.010 - Obfuscated Files or Information: Command Obfuscation](https://attack.mitre.org/techniques/T1027/010/))\n  - user/host (e.g., does`{person}` in `{department}` ever execute admin commands like this?)\n  - command -- adversaries/malware typically execute very common [Discovery](https://attack.mitre.org/tactics/TA0007/) commands that may also be rare for your environment (especially when executed in succession), such as:\n      - `whomai`\n      - `ipconfig /all`\n      - `nltest /domain_trusts`\n      - `net localgroup administrators`\n      - `net group \"Domain Computers\" /domain`\n      - `systeminfo`\n      - `route print`\n      - `net view /all`\n      - `net config workstation`",
+    "why": "- Adversaries often abuse accessible terminal/shell applications to execute post-compromise tasks\n- Malicious command execution may be identifiable by characteristics of the:\n  - command (e.g., `whoami` or other rare [Discovery](https://attack.mitre.org/tactics/TA0007/) activity) as well as attempts to obfuscate executed commands ([T1027.010 - Obfuscated Files or Information: Command Obfuscation](https://attack.mitre.org/techniques/T1027/010/))\n  - user/host (e.g., does`{person}` in `{department}` ever execute admin commands like this?)\n  - command -- adversaries/malware typically execute very common [Discovery](https://attack.mitre.org/tactics/TA0007/) commands that may also be rare for your environment (especially when executed in succession), such as:\n      - `whomai`\n      - `ipconfig /all`\n      - `nltest /domain_trusts`\n      - `net localgroup administrators`\n      - `net group \"Domain Computers\" /domain`\n      - `systeminfo`\n      - `route print`\n      - `net view /all`\n      - `net config workstation`\n\n      *source: [The DFIR Report](https://thedfirreport.com/)\n  - attempts to obfuscate executed commands ([T1027.010 - Obfuscated Files or Information: Command Obfuscation](https://attack.mitre.org/techniques/T1027/010/)\n      - Check out [M005](https://github.com/triw0lf/THOR/blob/main/Hunts/Model-Assisted/M005.md)!\n- user/host (e.g., does`{person}` in `{department}` ever execute admin commands like this?)\n- command/process lineage (e.g., why are `PowerShell.exe` processes spawning from Outlook...?)\n\n- Malicious commands may also be executed from script files or [common admin tools](https://github.com/BushidoUK/Ransomware-Tool-Matrix/blob/main/Tools/DiscoveryEnum.md), so consider also investigating newly created files ([T1105 - Ingress Tool Transfer](https://attack.mitre.org/techniques/T1105/)) referenced in suspicious commands\n- **Note:** Consider baselining and comparing instances of suspicious command execution against known false positives (e.g., [WTFBins](https://wtfbins.wtf/))",
     "references": "- [T1059 - Command and Scripting Interpreter](https://attack.mitre.org/techniques/T1059/)\n- [LOLBAS Cmd.exe](https://lolbas-project.github.io/lolbas/Binaries/Cmd/)\n- [GTFOBins bash](https://gtfobins.github.io/gtfobins/bash/)\n- [GTFOBins zsh](https://gtfobins.github.io/gtfobins/zsh/)\n- [The DFIR Report](https://thedfirreport.com/)\n- [Ransomware-Tool-Matrix](https://github.com/BushidoUK/Ransomware-Tool-Matrix)",
     "file_path": "Flames/H007.md"
   },
@@ -813,8 +836,8 @@ const HUNTS_DATA = [
     "tactic": "Defense Evasion",
     "notes": "Based on ATT&CK technique T1059.002. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
-      "defense-evasion",
-      "command-and-scripting-interpreter",
+      "defense_evasion",
+      "command_and_scripting_interpreter",
       "applescript",
       "malware"
     ],
@@ -834,7 +857,7 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1059.001. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "execution",
-      "command-and-scripting-interpreter",
+      "command_and_scripting_interpreter",
       "powershell",
       "ransomware"
     ],
@@ -854,9 +877,9 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1546.016. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "persistence",
-      "lateral-movement",
-      "ide-plugin",
-      "event-triggered-execution"
+      "lateral_movement",
+      "ide_plugin",
+      "event_triggered_execution"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -873,9 +896,9 @@ const HUNTS_DATA = [
     "tactic": "Initial Access",
     "notes": "Based on ATT&CK technique T0847. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
-      "initial-access",
-      "hardware-additions",
-      "air-gap"
+      "initial_access",
+      "hardware_additions",
+      "air_gap"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -892,7 +915,7 @@ const HUNTS_DATA = [
     "tactic": "Defense Evasion",
     "notes": "Based on ATT&CK technique T1090.001. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
-      "defense-evasion",
+      "defense_evasion",
       "proxy",
       "chisel"
     ],
@@ -911,8 +934,8 @@ const HUNTS_DATA = [
     "tactic": "Defense Evasion",
     "notes": "Based on ATT&CK technique T1027. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
-      "defense-evasion",
-      "obfuscated-files-or-information",
+      "defense_evasion",
+      "obfuscated_files_or_information",
       "javascript",
       "malvertising"
     ],
@@ -932,7 +955,7 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1560. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "collection",
-      "archive-collected-data",
+      "archive_collected_data",
       "powershell"
     ],
     "submitter": {
@@ -951,8 +974,8 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1595.001. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "reconnaissance",
-      "active-scanning",
-      "network-service-scanning"
+      "active_scanning",
+      "network_service_scanning"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -988,7 +1011,7 @@ const HUNTS_DATA = [
     "tactic": "Privilege Escalation",
     "notes": "Based on ATT&CK technique T1055. Generated by hearth-auto-intel.",
     "tags": [
-      "privilege-escalation",
+      "privilege_escalation",
       "tinyshell",
       "juniper"
     ],
@@ -1007,9 +1030,9 @@ const HUNTS_DATA = [
     "tactic": "Defense Evasion",
     "notes": "Based on ATT&CK technique T1140. Generated by hearth-auto-intel.",
     "tags": [
-      "defense-evasion",
-      "deobfuscate-files",
-      "earth-estries"
+      "defense_evasion",
+      "deobfuscate_files",
+      "earth_estries"
     ],
     "submitter": {
       "name": "Jocko",
@@ -1026,8 +1049,8 @@ const HUNTS_DATA = [
     "tactic": "Defense Evasion",
     "notes": "Based on ATT&CK technique T1112. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
-      "defense-evasion",
-      "registry-modification",
+      "defense_evasion",
+      "registry_modification",
       "persistence"
     ],
     "submitter": {
@@ -1066,7 +1089,7 @@ const HUNTS_DATA = [
     "tags": [
       "execution",
       "mshta",
-      "living-off-the-land"
+      "living_off_the_land"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -1098,8 +1121,8 @@ const HUNTS_DATA = [
     "tactic": "Command and Control",
     "notes": "Based on ATT&CK technique T1105. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
-      "command-and-control",
-      "ingress-tool-transfer",
+      "command_and_control",
+      "ingress_tool_transfer",
       "powershell"
     ],
     "submitter": {
@@ -1145,7 +1168,7 @@ const HUNTS_DATA = [
       "name": "Bruce Breuer",
       "link": ""
     },
-    "why": "- The hunt for malicious mailbox rules that focus on concealing adversary presence addresses both persistence and the risk of internal spearphishing.",
+    "why": "- The hunt for malicious mailbox rules that focus on concealing adversary presence addresses both persistence and the risk of internal spearphishing.\n\n- Potential impacts include, but are not limited to: data loss, adversary dwell time, and lateral movement to other services. This risk is increasingly prevalent in environments where audit visibility is limited or mailbox activity is not closely monitored within SaaS platforms.\n\n- This hunt can be valuable across environments of all sizes, helping uncover nefarious activity ranging from everyday business email compromise to more sophisticated campaigns attributed to eCrime groups.",
     "references": "- https://attack.mitre.org/techniques/T1566/ \n- https://attack.mitre.org/techniques/T1564/008/\n- https://attack.mitre.org/techniques/T1114/\n- https://learn.microsoft.com/en-us/defender-xdr/alert-grading-playbook-inbox-manipulation-rules",
     "file_path": "Flames/H049.md"
   },
@@ -1220,7 +1243,7 @@ const HUNTS_DATA = [
     "tags": [
       "discovery",
       "networkscan",
-      "AI-powered"
+      "AI_powered"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -1279,10 +1302,10 @@ const HUNTS_DATA = [
     "tactic": "Defense Evasion",
     "notes": "Based on ATT&CK technique T1550.001. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
-      "defense-evasion",
+      "defense_evasion",
       "T1550.001",
       "oauth",
-      "session-hijacking"
+      "session_hijacking"
     ],
     "submitter": {
       "name": "Azrara",
@@ -1353,6 +1376,201 @@ const HUNTS_DATA = [
     "why": "- Reckless sharing on AI chatbot platforms risks exposing sensitive data to the provider. This data could also potentially be used for training or made public via a breach/account compromise.\n- With an account, an insider can transfer sensitive data to a personal device, potentially bypassing other DLP controls (e.g., for email).",
     "references": "- https://insiderthreatmatrix.org/articles/AR4/sections/IF001/subsections/IF001.006\n- https://insiderthreatmatrix.org/articles/AR4/sections/IF018/subsections/IF018.002\n- https://attack.mitre.org/techniques/T1567/\n- https://www.ncsc.gov.uk/blog-post/chatgpt-and-large-language-models-whats-the-risk\n- https://center-for-threat-informed-defense.github.io/insider-threat-ttp-kb/introduction/\n- https://www.cisa.gov/resources-tools/resources/insider-threat-mitigation-guide\n- https://www.ncsc.gov.uk/guidance/reducing-data-exfiltration-by-malicious-insiders",
     "file_path": "Flames/H059.md"
+  },
+  {
+    "id": "H060",
+    "category": "Flames",
+    "title": "Threat actors may abuse netsh.exe or PowerShell to create, modify, or delete Windows Firewall rules or profiles in order to weaken host-based defenses, permit inbound or outbound communication for malicious tooling, or remove restrictions on command-and-control (C2) traffic. By excluding System integrity level processes, this hypothesis focuses on firewall changes initiated from user or elevated contexts, which are less common during normal operations and more indicative of defense evasion or persistence-related activity.",
+    "tactic": "Tactic: Defense Evasion (TA0005) - Technique: Impair Defenses: Disable or Modify System Firewall (T1562.004)",
+    "notes": "The hunt focuses on detecting firewall modifications initiated from user or elevated contexts, assuming these are less common during normal operations and more indicative of defense evasion or persistence-related activity.",
+    "tags": [
+      "netsh",
+      "powershell",
+      "TA0005",
+      "T1562.004",
+      "firewall"
+    ],
+    "submitter": {
+      "name": "@tsof-smoky",
+      "link": ""
+    },
+    "why": "This hunt matters because attackers can temporarily weaken host-based firewall protections to enable command-and-control or payload delivery while leaving little to no persistent evidence. By detecting the act of firewall manipulation rather than the final rule state, defenders can identify stealthy defense-evasion techniques that traditional audits miss. Catching this behavior early helps prevent unauthorized network access, lateral movement, and data exfiltration, reducing overall breach impact.",
+    "references": "- https://attack.mitre.org/techniques/T1562/004/\n- https://attack.mitre.org/tactics/TA0005/\n- https://thedfirreport.com/2022/03/21/phosphorus-automates-initial-access-using-proxyshell/\n- https://www.cisa.gov/news-events/cybersecurity-advisories/aa25-071a",
+    "file_path": "Flames/H060.md"
+  },
+  {
+    "id": "H061",
+    "category": "Flames",
+    "title": "Adversaries are modifying the VIB acceptance level on ESXi hosts using esxcli commands to lower system integrity enforcement from VMwareCertified or VMwareAccepted to CommunitySupported, enabling the installation of unsigned or malicious vSphere Installation Bundles that can establish persistence or deploy backdoors.",
+    "tactic": "Defense Evasion",
+    "notes": "Based on ATT&CK technique T1562.001. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
+    "tags": [
+      "defense_evasion",
+      "T1562_001",
+      "esxi",
+      "hypervisor",
+      "ransomware"
+    ],
+    "submitter": {
+      "name": "p-o-s-t",
+      "link": "https://github.com/p-o-s-t"
+    },
+    "why": "- Lowering VIB acceptance levels is a critical pre-requisite for attackers to install malicious kernel modules, backdoors, or ransomware components on ESXi hypervisors, directly weakening the system's code integrity protections\n- This technique enables adversaries to bypass VMware's signature verification mechanisms, allowing them to deploy unsigned software that would normally be blocked, which is frequently observed in ESXi-targeted ransomware campaigns\n- ESXi environments are often under-monitored and a single compromised hypervisor can lead to organization-wide impact, as demonstrated by the MGM Resorts incident where over 100 hypervisors were encrypted resulting in $100 million in losses\n- Detecting VIB acceptance level tampering provides an early warning indicator before malicious software installation occurs, giving defenders a critical opportunity to prevent ransomware deployment or persistence establishment",
+    "references": "- [MITRE ATT&CK T1562.001 - Impair Defenses: Disable or Modify Tools](https://attack.mitre.org/techniques/T1562/001/)\n- [Source CTI Report](https://www.splunk.com/en_us/blog/security/detecting-esxi-ransomware-activity-splunk.html)",
+    "file_path": "Flames/H061.md"
+  },
+  {
+    "id": "H062",
+    "category": "Flames",
+    "title": "An adversary is making use of legitimate tunneling service(s) in their malware to bypass firewalls and establish a connection to a command and control server.",
+    "tactic": "Command and Control",
+    "notes": "Tunneling services like TryCloudflare and Microsoft Dev Tunnels are used for legitimate purposes, their presence is not a strong indicator of malicious activity.",
+    "tags": [
+      "c2",
+      "tunnel",
+      "TA0011",
+      "T1572",
+      "t1102"
+    ],
+    "submitter": {
+      "name": "@p-o-s-t",
+      "link": ""
+    },
+    "why": "- Adversaries may tunnel network communications to and from a victim system within a separate protocol to avoid detection/network filtering and enable access to otherwise unreachable systems.\n- Dev Tunnels (Microsoft) create a secure, tempory URL that maps to a local service running on a machine, which works across firewalls and NAT.\n- Reverse tunneling tools allow software running on an endpoint to establish an outbound connection to the internet-based tunnel provider, who then provides the \"inbound\" path to the client system using the reverse tunnel. This can flip the script on typical taffic behavior.\n- These services may conceal malicious traffic by blending in with existing traffic and provide an outer layer of encryption.",
+    "references": "- https://isc.sans.edu/diary/31724\n- https://www.sentinelone.com/labs/operation-digital-eye-chinese-apt-compromises-critical-digital-infrastructure-via-visual-studio-code-tunnels/\n- https://blog.phylum.io/a-deep-dive-into-powerat-a-newly-discovered-stealer-rat-combo-polluting-pypi/\n- https://www.esentire.com/blog/quartet-of-trouble-xworm-asyncrat-venomrat-and-purelogs-stealer-leverage-trycloudflare\n- https://www.proofpoint.com/us/blog/threat-insight/threat-actor-abuses-cloudflare-tunnels-deliver-rats\n- https://learn.microsoft.com/en-us/azure/developer/dev-tunnels/overview\n- https://code.visualstudio.com/docs/remote/tunnels\n- [H036](https://github.com/THORCollective/HEARTH/blob/main/Flames/H036.md)",
+    "file_path": "Flames/H062.md"
+  },
+  {
+    "id": "H063",
+    "category": "Flames",
+    "title": "Adversaries are directly modifying the user-specific TCC.db database file by leveraging Finder's Full Disk Access permissions to programmatically insert authorization entries, bypassing macOS privacy prompts to gain unauthorized access to protected user directories including Desktop, Documents, and Downloads.",
+    "tactic": "Defense Evasion",
+    "notes": "Based on ATT&CK technique T1562.001. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
+    "tags": [
+      "defense_evasion",
+      "T1562_001",
+      "macos",
+      "tcc",
+      "unc1069"
+    ],
+    "submitter": {
+      "name": "odanh",
+      "link": ""
+    },
+    "why": "- Direct manipulation of the TCC database represents a critical security control bypass that undermines macOS's core privacy framework, allowing malware to operate with elevated privileges without user consent\n- This technique enables unfettered access to sensitive user data including credentials, browser data, messaging applications, and personal documents, directly facilitating the adversary's objective of credential harvesting and financial theft\n- UNC1069's DEEPBREATH malware demonstrates sophisticated understanding of macOS internals by staging the TCC folder rename operation through Finder to exploit its Full Disk Access permissions, making this a distinctive and high-impact technique\n- Detection of TCC database manipulation is critical as it precedes mass data exfiltration activities and represents a point where the attack chain can be interrupted before sensitive data is compromised\n- This technique is particularly dangerous in cryptocurrency and FinTech environments where browser extensions, keychains, and messaging applications contain high-value authentication tokens and credentials",
+    "references": "- [MITRE ATT&CK T1562.001 - Impair Defenses: Disable or Modify Tools](https://attack.mitre.org/techniques/T1562/001/)\n- [Source CTI Report](https://cloud.google.com/blog/topics/threat-intelligence/unc1069-targets-cryptocurrency-ai-social-engineering)",
+    "file_path": "Flames/H063.md"
+  },
+  {
+    "id": "H064",
+    "category": "Flames",
+    "title": "Threat actors are using Punycode-encoded International Domain Names (IDNs) with the \"xn--\" prefix in DNS queries to masquerade visually similar domain names that impersonate legitimate services for credential harvesting and malware delivery.",
+    "tactic": "Defense Evasion",
+    "notes": "Based on ATT&CK technique T1036.005. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
+    "tags": [
+      "defense_evasion",
+      "T1036_005",
+      "punycode",
+      "idn",
+      "dns"
+    ],
+    "submitter": {
+      "name": "DarkWizardCatcher",
+      "link": ""
+    },
+    "why": "- Punycode-encoded IDNs allow attackers to create domains that are visually indistinguishable from legitimate domains (e.g., replacing ASCII \"o\" with Greek \"ο\"), making them highly effective for phishing and malware distribution while evading user detection\n- These domains remain below the radar in many organizations despite their effectiveness, as security teams often don't actively hunt for the \"xn--\" prefix pattern in DNS logs\n- DNS resolver logs provide a goldmine for detecting this technique, as all Punycode domains must use the \"xn--\" prefix format, making them easily identifiable through simple pattern matching\n- Early detection of Punycode domain usage can prevent credential theft, malware infections, and business email compromise before users interact with malicious content",
+    "references": "- [MITRE ATT&CK T1036.005 - Masquerading: Match Legitimate Name or Location](https://attack.mitre.org/techniques/T1036/005/)\n- [Source CTI Report](https://isc.sans.edu/diary/Add+Punycode+to+your+Threat+Hunting+Routine/32640/)",
+    "file_path": "Flames/H064.md"
+  },
+  {
+    "id": "H065",
+    "category": "Flames",
+    "title": "An adversary is provisioning virtual machines through the vSphere API or web client targeting VMware virtualization infrastructure to deploy an unmonitored host for credential theft and data exfiltration.",
+    "tactic": "Defense Evasion",
+    "notes": "Observed in Muddled Libra (Scattered Spider) September 2025 incident. Attackers provisioned a VM named \"New Virtual Machine\" via vSphere within 2 hours of initial access, then used it for 15+ hours as their primary operations host — no EDR coverage.",
+    "tags": [
+      "defense_evasion",
+      "T1564_006",
+      "vmware",
+      "vsphere",
+      "rogue_vm",
+      "muddled_libra"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- VMs provisioned by attackers won't have EDR/XDR agents deployed, giving them a completely unmonitored host to run tools, dump credentials, and stage exfiltration from\n- vCenter audit logs capture VM lifecycle events including creation tasks — hunting for VMs created by unexpected users, outside change management windows, or with generic default names can surface rogue infrastructure before lateral movement begins\n- Once a rogue VM exists in the environment, attackers can mount virtual disks (VMDKs) of other VMs, including powered-down domain controllers, to extract sensitive files like NTDS.dit without generating any endpoint telemetry on the target\n- Organizations with broad vCenter permissions or self-service provisioning are at higher risk, as malicious VM creation may blend in with legitimate activity",
+    "references": "- [MITRE ATT&CK T1564.006 - Hide Artifacts: Run Virtual Instance](https://attack.mitre.org/techniques/T1564/006/)\n- [Unit 42 - A Peek Into Muddled Libra's Operational Playbook (Feb 2026)](https://unit42.paloaltonetworks.com/muddled-libra-ops-playbook/)",
+    "file_path": "Flames/H065.md"
+  },
+  {
+    "id": "H066",
+    "category": "Flames",
+    "title": "An adversary is deploying malicious browser extensions that impersonate AI productivity tools to steal session tokens and conversation data from AI platforms targeting users of ChatGPT, DeepSeek, and similar services to harvest credentials and exfiltrate sensitive prompt data.",
+    "tactic": "Credential Access",
+    "notes": "Multiple campaigns in late 2025/early 2026 — 16+ malicious Chrome/Edge extensions stealing ChatGPT session tokens, 900K+ users affected. Extensions clone legitimate tools and add token/conversation exfil under the guise of \"analytics data\" collection.",
+    "tags": [
+      "credential_access",
+      "T1528",
+      "T1185",
+      "browser_extension",
+      "ai_tokens",
+      "chatgpt",
+      "session_hijack"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- Malicious browser extensions requesting broad permissions can access session tokens, authentication cookies, and full conversation content from AI platform tabs without users noticing any change in extension behavior\n- AI platform sessions contain sensitive data beyond just credentials — proprietary code, internal documents pasted into prompts, strategic discussions, and customer data flowing through AI assistants represent high-value exfiltration targets\n- Hunting for unauthorized or recently installed browser extensions that interact with AI platform domains (chat.openai.com, deepseek.com, claude.ai) in endpoint telemetry can surface compromised workstations before session tokens are abused\n- Organizations often lack visibility into which browser extensions employees install, and AI-themed extensions are rapidly proliferating — creating a growing blind spot where credential harvesting can hide behind legitimate-looking productivity tools",
+    "references": "- [MITRE ATT&CK T1528 - Steal Application Access Token](https://attack.mitre.org/techniques/T1528/)\n- [MITRE ATT&CK T1185 - Browser Session Hijacking](https://attack.mitre.org/techniques/T1185/)\n- [Malwarebytes - Malicious Chrome Extensions Spy on ChatGPT Chats (Jan 2026)](https://www.malwarebytes.com/blog/news/2026/01/malicious-chrome-extensions-can-spy-on-your-chatgpt-chats)\n- [OX Security - 900K Users Compromised: Chrome Extensions Steal ChatGPT and DeepSeek Conversations (Dec 2025)](https://www.ox.security/blog/malicious-chrome-extensions-steal-chatgpt-deepseek-conversations/)",
+    "file_path": "Flames/H066.md"
+  },
+  {
+    "id": "H067",
+    "category": "Flames",
+    "title": "An adversary is registering typosquatted or trojanized MCP server packages in public registries and package managers targeting developers and AI agents that consume MCP tooling to achieve code execution or data exfiltration through tool poisoning.",
+    "tactic": "Initial Access",
+    "notes": "First malicious MCP server found on npm in 2025. MCP servers have direct access to AI agents and connected systems — a compromised server can modify tool descriptions between sessions to inject prompts, exfiltrate context, or execute arbitrary code on the host.",
+    "tags": [
+      "initial_access",
+      "T1195_002",
+      "mcp",
+      "supply_chain",
+      "typosquatting",
+      "tool_poisoning",
+      "ai_agent"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- MCP servers are distributed through the same package managers (npm, PyPI) already targeted by supply chain attacks, and typosquatted package names can trick developers into installing malicious servers that look identical to trusted ones\n- Unlike traditional supply chain compromises, a malicious MCP server gains direct access to the AI agent's execution context — it can modify tool descriptions to inject hidden instructions, alter tool behavior between sessions, or exfiltrate sensitive data from the agent's conversation history\n- Hunting for recently installed or updated MCP server packages that don't match an approved inventory, or monitoring for tool description changes between agent sessions, can surface compromised tooling before it's used in production\n- The MCP ecosystem currently lacks standardized authentication and package signing, meaning there is no built-in mechanism to verify server integrity — organizations deploying MCP servers are relying entirely on manual vetting",
+    "references": "- [MITRE ATT&CK T1195.002 - Supply Chain Compromise: Compromise Software Supply Chain](https://attack.mitre.org/techniques/T1195/002/)\n- [Semgrep - First Malicious MCP Server Found on npm (2025)](https://semgrep.dev/blog/2025/so-the-first-malicious-mcp-server-has-been-found-on-npm-what-does-this-mean-for-mcp-security/)\n- [Noma Security - Top Five MCP Security Blindspots (Nov 2025)](https://noma.security/blog/top-five-mcp-security-blindspots-putting-your-organization-at-risk/)\n- [Docker - MCP Horror Stories: The Supply Chain Attack (Aug 2025)](https://www.docker.com/blog/mcp-horror-stories-the-supply-chain-attack/)",
+    "file_path": "Flames/H067.md"
+  },
+  {
+    "id": "H068",
+    "category": "Flames",
+    "title": "An adversary is compromising software auto-update infrastructure to redirect legitimate update mechanisms into delivering malicious payloads targeting endpoints running widely deployed developer tools to gain initial access and establish persistence.",
+    "tactic": "Initial Access",
+    "notes": "Lotus Blossom (Chinese state-sponsored) compromised Notepad++ hosting infrastructure for ~6 months (June-Dec 2025), redirecting auto-updates to download malicious binaries. Targeted users in Southeast Asia and Central America. The application's updater (gup.exe) lacked authenticity verification.",
+    "tags": [
+      "initial_access",
+      "T1195_002",
+      "supply_chain",
+      "auto_update",
+      "lotus_blossom",
+      "notepadplusplus"
+    ],
+    "submitter": {
+      "name": "samuel-lucas6",
+      "link": "https://github.com/samuel-lucas6"
+    },
+    "why": "- Software auto-update mechanisms run with user trust and often elevated permissions, making them ideal delivery vehicles — users expect update processes to download and execute new binaries without intervention\n- Hunting for update processes (e.g., gup.exe, updater.exe) making network connections to unexpected domains, spawning unusual child processes, or writing executables to temp directories can reveal hijacked update channels\n- Applications that lack code signing verification or certificate pinning in their update process are vulnerable to redirection attacks when hosting infrastructure is compromised — the update client has no way to distinguish legitimate from malicious payloads\n- These attacks can be highly targeted (only serving malicious updates to specific IP ranges or regions) making them difficult to detect through broad threat intelligence alone — behavioral hunting on update process anomalies is more reliable",
+    "references": "- [MITRE ATT&CK T1195.002 - Supply Chain Compromise: Compromise Software Supply Chain](https://attack.mitre.org/techniques/T1195/002/)\n- [Notepad++ - Hijacked Incident Info Update](https://notepad-plus-plus.org/news/hijacked-incident-info-update/)\n- [Kaspersky/Securelist - Notepad++ Supply Chain Attack](https://securelist.com/notepad-supply-chain-attack/118708/)\n- [Rapid7 - Chrysalis Backdoor: Dive into Lotus Blossom's Toolkit](https://www.rapid7.com/blog/post/tr-chrysalis-backdoor-dive-into-lotus-blossoms-toolkit/)",
+    "file_path": "Flames/H-2026-001.md"
   },
   {
     "id": "M001",
@@ -1455,8 +1673,8 @@ const HUNTS_DATA = [
     "tactic": "Command and Control",
     "notes": "<ul><li>Deploying a model-based detection against a high-volume logging source like web traffic can be costly and resource-intensive. For this task, I recommend a retroactive hunt using a deduplicated list of domains, enabling a quick and efficient M-ATH method for finding threats, or at least reducing our dataset for hunting.</br><li>This is an evolving research area. Efficacy of a model may be heavily tied to the timeliness of the data, or the inclusion of the target malware family in the underlying training set.</br><li>Sample data and pre-trained models are available for this hunt, however it is also possible to generate new data by modifying the reverse-engineered DGA algorithms [here](https://github.com/baderj/domain_generation_algorithms).</br><li>False positives may be caused by Content Delivery Networks, Ad-tracking mechanisms.",
     "tags": [
-      "CommandandControl,",
-      "T1568.002,",
+      "CommandandControl",
+      "T1568.002",
       "DGA"
     ],
     "submitter": {
