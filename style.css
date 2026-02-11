@@ -1621,8 +1621,7 @@ main {
 
 .hunts-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    grid-auto-rows: 1fr;
+    grid-template-columns: 1fr;
     gap: clamp(1.25rem, 2vw, 2rem);
 }
 
