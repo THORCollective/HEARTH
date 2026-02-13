@@ -71,7 +71,9 @@ MANUAL_TECHNIQUE_MAP = {
     "T1059.001": ["endpoint", "windows"],               # PowerShell
     "T1068":     ["endpoint"],                          # Exploitation for Priv Esc
     "T1070.004": ["endpoint"],                          # File Deletion
+    "T1070_004": ["endpoint"],                          # File Deletion (underscore)
     "T1071.001": ["network", "web_proxy"],              # Web Protocols C2
+    "T1071_001": ["network", "web_proxy"],              # Web Protocols C2 (underscore)
     "T1078":     ["identity"],                          # Valid Accounts
     "T1078_004": ["identity", "cloud"],                 # Cloud Accounts
     "T1082":     ["endpoint"],                          # System Information Discovery
@@ -82,8 +84,10 @@ MANUAL_TECHNIQUE_MAP = {
     "T1203":     ["endpoint", "email"],                 # Exploitation for Client Exec
     "T1219":     ["endpoint", "network"],               # Remote Access Software
     "T1497.003": ["endpoint"],                          # Time Based Evasion
+    "T1497_003": ["endpoint"],                          # Time Based Evasion (underscore)
     "T1528":     ["identity", "cloud"],                 # Steal App Access Token
     "T1543.004": ["endpoint"],                          # Launch Daemon
+    "T1543_004": ["endpoint"],                          # Launch Daemon (underscore)
     "T1550.001": ["identity", "network"],               # App Access Token
     "T1553_001": ["endpoint"],                          # Code Signing
     "T1562.004": ["endpoint", "network"],               # Disable Firewall
@@ -91,9 +95,67 @@ MANUAL_TECHNIQUE_MAP = {
     "T1564":     ["endpoint"],                          # Hide Artifacts
     "T1564_006": ["endpoint", "cloud"],                 # Run Virtual Instance
     "T1566.002": ["email", "web_proxy"],                # Spearphishing Link
+    "T1566_001": ["email", "web_proxy"],                # Spearphishing Attachment (underscore)
+    "T1566_002": ["email", "web_proxy"],                # Spearphishing Link (underscore)
     "T1567":     ["network", "web_proxy"],              # Exfil Over Web Service
     "T1568.002": ["network"],                           # Domain Generation Algorithms
     "T1572":     ["network"],                           # Protocol Tunneling
+    "T1020":     ["network"],                           # Automated Exfiltration
+    "T1021":     ["endpoint", "network", "identity"],   # Remote Services
+    "T1059":     ["endpoint"],                          # Command and Scripting Interpreter
+    "T1070":     ["endpoint"],                          # Indicator Removal
+    "T1071":     ["network", "web_proxy"],              # Application Layer Protocol
+    "T1090":     ["network", "endpoint"],               # Connection Proxy
+    "T1091":     ["endpoint"],                          # Replication Through Removable Media
+    "T1114_003": ["email", "cloud"],                    # Email Forwarding Rule
+    "T1176":     ["endpoint", "web_proxy"],             # Browser Extensions
+    "T1200":     ["endpoint"],                          # Hardware Additions
+    "T1497":     ["endpoint"],                          # Virtualization/Sandbox Evasion
+    "T1543":     ["endpoint"],                          # Create or Modify System Process
+    "T1550":     ["identity", "network"],               # Use Alternate Auth Material
+    "T1559":     ["endpoint"],                          # Inter-Process Communication
+    "T1562":     ["endpoint"],                          # Impair Defenses
+    "T1566":     ["email", "web_proxy"],                # Phishing
+    "T1568":     ["network"],                           # Dynamic Resolution
+    "T1599":     ["network", "cloud"],                  # Network Boundary Bridging
+    # --- Added for HEARTH tagging pass ---
+    "T1041":     ["network"],                           # Exfiltration Over C2 Channel
+    "T1071_004": ["network"],                           # DNS C2
+    "T1030":     ["network"],                           # Data Transfer Size Limits
+    "T1039":     ["endpoint", "network"],               # Data from Network Shared Drive
+    "T1048":     ["network"],                           # Exfiltration Over Alternative Protocol
+    "T1098":     ["identity", "windows"],               # Account Manipulation
+    "T1105":     ["endpoint", "network"],               # Ingress Tool Transfer
+    "T1112":     ["endpoint", "windows"],               # Modify Registry
+    "T1110_003": ["identity"],                          # Password Spraying
+    "T1127":     ["endpoint"],                          # Trusted Developer Utilities
+    "T1136":     ["identity", "windows"],               # Create Account
+    "T1136_002": ["identity"],                          # Create Account: Domain Account
+    "T1140":     ["endpoint"],                          # Deobfuscate/Decode Files
+    "T1195_001": ["endpoint"],                          # Supply Chain: Compromise Software Dependencies
+    "T1197":     ["endpoint", "windows"],               # BITS Jobs
+    "T1204":     ["endpoint"],                          # User Execution
+    "T1204_002": ["endpoint"],                          # User Execution: Malicious File
+    "T1211":     ["endpoint"],                          # Exploitation for Defense Evasion
+    "T1218":     ["endpoint"],                          # System Binary Proxy Execution
+    "T1218_005": ["endpoint"],                          # Mshta
+    "T1218_011": ["endpoint"],                          # Rundll32
+    "T1027":     ["endpoint", "network"],               # Obfuscated Files or Information
+    "T1003_006": ["identity", "network"],               # DCSync
+    "T1036":     ["endpoint"],                          # Masquerading
+    "T1059_001": ["endpoint", "windows"],               # PowerShell
+    "T1059_002": ["endpoint"],                          # AppleScript
+    "T1059_006": ["endpoint"],                          # Python
+    "T1090_001": ["network"],                           # Internal Proxy
+    "T1114":     ["email", "cloud"],                    # Email Collection
+    "T1546_004": ["endpoint"],                          # Unix Shell Config Modification
+    "T1546_016": ["endpoint"],                          # Installer Packages
+    "T1547_001": ["endpoint", "windows"],               # Registry Run Keys
+    "T1560_001": ["endpoint"],                          # Archive via Utility
+    "T1564_008": ["email"],                             # Email Hiding Rules
+    "T1574_002": ["endpoint"],                          # DLL Side-Loading
+    "T1595_001": ["network"],                           # Active Scanning: Vulnerability Scanning
+    "T1560":     ["endpoint"],                          # Archive Collected Data
 }
 
 CATEGORIES = [

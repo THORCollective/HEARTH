@@ -8,25 +8,63 @@
       "examples": "CrowdStrike, Carbon Black, Defender for Endpoint, Sysmon, osquery",
       "techniques": [
         "T1005",
+        "T1021",
+        "T1027",
+        "T1036",
         "T1036_005",
+        "T1039",
         "T1047",
         "T1055",
+        "T1059",
         "T1059.001",
+        "T1059_001",
+        "T1059_002",
+        "T1059_006",
         "T1068",
+        "T1070",
         "T1070.004",
+        "T1070_004",
         "T1082",
+        "T1090",
+        "T1091",
+        "T1105",
+        "T1112",
+        "T1127",
         "T1135",
+        "T1140",
+        "T1176",
         "T1185",
+        "T1195_001",
         "T1195_002",
+        "T1197",
+        "T1200",
         "T1203",
+        "T1204",
+        "T1204_002",
+        "T1211",
+        "T1218",
+        "T1218_005",
+        "T1218_011",
         "T1219",
+        "T1497",
         "T1497.003",
+        "T1497_003",
+        "T1543",
         "T1543.004",
+        "T1543_004",
+        "T1546_004",
+        "T1546_016",
+        "T1547_001",
         "T1553_001",
+        "T1559",
+        "T1560",
+        "T1560_001",
+        "T1562",
         "T1562.004",
         "T1562_001",
         "T1564",
-        "T1564_006"
+        "T1564_006",
+        "T1574_002"
       ]
     },
     {
@@ -37,7 +75,13 @@
       "examples": "Event IDs 4688, 4624, 4672, Sysmon, PowerShell Script Block",
       "techniques": [
         "T1047",
-        "T1059.001"
+        "T1059.001",
+        "T1059_001",
+        "T1098",
+        "T1112",
+        "T1136",
+        "T1197",
+        "T1547_001"
       ]
     },
     {
@@ -47,15 +91,33 @@
       "description": "Firewall, IDS/IPS, NetFlow, DNS, packet capture",
       "examples": "Palo Alto, Suricata, Zeek, Cisco ASA, DNS server logs",
       "techniques": [
+        "T1003_006",
+        "T1020",
+        "T1021",
+        "T1027",
+        "T1030",
+        "T1039",
+        "T1041",
+        "T1048",
+        "T1071",
         "T1071.001",
+        "T1071_001",
+        "T1071_004",
+        "T1090",
+        "T1090_001",
+        "T1105",
         "T1135",
         "T1195_002",
         "T1219",
+        "T1550",
         "T1550.001",
         "T1562.004",
         "T1567",
+        "T1568",
         "T1568.002",
-        "T1572"
+        "T1572",
+        "T1595_001",
+        "T1599"
       ]
     },
     {
@@ -66,8 +128,11 @@
       "examples": "AWS CloudTrail, Azure Activity Log, GCP Audit Log, O365 UAL",
       "techniques": [
         "T1078_004",
+        "T1114",
+        "T1114_003",
         "T1528",
-        "T1564_006"
+        "T1564_006",
+        "T1599"
       ]
     },
     {
@@ -77,10 +142,17 @@
       "description": "Authentication, authorization, directory services",
       "examples": "Active Directory, Okta, Azure AD, LDAP, RADIUS, MFA logs",
       "techniques": [
+        "T1003_006",
+        "T1021",
         "T1078",
         "T1078_004",
+        "T1098",
         "T1110",
+        "T1110_003",
+        "T1136",
+        "T1136_002",
         "T1528",
+        "T1550",
         "T1550.001"
       ]
     },
@@ -91,8 +163,14 @@
       "description": "Mail gateway, message trace, phishing detection",
       "examples": "Exchange, O365 Message Trace, Proofpoint, Mimecast",
       "techniques": [
+        "T1114",
+        "T1114_003",
         "T1203",
-        "T1566.002"
+        "T1564_008",
+        "T1566",
+        "T1566.002",
+        "T1566_001",
+        "T1566_002"
       ]
     },
     {
@@ -102,9 +180,15 @@
       "description": "URL filtering, web gateway, SSL inspection",
       "examples": "Zscaler, Squid, BlueCoat, browser history, WAF",
       "techniques": [
+        "T1071",
         "T1071.001",
+        "T1071_001",
+        "T1176",
         "T1185",
+        "T1566",
         "T1566.002",
+        "T1566_001",
+        "T1566_002",
         "T1567"
       ]
     },
@@ -119,7 +203,7 @@
   ],
   "metadata": {
     "version": "1.0",
-    "technique_count": 30,
+    "technique_count": 91,
     "note": "Manual mapping of HEARTH technique tags to broad data source categories"
   }
 }

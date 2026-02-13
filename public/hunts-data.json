@@ -8,7 +8,9 @@
     "tags": [
       "baseline",
       "networktraffic",
-      "anomalydetection"
+      "anomalydetection",
+      "T1071_001",
+      "T1041"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -27,7 +29,8 @@
     "tags": [
       "baseline",
       "persistence",
-      "anomalydetection"
+      "anomalydetection",
+      "T1219"
     ],
     "submitter": {
       "name": "John Grageda",
@@ -46,7 +49,8 @@
     "tags": [
       "baseline",
       "persistence",
-      "anomalydetection"
+      "anomalydetection",
+      "T1547_001"
     ],
     "submitter": {
       "name": "John Grageda",
@@ -66,7 +70,8 @@
       "baseline",
       "persistence",
       "anomalydetection",
-      "sus"
+      "sus",
+      "T1136"
     ],
     "submitter": {
       "name": "Jamie Williams",
@@ -86,7 +91,8 @@
       "Execution",
       "DefenseEvasion",
       "LOLBIN",
-      "Rundll32"
+      "Rundll32",
+      "T1218_011"
     ],
     "submitter": {
       "name": "Claire Stromboe",
@@ -105,7 +111,9 @@
     "tags": [
       "Collection",
       "Exfiltration",
-      "BrowserExtensions"
+      "BrowserExtensions",
+      "T1176",
+      "T1005"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -125,7 +133,9 @@
       "Collection",
       "Exfiltration",
       "Email",
-      "MailForwarding"
+      "MailForwarding",
+      "T1114_003",
+      "T1020"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -144,7 +154,8 @@
     "tags": [
       "baseline",
       "privilege_escalation",
-      "anomalydetection"
+      "anomalydetection",
+      "T1098"
     ],
     "submitter": {
       "name": "Jon Perez",
@@ -164,7 +175,10 @@
       "DefenseEvasion",
       "Masquerading",
       "TrustedDeveloperUtilities",
-      "ProxyExecution"
+      "ProxyExecution",
+      "T1036",
+      "T1127",
+      "T1211"
     ],
     "submitter": {
       "name": "Joshua Hines",
@@ -181,7 +195,9 @@
     "tactic": "Lateral Movement",
     "notes": "Explore typical peering requests, initiators, unusual IPs, and connection events.",
     "tags": [
-      "LateralMovement"
+      "LateralMovement",
+      "T1599",
+      "T1021"
     ],
     "submitter": {
       "name": "Bruce Breuer",
@@ -199,7 +215,8 @@
     "notes": "Indicators of Xcode usage can be found in EDR telemetry and potential for detection if Xcode is not utilized/approved in the environment.",
     "tags": [
       "InitialAccess",
-      "Baseline"
+      "Baseline",
+      "T1195_001"
     ],
     "submitter": {
       "name": "Collin McClaine",
@@ -241,7 +258,8 @@
     "tags": [
       "credentialaccess",
       "bruteforce",
-      "vpn"
+      "vpn",
+      "T1110"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -261,7 +279,8 @@
       "commandandcontrol",
       "remoteaccess",
       "edr",
-      "lolbin"
+      "lolbin",
+      "T1219"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -278,7 +297,9 @@
     "tactic": "Exfiltration",
     "notes": "Attackers often need to get data out, 1MB chunks sneak beneath big file anomaly detection. Consider different file sizes and types based on normal in your environment.",
     "tags": [
-      "exfiltration"
+      "exfiltration",
+      "T1030",
+      "T1560_001"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -297,7 +318,8 @@
     "tags": [
       "persistence",
       "lolbin",
-      "windows"
+      "windows",
+      "T1197"
     ],
     "submitter": {
       "name": "John Grageda",
@@ -316,7 +338,8 @@
     "tags": [
       "persistence",
       "lolbas",
-      "linux"
+      "linux",
+      "T1546_004"
     ],
     "submitter": {
       "name": "John Grageda",
@@ -334,7 +357,8 @@
     "notes": "Adversaries often abuse legitimate remote access features (such as RDP and SSH) already enabled in the environment.",
     "tags": [
       "lateralmovement",
-      "sus"
+      "sus",
+      "T1021"
     ],
     "submitter": {
       "name": "Jamie Williams",
@@ -352,7 +376,8 @@
     "notes": "Adversaries often abuse legitimate command interpreters/applications, such as CMD, PowerShell, or bash/zsh.",
     "tags": [
       "execution",
-      "sus"
+      "sus",
+      "T1059"
     ],
     "submitter": {
       "name": "Jamie Williams",
@@ -370,7 +395,8 @@
     "notes": "Domain Accounts can cover user, administrator, and service accounts.",
     "tags": [
       "Persistence",
-      "ActiveDirectory"
+      "ActiveDirectory",
+      "T1136_002"
     ],
     "submitter": {
       "name": "Audra Streetman",
@@ -388,7 +414,8 @@
     "notes": "Data requirements: Windows Sysmon, EDR telemetry, Proxy logs",
     "tags": [
       "DefenseEvasion",
-      "SystemBinaryProxyExecutionMshta"
+      "SystemBinaryProxyExecutionMshta",
+      "T1218_005"
     ],
     "submitter": {
       "name": "Azrara",
@@ -403,7 +430,7 @@
     "category": "Flames",
     "title": "Adversaries may search for network shares on compromised systems to locate files of interest. Sensitive data can be gathered from remote systems via shared network drives (host-shared directories, network file servers, etc.) that are accessible from the current system before exfiltration.",
     "tactic": "Collection",
-    "notes": "<ul><li>Data requirements: EDR telemetry, Windows event logs id 5140</li></br><li>Implementation examples in SIGMA:</li></br>Title: Suspicious Network Share Enumeration and Access</br>Id:xxxxx</br>Status: test</br>Description: Detects commands used for network share enumeration and correlates with Event ID 5140 for access to shared resources.</br>Author: Your Name</br>Date:2024/11/14</br>Tags:</br><ul><li>attack.discovery</br><li>attack.t1135</li></ul></br>logsource:</br>category: process_creation</br>product:windows</br>detection:</br>selection_cmd:</br>Image&#124;endswith:</br><ul><li>'\\cmd.exe'</br><li>'\\powershell.exe'</br>ComandLine&#124;contains&#124;all:</br><li>'net view'</br><li>'&bsol;'</br>selection_event:</br>EventID: 5140</br>condition: selection_cmd or selection_event</br>falsepositives:</br><li>Legitimate administrative tasks</br><li>Regular file-sharing activities</br>level: medium",
+    "notes": "<ul><li>Data requirements: EDR telemetry, Windows event logs id 5140</li></br><li>Implementation examples in SIGMA:</li></br>Title: Suspicious Network Share Enumeration and Access</br>Id:xxxxx</br>Status: test</br>Description: Detects commands used for network share enumeration and correlates with Event ID 5140 for access to shared resources.</br>Author: Your Name</br>Date:2024/11/14</br>Tags:</br><ul><li>attack.discovery</br><li>attack.t1135</li></ul></br>logsource:</br>category: process_creation</br>product:windows</br>detection:</br>selection_cmd:</br>Image&#124;endswith:</br><ul><li>'\\cmd.exe'</br><li>'\\powershell.exe'</br>ComandLine&#124;contains&#124;all:</br><li>'net view'</br><li>'&bsol;'</br>selection_event:</br>EventID: 5140</br>condition: selection_cmd or selection_event</br>falsepositives:</br><li>Legitimate administrative tasks</br><li>Regular file-sharing activities</br>level: medium #T1039",
     "tags": [
       "collection",
       "DatafromNetworkSharedDrive"
@@ -426,7 +453,8 @@
       "Persistence",
       "Privilege",
       "Defense",
-      "DLLSideloading"
+      "DLLSideloading",
+      "T1574_002"
     ],
     "submitter": {
       "name": "hu983r",
@@ -445,7 +473,9 @@
     "tags": [
       "DNS",
       "Tunneling",
-      "Exfiltration"
+      "Exfiltration",
+      "T1048",
+      "T1071_004"
     ],
     "submitter": {
       "name": "Cody Lunday",
@@ -466,7 +496,8 @@
       "Sysmon",
       "Execution",
       "TA0002",
-      "T1059.001"
+      "T1059.001",
+      "T1059_001"
     ],
     "submitter": {
       "name": "Siddhant Mishra",
@@ -487,7 +518,9 @@
       "NamedPipes",
       "CommandAndControl",
       "Sysmon",
-      "ThreatHunting"
+      "ThreatHunting",
+      "T1559",
+      "T1090"
     ],
     "submitter": {
       "name": "Siddhant Mishra",
@@ -507,7 +540,9 @@
       "Registry",
       "EDR",
       "DNS",
-      "DefenseEvasion"
+      "DefenseEvasion",
+      "T1562_001",
+      "T1112"
     ],
     "submitter": {
       "name": "wikijm",
@@ -545,7 +580,8 @@
     "tags": [
       "privilegeescalation",
       "exploit",
-      "apache"
+      "apache",
+      "T1068"
     ],
     "submitter": {
       "name": "hearth-auto-intel",
@@ -564,7 +600,8 @@
     "tags": [
       "credentialaccess",
       "serverlessfunctions",
-      "cloud"
+      "cloud",
+      "T1098"
     ],
     "submitter": {
       "name": "hearth-auto-intel",
@@ -584,7 +621,8 @@
       "persistence",
       "initialaccess",
       "userexecution",
-      "ELF"
+      "ELF",
+      "T1204"
     ],
     "submitter": {
       "name": "hearth-auto-intel",
@@ -621,7 +659,7 @@
     "notes": "Based on ATT&CK technique T1562.001, using the undocumented Windows Security Center (WSC) APIs",
     "tags": [
       "defenseevasion",
-      "t1562.001",
+      "T1562_001",
       "WSC"
     ],
     "submitter": {
@@ -679,7 +717,9 @@
     "tags": [
       "initialaccess",
       "phishing",
-      "spearphishinglink"
+      "spearphishinglink",
+      "T1566_001",
+      "T1204_002"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -699,7 +739,9 @@
       "initialaccess",
       "execution",
       "userexecution",
-      "commandandscriptinginterpreter"
+      "commandandscriptinginterpreter",
+      "T1204_002",
+      "T1059_006"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -717,7 +759,7 @@
     "notes": "Based on ATT&CK technique T1070.004. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defenseevasion",
-      "T1070.004",
+      "T1070_004",
       "cipher.exe"
     ],
     "submitter": {
@@ -736,7 +778,7 @@
     "notes": "Based on ATT&CK technique T1566.002. BlueNoroff campaign targeting Web3 organizations using deepfake meetings and fake Zoom extensions.",
     "tags": [
       "initialaccess",
-      "T1566.002",
+      "T1566_002",
       "applescript",
       "bluenoroff"
     ],
@@ -756,7 +798,7 @@
     "notes": "Based on ATT&CK technique T1497.003. Using display state awareness to time malicious activities when users are away from their systems.",
     "tags": [
       "defenseevasion",
-      "T1497.003",
+      "T1497_003",
       "evasion",
       "macos"
     ],
@@ -796,7 +838,7 @@
     "notes": "Based on ATT&CK technique T1543.004. Creating LaunchDaemon persistence using legitimate service names with suspicious execution paths.",
     "tags": [
       "persistence",
-      "T1543.004",
+      "T1543_004",
       "launchdaemon",
       "macos"
     ],
@@ -838,7 +880,8 @@
       "defense_evasion",
       "command_and_scripting_interpreter",
       "applescript",
-      "malware"
+      "malware",
+      "T1059_002"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -858,7 +901,8 @@
       "execution",
       "command_and_scripting_interpreter",
       "powershell",
-      "ransomware"
+      "ransomware",
+      "T1059_001"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -878,7 +922,8 @@
       "persistence",
       "lateral_movement",
       "ide_plugin",
-      "event_triggered_execution"
+      "event_triggered_execution",
+      "T1546_016"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -897,7 +942,9 @@
     "tags": [
       "initial_access",
       "hardware_additions",
-      "air_gap"
+      "air_gap",
+      "T1091",
+      "T1200"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -916,7 +963,8 @@
     "tags": [
       "defense_evasion",
       "proxy",
-      "chisel"
+      "chisel",
+      "T1090_001"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -936,7 +984,8 @@
       "defense_evasion",
       "obfuscated_files_or_information",
       "javascript",
-      "malvertising"
+      "malvertising",
+      "T1027"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -955,7 +1004,8 @@
     "tags": [
       "collection",
       "archive_collected_data",
-      "powershell"
+      "powershell",
+      "T1560"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -974,7 +1024,8 @@
     "tags": [
       "reconnaissance",
       "active_scanning",
-      "network_service_scanning"
+      "network_service_scanning",
+      "T1595_001"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -993,7 +1044,8 @@
     "tags": [
       "initial_access",
       "password_spraying",
-      "rdp"
+      "rdp",
+      "T1110_003"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -1012,7 +1064,8 @@
     "tags": [
       "privilege_escalation",
       "tinyshell",
-      "juniper"
+      "juniper",
+      "T1055"
     ],
     "submitter": {
       "name": "Jocko",
@@ -1031,7 +1084,8 @@
     "tags": [
       "defense_evasion",
       "deobfuscate_files",
-      "earth_estries"
+      "earth_estries",
+      "T1140"
     ],
     "submitter": {
       "name": "Jocko",
@@ -1050,7 +1104,8 @@
     "tags": [
       "defense_evasion",
       "registry_modification",
-      "persistence"
+      "persistence",
+      "T1112"
     ],
     "submitter": {
       "name": "Jocko",
@@ -1069,7 +1124,8 @@
     "tags": [
       "execution",
       "powershell",
-      "rat"
+      "rat",
+      "T1059_001"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -1088,7 +1144,8 @@
     "tags": [
       "execution",
       "mshta",
-      "living_off_the_land"
+      "living_off_the_land",
+      "T1218_005"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -1104,7 +1161,14 @@
     "title": "Evildoers might be using reverse ssh for Command and Control.",
     "tactic": "Command and Control",
     "notes": "Look for processes with \"ssh -R\" and use JA4SSH for TLS/JA4+ fingerprinting.",
-    "tags": [],
+    "tags": [
+      "CommandAndControl",
+      "networktraffic",
+      "ssh",
+      "linux",
+      "windows",
+      "T1572"
+    ],
     "submitter": {
       "name": "DarkWizardCatcher",
       "link": ""
@@ -1122,7 +1186,8 @@
     "tags": [
       "command_and_control",
       "ingress_tool_transfer",
-      "powershell"
+      "powershell",
+      "T1105"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -1142,7 +1207,10 @@
       "DefenseEvasion",
       "Execution",
       "Masquerading",
-      "ProxyExecution"
+      "ProxyExecution",
+      "T1036",
+      "T1218",
+      "T1105"
     ],
     "submitter": {
       "name": "Joshua Hines",
@@ -1161,7 +1229,9 @@
     "tags": [
       "DefenseEvasion",
       "Phishing",
-      "Collection"
+      "Collection",
+      "T1564_008",
+      "T1114"
     ],
     "submitter": {
       "name": "Bruce Breuer",
@@ -1181,7 +1251,8 @@
       "CredentialAccess",
       "ActiveDirectory",
       "Identity",
-      "Secretsdump"
+      "Secretsdump",
+      "T1003_006"
     ],
     "submitter": {
       "name": "Bruce Breuer",
