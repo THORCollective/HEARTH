@@ -130,9 +130,10 @@ export class HuntFinder {
     }
 
     // A hunt matches if it has at least one technique tag covered
+    // Hunts without technique tags are excluded (can't determine data source needs)
     return this.hunts.filter(hunt => {
       const techTags = hunt.tags.filter(t => /^T\d{4}/.test(t));
-      if (techTags.length === 0) return true; // No technique tags = always huntable
+      if (techTags.length === 0) return false;
       return techTags.some(t => coveredTechniques.has(t));
     });
   }
@@ -160,8 +161,9 @@ export class HuntFinder {
     }
 
     const matches = this.getMatchingHunts();
-    const total = this.hunts.length;
-    const pct = Math.round((matches.length / total) * 100);
+    const taggedHunts = this.hunts.filter(h => h.tags.some(t => /^T\d{4}/.test(t)));
+    const total = taggedHunts.length;
+    const pct = total > 0 ? Math.round((matches.length / total) * 100) : 0;
 
     statsEl.innerHTML = `
       <div class="hf-stats__summary">
