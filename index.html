@@ -29,6 +29,11 @@
                 <a href="https://github.com/THORCollective/HEARTH" target="_blank" class="btn btn-ghost"><span class="btn-icon">🌐</span>View on GitHub</a>
             </div>
         </div>
+        <nav class="header-nav">
+            <button class="nav-tab nav-tab--active" data-view="library" id="navLibrary">📚 Hunt Library</button>
+            <button class="nav-tab" data-view="finder" id="navFinder">🎯 What Can I Hunt?</button>
+        </nav>
+        </div>
     </header>
 
     <main>
@@ -128,6 +133,9 @@
 
         <!-- Hunt grid (populated by TypeScript) -->
         <div id="huntsGrid" class="hunts-grid"></div>
+
+        <!-- Hunt Finder view (hidden by default) -->
+        <div id="huntFinderView" class="hunt-finder-view" style="display: none;"></div>
     </main>
 
     <!-- Vite injects module script here during dev, bundle during build -->

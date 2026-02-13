@@ -1,0 +1,125 @@
+{
+  "categories": [
+    {
+      "id": "endpoint",
+      "name": "Endpoint Logs",
+      "icon": "\ud83d\udcbb",
+      "description": "EDR telemetry, process creation, file events, registry changes",
+      "examples": "CrowdStrike, Carbon Black, Defender for Endpoint, Sysmon, osquery",
+      "techniques": [
+        "T1005",
+        "T1036_005",
+        "T1047",
+        "T1055",
+        "T1059.001",
+        "T1068",
+        "T1070.004",
+        "T1082",
+        "T1135",
+        "T1185",
+        "T1195_002",
+        "T1203",
+        "T1219",
+        "T1497.003",
+        "T1543.004",
+        "T1553_001",
+        "T1562.004",
+        "T1562_001",
+        "T1564",
+        "T1564_006"
+      ]
+    },
+    {
+      "id": "windows",
+      "name": "Windows Event Logs",
+      "icon": "\ud83e\ude9f",
+      "description": "Security, System, PowerShell, WMI, Sysmon event logs",
+      "examples": "Event IDs 4688, 4624, 4672, Sysmon, PowerShell Script Block",
+      "techniques": [
+        "T1047",
+        "T1059.001"
+      ]
+    },
+    {
+      "id": "network",
+      "name": "Network Logs",
+      "icon": "\ud83c\udf10",
+      "description": "Firewall, IDS/IPS, NetFlow, DNS, packet capture",
+      "examples": "Palo Alto, Suricata, Zeek, Cisco ASA, DNS server logs",
+      "techniques": [
+        "T1071.001",
+        "T1135",
+        "T1195_002",
+        "T1219",
+        "T1550.001",
+        "T1562.004",
+        "T1567",
+        "T1568.002",
+        "T1572"
+      ]
+    },
+    {
+      "id": "cloud",
+      "name": "Cloud Logs",
+      "icon": "\u2601\ufe0f",
+      "description": "Cloud provider audit and activity logs",
+      "examples": "AWS CloudTrail, Azure Activity Log, GCP Audit Log, O365 UAL",
+      "techniques": [
+        "T1078_004",
+        "T1528",
+        "T1564_006"
+      ]
+    },
+    {
+      "id": "identity",
+      "name": "Identity & Auth Logs",
+      "icon": "\ud83d\udd10",
+      "description": "Authentication, authorization, directory services",
+      "examples": "Active Directory, Okta, Azure AD, LDAP, RADIUS, MFA logs",
+      "techniques": [
+        "T1078",
+        "T1078_004",
+        "T1110",
+        "T1528",
+        "T1550.001"
+      ]
+    },
+    {
+      "id": "email",
+      "name": "Email Logs",
+      "icon": "\ud83d\udce7",
+      "description": "Mail gateway, message trace, phishing detection",
+      "examples": "Exchange, O365 Message Trace, Proofpoint, Mimecast",
+      "techniques": [
+        "T1203",
+        "T1566.002"
+      ]
+    },
+    {
+      "id": "web_proxy",
+      "name": "Web & Proxy Logs",
+      "icon": "\ud83d\udd0d",
+      "description": "URL filtering, web gateway, SSL inspection",
+      "examples": "Zscaler, Squid, BlueCoat, browser history, WAF",
+      "techniques": [
+        "T1071.001",
+        "T1185",
+        "T1566.002",
+        "T1567"
+      ]
+    },
+    {
+      "id": "application",
+      "name": "Application Logs",
+      "icon": "\ud83d\udcf1",
+      "description": "Database, web server, SaaS, custom application logs",
+      "examples": "SQL audit, Apache/Nginx, Salesforce, Snowflake, app-specific",
+      "techniques": []
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "technique_count": 30,
+    "note": "Manual mapping of HEARTH technique tags to broad data source categories"
+  }
+}

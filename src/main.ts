@@ -4,6 +4,7 @@ import { FilterPanel } from './components/FilterPanel';
 import { HuntGrid } from './components/HuntGrid';
 import { Pagination } from './components/Pagination';
 import { Modal } from './components/Modal';
+import { HuntFinder } from './components/HuntFinder';
 import type { Hunt } from './types/Hunt';
 import './styles/main.css';
 
@@ -81,6 +82,39 @@ async function initApp(): Promise<void> {
 
     // Trigger initial render
     state.render();
+
+    // Initialize Hunt Finder (lazy - created on first tab switch)
+    let huntFinderInit = false;
+    const finderView = document.getElementById('huntFinderView');
+    const libraryElements = [
+      document.querySelector('.intro') as HTMLElement,
+      document.querySelector('.controls') as HTMLElement,
+      document.getElementById('huntsGrid') as HTMLElement,
+    ].filter(Boolean);
+
+    const navLibrary = document.getElementById('navLibrary');
+    const navFinder = document.getElementById('navFinder');
+
+    function switchView(view: string) {
+      const isLibrary = view === 'library';
+      libraryElements.forEach(el => { if (el) el.style.display = isLibrary ? '' : 'none'; });
+      if (finderView) finderView.style.display = isLibrary ? 'none' : '';
+      navLibrary?.classList.toggle('nav-tab--active', isLibrary);
+      navFinder?.classList.toggle('nav-tab--active', !isLibrary);
+
+      if (!isLibrary && !huntFinderInit && finderView) {
+        huntFinderInit = true;
+        new HuntFinder(finderView, hunts);
+      }
+    }
+
+    navLibrary?.addEventListener('click', () => switchView('library'));
+    navFinder?.addEventListener('click', () => switchView('finder'));
+
+    // Handle hash navigation
+    if (window.location.hash === '#finder') {
+      switchView('finder');
+    }
 
     console.log('HEARTH initialized successfully');
     console.log(`- Total hunts: ${state.getTotalHuntCount()}`);

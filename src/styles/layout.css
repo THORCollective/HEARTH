@@ -61,6 +61,34 @@ header {
   gap: var(--space-md);
 }
 
+/* Navigation tabs */
+.header-nav {
+  display: flex;
+  gap: var(--space-xs);
+  max-width: 1400px;
+  margin: var(--space-sm) auto 0;
+}
+
+.nav-tab {
+  padding: var(--space-sm) var(--space-md);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.nav-tab:hover {
+  color: var(--color-text);
+}
+
+.nav-tab--active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
 main {
   max-width: 1400px;
   margin: 0 auto;
