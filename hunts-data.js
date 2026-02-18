@@ -9,7 +9,9 @@ const HUNTS_DATA = [
     "tags": [
       "baseline",
       "networktraffic",
-      "anomalydetection"
+      "anomalydetection",
+      "T1071_001",
+      "T1041"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -28,7 +30,8 @@ const HUNTS_DATA = [
     "tags": [
       "baseline",
       "persistence",
-      "anomalydetection"
+      "anomalydetection",
+      "T1219"
     ],
     "submitter": {
       "name": "John Grageda",
@@ -47,7 +50,8 @@ const HUNTS_DATA = [
     "tags": [
       "baseline",
       "persistence",
-      "anomalydetection"
+      "anomalydetection",
+      "T1547_001"
     ],
     "submitter": {
       "name": "John Grageda",
@@ -67,7 +71,8 @@ const HUNTS_DATA = [
       "baseline",
       "persistence",
       "anomalydetection",
-      "sus"
+      "sus",
+      "T1136"
     ],
     "submitter": {
       "name": "Jamie Williams",
@@ -87,7 +92,8 @@ const HUNTS_DATA = [
       "Execution",
       "DefenseEvasion",
       "LOLBIN",
-      "Rundll32"
+      "Rundll32",
+      "T1218_011"
     ],
     "submitter": {
       "name": "Claire Stromboe",
@@ -106,7 +112,9 @@ const HUNTS_DATA = [
     "tags": [
       "Collection",
       "Exfiltration",
-      "BrowserExtensions"
+      "BrowserExtensions",
+      "T1176",
+      "T1005"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -126,7 +134,9 @@ const HUNTS_DATA = [
       "Collection",
       "Exfiltration",
       "Email",
-      "MailForwarding"
+      "MailForwarding",
+      "T1114_003",
+      "T1020"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -145,7 +155,8 @@ const HUNTS_DATA = [
     "tags": [
       "baseline",
       "privilege_escalation",
-      "anomalydetection"
+      "anomalydetection",
+      "T1098"
     ],
     "submitter": {
       "name": "Jon Perez",
@@ -165,7 +176,10 @@ const HUNTS_DATA = [
       "DefenseEvasion",
       "Masquerading",
       "TrustedDeveloperUtilities",
-      "ProxyExecution"
+      "ProxyExecution",
+      "T1036",
+      "T1127",
+      "T1211"
     ],
     "submitter": {
       "name": "Joshua Hines",
@@ -182,7 +196,9 @@ const HUNTS_DATA = [
     "tactic": "Lateral Movement",
     "notes": "Explore typical peering requests, initiators, unusual IPs, and connection events.",
     "tags": [
-      "LateralMovement"
+      "LateralMovement",
+      "T1599",
+      "T1021"
     ],
     "submitter": {
       "name": "Bruce Breuer",
@@ -200,7 +216,8 @@ const HUNTS_DATA = [
     "notes": "Indicators of Xcode usage can be found in EDR telemetry and potential for detection if Xcode is not utilized/approved in the environment.",
     "tags": [
       "InitialAccess",
-      "Baseline"
+      "Baseline",
+      "T1195_001"
     ],
     "submitter": {
       "name": "Collin McClaine",
@@ -234,6 +251,119 @@ const HUNTS_DATA = [
     "file_path": "Embers/B012.md"
   },
   {
+    "id": "B013",
+    "category": "Embers",
+    "title": "Baseline DNS query volumes, top queried domains, and resolution patterns across the environment to identify deviations that may indicate DNS tunneling, beaconing, or data exfiltration.",
+    "tactic": "Command and Control",
+    "notes": "DNS is ubiquitous and rarely monitored at a per-host level. Establishing what normal query patterns look like — volume, frequency, domain diversity, query types (A, AAAA, TXT, MX, CNAME) — creates a foundation to detect anomalies such as high-entropy subdomain queries, unusual TXT record lookups, or sudden spikes in NXDomain responses.",
+    "tags": [
+      "command_and_control",
+      "T1071_004",
+      "dns",
+      "baselining",
+      "beaconing",
+      "tunneling",
+      "exfiltration"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- DNS is one of the most abused protocols for C2 communication and data exfiltration because it is almost always allowed through firewalls and rarely inspected at depth — without a baseline, distinguishing malicious DNS from normal resolution is nearly impossible\n- Most organizations lack visibility into per-host DNS behavior, making it trivial for adversaries to use DNS tunneling tools (iodine, dnscat2, Cobalt Strike DNS beacon) to blend into legitimate traffic\n- Data sources include DNS server query logs, passive DNS sensors, EDR telemetry with DNS enrichment, and network flow data — correlating these against a known-good baseline enables high-confidence anomaly detection",
+    "references": "- [MITRE ATT&CK T1071.004 - Application Layer Protocol: DNS](https://attack.mitre.org/techniques/T1071/004/)\n- [SANS - Detecting DNS Tunneling (2019)](https://www.sans.org/white-papers/detecting-dns-tunneling/)\n- [Akamai - DNS Exfiltration and Tunneling Detection](https://www.akamai.com/blog/security/dns-exfiltration-detection)",
+    "file_path": "Embers/B013.md"
+  },
+  {
+    "id": "B014",
+    "category": "Embers",
+    "title": "Inventory and baseline all scheduled tasks, cron jobs, and recurring automation across endpoints and servers to detect unauthorized persistence mechanisms or task hijacking.",
+    "tactic": "Persistence",
+    "notes": "Scheduled tasks and cron jobs are a well-known persistence mechanism. Without a comprehensive inventory, new or modified tasks created by adversaries blend in with legitimate automation. Baselining task names, execution paths, owners, schedules, and associated binaries establishes a reference point for detecting unauthorized additions or modifications.",
+    "tags": [
+      "persistence",
+      "T1053_005",
+      "scheduled_task",
+      "cron",
+      "baselining",
+      "inventory"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- Adversaries routinely use scheduled tasks (T1053.005) and cron jobs (T1053.003) for persistence, privilege escalation, and execution — these are among the most common persistence techniques observed in the wild\n- Many organizations have hundreds of legitimate scheduled tasks across their fleet with no centralized inventory, making it trivial for an attacker-created task to go unnoticed indefinitely\n- Data sources include Windows Task Scheduler logs (Event IDs 4698, 4702), Sysmon Event ID 1 with schtasks.exe, crontab files, systemd timers, and EDR scheduled task telemetry — a baseline enables alerting on any net-new or modified task",
+    "references": "- [MITRE ATT&CK T1053.005 - Scheduled Task/Job: Scheduled Task](https://attack.mitre.org/techniques/T1053/005/)\n- [MITRE ATT&CK T1053.003 - Scheduled Task/Job: Cron](https://attack.mitre.org/techniques/T1053/003/)\n- [Red Canary - Threat Detection Report: Scheduled Tasks](https://redcanary.com/threat-detection-report/techniques/scheduled-task-job/)",
+    "file_path": "Embers/B014.md"
+  },
+  {
+    "id": "B015",
+    "category": "Embers",
+    "title": "Profile PowerShell usage across endpoints to establish normal execution patterns — including script paths, cmdlets, users, and execution policies — so that anomalous or malicious PowerShell activity can be identified.",
+    "tactic": "Execution",
+    "notes": "PowerShell is both a critical admin tool and a top attacker utility. Without understanding who uses it, how often, and what commands are typical, detection rules either drown in false positives or miss real threats. Baselining script block contents, module loads, invocation methods (console, ISE, encoded commands), and user-to-host mappings creates a foundation for behavioral detection.",
+    "tags": [
+      "execution",
+      "T1059_001",
+      "powershell",
+      "baselining",
+      "script_block_logging",
+      "encoded_commands"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- PowerShell is consistently one of the most abused LOLBins — used for download cradles, credential theft, lateral movement, and C2 — but it is also essential for legitimate IT operations, making blanket blocking impractical\n- Many environments have PowerShell Script Block Logging and Module Logging enabled but no baseline to compare against, resulting in either ignored logs or alert fatigue from normal admin activity\n- Data sources include PowerShell Script Block Logging (Event ID 4104), Module Logging (Event ID 4103), Transcription Logs, Sysmon Event ID 1 for powershell.exe/pwsh.exe process creation, and EDR command-line telemetry",
+    "references": "- [MITRE ATT&CK T1059.001 - Command and Scripting Interpreter: PowerShell](https://attack.mitre.org/techniques/T1059/001/)\n- [SANS - Hunting for PowerShell Abuse](https://www.sans.org/white-papers/hunting-powershell-abuse/)\n- [Microsoft - About Logging in PowerShell](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_logging)",
+    "file_path": "Embers/B015.md"
+  },
+  {
+    "id": "B016",
+    "category": "Embers",
+    "title": "Baseline service account authentication patterns — including login times, source hosts, target resources, and protocols — to detect credential abuse or unauthorized use of service accounts for lateral movement.",
+    "tactic": "Credential Access",
+    "notes": "Service accounts are high-value targets because they often have elevated privileges, rarely change passwords, and lack MFA. Baselining their expected behavior — which hosts they authenticate from, what times, what services they access — makes it possible to detect when a stolen service account credential is used from an unexpected source or at an unusual time.",
+    "tags": [
+      "credential_access",
+      "T1078_001",
+      "service_account",
+      "lateral_movement",
+      "authentication",
+      "baselining"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- Service accounts frequently have over-provisioned privileges and static credentials, making them prime targets for credential theft — adversaries who compromise a service account can move laterally with minimal detection\n- Unlike human accounts, service accounts have highly predictable behavior (same source, same destination, same schedule), which makes even slight deviations highly suspicious — but only if a baseline exists to compare against\n- Data sources include Windows Security Event Logs (4624, 4625, 4648), Kerberos authentication logs, Active Directory audit logs, cloud IAM sign-in logs, and SIEM/UEBA platforms that can model entity behavior over time",
+    "references": "- [MITRE ATT&CK T1078.001 - Valid Accounts: Default Accounts](https://attack.mitre.org/techniques/T1078/001/)\n- [MITRE ATT&CK T1078.002 - Valid Accounts: Domain Accounts](https://attack.mitre.org/techniques/T1078/002/)\n- [CrowdStrike - Service Account Security Best Practices](https://www.crowdstrike.com/cybersecurity-101/identity-security/service-account/)",
+    "file_path": "Embers/B016.md"
+  },
+  {
+    "id": "B017",
+    "category": "Embers",
+    "title": "Baseline TLS/SSL certificate inventory, issuance sources, validity periods, and renewal patterns across the environment to detect rogue certificates, expired certificates in production, or adversary-issued certificates used for interception.",
+    "tactic": "Defense Evasion",
+    "notes": "Certificates underpin trust in encrypted communications. Without a baseline of which CAs issue certificates for your domains, what validity periods are normal, and which hosts present which certificates, adversaries can deploy rogue or self-signed certificates for man-in-the-middle attacks or to encrypt C2 traffic. Expired certificates also create security gaps that attackers exploit.",
+    "tags": [
+      "defense_evasion",
+      "T1587_003",
+      "certificate",
+      "tls",
+      "ssl",
+      "pki",
+      "baselining",
+      "inventory"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- Adversaries use fraudulently obtained or self-signed certificates to encrypt C2 channels, perform SSL interception, or impersonate legitimate services — a certificate baseline makes unauthorized issuance immediately visible\n- Expired or misconfigured certificates in production create both security vulnerabilities and operational risk, yet many organizations lack a comprehensive certificate inventory and only discover issues during outages\n- Data sources include Certificate Transparency (CT) logs, internal PKI/CA logs, network TLS handshake metadata, cloud provider certificate managers (ACM, Let's Encrypt), and endpoint certificate stores — correlating these builds a full picture of the certificate landscape",
+    "references": "- [MITRE ATT&CK T1587.003 - Develop Capabilities: Digital Certificates](https://attack.mitre.org/techniques/T1587/003/)\n- [MITRE ATT&CK T1553.004 - Subvert Trust Controls: Install Root Certificate](https://attack.mitre.org/techniques/T1553/004/)\n- [Certificate Transparency - How CT Works](https://certificate.transparency.dev/howctworks/)",
+    "file_path": "Embers/B017.md"
+  },
+  {
     "id": "H001",
     "category": "Flames",
     "title": "An adversary is attempting to brute force the admin account on the externally facing VPN gateway.",
@@ -242,7 +372,8 @@ const HUNTS_DATA = [
     "tags": [
       "credentialaccess",
       "bruteforce",
-      "vpn"
+      "vpn",
+      "T1110"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -262,7 +393,8 @@ const HUNTS_DATA = [
       "commandandcontrol",
       "remoteaccess",
       "edr",
-      "lolbin"
+      "lolbin",
+      "T1219"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -279,7 +411,9 @@ const HUNTS_DATA = [
     "tactic": "Exfiltration",
     "notes": "Attackers often need to get data out, 1MB chunks sneak beneath big file anomaly detection. Consider different file sizes and types based on normal in your environment.",
     "tags": [
-      "exfiltration"
+      "exfiltration",
+      "T1030",
+      "T1560_001"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -298,7 +432,8 @@ const HUNTS_DATA = [
     "tags": [
       "persistence",
       "lolbin",
-      "windows"
+      "windows",
+      "T1197"
     ],
     "submitter": {
       "name": "John Grageda",
@@ -317,7 +452,8 @@ const HUNTS_DATA = [
     "tags": [
       "persistence",
       "lolbas",
-      "linux"
+      "linux",
+      "T1546_004"
     ],
     "submitter": {
       "name": "John Grageda",
@@ -335,7 +471,8 @@ const HUNTS_DATA = [
     "notes": "Adversaries often abuse legitimate remote access features (such as RDP and SSH) already enabled in the environment.",
     "tags": [
       "lateralmovement",
-      "sus"
+      "sus",
+      "T1021"
     ],
     "submitter": {
       "name": "Jamie Williams",
@@ -353,7 +490,8 @@ const HUNTS_DATA = [
     "notes": "Adversaries often abuse legitimate command interpreters/applications, such as CMD, PowerShell, or bash/zsh.",
     "tags": [
       "execution",
-      "sus"
+      "sus",
+      "T1059"
     ],
     "submitter": {
       "name": "Jamie Williams",
@@ -371,7 +509,8 @@ const HUNTS_DATA = [
     "notes": "Domain Accounts can cover user, administrator, and service accounts.",
     "tags": [
       "Persistence",
-      "ActiveDirectory"
+      "ActiveDirectory",
+      "T1136_002"
     ],
     "submitter": {
       "name": "Audra Streetman",
@@ -389,7 +528,8 @@ const HUNTS_DATA = [
     "notes": "Data requirements: Windows Sysmon, EDR telemetry, Proxy logs",
     "tags": [
       "DefenseEvasion",
-      "SystemBinaryProxyExecutionMshta"
+      "SystemBinaryProxyExecutionMshta",
+      "T1218_005"
     ],
     "submitter": {
       "name": "Azrara",
@@ -404,7 +544,7 @@ const HUNTS_DATA = [
     "category": "Flames",
     "title": "Adversaries may search for network shares on compromised systems to locate files of interest. Sensitive data can be gathered from remote systems via shared network drives (host-shared directories, network file servers, etc.) that are accessible from the current system before exfiltration.",
     "tactic": "Collection",
-    "notes": "<ul><li>Data requirements: EDR telemetry, Windows event logs id 5140</li></br><li>Implementation examples in SIGMA:</li></br>Title: Suspicious Network Share Enumeration and Access</br>Id:xxxxx</br>Status: test</br>Description: Detects commands used for network share enumeration and correlates with Event ID 5140 for access to shared resources.</br>Author: Your Name</br>Date:2024/11/14</br>Tags:</br><ul><li>attack.discovery</br><li>attack.t1135</li></ul></br>logsource:</br>category: process_creation</br>product:windows</br>detection:</br>selection_cmd:</br>Image&#124;endswith:</br><ul><li>'\\cmd.exe'</br><li>'\\powershell.exe'</br>ComandLine&#124;contains&#124;all:</br><li>'net view'</br><li>'&bsol;'</br>selection_event:</br>EventID: 5140</br>condition: selection_cmd or selection_event</br>falsepositives:</br><li>Legitimate administrative tasks</br><li>Regular file-sharing activities</br>level: medium",
+    "notes": "<ul><li>Data requirements: EDR telemetry, Windows event logs id 5140</li></br><li>Implementation examples in SIGMA:</li></br>Title: Suspicious Network Share Enumeration and Access</br>Id:xxxxx</br>Status: test</br>Description: Detects commands used for network share enumeration and correlates with Event ID 5140 for access to shared resources.</br>Author: Your Name</br>Date:2024/11/14</br>Tags:</br><ul><li>attack.discovery</br><li>attack.t1135</li></ul></br>logsource:</br>category: process_creation</br>product:windows</br>detection:</br>selection_cmd:</br>Image&#124;endswith:</br><ul><li>'\\cmd.exe'</br><li>'\\powershell.exe'</br>ComandLine&#124;contains&#124;all:</br><li>'net view'</br><li>'&bsol;'</br>selection_event:</br>EventID: 5140</br>condition: selection_cmd or selection_event</br>falsepositives:</br><li>Legitimate administrative tasks</br><li>Regular file-sharing activities</br>level: medium #T1039",
     "tags": [
       "collection",
       "DatafromNetworkSharedDrive"
@@ -427,7 +567,8 @@ const HUNTS_DATA = [
       "Persistence",
       "Privilege",
       "Defense",
-      "DLLSideloading"
+      "DLLSideloading",
+      "T1574_002"
     ],
     "submitter": {
       "name": "hu983r",
@@ -446,7 +587,9 @@ const HUNTS_DATA = [
     "tags": [
       "DNS",
       "Tunneling",
-      "Exfiltration"
+      "Exfiltration",
+      "T1048",
+      "T1071_004"
     ],
     "submitter": {
       "name": "Cody Lunday",
@@ -467,7 +610,8 @@ const HUNTS_DATA = [
       "Sysmon",
       "Execution",
       "TA0002",
-      "T1059.001"
+      "T1059.001",
+      "T1059_001"
     ],
     "submitter": {
       "name": "Siddhant Mishra",
@@ -488,7 +632,9 @@ const HUNTS_DATA = [
       "NamedPipes",
       "CommandAndControl",
       "Sysmon",
-      "ThreatHunting"
+      "ThreatHunting",
+      "T1559",
+      "T1090"
     ],
     "submitter": {
       "name": "Siddhant Mishra",
@@ -508,7 +654,9 @@ const HUNTS_DATA = [
       "Registry",
       "EDR",
       "DNS",
-      "DefenseEvasion"
+      "DefenseEvasion",
+      "T1562_001",
+      "T1112"
     ],
     "submitter": {
       "name": "wikijm",
@@ -546,7 +694,8 @@ const HUNTS_DATA = [
     "tags": [
       "privilegeescalation",
       "exploit",
-      "apache"
+      "apache",
+      "T1068"
     ],
     "submitter": {
       "name": "hearth-auto-intel",
@@ -565,7 +714,8 @@ const HUNTS_DATA = [
     "tags": [
       "credentialaccess",
       "serverlessfunctions",
-      "cloud"
+      "cloud",
+      "T1098"
     ],
     "submitter": {
       "name": "hearth-auto-intel",
@@ -585,7 +735,8 @@ const HUNTS_DATA = [
       "persistence",
       "initialaccess",
       "userexecution",
-      "ELF"
+      "ELF",
+      "T1204"
     ],
     "submitter": {
       "name": "hearth-auto-intel",
@@ -622,7 +773,7 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1562.001, using the undocumented Windows Security Center (WSC) APIs",
     "tags": [
       "defenseevasion",
-      "t1562.001",
+      "T1562_001",
       "WSC"
     ],
     "submitter": {
@@ -680,7 +831,9 @@ const HUNTS_DATA = [
     "tags": [
       "initialaccess",
       "phishing",
-      "spearphishinglink"
+      "spearphishinglink",
+      "T1566_001",
+      "T1204_002"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -700,7 +853,9 @@ const HUNTS_DATA = [
       "initialaccess",
       "execution",
       "userexecution",
-      "commandandscriptinginterpreter"
+      "commandandscriptinginterpreter",
+      "T1204_002",
+      "T1059_006"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -718,7 +873,7 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1070.004. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defenseevasion",
-      "T1070.004",
+      "T1070_004",
       "cipher.exe"
     ],
     "submitter": {
@@ -737,7 +892,7 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1566.002. BlueNoroff campaign targeting Web3 organizations using deepfake meetings and fake Zoom extensions.",
     "tags": [
       "initialaccess",
-      "T1566.002",
+      "T1566_002",
       "applescript",
       "bluenoroff"
     ],
@@ -757,7 +912,7 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1497.003. Using display state awareness to time malicious activities when users are away from their systems.",
     "tags": [
       "defenseevasion",
-      "T1497.003",
+      "T1497_003",
       "evasion",
       "macos"
     ],
@@ -797,7 +952,7 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1543.004. Creating LaunchDaemon persistence using legitimate service names with suspicious execution paths.",
     "tags": [
       "persistence",
-      "T1543.004",
+      "T1543_004",
       "launchdaemon",
       "macos"
     ],
@@ -839,7 +994,8 @@ const HUNTS_DATA = [
       "defense_evasion",
       "command_and_scripting_interpreter",
       "applescript",
-      "malware"
+      "malware",
+      "T1059_002"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -859,7 +1015,8 @@ const HUNTS_DATA = [
       "execution",
       "command_and_scripting_interpreter",
       "powershell",
-      "ransomware"
+      "ransomware",
+      "T1059_001"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -879,7 +1036,8 @@ const HUNTS_DATA = [
       "persistence",
       "lateral_movement",
       "ide_plugin",
-      "event_triggered_execution"
+      "event_triggered_execution",
+      "T1546_016"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -898,7 +1056,9 @@ const HUNTS_DATA = [
     "tags": [
       "initial_access",
       "hardware_additions",
-      "air_gap"
+      "air_gap",
+      "T1091",
+      "T1200"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -917,7 +1077,8 @@ const HUNTS_DATA = [
     "tags": [
       "defense_evasion",
       "proxy",
-      "chisel"
+      "chisel",
+      "T1090_001"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -937,7 +1098,8 @@ const HUNTS_DATA = [
       "defense_evasion",
       "obfuscated_files_or_information",
       "javascript",
-      "malvertising"
+      "malvertising",
+      "T1027"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -956,7 +1118,8 @@ const HUNTS_DATA = [
     "tags": [
       "collection",
       "archive_collected_data",
-      "powershell"
+      "powershell",
+      "T1560"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -975,7 +1138,8 @@ const HUNTS_DATA = [
     "tags": [
       "reconnaissance",
       "active_scanning",
-      "network_service_scanning"
+      "network_service_scanning",
+      "T1595_001"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -994,7 +1158,8 @@ const HUNTS_DATA = [
     "tags": [
       "initial_access",
       "password_spraying",
-      "rdp"
+      "rdp",
+      "T1110_003"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -1013,7 +1178,8 @@ const HUNTS_DATA = [
     "tags": [
       "privilege_escalation",
       "tinyshell",
-      "juniper"
+      "juniper",
+      "T1055"
     ],
     "submitter": {
       "name": "Jocko",
@@ -1032,7 +1198,8 @@ const HUNTS_DATA = [
     "tags": [
       "defense_evasion",
       "deobfuscate_files",
-      "earth_estries"
+      "earth_estries",
+      "T1140"
     ],
     "submitter": {
       "name": "Jocko",
@@ -1051,7 +1218,8 @@ const HUNTS_DATA = [
     "tags": [
       "defense_evasion",
       "registry_modification",
-      "persistence"
+      "persistence",
+      "T1112"
     ],
     "submitter": {
       "name": "Jocko",
@@ -1070,7 +1238,8 @@ const HUNTS_DATA = [
     "tags": [
       "execution",
       "powershell",
-      "rat"
+      "rat",
+      "T1059_001"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -1089,7 +1258,8 @@ const HUNTS_DATA = [
     "tags": [
       "execution",
       "mshta",
-      "living_off_the_land"
+      "living_off_the_land",
+      "T1218_005"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -1105,7 +1275,14 @@ const HUNTS_DATA = [
     "title": "Evildoers might be using reverse ssh for Command and Control.",
     "tactic": "Command and Control",
     "notes": "Look for processes with \"ssh -R\" and use JA4SSH for TLS/JA4+ fingerprinting.",
-    "tags": [],
+    "tags": [
+      "CommandAndControl",
+      "networktraffic",
+      "ssh",
+      "linux",
+      "windows",
+      "T1572"
+    ],
     "submitter": {
       "name": "DarkWizardCatcher",
       "link": ""
@@ -1123,7 +1300,8 @@ const HUNTS_DATA = [
     "tags": [
       "command_and_control",
       "ingress_tool_transfer",
-      "powershell"
+      "powershell",
+      "T1105"
     ],
     "submitter": {
       "name": "Sydney Marrone",
@@ -1143,7 +1321,10 @@ const HUNTS_DATA = [
       "DefenseEvasion",
       "Execution",
       "Masquerading",
-      "ProxyExecution"
+      "ProxyExecution",
+      "T1036",
+      "T1218",
+      "T1105"
     ],
     "submitter": {
       "name": "Joshua Hines",
@@ -1162,7 +1343,9 @@ const HUNTS_DATA = [
     "tags": [
       "DefenseEvasion",
       "Phishing",
-      "Collection"
+      "Collection",
+      "T1564_008",
+      "T1114"
     ],
     "submitter": {
       "name": "Bruce Breuer",
@@ -1182,7 +1365,8 @@ const HUNTS_DATA = [
       "CredentialAccess",
       "ActiveDirectory",
       "Identity",
-      "Secretsdump"
+      "Secretsdump",
+      "T1003_006"
     ],
     "submitter": {
       "name": "Bruce Breuer",
@@ -1553,24 +1737,180 @@ const HUNTS_DATA = [
   {
     "id": "H068",
     "category": "Flames",
-    "title": "An adversary is compromising software auto-update infrastructure to redirect legitimate update mechanisms into delivering malicious payloads targeting endpoints running widely deployed developer tools to gain initial access and establish persistence.",
-    "tactic": "Initial Access",
-    "notes": "Lotus Blossom (Chinese state-sponsored) compromised Notepad++ hosting infrastructure for ~6 months (June-Dec 2025), redirecting auto-updates to download malicious binaries. Targeted users in Southeast Asia and Central America. The application's updater (gup.exe) lacked authenticity verification.",
+    "title": "An adversary is bypassing Windows SmartScreen and MSHTML security warnings via crafted links targeting end users to deliver malware without triggering protective prompts",
+    "tactic": "Defense Evasion (T1218 / T1566.002)",
+    "notes": "CVE-2026-21510 (SmartScreen) and CVE-2026-21513 (MSHTML) — both actively exploited zero-days from Feb 2026 Patch Tuesday. CISA KEV deadline March 3. Attackers dismantle warning systems to make social engineering exponentially more effective.",
     "tags": [
-      "initial_access",
-      "T1195_002",
-      "supply_chain",
-      "auto_update",
-      "lotus_blossom",
-      "notepadplusplus"
+      "zerodday",
+      "smartscreen",
+      "mshtml",
+      "defense_evasion",
+      "cisa_kev"
     ],
     "submitter": {
-      "name": "samuel-lucas6",
-      "link": "https://github.com/samuel-lucas6"
+      "name": "Jinx (THOR Collective)",
+      "link": ""
     },
-    "why": "- Software auto-update mechanisms run with user trust and often elevated permissions, making them ideal delivery vehicles — users expect update processes to download and execute new binaries without intervention\n- Hunting for update processes (e.g., gup.exe, updater.exe) making network connections to unexpected domains, spawning unusual child processes, or writing executables to temp directories can reveal hijacked update channels\n- Applications that lack code signing verification or certificate pinning in their update process are vulnerable to redirection attacks when hosting infrastructure is compromised — the update client has no way to distinguish legitimate from malicious payloads\n- These attacks can be highly targeted (only serving malicious updates to specific IP ranges or regions) making them difficult to detect through broad threat intelligence alone — behavioral hunting on update process anomalies is more reliable",
-    "references": "- [MITRE ATT&CK T1195.002 - Supply Chain Compromise: Compromise Software Supply Chain](https://attack.mitre.org/techniques/T1195/002/)\n- [Notepad++ - Hijacked Incident Info Update](https://notepad-plus-plus.org/news/hijacked-incident-info-update/)\n- [Kaspersky/Securelist - Notepad++ Supply Chain Attack](https://securelist.com/notepad-supply-chain-attack/118708/)\n- [Rapid7 - Chrysalis Backdoor: Dive into Lotus Blossom's Toolkit](https://www.rapid7.com/blog/post/tr-chrysalis-backdoor-dive-into-lotus-blossoms-toolkit/)",
-    "file_path": "Flames/H-2026-001.md"
+    "why": "- Two actively exploited zero-days (CVE-2026-21510, CVE-2026-21513) bypass the primary user-facing security warnings in Windows, making phishing dramatically more effective\n- CISA added both to KEV catalog with March 3 patch deadline — signals broad exploitation in the wild\n- Represents a shift in attacker methodology: instead of technical RCE, adversaries are systematically removing security guardrails to amplify social engineering",
+    "references": "- [MITRE ATT&CK T1218 - System Binary Proxy Execution](https://attack.mitre.org/techniques/T1218/)\n- [MITRE ATT&CK T1566.002 - Phishing: Spearphishing Link](https://attack.mitre.org/techniques/T1566/002/)\n- [WinBuzzer - February 2026 Patch Tuesday: Microsoft Fixes 6 Active Zero-Days](https://winbuzzer.com/2026/02/11/patch-tuesday-microsoft-fixes-6-active-zero-days-xcxwbn/)\n- [MSRC CVE-2026-21510](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-21510)\n- [MSRC CVE-2026-21513](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-21513)",
+    "file_path": "Flames/H068.md"
+  },
+  {
+    "id": "H069",
+    "category": "Flames",
+    "title": "An adversary is abusing the native Windows utility finger.exe by copying and renaming it to a temporary directory to retrieve remote payloads over TCP port 79 targeting enterprise endpoints to establish command and control while evading application controls.",
+    "tactic": "Command and Control",
+    "notes": "Observed in CrashFix/KongTuke campaign (Jan 2026). finger.exe copied to %TEMP% and renamed to ct.exe to retrieve obfuscated PowerShell payloads. Selectively targets domain-joined machines. Finger protocol (TCP 79) is effectively dead in modern enterprises, making any activity highly anomalous.",
+    "tags": [
+      "command_and_control",
+      "T1105",
+      "T1036_003",
+      "T1218",
+      "finger_exe",
+      "lolbin",
+      "crashfix"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- finger.exe is a native Windows binary that ships with every Windows installation but has virtually no legitimate use in modern enterprise environments — any execution or network connection from this binary is highly anomalous and worth investigating\n- Copying and renaming finger.exe to a temp directory (e.g., ct.exe) evades application allowlists and detection rules that key on the original filename, while the renamed binary retains full functionality to retrieve remote content over TCP 79\n- Outbound TCP port 79 traffic is rarely monitored or included in firewall egress rules because the finger protocol is considered obsolete — attackers exploit this blind spot to retrieve payloads without triggering common network-based detections\n- Hunting for any combination of finger.exe file copies, renamed instances of the binary (by hash), or outbound TCP 79 connections in endpoint and network telemetry provides a high-fidelity, low-noise detection opportunity",
+    "references": "- [MITRE ATT&CK T1105 - Ingress Tool Transfer](https://attack.mitre.org/techniques/T1105/)\n- [MITRE ATT&CK T1036.003 - Masquerading: Rename System Utilities](https://attack.mitre.org/techniques/T1036/003/)\n- [Microsoft Security Blog - CrashFix: ClickFix Variant Deploying Python RAT (Feb 2026)](https://www.microsoft.com/en-us/security/blog/2026/02/05/clickfix-variant-crashfix-deploying-python-rat-trojan/)\n- [The Hacker News - CrashFix Chrome Extension Delivers ModeloRAT (Jan 2026)](https://thehackernews.com/2026/01/crashfix-chrome-extension-delivers.html)",
+    "file_path": "Flames/H069.md"
+  },
+  {
+    "id": "H070",
+    "category": "Flames",
+    "title": "An adversary is escalating privileges via Windows Remote Desktop Services targeting RDS-enabled servers to gain SYSTEM-level access in post-compromise scenarios",
+    "tactic": "Privilege Escalation (T1068)",
+    "notes": "CVE-2026-21533 — RDS EoP zero-day discovered by CrowdStrike, actively exploited. Local access required but no user interaction. CISA KEV deadline March 3.",
+    "tags": [
+      "zeroday",
+      "rds",
+      "privilege_escalation",
+      "cisa_kev",
+      "post_compromise"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- Actively exploited zero-day (CVE-2026-21533) in RDS — ideal for post-compromise privilege escalation on the many servers running Remote Desktop Services\n- No user interaction required once local access is obtained, making it a reliable chain link after initial access via phishing or other vectors\n- RDS is ubiquitous in enterprise environments for remote administration; broad attack surface across most Windows Server deployments",
+    "references": "- [MITRE ATT&CK T1068 - Exploitation for Privilege Escalation](https://attack.mitre.org/techniques/T1068/)\n- [Blackswan Cybersecurity - CVE-2026-21533 Advisory](https://blackswan-cybersecurity.com/threat-advisory-zero-day-windows-remote-desktop-services-elevation-of-privilege-cve-2026-21533-february-11-2026/)\n- [Qualys - February 2026 Patch Tuesday Review](https://blog.qualys.com/vulnerabilities-threat-research/2026/02/10/microsoft-patch-tuesday-february-2026-security-update-review)",
+    "file_path": "Flames/H070.md"
+  },
+  {
+    "id": "H071",
+    "category": "Flames",
+    "title": "An adversary is leveraging the ClickFix social engineering tactic via compromised WordPress sites targeting visitors to trick them into executing malicious commands",
+    "tactic": "Execution (T1204.002)",
+    "notes": "IClickFix framework identified by Sekoia — widespread WordPress campaign using fake browser/CAPTCHA prompts that instruct users to paste and run PowerShell commands. Uses TDS for targeting.",
+    "tags": [
+      "clickfix",
+      "wordpress",
+      "social_engineering",
+      "execution",
+      "powershell"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- ClickFix is a rapidly growing social engineering tactic where fake error/CAPTCHA prompts trick users into pasting attacker-supplied commands into Run dialogs or terminals\n- The IClickFix framework industrializes this via a Traffic Distribution System targeting WordPress sites at scale — WordPress powers ~40% of the web\n- Bypasses traditional email-based phishing defenses entirely; the malware delivery happens through legitimate-looking websites the user already trusts",
+    "references": "- [MITRE ATT&CK T1204.002 - User Execution: Malicious File](https://attack.mitre.org/techniques/T1204/002/)\n- [Sekoia - Meet IClickFix: WordPress-targeting framework using ClickFix](https://blog.sekoia.io/meet-iclickfix-a-widespread-wordpress-targeting-framework-using-the-clickfix-tactic/)\n- [Malware Patrol - Early February 2026 Threat Reports](https://www.malwarepatrol.net/early-february-2026-cyber-threat-reports/)",
+    "file_path": "Flames/H071.md"
+  },
+  {
+    "id": "H072",
+    "category": "Flames",
+    "title": "An adversary is weaponizing WinRAR archive extraction to write malware into the Windows Startup folder targeting users who open phishing attachments to achieve persistence and automatic execution",
+    "tactic": "Persistence (T1547.001)",
+    "notes": "CVE-2025-8088 — crafted archives extract payloads directly to Startup folder. Actively exploited for ransomware and credential theft. Patch available in WinRAR 7.13.",
+    "tags": [
+      "winrar",
+      "persistence",
+      "startup_folder",
+      "phishing",
+      "cve_2025_8088"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- Weaponized WinRAR archives silently write payloads into the Windows Startup folder during extraction, achieving persistence without any post-exploitation tooling\n- Actively exploited in the wild for both ransomware deployment and credential theft — two high-impact objectives from a single initial access vector\n- WinRAR has ~500M+ users globally; many run outdated versions, and the fix requires updating to 7.13 which requires manual action",
+    "references": "- [MITRE ATT&CK T1547.001 - Boot or Logon Autostart Execution: Registry Run Keys / Startup Folder](https://attack.mitre.org/techniques/T1547/001/)\n- [Check Point Research - 2nd February Threat Intelligence Report](https://research.checkpoint.com/2026/2nd-february-threat-intelligence-report/)\n- [Purple Ops - Daily Ransomware Report 2/2/2026](https://www.purple-ops.io/cybersecurity-threat-intelligence-blog/daily-ransomware-report-2-2-2026/)",
+    "file_path": "Flames/H072.md"
+  },
+  {
+    "id": "H073",
+    "category": "Flames",
+    "title": "An adversary is abusing legitimate cloud storage services as command-and-control channels delivering fileless payloads via weaponized Office documents targeting defense and diplomatic organizations to conduct espionage while evading network-based detection.",
+    "tactic": "Command and Control",
+    "notes": "Cloud storage C2 blends with legitimate traffic; fileless execution; compromised .gov sender accounts",
+    "tags": [
+      "command_and_control",
+      "T1102_002",
+      "T1203",
+      "T1055",
+      "cloud_c2",
+      "apt28",
+      "filen"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- Cloud storage C2 blends with legitimate traffic and bypasses proxy/firewall allowlists\n- Fileless + memory-only execution leaves zero disk artifacts\n- Spear-phishing from compromised .gov accounts bypasses sender reputation\n- Most orgs have zero visibility into which cloud storage services endpoints communicate with",
+    "references": "- [ATT&CK T1102.002](https://attack.mitre.org/techniques/T1102/002/)\n- Trellix research (Feb 2026)\n- CERT-UA UAC-0001",
+    "file_path": "Flames/H073.md"
+  },
+  {
+    "id": "H074",
+    "category": "Flames",
+    "title": "An adversary is creating temporary virtual network interfaces on ESXi-hosted virtual machines to pivot into internal networks and SaaS infrastructure targeting organizations with VMware environments to maintain covert lateral movement channels.",
+    "tactic": "Lateral Movement",
+    "notes": "UNC6201 ghost NIC technique; temporary vNICs removed after use; minimal forensic evidence",
+    "tags": [
+      "lateral_movement",
+      "defense_evasion",
+      "T1021",
+      "T1497",
+      "esxi",
+      "vmware",
+      "ghost_nic",
+      "unc6201"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- UNC6201 created temporary vNICs on existing VMs — removed after use leaving minimal forensic evidence\n- Most SOCs don't monitor ESXi host-level VM config changes\n- Data sources: ESXi hostd.log, vpxa.log, vCenter task events for VirtualDevice.add\n- TTP used since mid-2024 but only publicly reported Feb 2026",
+    "references": "- [ATT&CK T1021](https://attack.mitre.org/techniques/T1021/)\n- Mandiant/GTIG UNC6201 (Feb 2026)",
+    "file_path": "Flames/H074.md"
+  },
+  {
+    "id": "H075",
+    "category": "Flames",
+    "title": "An adversary is deploying iptables-based Single Packet Authorization on compromised Linux appliances to create port-knocking backdoors targeting network infrastructure to maintain persistent covert access invisible to standard port scanning.",
+    "tactic": "Persistence",
+    "notes": "UNC6201 iptables SPA technique; magic hex string on 443; hidden backdoor port for 5 minutes",
+    "tags": [
+      "persistence",
+      "defense_evasion",
+      "T1205_001",
+      "T1562_004",
+      "iptables",
+      "port_knocking",
+      "spa",
+      "unc6201"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- UNC6201 deployed iptables rules listening for magic hex string on 443, redirecting to hidden backdoor port for 5 minutes — standard scanners never see it\n- SPA/port-knocking rarely hunted in production\n- Look for iptables recent module or hex-string matches\n- Any appliance with these rules deserves immediate investigation",
+    "references": "- [ATT&CK T1205.001](https://attack.mitre.org/techniques/T1205/001/)\n- Mandiant/GTIG UNC6201 (Feb 2026)",
+    "file_path": "Flames/H075.md"
   },
   {
     "id": "M001",
@@ -1702,5 +2042,149 @@ const HUNTS_DATA = [
     "why": "- This is an important Model-Assisted methodology which can be applied to hunt for multiple types of threats.\n- This hunt is grounded in two examples which showcase clustering vectorized text fields, and application of similarity measures pre- and post-vectorization, like Levenshtein, hamming, and euclidean distance.",
     "references": "- https://www.splunk.com/en_us/blog/tips-and-tricks/text-vectorisation-clustering-and-similarity-analysis-with-splunk-exploring-user-agent-strings-at-scale.html\n- https://www.splunk.com/en_us/blog/security/add-to-chrome-part-4-threat-hunting-in-3-dimensions-m-ath-in-the-chrome-web-store.html\n- https://attack.mitre.org/techniques/T1203/\n- https://attack.mitre.org/techniques/T1071/001/\n- https://www.geeksforgeeks.org/vectorization-techniques-in-nlp/",
     "file_path": "Alchemy/M007.md"
+  },
+  {
+    "id": "M008",
+    "category": "Alchemy",
+    "title": "Cluster process parent-child execution chains across the endpoint fleet to establish baseline lineage frequency, then identify rare or never-seen process trees that deviate from the norm to detect living-off-the-land abuse, novel malware execution, and compromised applications.",
+    "tactic": "Execution",
+    "notes": "Build frequency counts of parent→child process pairs across the fleet over a baseline period. Pairs seen on less than 1% of endpoints or appearing for the first time are flagged for review. Effective across multiple ATT&CK tactics since most attack chains produce abnormal process trees regardless of the specific technique used.",
+    "tags": [
+      "execution",
+      "defense_evasion",
+      "model_assisted",
+      "process_lineage",
+      "clustering",
+      "anomaly_detection",
+      "T1059",
+      "T1218"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- Nearly every attack technique produces an abnormal process parent-child relationship — chrome.exe spawning finger.exe, winword.exe spawning powershell.exe, or svchost.exe spawning cmd.exe with encoded arguments all stand out when measured against fleet-wide frequency baselines\n- Frequency stacking across the fleet turns rarity into signal — a process pair seen on 3 out of 10,000 endpoints is worth investigating regardless of whether that specific combination appears in any detection rule\n- This approach catches novel techniques without prior signatures because it measures deviation from normal rather than matching known bad — new LOLBINs, renamed binaries, and zero-day exploitation all produce unusual lineages\n- Process creation data with parent process context is already collected by most EDR tools and Sysmon, making this immediately actionable without deploying additional telemetry",
+    "references": "- [MITRE ATT&CK T1059 - Command and Scripting Interpreter](https://attack.mitre.org/techniques/T1059/)\n- [MITRE ATT&CK T1218 - System Binary Proxy Execution](https://attack.mitre.org/techniques/T1218/)",
+    "file_path": "Alchemy/M008.md"
+  },
+  {
+    "id": "M009",
+    "category": "Alchemy",
+    "title": "Apply time-series anomaly detection to authentication event volumes per user and service account to identify credential abuse, brute-force campaigns, and compromised accounts producing abnormal login spikes or off-hours activity.",
+    "tactic": "Credential Access",
+    "notes": "Build per-user and per-service-account authentication baselines using rolling time-series models (e.g., STL decomposition, Prophet, or ARIMA). Flag deviations beyond 3 standard deviations from the seasonal norm — especially during non-business hours or from previously unseen source IPs. Service accounts are high-value targets since their authentication patterns are highly predictable, making anomalies extremely visible.",
+    "tags": [
+      "credential_access",
+      "T1110",
+      "T1078",
+      "time_series",
+      "anomaly_detection",
+      "authentication",
+      "brute_force",
+      "model_assisted"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- Credential-based attacks (password spraying, brute force, token replay) produce measurable spikes in authentication volume that blend into aggregate traffic but stand out at the per-user level when measured against temporal baselines\n- Time-series models capture daily, weekly, and seasonal patterns — a service account that authenticates 50 times per hour on weekdays but suddenly authenticates 500 times at 3 AM on a Saturday is trivially anomalous to a model but invisible to threshold-based rules\n- Authentication logs (Windows Security Event 4624/4625, Azure AD sign-in logs, Okta system logs) are universally available and high-fidelity, and time-series decomposition requires minimal compute compared to deep learning approaches",
+    "references": "- [MITRE ATT&CK T1110 - Brute Force](https://attack.mitre.org/techniques/T1110/)\n- [MITRE ATT&CK T1078 - Valid Accounts](https://attack.mitre.org/techniques/T1078/)\n- [Facebook Prophet for Anomaly Detection in Security Logs](https://engineering.fb.com/2017/02/06/core-infra/prophet-forecasting-at-scale/)\n- [Elastic ML Anomaly Detection for Authentication](https://www.elastic.co/guide/en/machine-learning/current/ootb-ml-jobs-siem.html)",
+    "file_path": "Alchemy/M009.md"
+  },
+  {
+    "id": "M010",
+    "category": "Alchemy",
+    "title": "Build a graph model of host-to-host authentication relationships and apply community detection and centrality analysis to identify anomalous lateral movement paths that deviate from established administrative and operational access patterns.",
+    "tactic": "Lateral Movement",
+    "notes": "Construct a directed graph where nodes are hosts and edges represent authentication events (RDP, SMB, WinRM, SSH). Apply community detection (Louvain, label propagation) to identify natural groupings — then flag cross-community edges that appear for the first time. Calculate betweenness centrality to identify hosts being used as pivot points. A workstation suddenly bridging the developer VLAN and the domain controller subnet is a high-fidelity lateral movement indicator.",
+    "tags": [
+      "lateral_movement",
+      "T1021",
+      "T1563",
+      "graph_analysis",
+      "community_detection",
+      "centrality",
+      "model_assisted"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- Lateral movement inherently creates new edges in the authentication graph — an attacker moving from a compromised workstation to a file server to a domain controller produces a path that likely never existed in the baseline graph\n- Graph-based community detection naturally segments the network into operational clusters (dev, finance, IT admin) without requiring manual asset classification — cross-community authentication is rare and high-signal by definition\n- Authentication and network flow logs from EDR, Windows Event Logs (4624 type 3/10), and firewall data provide the edges; tools like NetworkX, Neo4j, or Splunk's graph analytics commands make this operationally feasible at enterprise scale",
+    "references": "- [MITRE ATT&CK T1021 - Remote Services](https://attack.mitre.org/techniques/T1021/)\n- [MITRE ATT&CK T1563 - Remote Service Session Hijacking](https://attack.mitre.org/techniques/T1563/)\n- [Graphistry: Graph Analytics for Threat Hunting](https://www.graphistry.com/blog/graph-based-threat-hunting)\n- [SpecterOps BloodHound — Attack Path Analysis](https://bloodhound.readthedocs.io/)",
+    "file_path": "Alchemy/M010.md"
+  },
+  {
+    "id": "M011",
+    "category": "Alchemy",
+    "title": "Use Shannon entropy analysis combined with n-gram frequency scoring on DNS query strings to detect domain generation algorithm (DGA) activity, DNS tunneling, and algorithmically generated subdomains used for command and control or data exfiltration.",
+    "tactic": "Command and Control",
+    "notes": "Calculate character-level Shannon entropy and bigram/trigram frequency scores for each queried domain. Algorithmically generated domains exhibit high entropy and low natural-language n-gram frequency compared to legitimate domains. Combine both features with a simple threshold or lightweight classifier (logistic regression, random forest) to separate DGA from benign. Complements M006 (dictionary DGA via supervised classification) by targeting random-character DGAs and DNS tunneling payloads that dictionary-based classifiers may miss.",
+    "tags": [
+      "command_and_control",
+      "T1568.002",
+      "T1071.004",
+      "entropy",
+      "DGA",
+      "dns_tunneling",
+      "model_assisted",
+      "statistical"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- Random-character DGAs (used by families like Necurs, Conficker, and Ramnit) and DNS tunneling tools (iodine, dnscat2) produce domain strings with measurably higher entropy than legitimate domains — entropy alone catches a large percentage with minimal compute\n- Combining entropy with n-gram frequency scoring reduces false positives from legitimate high-entropy domains (CDN hashes, base64 tracking parameters) since those still contain natural language character distributions\n- DNS query logs are available from passive DNS sensors, recursive resolvers, and EDR agents; the statistical features can be computed in-line or batch with no GPU requirement, making this deployable even in resource-constrained environments",
+    "references": "- [MITRE ATT&CK T1568.002 - Dynamic Resolution: Domain Generation Algorithms](https://attack.mitre.org/techniques/T1568/002/)\n- [MITRE ATT&CK T1071.004 - Application Layer Protocol: DNS](https://attack.mitre.org/techniques/T1071/004/)\n- [Cisco Umbrella: Detecting DGAs with Entropy](https://umbrella.cisco.com/blog/detecting-dgas)\n- [SANS: Detecting DNS Tunneling](https://www.sans.org/white-papers/detecting-dns-tunneling/)",
+    "file_path": "Alchemy/M011.md"
+  },
+  {
+    "id": "M012",
+    "category": "Alchemy",
+    "title": "Apply text embedding similarity models to newly registered and recently observed domains to detect typosquatting, homoglyph attacks, and brand impersonation domains targeting the organization for credential harvesting or malware delivery.",
+    "tactic": "Resource Development",
+    "notes": "Generate character-level and word-level embeddings for the organization's legitimate domains and brand terms, then compute cosine similarity against newly registered domains (from Certificate Transparency logs, WHOIS feeds, or passive DNS). Domains exceeding a similarity threshold but not matching known-good assets are flagged as potential typosquats. Augment with visual similarity scoring (confusable Unicode characters, Levenshtein distance) to catch homoglyph and combosquatting variants.",
+    "tags": [
+      "resource_development",
+      "T1583.001",
+      "T1584.001",
+      "embedding",
+      "similarity",
+      "typosquatting",
+      "phishing",
+      "model_assisted"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- Typosquatting and brand impersonation domains are a primary vector for credential phishing, watering hole attacks, and supply chain compromise — catching them before employees interact with them is a high-impact proactive hunt\n- Embedding-based similarity captures semantic and visual resemblance that simple string matching misses — homoglyphs (rn vs m), character transpositions, and TLD variations all score high similarity in embedding space\n- Certificate Transparency logs, passive DNS feeds, and newly registered domain lists provide a continuous stream of candidates; lightweight embedding models (character CNNs, fastText) can score thousands of domains per second without heavy infrastructure",
+    "references": "- [MITRE ATT&CK T1583.001 - Acquire Infrastructure: Domains](https://attack.mitre.org/techniques/T1583/001/)\n- [MITRE ATT&CK T1584.001 - Compromise Infrastructure: Domains](https://attack.mitre.org/techniques/T1584/001/)\n- [dnstwist — Domain Name Permutation Engine](https://github.com/elceef/dnstwist)\n- [PhishCatcher: Detecting Phishing Domains via Certificate Transparency](https://github.com/x0rz/phishing_catcher)",
+    "file_path": "Alchemy/M012.md"
+  },
+  {
+    "id": "M013",
+    "category": "Alchemy",
+    "title": "Apply NLP classification and semantic analysis to email subjects, bodies, and metadata to detect business email compromise (BEC) attempts that evade keyword-based filters through social engineering language, urgency framing, and impersonation of executive communication patterns.",
+    "tactic": "Initial Access",
+    "notes": "Train or fine-tune a text classifier (BERT, DistilBERT, or TF-IDF + logistic regression) on labeled BEC/legitimate email corpora to score inbound emails for BEC indicators. Extract features including urgency markers, financial action requests, sender display-name vs. envelope-from mismatches, and stylometric deviation from the purported sender's historical writing patterns. Emails scoring above threshold are flagged for SOC review. This catches BEC variants that avoid traditional keywords by using natural conversational language.",
+    "tags": [
+      "initial_access",
+      "T1566.002",
+      "T1534",
+      "NLP",
+      "text_classification",
+      "BEC",
+      "phishing",
+      "social_engineering",
+      "model_assisted"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- BEC attacks caused over $2.9 billion in losses in 2023 (FBI IC3) and increasingly use conversational language without malicious links or attachments, making them invisible to traditional email security gateways\n- NLP models capture semantic meaning rather than keyword presence — phrases like \"can you handle a wire for me before end of day\" score high on urgency + financial action features even though no individual word is traditionally flagged\n- Email gateway logs, Exchange message trace data, and O365/Google Workspace audit logs provide the raw text and metadata; lightweight transformer models or even TF-IDF approaches can run retroactively against email corpora for hunting without requiring inline deployment",
+    "references": "- [MITRE ATT&CK T1566.002 - Phishing: Spearphishing Link](https://attack.mitre.org/techniques/T1566/002/)\n- [MITRE ATT&CK T1534 - Internal Spearphishing](https://attack.mitre.org/techniques/T1534/)\n- [FBI IC3 2023 Internet Crime Report — BEC Statistics](https://www.ic3.gov/AnnualReport/Reports/2023_IC3Report.pdf)\n- [Microsoft: Detecting BEC with Machine Learning](https://www.microsoft.com/en-us/security/blog/2023/06/08/detecting-and-mitigating-bec-attacks/)",
+    "file_path": "Alchemy/M013.md"
   }
 ];
