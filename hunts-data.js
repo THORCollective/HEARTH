@@ -1913,6 +1913,102 @@ const HUNTS_DATA = [
     "file_path": "Flames/H075.md"
   },
   {
+    "id": "H076",
+    "category": "Flames",
+    "title": "An adversary is claiming expired domains and deployment URLs of abandoned Microsoft Office add-ins to serve credential phishing pages inside Outlook targeting enterprise users who have stale add-ins installed to harvest Microsoft 365 credentials at scale.",
+    "tactic": "Initial Access",
+    "notes": "First malicious Outlook add-in in the wild; abandoned AgreeTo add-in reclaimed; 4000+ creds stolen; approve-once-trust-forever gap",
+    "tags": [
+      "initial_access",
+      "credential_access",
+      "T1195_002",
+      "T1056_002",
+      "T1114",
+      "outlook",
+      "office_addin",
+      "supply_chain",
+      "agreeToSteal"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- First documented malicious Outlook add-in in the wild — 4,000+ credentials stolen via abandoned \"AgreeTo\" add-in whose Vercel URL was reclaimed by attacker\n- Office add-ins load content live from developer URLs with NO re-review after initial approval — \"approve once, trust forever\" gap\n- Add-ins with ReadWriteItem permissions can silently read/modify ALL user emails — credential theft was the least damaging option\n- Same attack class as browser extension takeovers and npm package hijacking, but inside the M365 trust boundary",
+    "references": "- [ATT&CK T1195.002](https://attack.mitre.org/techniques/T1195/002/)\n- [ATT&CK T1056.002](https://attack.mitre.org/techniques/T1056/002/)\n- Koi Security — AgreeToSteal (Feb 2026)",
+    "file_path": "Flames/H076.md"
+  },
+  {
+    "id": "H077",
+    "category": "Flames",
+    "title": "An adversary is creating unauthorized virtual network interface cards on VMware ESXi hosts to establish covert network paths targeting virtualized infrastructure to pivot laterally while evading network-based detection.",
+    "tactic": "Lateral Movement",
+    "notes": "UNC6201 Ghost NICs bridge isolated segments; combined with iptables SPA for C2; vNIC changes often unmonitored",
+    "tags": [
+      "lateral_movement",
+      "defense_evasion",
+      "T1021",
+      "T1599",
+      "T1049",
+      "esxi",
+      "vmware",
+      "ghost_nic",
+      "unc6201"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- UNC6201 created Ghost NICs on ESXi hosts to bridge isolated network segments — traffic never touches monitored network paths\n- Combined with iptables-based Single Packet Authorization for C2 — connection only activates after a specific knock packet, invisible to passive monitoring\n- VMware infrastructure is a crown jewel but vNIC changes often lack audit logging or alerting\n- Huntable via ESXi host logs: unexpected esxcli network vswitch changes, new portgroups, or vNIC additions outside change windows",
+    "references": "- [ATT&CK T1021](https://attack.mitre.org/techniques/T1021/)\n- [ATT&CK T1599](https://attack.mitre.org/techniques/T1599/)\n- Google GTIG/Mandiant — UNC6201 (Feb 2026)",
+    "file_path": "Flames/H077.md"
+  },
+  {
+    "id": "H078",
+    "category": "Flames",
+    "title": "An adversary is operating Havoc C2 teamservers identifiable through a three-tier detection ladder: default `X-Havoc: true` HTTP header (older builds), self-signed certificates generated from a degraded copy of Sliver's cert generator (8 hardcoded organization name combinations), and a distinctive empty 404 response with a computable body hash.",
+    "tactic": "Command and Control",
+    "notes": "Havoc is \"partially hardened\" — X-Havoc header removed in newer builds but cert generation unchanged. The cert code was copied from Sliver but degraded: only 8 org name combos (vs Sliver's dictionary), uses `math/rand` (vs `crypto/rand`), and hardcodes `CN=0.0.0.0` with `postalCode` always present.",
+    "tags": [
+      "command_and_control",
+      "T1573_002",
+      "T1071_001",
+      "havoc",
+      "c2",
+      "certificate",
+      "external_hunting"
+    ],
+    "submitter": {
+      "name": "Jinx & Salem (THOR Collective)",
+      "link": ""
+    },
+    "why": "- Havoc is increasingly popular as a Cobalt Strike alternative — used by multiple threat actors\n- Havoc represents the \"partially hardened\" category: devs removed the most obvious fingerprint (X-Havoc header) but left cert generation untouched\n- Certificate code lineage traced to Sliver source — but degraded with only 8 hardcoded org combos, making it MORE detectable than Sliver's randomized approach\n- `CN=0.0.0.0` is distinctive — rarely seen in legitimate certificates\n- Header-stripped Havoc instances on bulletproof hosting still detectable via cert pattern + `/havoc/` endpoint + teamserver 301 redirect\n- Default teamserver port 40056 is another supplementary signal",
+    "references": "- [ATT&CK T1573.002 — Asymmetric Cryptography](https://attack.mitre.org/techniques/T1573/002/)\n- [ATT&CK T1071.001 — Web Protocols](https://attack.mitre.org/techniques/T1071/001/)\n- [Havoc source: teamserver/pkg/common/certs/https.go](https://github.com/HavocFramework/Havoc)\n- [Sliver source: server/certs/subject.go](https://github.com/BishopFox/sliver/blob/master/server/certs/subject.go) (origin of Havoc's cert code)\n- THOR Collective C2 infrastructure research (2026)",
+    "file_path": "Flames/H078.md"
+  },
+  {
+    "id": "H079",
+    "category": "Flames",
+    "title": "An adversary is reusing hosting infrastructure across multiple C2 frameworks, detectable by correlating IP ranges and hosting providers across framework-specific fingerprints — particularly shared bulletproof hosting providers that appear across SparkRAT, Havoc, and Sliver deployments.",
+    "tactic": "Command and Control",
+    "notes": "Cross-framework infrastructure overlap observed: the same bulletproof hosting providers appear across SparkRAT, Havoc, and Sliver deployments. Pivoting from one framework's confirmed C2 to same-provider IPs discovers related infrastructure across frameworks.",
+    "tags": [
+      "command_and_control",
+      "T1583_003",
+      "T1584_004",
+      "infrastructure",
+      "pivot",
+      "cross_framework",
+      "external_hunting"
+    ],
+    "submitter": {
+      "name": "Jinx & Salem (THOR Collective)",
+      "link": ""
+    },
+    "why": "- Threat actors often reuse hosting providers — bulletproof hosters serve a finite customer base\n- Shared hosting providers observed hosting SparkRAT C2s alongside other C2 frameworks on nearby subnets\n- Bulletproof providers (Stark Industries, FlokiNET, Cloudzy, etc.) appear across multiple C2 framework deployments\n- Cross-framework pivots find infrastructure that single-framework hunting misses\n- This hypothesis enables \"hunt once, find many\" — a single bulletproof hosting investigation surfaces multiple C2 families",
+    "references": "- [ATT&CK T1583.003 — Acquire Infrastructure: Virtual Private Server](https://attack.mitre.org/techniques/T1583/003/)\n- [ATT&CK T1584.004 — Compromise Infrastructure: Server](https://attack.mitre.org/techniques/T1584/004/)\n- THOR Collective C2 infrastructure research (2026)",
+    "file_path": "Flames/H079.md"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
