@@ -1965,24 +1965,28 @@ const HUNTS_DATA = [
   {
     "id": "H078",
     "category": "Flames",
-    "title": "An adversary is operating Havoc C2 teamservers identifiable through a three-tier detection ladder: default `X-Havoc: true` HTTP header (older builds), self-signed certificates generated from a degraded copy of Sliver's cert generator (8 hardcoded organization name combinations), and a distinctive empty 404 response with a computable body hash.",
-    "tactic": "Command and Control",
-    "notes": "Havoc is \"partially hardened\" — X-Havoc header removed in newer builds but cert generation unchanged. The cert code was copied from Sliver but degraded: only 8 org name combos (vs Sliver's dictionary), uses `math/rand` (vs `crypto/rand`), and hardcodes `CN=0.0.0.0` with `postalCode` always present.",
+    "title": "An adversary is exploiting Microsoft Office OLE objects to fetch payloads over WebDAV and establish an Outlook VBA backdoor targeting defense and logistics organizations to conduct long-term espionage via cloud-based command and control.",
+    "tactic": "Initial Access",
+    "notes": "APT28 CVE-2026-21509 zero-click OLE; NotDoor Outlook VBA backdoor; modified Covenant implant; filen.io C2; COM hijacking persistence",
     "tags": [
+      "initial_access",
+      "execution",
+      "persistence",
       "command_and_control",
-      "T1573_002",
-      "T1071_001",
-      "havoc",
-      "c2",
-      "certificate",
-      "external_hunting"
+      "T1566_001",
+      "T1059_005",
+      "T1546_015",
+      "T1102",
+      "apt28",
+      "notdoor",
+      "com_hijacking"
     ],
     "submitter": {
-      "name": "Jinx & Salem (THOR Collective)",
+      "name": "Jinx (THOR Collective)",
       "link": ""
     },
-    "why": "- Havoc is increasingly popular as a Cobalt Strike alternative — used by multiple threat actors\n- Havoc represents the \"partially hardened\" category: devs removed the most obvious fingerprint (X-Havoc header) but left cert generation untouched\n- Certificate code lineage traced to Sliver source — but degraded with only 8 hardcoded org combos, making it MORE detectable than Sliver's randomized approach\n- `CN=0.0.0.0` is distinctive — rarely seen in legitimate certificates\n- Header-stripped Havoc instances on bulletproof hosting still detectable via cert pattern + `/havoc/` endpoint + teamserver 301 redirect\n- Default teamserver port 40056 is another supplementary signal",
-    "references": "- [ATT&CK T1573.002 — Asymmetric Cryptography](https://attack.mitre.org/techniques/T1573/002/)\n- [ATT&CK T1071.001 — Web Protocols](https://attack.mitre.org/techniques/T1071/001/)\n- [Havoc source: teamserver/pkg/common/certs/https.go](https://github.com/HavocFramework/Havoc)\n- [Sliver source: server/certs/subject.go](https://github.com/BishopFox/sliver/blob/master/server/certs/subject.go) (origin of Havoc's cert code)\n- THOR Collective C2 infrastructure research (2026)",
+    "why": "- APT28 weaponized CVE-2026-21509 within 24h of disclosure — zero-click OLE execution via spearphishing from compromised gov email accounts\n- Outlook VBA backdoor (NotDoor) + modified Covenant implant = post-exploitation lives entirely in-memory with no disk artifacts\n- C2 traffic blends into legitimate cloud storage (filen.io) — most network monitors won't flag it\n- COM hijacking for persistence is rarely baselined — detection gap in most EDR deployments",
+    "references": "- [ATT&CK T1566.001](https://attack.mitre.org/techniques/T1566/001/)\n- [ATT&CK T1546.015](https://attack.mitre.org/techniques/T1546/015/)\n- [ATT&CK T1102](https://attack.mitre.org/techniques/T1102/)\n- Trellix — APT28 CVE-2026-21509 campaign (Feb 2026)",
     "file_path": "Flames/H078.md"
   },
   {
