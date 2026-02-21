@@ -1992,25 +1992,52 @@ const HUNTS_DATA = [
   {
     "id": "H079",
     "category": "Flames",
-    "title": "An adversary is reusing hosting infrastructure across multiple C2 frameworks, detectable by correlating IP ranges and hosting providers across framework-specific fingerprints — particularly shared bulletproof hosting providers that appear across SparkRAT, Havoc, and Sliver deployments.",
-    "tactic": "Command and Control",
-    "notes": "Cross-framework infrastructure overlap observed: the same bulletproof hosting providers appear across SparkRAT, Havoc, and Sliver deployments. Pivoting from one framework's confirmed C2 to same-provider IPs discovers related infrastructure across frameworks.",
+    "title": "An adversary is abusing Group Policy Objects for lateral deployment and using bring-your-own-vulnerable-driver techniques to terminate security tools targeting enterprise Active Directory environments to disable defenses before executing ransomware with hybrid encryption.",
+    "tactic": "Lateral Movement",
+    "notes": "CrazyHunter ransomware; GPO abuse looks like legit admin activity; BYOVD to kill EDR; weak AD creds as entry",
     "tags": [
-      "command_and_control",
-      "T1583_003",
-      "T1584_004",
-      "infrastructure",
-      "pivot",
-      "cross_framework",
-      "external_hunting"
+      "lateral_movement",
+      "defense_evasion",
+      "T1484_001",
+      "T1562_001",
+      "T1106",
+      "byovd",
+      "gpo",
+      "ransomware",
+      "crazyhunter"
     ],
     "submitter": {
-      "name": "Jinx & Salem (THOR Collective)",
+      "name": "Jinx (THOR Collective)",
       "link": ""
     },
-    "why": "- Threat actors often reuse hosting providers — bulletproof hosters serve a finite customer base\n- Shared hosting providers observed hosting SparkRAT C2s alongside other C2 frameworks on nearby subnets\n- Bulletproof providers (Stark Industries, FlokiNET, Cloudzy, etc.) appear across multiple C2 framework deployments\n- Cross-framework pivots find infrastructure that single-framework hunting misses\n- This hypothesis enables \"hunt once, find many\" — a single bulletproof hosting investigation surfaces multiple C2 families",
-    "references": "- [ATT&CK T1583.003 — Acquire Infrastructure: Virtual Private Server](https://attack.mitre.org/techniques/T1583/003/)\n- [ATT&CK T1584.004 — Compromise Infrastructure: Server](https://attack.mitre.org/techniques/T1584/004/)\n- THOR Collective C2 infrastructure research (2026)",
+    "why": "- BYOVD is increasingly common but many orgs lack vulnerable driver blocklists or kernel-level monitoring\n- GPO abuse for ransomware distribution bypasses endpoint-focused detections — it looks like legitimate admin activity\n- Multi-stage execution (disable defenses → in-memory payload) leaves minimal disk artifacts\n- Weak AD credentials as initial access vector — huntable via authentication log baselines",
+    "references": "- [ATT&CK T1484.001](https://attack.mitre.org/techniques/T1484/001/)\n- [ATT&CK T1562.001](https://attack.mitre.org/techniques/T1562/001/)\n- Trellix — CrazyHunter ransomware (Feb 2026)",
     "file_path": "Flames/H079.md"
+  },
+  {
+    "id": "H080",
+    "category": "Flames",
+    "title": "An adversary is using fake human-verification prompts to trick users into executing clipboard-injected commands targeting hospitality sector organizations to deploy remote access trojans for credential theft and data exfiltration.",
+    "tactic": "Initial Access",
+    "notes": "ClickFix technique; fake CAPTCHA prompts; clipboard command injection; bypasses email security; user-initiated execution",
+    "tags": [
+      "initial_access",
+      "execution",
+      "command_and_control",
+      "T1566_002",
+      "T1204_002",
+      "T1219",
+      "clickfix",
+      "social_engineering",
+      "rat"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- ClickFix is evolving rapidly — sector-specific lures increase success rates beyond generic phishing\n- The \"run this command to verify\" pattern bypasses email security entirely since the user initiates execution\n- Clipboard-based command injection is hard to detect without endpoint telemetry on clipboard + shell activity\n- Hospitality sector often has weaker security maturity — could expand to other verticals",
+    "references": "- [ATT&CK T1566.002](https://attack.mitre.org/techniques/T1566/002/)\n- [ATT&CK T1204.002](https://attack.mitre.org/techniques/T1204/002/)\n- SecurityWeek — ClickFix hospitality campaign (Feb 2026)",
+    "file_path": "Flames/H080.md"
   },
   {
     "id": "M001",
