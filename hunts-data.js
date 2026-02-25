@@ -2040,6 +2040,32 @@ const HUNTS_DATA = [
     "file_path": "Flames/H080.md"
   },
   {
+    "id": "H081",
+    "category": "Flames",
+    "title": "An adversary is publishing typosquatted npm packages with MCP server injection targeting developer environments using AI coding assistants to harvest SSH keys, cloud credentials, and LLM API keys via prompt injection.",
+    "tactic": "Initial Access",
+    "notes": "SANDWORM_MODE campaign; typosquatted npm packages; MCP server injection; worm propagates via stolen npm/GitHub tokens; 48h delayed second stage",
+    "tags": [
+      "initial_access",
+      "credential_access",
+      "collection",
+      "T1195_002",
+      "T1555",
+      "T1119",
+      "npm",
+      "supply_chain",
+      "mcp",
+      "ai_coding_assistant"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- MCP server injection is a novel attack vector — most security teams have zero visibility into AI tool configurations\n- Worm propagates using stolen npm/GitHub tokens, meaning one compromised dev can seed packages across an org\n- 48-hour delayed second stage with per-machine jitter evades sandbox analysis and incident response timelines\n- Targets 9 LLM provider API keys — compromised keys enable downstream abuse at scale",
+    "references": "- [ATT&CK T1195.002](https://attack.mitre.org/techniques/T1195/002/)\n- [ATT&CK T1555](https://attack.mitre.org/techniques/T1555/)\n- Socket — SANDWORM_MODE campaign (Feb 2026)",
+    "file_path": "Flames/H081.md"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
