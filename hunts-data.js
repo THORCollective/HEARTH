@@ -2066,6 +2066,30 @@ const HUNTS_DATA = [
     "file_path": "Flames/H081.md"
   },
   {
+    "id": "H082",
+    "category": "Flames",
+    "title": "An adversary is poisoning AI coding tool project configurations such as hooks, MCP servers, and environment variables in shared repositories targeting developer workstations to achieve remote code execution and API credential theft.",
+    "tactic": "Initial Access",
+    "notes": "CVE-2025-59536 / CVE-2026-21852; malicious .claude/settings.json and .mcp.json execute shell on clone; AI dev tools poorly monitored",
+    "tags": [
+      "initial_access",
+      "execution",
+      "T1195_001",
+      "T1059_004",
+      "supply_chain",
+      "mcp",
+      "ai_coding_tools",
+      "claude_code"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- Check Point disclosed CVE-2025-59536 / CVE-2026-21852 — malicious `.claude/settings.json` and `.mcp.json` files execute shell commands on clone with minimal user warning\n- AI coding tools are rapidly adopted in enterprise dev workflows — growing, poorly-monitored attack surface\n- Traditional EDR focuses on binary execution, not config-triggered shell commands from trusted dev tools\n- Data sources: Git clone/pull logs, process creation from AI tool parent processes, `.claude/` and `.mcp.json` file creation events",
+    "references": "- [ATT&CK T1195.001](https://attack.mitre.org/techniques/T1195/001/)\n- [ATT&CK T1059.004](https://attack.mitre.org/techniques/T1059/004/)\n- Check Point Research — CVE-2025-59536 / CVE-2026-21852 (Feb 2026)",
+    "file_path": "Flames/H082.md"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
