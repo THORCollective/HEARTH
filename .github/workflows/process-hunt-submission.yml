@@ -6,7 +6,11 @@ on:
 
 jobs:
   create_hunt_draft:
-    if: github.event.label.name == 'submission'
+    if: >-
+      github.event.label.name == 'submission' && (
+      github.event.issue.author_association == 'OWNER' ||
+      github.event.issue.author_association == 'MEMBER' ||
+      github.event.issue.author_association == 'COLLABORATOR')
     runs-on: ubuntu-latest
     permissions:
       contents: write

@@ -6,6 +6,10 @@ on:
 
 jobs:
   process-cti:
+    if: >-
+      github.event.issue.author_association == 'OWNER' ||
+      github.event.issue.author_association == 'MEMBER' ||
+      github.event.issue.author_association == 'COLLABORATOR'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
