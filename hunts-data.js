@@ -2090,6 +2090,56 @@ const HUNTS_DATA = [
     "file_path": "Flames/H082.md"
   },
   {
+    "id": "H083",
+    "category": "Flames",
+    "title": "An adversary is exploiting MSHTML framework flaws in crafted Windows Shortcut files with embedded HTML to bypass Mark-of-the-Web and browser security boundaries targeting Windows enterprise endpoints to achieve arbitrary code execution outside the browser sandbox.",
+    "tactic": "Initial Access",
+    "notes": "APT28 zero-day CVE-2026-21513; LNK with embedded HTML; bypasses MotW and IE Enhanced Security; ieframe.dll code path exploitable beyond LNK",
+    "tags": [
+      "initial_access",
+      "defense_evasion",
+      "T1566_001",
+      "T1553_005",
+      "mshtml",
+      "motw_bypass",
+      "lnk",
+      "apt28"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- CVE-2026-21513 was exploited as a zero-day by APT28 before the Feb 2026 patch — orgs slow to patch are exposed now\n- The technique bypasses MotW and IE Enhanced Security Configuration, defeating a core Windows trust boundary that many detection stacks rely on\n- The vulnerable code path in ieframe.dll can be triggered by ANY component embedding MSHTML, not just LNK files — delivery vectors beyond phishing should be expected\n- Observable artifacts: LNK files with abnormally large payloads, nested iframe DOM manipulation, ShellExecuteExW calls from MSHTML contexts",
+    "references": "- [ATT&CK T1566.001](https://attack.mitre.org/techniques/T1566/001/)\n- [ATT&CK T1553.005](https://attack.mitre.org/techniques/T1553/005/)\n- Akamai — CVE-2026-21513 MSHTML exploit analysis (Feb 2026)",
+    "file_path": "Flames/H083.md"
+  },
+  {
+    "id": "H084",
+    "category": "Flames",
+    "title": "An adversary is deploying a malicious Ruby interpreter disguised as a legitimate USB utility on removable media targeting air-gapped networks in critical infrastructure and research sectors to establish a bidirectional covert C2 relay that bridges isolated network segments for data exfiltration and command delivery.",
+    "tactic": "Initial Access",
+    "notes": "APT37 RubyJumper; Ruby 3.3.0 disguised as usbspeed.exe; RubyGems operating_system.rb hijack; THUMBSBD hidden dirs on USB; FOOTWINE full surveillance suite",
+    "tags": [
+      "initial_access",
+      "command_and_control",
+      "defense_evasion",
+      "T1091",
+      "T1092",
+      "T1036_005",
+      "usb",
+      "air_gap",
+      "apt37",
+      "rubyjumper"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- Air-gapped networks are high-value targets and defenders often assume physical isolation equals safety — this toolkit shatters that assumption\n- The attack chain disguises the Ruby 3.3.0 runtime as usbspeed.exe and hijacks RubyGems operating_system.rb auto-load mechanism — a novel persistence trick unlikely to be in current detection rules\n- THUMBSBD creates hidden directories on USB drives and turns them into bidirectional C2 relays — look for hidden dirs, scheduled tasks named rubyupdatecheck, and unexpected Ruby interpreters on endpoints\n- Includes FOOTWINE spyware with keylogging, screen/audio/video capture, and remote shell — full surveillance suite once inside the gap",
+    "references": "- [ATT&CK T1091](https://attack.mitre.org/techniques/T1091/)\n- [ATT&CK T1092](https://attack.mitre.org/techniques/T1092/)\n- [ATT&CK T1036.005](https://attack.mitre.org/techniques/T1036/005/)\n- Zscaler ThreatLabz — APT37 RubyJumper (Mar 2026)",
+    "file_path": "Flames/H084.md"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
