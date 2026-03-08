@@ -2140,6 +2140,76 @@ const HUNTS_DATA = [
     "file_path": "Flames/H084.md"
   },
   {
+    "id": "H085",
+    "category": "Flames",
+    "title": "An adversary is using Google Drive API calls as command-and-control communication targeting government and critical sector organizations to exfiltrate data and maintain persistent remote access while evading network-based detection.",
+    "tactic": "Command and Control",
+    "notes": "Silver Dragon/APT41 GearDoor backdoor; Google Drive API for C2; file-based tasking via extensions; blends with legitimate Workspace traffic",
+    "tags": [
+      "command_and_control",
+      "T1102_002",
+      "google_drive",
+      "cloud_c2",
+      "apt41",
+      "silver_dragon"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- Silver Dragon (APT41 umbrella) actively uses a custom backdoor (GearDoor) that authenticates to attacker-controlled Google Drive accounts, uploads heartbeat files, and receives tasking via file extensions — all over legitimate Google APIs\n- Google Drive traffic blends with normal business activity, making it nearly invisible to traditional network monitoring and domain-based blocklists\n- The C2 protocol is fully file-based — commands arrive as uploaded files, results return as .db/.bak files — meaning no anomalous HTTP patterns to trigger IDS signatures\n- Organizations with Google Workspace have high volumes of legitimate Drive API traffic, creating perfect cover for this technique",
+    "references": "- [ATT&CK T1102.002](https://attack.mitre.org/techniques/T1102/002/)\n- Check Point Research — Silver Dragon / APT41 (Mar 2026)",
+    "file_path": "Flames/H085.md"
+  },
+  {
+    "id": "H086",
+    "category": "Flames",
+    "title": "An adversary is compromising software update infrastructure to deliver malicious DLLs sideloaded by legitimate signed executables targeting organizations in government finance and IT sectors to establish persistent backdoor access.",
+    "tactic": "Defense Evasion",
+    "notes": "Notepad++ supply chain Jun-Dec 2025; three infection chains; Chrysalis backdoor masquerades as DeepSeek API; DLL sideloading via signed ProShow/GameHook/BluetoothService",
+    "tags": [
+      "defense_evasion",
+      "initial_access",
+      "T1574_002",
+      "T1195_002",
+      "dll_sideloading",
+      "supply_chain",
+      "notepadpp",
+      "chrysalis"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- The Notepad++ supply chain compromise (Jun-Dec 2025) used three distinct infection chains all culminating in DLL sideloading — legitimate executables loading malicious DLLs that decrypt and inject Cobalt Strike or the Chrysalis backdoor\n- Chrysalis masquerades its C2 traffic as DeepSeek API calls — hunting for unusual API-path patterns from non-browser processes is a detection gap most SOCs have not closed\n- Sideloading abuses trust in signed binaries — the malicious DLL runs under the context of a legitimate signed process, bypassing application whitelisting and EDR behavioral rules\n- Three sectors confirmed targeted (government, finance, IT) across four countries — ran undetected for approximately 6 months",
+    "references": "- [ATT&CK T1574.002](https://attack.mitre.org/techniques/T1574/002/)\n- [ATT&CK T1195.002](https://attack.mitre.org/techniques/T1195/002/)\n- Picus Security — Notepad++ Supply Chain Attack and Chrysalis Backdoor (2026)",
+    "file_path": "Flames/H086.md"
+  },
+  {
+    "id": "H087",
+    "category": "Flames",
+    "title": "An adversary is injecting malicious preinstall scripts into npm packages using stolen developer tokens targeting software development organizations to harvest credentials across cloud platforms and propagate through the software supply chain.",
+    "tactic": "Initial Access",
+    "notes": "Shai-Hulud v2 worm; steals npm tokens and republishes poisoned packages; harvests GitHub/AWS/GCP/Azure creds; Trufflehog against home dirs; dead man switch for destruction",
+    "tags": [
+      "initial_access",
+      "credential_access",
+      "T1195_001",
+      "T1552_001",
+      "npm",
+      "supply_chain",
+      "worm",
+      "shai_hulud"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- Shai-Hulud v2 is an active worm — once it compromises a developer it steals npm tokens, downloads all their packages, injects a malicious preinstall hook, bumps the version, and republishes automatically creating exponential spread\n- The malware harvests GitHub tokens, AWS/GCP/Azure creds, and runs Trufflehog against the developer home directory — a single infected install can compromise an entire organization cloud infrastructure\n- Exfiltrated credentials are stored in public GitHub repos making takedown difficult while compromised systems share tokens in a botnet-like mesh\n- Contains a destructive dead man switch — if C2 channels are severed it triggers data destruction raising the stakes for incident response",
+    "references": "- [ATT&CK T1195.001](https://attack.mitre.org/techniques/T1195/001/)\n- [ATT&CK T1552.001](https://attack.mitre.org/techniques/T1552/001/)\n- GitLab Vulnerability Research — Shai-Hulud npm supply chain attack (2026)",
+    "file_path": "Flames/H087.md"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
