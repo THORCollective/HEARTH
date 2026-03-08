@@ -1,22 +1,35 @@
+#!/usr/bin/env python3
+"""Generate the HEARTH Contributors Leaderboard (standalone, no external deps)."""
+
 from pathlib import Path
 import re
 from collections import Counter
-from hunt_parser_utils import (
-    find_hunt_files,
-    extract_submitter_info
-)
 
 
-def extract_contributor_name(cell_content):
-    """Extracts the contributor's name from a markdown link or plain text."""
-    submitter_info = extract_submitter_info(cell_content)
-    return submitter_info['name'] if submitter_info['name'] else cell_content.strip()
+HUNT_DIRS = ["Flames", "Embers", "Alchemy"]
 
-# Using shared utility function - no need to redefine
+
+def find_hunt_files():
+    """Find all hunt markdown files across hunt directories."""
+    files = []
+    for d in HUNT_DIRS:
+        p = Path(d)
+        if p.is_dir():
+            files.extend(sorted(p.glob("*.md")))
+    return files
+
+
+def extract_submitter(cell):
+    """Extract contributor name from a markdown link or plain text."""
+    # [Name](url) pattern
+    m = re.match(r'\[([^\]]+)\]', cell)
+    if m:
+        return m.group(1).strip()
+    return cell.strip()
 
 
 def generate_leaderboard():
-    """Scans all hunts, counts contributions, and generates a new Contributors.md file."""
+    """Scans all hunts, counts contributions, and generates Contributors.md."""
     all_hunts = find_hunt_files()
     contributors = []
 
@@ -26,32 +39,25 @@ def generate_leaderboard():
             lines = content.splitlines()
 
             # Find the table header line that contains "Submitter"
-            header_line = None
             header_line_index = -1
+            submitter_index = -1
 
             for i, line in enumerate(lines):
                 if '|' in line and 'Submitter' in line:
-                    header_line = line
-                    header_line_index = i
-                    break
+                    columns = [c.strip() for c in line.split('|') if c.strip()]
+                    for ci, col in enumerate(columns):
+                        clean_col = re.sub(r'\*\*|\*', '', col).strip()
+                        if "Submitter" in clean_col:
+                            submitter_index = ci
+                            break
+                    if submitter_index >= 0:
+                        header_line_index = i
+                        break
 
-            if not header_line:
+            if header_line_index < 0 or submitter_index < 0:
                 continue
 
-            # Parse the header to find the submitter column index
-            columns = [c.strip() for c in header_line.split('|') if c.strip()]
-            submitter_index = -1
-            for i, col in enumerate(columns):
-                # Remove markdown formatting and check for "Submitter"
-                clean_col = re.sub(r'\*\*|\*', '', col).strip()
-                if "Submitter" in clean_col:
-                    submitter_index = i
-                    break
-
-            if submitter_index == -1:
-                continue
-
-            # Find the data row (skip the separator line)
+            # Data row is 2 lines after header (skip separator)
             data_row_index = header_line_index + 2
             if data_row_index >= len(lines):
                 continue
@@ -64,39 +70,33 @@ def generate_leaderboard():
             if submitter_index >= len(data_cells):
                 continue
 
-            submitter_cell = data_cells[submitter_index]
-
-            contributor_name = extract_contributor_name(submitter_cell)
-            if contributor_name and contributor_name != "hearth-auto-intel":
-                contributors.append(contributor_name)
+            name = extract_submitter(data_cells[submitter_index])
+            if name and name != "hearth-auto-intel":
+                contributors.append(name)
         except Exception as e:
-            print(f"Could not process file {hunt_file}: {e}")
+            print(f"Could not process {hunt_file}: {e}")
 
-    contribution_counts = Counter(contributors)
-    sorted_contributors = sorted(contribution_counts.items(), key=lambda contributor_data: contributor_data[1], reverse=True)
+    counts = Counter(contributors)
+    sorted_contribs = sorted(counts.items(), key=lambda x: x[1], reverse=True)
 
-    markdown_content = build_leaderboard_markdown(sorted_contributors)
-    save_leaderboard_file(markdown_content)
-    print("✅ Successfully generated new Contributors.md")
+    # Build markdown
+    lines = [
+        "# 🔥 HEARTH Contributors Leaderboard 🔥\n",
+        "",
+        "Everyone listed below has submitted ideas that have been added to HEARTH. "
+        "This list is automatically generated and updated monthly. "
+        "Thank you for stoking the fire that warms our community!\n",
+        "",
+        "| Rank | Contributor | Hunts Submitted |",
+        "|------|-------------|-----------------|",
+    ]
+    for rank, (name, count) in enumerate(sorted_contribs, 1):
+        lines.append(f"| {rank} | {name} | {count} |")
 
-
-def build_leaderboard_markdown(sorted_contributors):
-    """Build the markdown content for the leaderboard."""
-    header = "# 🔥 HEARTH Contributors Leaderboard 🔥\n\n"
-    description = "Everyone listed below has submitted ideas that have been added to HEARTH. This list is automatically generated and updated monthly. Thank you for stoking the fire that warms our community!\n\n"
-    table_header = "| Rank | Contributor | Hunts Submitted |\n|------|-------------|-----------------|\n"
-
-    table_rows = ""
-    for rank, (contributor_name, hunt_count) in enumerate(sorted_contributors, 1):
-        table_rows += f"| {rank} | {contributor_name} | {hunt_count} |\n"
-
-    return header + description + table_header + table_rows
-
-
-def save_leaderboard_file(markdown_content):
-    """Save the leaderboard content to file."""
-    leaderboard_file_path = Path("Keepers/Contributors.md")
-    leaderboard_file_path.write_text(markdown_content)
+    out = Path("Keepers/Contributors.md")
+    out.parent.mkdir(exist_ok=True)
+    out.write_text("\n".join(lines) + "\n")
+    print(f"✅ Generated Contributors.md ({len(sorted_contribs)} contributors)")
 
 
 if __name__ == "__main__":
