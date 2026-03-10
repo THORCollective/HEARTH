@@ -2210,6 +2210,32 @@ const HUNTS_DATA = [
     "file_path": "Flames/H087.md"
   },
   {
+    "id": "H088",
+    "category": "Flames",
+    "title": "An adversary is using ClickFix social engineering via the Windows Terminal application targeting enterprise endpoints to deploy commodity loaders and backdoors for ransomware pre-positioning.",
+    "tactic": "Initial Access",
+    "notes": "Velvet Tempest/DEV-0504 ransomware affiliate; shift from Run dialog to Windows Terminal; finger.exe for payload retrieval; csc.exe runtime .NET compilation; Python persistence in ProgramData",
+    "tags": [
+      "initial_access",
+      "execution",
+      "defense_evasion",
+      "T1204_002",
+      "T1059_001",
+      "T1027_004",
+      "clickfix",
+      "windows_terminal",
+      "ransomware",
+      "velvet_tempest"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- Velvet Tempest (DEV-0504) — a prolific ransomware affiliate tied to Ryuk, Conti, BlackCat, LockBit — is actively using this chain as of Feb 2026\n- The shift from Windows Run dialog to Windows Terminal bypasses traditional ClickFix detections that monitor cmd.exe spawned from explorer.exe via Run\n- The attack chain uses finger.exe for payload retrieval and csc.exe for runtime .NET compilation in temp directories — both are LOLBins with low baseline noise\n- Python-based persistence components in C:\\ProgramData provide a secondary detection surface most EDR alert logic does not cover",
+    "references": "- [ATT&CK T1204.002](https://attack.mitre.org/techniques/T1204/002/)\n- [ATT&CK T1059.001](https://attack.mitre.org/techniques/T1059/001/)\n- [ATT&CK T1027.004](https://attack.mitre.org/techniques/T1027/004/)\n- BleepingComputer — Velvet Tempest ClickFix campaign (Mar 2026)",
+    "file_path": "Flames/H088.md"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
@@ -2483,5 +2509,31 @@ const HUNTS_DATA = [
     "why": "- BEC attacks caused over $2.9 billion in losses in 2023 (FBI IC3) and increasingly use conversational language without malicious links or attachments, making them invisible to traditional email security gateways\n- NLP models capture semantic meaning rather than keyword presence — phrases like \"can you handle a wire for me before end of day\" score high on urgency + financial action features even though no individual word is traditionally flagged\n- Email gateway logs, Exchange message trace data, and O365/Google Workspace audit logs provide the raw text and metadata; lightweight transformer models or even TF-IDF approaches can run retroactively against email corpora for hunting without requiring inline deployment",
     "references": "- [MITRE ATT&CK T1566.002 - Phishing: Spearphishing Link](https://attack.mitre.org/techniques/T1566/002/)\n- [MITRE ATT&CK T1534 - Internal Spearphishing](https://attack.mitre.org/techniques/T1534/)\n- [FBI IC3 2023 Internet Crime Report — BEC Statistics](https://www.ic3.gov/AnnualReport/Reports/2023_IC3Report.pdf)\n- [Microsoft: Detecting BEC with Machine Learning](https://www.microsoft.com/en-us/security/blog/2023/06/08/detecting-and-mitigating-bec-attacks/)",
     "file_path": "Alchemy/M013.md"
+  },
+  {
+    "id": "M014",
+    "category": "Alchemy",
+    "title": "An adversary is deploying malicious npm packages with embedded MCPInject modules targeting developer environments to compromise AI coding assistants and exfiltrate LLM API keys, secrets, and cryptocurrency wallet data.",
+    "tactic": "Initial Access",
+    "notes": "SANDWORM_MODE campaign; 19 malicious npm packages; MCPInject targets MCP servers; self-propagating worm; AI coding tools as pivot points",
+    "tags": [
+      "initial_access",
+      "collection",
+      "credential_access",
+      "T1195_002",
+      "T1119",
+      "T1555",
+      "npm",
+      "mcp",
+      "supply_chain",
+      "ai_coding_assistant"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- The SANDWORM_MODE campaign deployed 19 malicious npm packages operating as a self-propagating worm through developer environments\n- The MCPInject module specifically targets Model Context Protocol servers — a brand new attack surface with almost zero defensive coverage\n- AI coding assistants often run with elevated filesystem and API access making them high-value pivot points for credential theft\n- Most organizations have zero visibility into what MCP servers their developers have connected to their AI tools",
+    "references": "- [ATT&CK T1195.002](https://attack.mitre.org/techniques/T1195/002/)\n- [ATT&CK T1119](https://attack.mitre.org/techniques/T1119/)\n- [ATT&CK T1555](https://attack.mitre.org/techniques/T1555/)\n- SISA Weekly Threat Watch — SANDWORM_MODE campaign (Mar 2026)",
+    "file_path": "Alchemy/M014.md"
   }
 ];

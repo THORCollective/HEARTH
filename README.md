@@ -1,3 +1,6 @@
+---
+tags: [project]
+---
 <p align="center">
   <img src="https://github.com/THORCollective/HEARTH/blob/main/Assets/HEARTH-logo.png?raw=true" alt="HEARTH Logo" width="200"/>
   <h1 align="center">🔥 HEARTH: Hunting Exchange and Research Threat Hub 🔥</h1>
