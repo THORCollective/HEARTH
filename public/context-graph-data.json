@@ -1,8 +1,8 @@
 {
   "generated_at": "2026-03-10T14:20:37.677Z",
   "stats": {
-    "totalNodes": 480,
-    "totalEdges": 3714,
+    "totalNodes": 503,
+    "totalEdges": 3751,
     "hypotheses": 121,
     "techniques": 101,
     "dataSources": 29,
@@ -16,7 +16,8 @@
     "threat_actors": 159,
     "campaigns": 49,
     "hottest_technique": "T1105",
-    "hottest_technique_score": 1
+    "hottest_technique_score": 1,
+    "intel_sources": 23
   },
   "nodes": [
     {
@@ -9832,6 +9833,167 @@
       "last_seen": "2024-02-01T05:00:00.000Z",
       "technique_count": 2,
       "stix_id": "campaign--81e89fb4-8d07-4d8a-82f4-bf084f9d5d53"
+    },
+    {
+      "id": "intel:aHR0cHM6Ly93d3cuY2lzYS5nb3YvbmV3cy1ldmVu",
+      "type": "intel_source",
+      "subtype": "advisory",
+      "label": "CISA Advisory AA22-277A",
+      "url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa22-277a"
+    },
+    {
+      "id": "intel:aHR0cHM6Ly90aGVkZmlycmVwb3J0LmNvbS8",
+      "type": "intel_source",
+      "subtype": "advisory",
+      "label": "Thedfirreport Advisory",
+      "url": "https://thedfirreport.com/"
+    },
+    {
+      "id": "intel:aHR0cHM6Ly90aGVkZmlycmVwb3J0LmNvbS8yMDI1",
+      "type": "intel_source",
+      "subtype": "advisory",
+      "label": "Thedfirreport Advisory",
+      "url": "https://thedfirreport.com/2025/04/28/navigating-through-the-fog/"
+    },
+    {
+      "id": "intel:CVE-2021-44790",
+      "type": "intel_source",
+      "subtype": "cve",
+      "label": "CVE-2021-44790",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-44790"
+    },
+    {
+      "id": "intel:aHR0cHM6Ly91bml0NDIucGFsb2FsdG9uZXR3b3Jr",
+      "type": "intel_source",
+      "subtype": "advisory",
+      "label": "Paloaltonetworks Advisory",
+      "url": "https://unit42.paloaltonetworks.com/serverless-authentication-cloud/"
+    },
+    {
+      "id": "intel:aHR0cHM6Ly93d3cuZWxhc3RpYy5jby9zZWN1cml0",
+      "type": "intel_source",
+      "subtype": "advisory",
+      "label": "Elastic Advisory",
+      "url": "https://www.elastic.co/security-labs/a-wretch-client"
+    },
+    {
+      "id": "intel:aHR0cHM6Ly93d3cubmNzYy5nb3YudWsvYmxvZy1w",
+      "type": "intel_source",
+      "subtype": "advisory",
+      "label": "Gov Advisory",
+      "url": "https://www.ncsc.gov.uk/blog-post/chatgpt-and-large-language-models-whats-the-risk"
+    },
+    {
+      "id": "intel:aHR0cHM6Ly93d3cuY2lzYS5nb3YvcmVzb3VyY2Vz",
+      "type": "intel_source",
+      "subtype": "advisory",
+      "label": "CISA Advisory",
+      "url": "https://www.cisa.gov/resources-tools/resources/insider-threat-mitigation-guide"
+    },
+    {
+      "id": "intel:aHR0cHM6Ly93d3cubmNzYy5nb3YudWsvZ3VpZGFu",
+      "type": "intel_source",
+      "subtype": "advisory",
+      "label": "Gov Advisory",
+      "url": "https://www.ncsc.gov.uk/guidance/reducing-data-exfiltration-by-malicious-insiders"
+    },
+    {
+      "id": "intel:aHR0cHM6Ly90aGVkZmlycmVwb3J0LmNvbS8yMDIy",
+      "type": "intel_source",
+      "subtype": "advisory",
+      "label": "Thedfirreport Advisory",
+      "url": "https://thedfirreport.com/2022/03/21/phosphorus-automates-initial-access-using-proxyshell/"
+    },
+    {
+      "id": "intel:aHR0cHM6Ly93d3cuc2VudGluZWxvbmUuY29tL2xh",
+      "type": "intel_source",
+      "subtype": "advisory",
+      "label": "Sentinelone Advisory",
+      "url": "https://www.sentinelone.com/labs/operation-digital-eye-chinese-apt-compromises-critical-digital-infrastructure-via-visual-studio-code-tunnels/"
+    },
+    {
+      "id": "intel:CVE-2026-21510",
+      "type": "intel_source",
+      "subtype": "cve",
+      "label": "CVE-2026-21510",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-21510"
+    },
+    {
+      "id": "intel:CVE-2026-21513",
+      "type": "intel_source",
+      "subtype": "cve",
+      "label": "CVE-2026-21513",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-21513"
+    },
+    {
+      "id": "intel:aHR0cHM6Ly9tc3JjLm1pY3Jvc29mdC5jb20vdXBk",
+      "type": "intel_source",
+      "subtype": "advisory",
+      "label": "MSRC CVE-2026-21510",
+      "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-21510"
+    },
+    {
+      "id": "intel:CVE-2026-21533",
+      "type": "intel_source",
+      "subtype": "cve",
+      "label": "CVE-2026-21533",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-21533"
+    },
+    {
+      "id": "intel:aHR0cHM6Ly9ibGFja3N3YW4tY3liZXJzZWN1cml0",
+      "type": "intel_source",
+      "subtype": "advisory",
+      "label": "Blackswan-cybersecurity Advisory",
+      "url": "https://blackswan-cybersecurity.com/threat-advisory-zero-day-windows-remote-desktop-services-elevation-of-privilege-cve-2026-21533-february-11-2026/"
+    },
+    {
+      "id": "intel:CVE-2025-8088",
+      "type": "intel_source",
+      "subtype": "cve",
+      "label": "CVE-2025-8088",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-8088"
+    },
+    {
+      "id": "intel:CVE-2026-21509",
+      "type": "intel_source",
+      "subtype": "cve",
+      "label": "CVE-2026-21509",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-21509"
+    },
+    {
+      "id": "intel:CVE-2025-59536",
+      "type": "intel_source",
+      "subtype": "cve",
+      "label": "CVE-2025-59536",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-59536"
+    },
+    {
+      "id": "intel:CVE-2026-21852",
+      "type": "intel_source",
+      "subtype": "cve",
+      "label": "CVE-2026-21852",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-21852"
+    },
+    {
+      "id": "intel:aHR0cHM6Ly9nby5jcm93ZHN0cmlrZS5jb20vcnMv",
+      "type": "intel_source",
+      "subtype": "advisory",
+      "label": "Crowdstrike Advisory",
+      "url": "https://go.crowdstrike.com/rs/281-OBQ-266/images/CrowdStrike2024ThreatHuntingReport.pdf?version=0"
+    },
+    {
+      "id": "intel:aHR0cHM6Ly93d3cuY3Jvd2RzdHJpa2UuY29tL2N5",
+      "type": "intel_source",
+      "subtype": "advisory",
+      "label": "Crowdstrike Advisory",
+      "url": "https://www.crowdstrike.com/cybersecurity-101/identity-security/service-account/"
+    },
+    {
+      "id": "intel:aHR0cHM6Ly93d3cubWFuZGlhbnQuY29tL3NpdGVz",
+      "type": "intel_source",
+      "subtype": "advisory",
+      "label": "Mandiant Advisory",
+      "url": "https://www.mandiant.com/sites/default/files/2021-09/rpt-apt38-2018-web_v5-1.pdf"
     }
   ],
   "edges": [
@@ -28583,6 +28745,191 @@
       "source": "M014",
       "target": "campaign:C0014",
       "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H003",
+      "target": "intel:aHR0cHM6Ly93d3cuY2lzYS5nb3YvbmV3cy1ldmVu",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H007",
+      "target": "intel:aHR0cHM6Ly90aGVkZmlycmVwb3J0LmNvbS8",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H016",
+      "target": "intel:aHR0cHM6Ly90aGVkZmlycmVwb3J0LmNvbS8yMDI1",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H017",
+      "target": "intel:CVE-2021-44790",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H018",
+      "target": "intel:aHR0cHM6Ly91bml0NDIucGFsb2FsdG9uZXR3b3Jr",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H019",
+      "target": "intel:aHR0cHM6Ly91bml0NDIucGFsb2FsdG9uZXR3b3Jr",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H024",
+      "target": "intel:aHR0cHM6Ly93d3cuZWxhc3RpYy5jby9zZWN1cml0",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H036",
+      "target": "intel:aHR0cHM6Ly91bml0NDIucGFsb2FsdG9uZXR3b3Jr",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H037",
+      "target": "intel:aHR0cHM6Ly91bml0NDIucGFsb2FsdG9uZXR3b3Jr",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H038",
+      "target": "intel:aHR0cHM6Ly91bml0NDIucGFsb2FsdG9uZXR3b3Jr",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H040",
+      "target": "intel:aHR0cHM6Ly90aGVkZmlycmVwb3J0LmNvbS8yMDI1",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H044",
+      "target": "intel:aHR0cHM6Ly90aGVkZmlycmVwb3J0LmNvbS8yMDI1",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H045",
+      "target": "intel:aHR0cHM6Ly91bml0NDIucGFsb2FsdG9uZXR3b3Jr",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H047",
+      "target": "intel:aHR0cHM6Ly90aGVkZmlycmVwb3J0LmNvbS8yMDI1",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H052",
+      "target": "intel:aHR0cHM6Ly90aGVkZmlycmVwb3J0LmNvbS8yMDI1",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H059",
+      "target": "intel:aHR0cHM6Ly93d3cubmNzYy5nb3YudWsvYmxvZy1w",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H059",
+      "target": "intel:aHR0cHM6Ly93d3cuY2lzYS5nb3YvcmVzb3VyY2Vz",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H059",
+      "target": "intel:aHR0cHM6Ly93d3cubmNzYy5nb3YudWsvZ3VpZGFu",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H060",
+      "target": "intel:aHR0cHM6Ly90aGVkZmlycmVwb3J0LmNvbS8yMDIy",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H060",
+      "target": "intel:aHR0cHM6Ly93d3cuY2lzYS5nb3YvbmV3cy1ldmVu",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H062",
+      "target": "intel:aHR0cHM6Ly93d3cuc2VudGluZWxvbmUuY29tL2xh",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H065",
+      "target": "intel:aHR0cHM6Ly91bml0NDIucGFsb2FsdG9uZXR3b3Jr",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H068",
+      "target": "intel:CVE-2026-21510",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H068",
+      "target": "intel:CVE-2026-21513",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H068",
+      "target": "intel:aHR0cHM6Ly9tc3JjLm1pY3Jvc29mdC5jb20vdXBk",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H070",
+      "target": "intel:CVE-2026-21533",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H070",
+      "target": "intel:aHR0cHM6Ly9ibGFja3N3YW4tY3liZXJzZWN1cml0",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H072",
+      "target": "intel:CVE-2025-8088",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H078",
+      "target": "intel:CVE-2026-21509",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H082",
+      "target": "intel:CVE-2025-59536",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H082",
+      "target": "intel:CVE-2026-21852",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "H083",
+      "target": "intel:CVE-2026-21513",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "B002",
+      "target": "intel:aHR0cHM6Ly9nby5jcm93ZHN0cmlrZS5jb20vcnMv",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "B007",
+      "target": "intel:aHR0cHM6Ly93d3cuY2lzYS5nb3YvbmV3cy1ldmVu",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "B016",
+      "target": "intel:aHR0cHM6Ly93d3cuY3Jvd2RzdHJpa2UuY29tL2N5",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "M002",
+      "target": "intel:aHR0cHM6Ly91bml0NDIucGFsb2FsdG9uZXR3b3Jr",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "source": "M004",
+      "target": "intel:aHR0cHM6Ly93d3cubWFuZGlhbnQuY29tL3NpdGVz",
+      "type": "INSPIRED_BY"
     }
   ],
   "phase2a_enriched_at": "2026-03-10T14:20:37.677Z"
