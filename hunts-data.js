@@ -2123,6 +2123,31 @@ const HUNTS_DATA = [
     "file_path": "Flames/H088.md"
   },
   {
+    "id": "H089",
+    "category": "Flames",
+    "title": "An adversary is using social engineering to trick users into executing hex-encoded commands in Windows Terminal to deploy information-stealing malware targeting enterprise users to harvest credentials and session tokens.",
+    "tactic": "Execution",
+    "notes": "ClickFix shift from Run dialog to Windows Terminal; hex-encoded command execution in wt.exe; Lumma Stealer targets 100+ browsers and apps; strong anomaly signal from wt.exe parent-child process chains",
+    "tags": [
+      "execution",
+      "credential_access",
+      "T1204_002",
+      "T1059_001",
+      "T1555",
+      "clickfix",
+      "windows_terminal",
+      "lumma_stealer",
+      "infostealer"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- This campaign deliberately shifts execution from the Windows Run dialog to Windows Terminal — existing detections that monitor cmd.exe spawned from explorer.exe via Run will miss it entirely\n- Hex-encoded command execution in wt.exe is a strong anomaly — baseline your environment and hunt for unusual parent-child process relationships involving wt.exe\n- Lumma Stealer targets 100+ browsers and applications — post-compromise credential harvesting creates immediate downstream risk for SSO, cloud apps, and VPN access\n- ClickFix campaigns have evolved rapidly through 2025-2026, each iteration bypassing the previous round of detections — this is the latest evasion pivot",
+    "references": "- [ATT&CK T1204.002](https://attack.mitre.org/techniques/T1204/002/)\n- [ATT&CK T1059.001](https://attack.mitre.org/techniques/T1059/001/)\n- [ATT&CK T1555](https://attack.mitre.org/techniques/T1555/)\n- Microsoft Threat Intelligence — ClickFix via Windows Terminal (Mar 2026)",
+    "file_path": "Flames/H089.md"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
