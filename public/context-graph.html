@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HEARTH — Context Graph</title>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-B4FE1Q174V"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-B4FE1Q174V');</script>
+<!-- D3.js -->
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+:root {
+  --color-primary: #8a47ff;
+  --color-accent: #e457da;
+  --color-background: #0f0f11;
+  --color-surface: rgba(28, 27, 31, 0.85);
+  --color-surface-hover: rgba(32, 33, 42, 0.9);
+  --color-text: #f7f5ff;
+  --color-text-secondary: #a6a9c8;
+  --color-border: rgba(120, 122, 230, 0.25);
+  --color-error: #ef4444;
+  --color-success: #4bdca2;
+  --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--color-background);color:var(--color-text);font-family:var(--font-family-base);overflow:hidden;height:100vh}
+a{color:var(--color-primary);text-decoration:none}a:hover{text-decoration:underline}
+
+/* --- Header (exact HEARTH site structure) --- */
+header{background:var(--color-surface);border-bottom:1px solid var(--color-border)}
+.header-content{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;flex-wrap:wrap;gap:1rem}
+.logo-link{display:flex;align-items:center;gap:0.75rem;text-decoration:none;color:var(--color-text)}
+.logo-link:hover{text-decoration:none}
+.logo{height:48px;width:auto}
+.title-section .eyebrow{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;color:var(--color-text-secondary);margin-bottom:0.1rem}
+.title-section h1{font-size:1.5rem;font-weight:800;letter-spacing:0.08em;color:var(--color-text);line-height:1.1}
+.title-section p:last-child{font-size:0.75rem;color:var(--color-text-secondary)}
+.header-links{display:flex;gap:0.5rem;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem;border-radius:var(--radius-md);font-size:0.85rem;font-weight:600;text-decoration:none;transition:all 0.2s ease;cursor:pointer;border:none}
+.btn:hover{text-decoration:none}
+.btn-accent{background:var(--color-accent);color:#fff}
+.btn-accent:hover{filter:brightness(1.15)}
+.btn-ghost{background:transparent;border:1px solid var(--color-border);color:var(--color-text-secondary)}
+.btn-ghost:hover{background:var(--color-surface-hover);color:var(--color-text)}
+.btn-icon{font-size:1rem}
+.header-nav{display:flex;gap:0;padding:0 2rem;border-top:1px solid var(--color-border)}
+.nav-tab{padding:0.65rem 1.1rem;font-size:0.85rem;color:var(--color-text-secondary);transition:color 0.2s,border-color 0.2s;border-bottom:2px solid transparent;text-decoration:none}
+.nav-tab:hover{color:var(--color-text);text-decoration:none}
+.nav-tab--active{color:var(--color-text);border-bottom-color:var(--color-primary)}
+
+/* --- Stats bar --- */
+.stats-bar{background:var(--color-surface);border-bottom:1px solid var(--color-border);padding:8px 20px;display:flex;align-items:center;gap:16px;font-size:13px;color:var(--color-text-secondary);flex-wrap:wrap;z-index:90;position:relative}
+.stats-bar .stat{display:flex;align-items:center;gap:4px}
+.stats-bar .stat .num{color:var(--color-text);font-weight:600}
+.stats-bar .sep{color:var(--color-border)}
+
+/* --- Filter bar --- */
+.filter-bar{background:var(--color-background);border-bottom:1px solid var(--color-border);padding:8px 20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;z-index:80;position:relative}
+.filter-btn{background:rgba(28,27,31,0.85);border:1px solid var(--color-border);color:var(--color-text-secondary);padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.filter-btn:hover{background:var(--color-surface-hover);border-color:var(--color-primary);color:var(--color-text)}
+.filter-btn.active{background:var(--color-primary);border-color:var(--color-primary);color:#fff}
+.filter-btn.toggle{background:rgba(228,87,218,0.1);border-color:var(--color-accent);color:var(--color-accent)}
+.filter-btn.toggle.active{background:var(--color-accent);border-color:var(--color-accent);color:#fff}
+.filter-label{color:var(--color-text-secondary);font-size:12px;margin-right:4px}
+.filter-sep{width:1px;height:20px;background:var(--color-border);margin:0 4px}
+
+/* --- Main layout --- */
+.main{display:flex;height:calc(100vh - 130px - 37px - 42px);position:relative}
+.graph-wrap{flex:1;position:relative;overflow:hidden}
+svg{display:block;width:100%;height:100%}
+
+/* --- Controls overlay --- */
+.controls{position:absolute;bottom:16px;right:16px;display:flex;gap:6px;z-index:50}
+.ctrl-btn{background:var(--color-surface);border:1px solid var(--color-border);color:var(--color-text-secondary);width:36px;height:36px;border-radius:var(--radius-md);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.ctrl-btn:hover{background:var(--color-surface-hover);border-color:var(--color-primary);color:var(--color-text)}
+
+/* --- Stats overlay --- */
+.stats-overlay{position:absolute;top:12px;right:12px;background:var(--color-surface);border:1px solid var(--color-border);border-radius:8px;padding:14px 18px;font-size:12px;z-index:50;min-width:200px;backdrop-filter:blur(8px)}
+.stats-overlay h3{font-size:13px;color:var(--color-text);margin-bottom:8px;font-weight:600}
+.stats-overlay .row{display:flex;justify-content:space-between;padding:2px 0;color:var(--color-text-secondary)}
+.stats-overlay .row .val{color:var(--color-text);font-weight:500}
+.stats-overlay .divider{border-top:1px solid var(--color-border);margin:6px 0}
+
+/* --- Sidebar --- */
+.sidebar{width:0;background:rgba(28, 27, 31, 0.95);border-left:1px solid var(--color-border);overflow-y:auto;overflow-x:hidden;transition:width .25s ease;flex-shrink:0}
+.sidebar.open{width:340px}
+.sidebar-inner{padding:20px;width:340px}
+.sidebar-close{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--color-text-secondary);cursor:pointer;font-size:18px;padding:4px 8px}
+.sidebar-close:hover{color:var(--color-text)}
+.sidebar h2{font-size:16px;color:var(--color-text);margin-bottom:12px;padding-right:30px}
+.sidebar h3{font-size:13px;color:var(--color-text-secondary);margin:12px 0 6px;text-transform:uppercase;letter-spacing:.5px}
+.sidebar .tag{display:inline-block;background:rgba(28,27,31,0.85);color:var(--color-text-secondary);padding:2px 8px;border-radius:10px;font-size:11px;margin:2px}
+.sidebar .tag.tech{border:1px solid #f97316;color:#f97316}
+.sidebar .tag.flame{border:1px solid #a855f7;color:#a855f7}
+.sidebar .tag.ember{border:1px solid #60a5fa;color:#60a5fa}
+.sidebar .tag.alchemy{border:1px solid #f59e0b;color:#f59e0b}
+.sidebar .tag.ds{border:1px solid var(--color-success);color:var(--color-success)}
+.sidebar .tag.tactic-tag{border:1px solid var(--color-primary);color:var(--color-primary)}
+.sidebar .tag.contrib-tag{border:1px solid var(--color-accent);color:var(--color-accent)}
+.sidebar .detail-row{padding:6px 0;font-size:13px;color:var(--color-text);border-bottom:1px solid var(--color-border)}
+.sidebar .detail-label{color:var(--color-text-secondary);font-size:11px}
+.sidebar .hyp-link{display:block;padding:6px 8px;margin:2px 0;background:rgba(28,27,31,0.85);border-radius:var(--radius-sm);color:var(--color-text);font-size:12px;cursor:pointer;transition:background .15s}
+.sidebar .hyp-link:hover{background:var(--color-surface-hover);text-decoration:none}
+.sidebar .cta{display:inline-block;margin-top:16px;background:var(--color-accent);color:#fff;padding:10px 20px;border-radius:var(--radius-md);font-weight:600;font-size:14px;text-decoration:none;transition:all .15s}
+.sidebar .cta:hover{filter:brightness(1.15);text-decoration:none}
+
+/* --- Tooltip --- */
+.tooltip{position:absolute;background:rgba(15,15,17,0.96);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:8px 12px;font-size:12px;color:var(--color-text);pointer-events:none;z-index:200;max-width:320px;display:none;box-shadow:0 4px 12px rgba(0,0,0,.4);backdrop-filter:blur(8px)}
+.tooltip .tt-title{color:var(--color-text);font-weight:600;margin-bottom:4px}
+.tooltip .tt-sub{color:var(--color-text-secondary);font-size:11px}
+.tooltip .tt-date{color:var(--color-accent);font-size:10px;margin-top:3px}
+
+/* --- Legend --- */
+.legend{position:absolute;bottom:16px;left:16px;background:var(--color-surface);border:1px solid var(--color-border);border-radius:8px;padding:10px 14px;display:flex;gap:14px;z-index:50;font-size:11px;backdrop-filter:blur(8px);flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:5px;color:var(--color-text-secondary)}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.legend-dot.square{border-radius:2px}
+
+@media(max-width:768px){
+  .header-content{padding:0.75rem 1rem}
+  .header-nav{padding:0 1rem}
+  .header-links{display:none}
+  .sidebar.open{width:280px}
+  .sidebar-inner{width:280px}
+  .stats-overlay{display:none}
+  .legend{flex-wrap:wrap;gap:8px}
+  .filter-bar{overflow-x:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- Header (exact HEARTH site structure) -->
+<header>
+  <div class="header-content">
+    <a href="index.html" class="logo-link">
+      <img src="/Assets/HEARTH-logo.png" alt="HEARTH Logo" class="logo"/>
+      <div class="title-section">
+        <p class="eyebrow">THOR Collective</p>
+        <h1>HEARTH</h1>
+        <p>Hunting Exchange and Research Threat Hub</p>
+      </div>
+    </a>
+    <div class="header-links">
+      <a href="submit.html" class="btn btn-accent"><span class="btn-icon">📝</span>Submit a Hunt</a>
+      <a href="https://github.com/THORCollective/HEARTH" target="_blank" class="btn btn-ghost"><span class="btn-icon">🌐</span>View on GitHub</a>
+    </div>
+  </div>
+  <nav class="header-nav">
+    <a href="index.html" class="nav-tab">📚 Hunt Library</a>
+    <a href="index.html" class="nav-tab">🎯 What Can I Hunt?</a>
+    <a href="graph.html" class="nav-tab">🗺️ Coverage Map</a>
+    <a href="context-graph.html" class="nav-tab nav-tab--active" style="text-decoration:none">🔗 Context Graph</a>
+  </nav>
+</header>
+
+<!-- Stats bar -->
+<div class="stats-bar" id="statsBar">
+  <div class="stat"><span class="num" id="statNodes">0</span> nodes</div>
+  <span class="sep">·</span>
+  <div class="stat"><span class="num" id="statEdges">0</span> edges</div>
+  <span class="sep">·</span>
+  <div class="stat"><span class="num" id="statContrib">0</span> contributors</div>
+  <span class="sep">·</span>
+  <div class="stat"><span class="num" id="statDateRange">—</span> date range</div>
+  <span class="sep">·</span>
+  <div class="stat">avg age: <span class="num" id="statAvgAge">0</span> days</div>
+</div>
+
+<!-- Filter bar -->
+<div class="filter-bar" id="filterBar">
+  <span class="filter-label">Tactic:</span>
+  <button class="filter-btn active" data-tactic="all">All</button>
+  <div class="filter-sep"></div>
+  <span class="filter-label">Overlay:</span>
+  <button class="filter-btn toggle" id="btnContributors">Contributors</button>
+</div>
+
+<!-- Main area -->
+<div class="main">
+  <div class="graph-wrap" id="graphWrap">
+    <svg id="graph"></svg>
+
+    <!-- Tooltip -->
+    <div class="tooltip" id="tooltip">
+      <div class="tt-title" id="ttTitle"></div>
+      <div class="tt-sub" id="ttSub"></div>
+      <div class="tt-date" id="ttDate"></div>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend" id="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#f97316"></div>Technique</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#a855f7"></div>Flame</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div>Ember</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Alchemy</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div>Data Source</div>
+      <div class="legend-item"><div class="legend-dot square" style="background:var(--color-primary)"></div>Tactic</div>
+    </div>
+
+    <!-- Stats overlay -->
+    <div class="stats-overlay" id="statsOverlay">
+      <h3>Context Graph</h3>
+      <div class="row"><span>Flames</span><span class="val" id="soFlames">0</span></div>
+      <div class="row"><span>Embers</span><span class="val" id="soEmbers">0</span></div>
+      <div class="row"><span>Alchemy</span><span class="val" id="soAlchemy">0</span></div>
+      <div class="divider"></div>
+      <div class="row"><span>Techniques</span><span class="val" id="soTech">0</span></div>
+      <div class="row"><span>Tactics</span><span class="val" id="soTactics">0</span></div>
+      <div class="row"><span>Data Sources</span><span class="val" id="soDS">0</span></div>
+      <div class="divider"></div>
+      <div class="row"><span>Relationships</span><span class="val" id="soEdges">0</span></div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button class="ctrl-btn" id="btnFit" title="Zoom to fit">⊞</button>
+      <button class="ctrl-btn" id="btnZoomIn" title="Zoom in">+</button>
+      <button class="ctrl-btn" id="btnZoomOut" title="Zoom out">−</button>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-inner" id="sidebarInner">
+      <button class="sidebar-close" id="sidebarClose">✕</button>
+      <div id="sidebarContent"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// =====================================================
+// HEARTH Context Graph — D3.js Force-Directed Layout
+// =====================================================
+
+let DATA = null;
+let showContributors = false;
+let activeTactic = 'all';
+let simulation = null;
+let selectedNode = null;
+let currentZoom = null;
+let currentSvg = null;
+let currentG = null;
+let currentSimNodes = null;
+
+// ATT&CK technique name lookup (subset)
+const TECH_NAMES={T0847:"Replication Through Removable Media",T1003:"OS Credential Dumping",T1003006:"DCSync",T1005:"Data from Local System",T1020:"Automated Exfiltration",T1021:"Remote Services",T1027:"Obfuscated Files or Information",T1027010:"Command Obfuscation",T1030:"Data Transfer Size Limits",T1036:"Masquerading",T1036003:"Rename System Utilities",T1036005:"Match Legitimate Name or Location",T1039:"Data from Network Shared Drive",T1041:"Exfiltration Over C2 Channel",T1046:"Network Service Scanning",T1047:"Windows Management Instrumentation",T1048:"Exfiltration Over Alternative Protocol",T1049:"System Network Connections Discovery",T1053003:"Cron",T1053005:"Scheduled Task",T1055:"Process Injection",T1056002:"GUI Input Capture",T1059:"Command and Scripting Interpreter",T1059001:"PowerShell",T1059002:"AppleScript",T1059004:"Unix Shell",T1059005:"Visual Basic",T1059006:"Python",T1068:"Exploitation for Privilege Escalation",T1070004:"File Deletion",T1071:"Application Layer Protocol",T1071001:"Web Protocols",T1071004:"DNS",T1078:"Valid Accounts",T1078001:"Default Accounts",T1078002:"Domain Accounts",T1078004:"Cloud Accounts",T1082:"System Information Discovery",T1090:"Proxy",T1090001:"Internal Proxy",T1091:"Replication Through Removable Media",T1092:"Communication Through Removable Media",T1098:"Account Manipulation",T1102:"Web Service",T1102002:"Bidirectional Communication",T1105:"Ingress Tool Transfer",T1106:"Native API",T1110:"Brute Force",T1110003:"Password Spraying",T1112:"Modify Registry",T1114:"Email Collection",T1114003:"Email Forwarding Rule",T1119:"Automated Collection",T1127:"Trusted Developer Utilities",T1135:"Network Share Discovery",T1136002:"Domain Account",T1140:"Deobfuscate/Decode Files",T1176:"Browser Extensions",T1185:"Browser Session Hijacking",T1195001:"Compromise Software Dependencies",T1195002:"Compromise Software Supply Chain",T1197:"BITS Jobs",T1200:"Hardware Additions",T1203:"Exploitation for Client Execution",T1204:"User Execution",T1204002:"Malicious File",T1205001:"Port Knocking",T1211:"Exploitation for Defense Evasion",T1218:"System Binary Proxy Execution",T1218005:"Mshta",T1218011:"Rundll32",T1219:"Remote Access Software",T1484001:"Group Policy Modification",T1497:"Virtualization/Sandbox Evasion",T1497003:"Time Based Evasion",T1528:"Steal Application Access Token",T1534:"Internal Spearphishing",T1543004:"Launch Daemon",T1546004:".bash_profile and .bashrc",T1546015:"COM Hijacking",T1546016:"Installer Packages",T1547001:"Registry Run Keys / Startup Folder",T1550001:"Application Access Token",T1553001:"Gatekeeper Bypass",T1553004:"Install Root Certificate",T1553005:"Mark-of-the-Web Bypass",T1555:"Credentials from Password Stores",T1559:"Inter-Process Communication",T1560:"Archive Collected Data",T1562001:"Disable or Modify Tools",T1562004:"Disable or Modify System Firewall",T1563:"Remote Service Session Hijacking",T1564:"Hide Artifacts",T1564002:"Hidden Users",T1564006:"Run Virtual Instance",T1564008:"Email Hiding Rules",T1565001:"Stored Data Manipulation",T1566:"Phishing",T1566001:"Spearphishing Attachment",T1566002:"Spearphishing Link",T1567:"Exfiltration Over Web Service",T1568002:"Domain Generation Algorithms",T1572:"Protocol Tunneling",T1574002:"DLL Side-Loading",T1583001:"Domains",T1584001:"Domains",T1587003:"Digital Certificates",T1595001:"Scanning IP Blocks",T1599:"Network Boundary Bridging"};
+function techName(id){return TECH_NAMES[id.replace(/\./g,'')]||id}
+
+// =====================================================
+// LOAD DATA
+// =====================================================
+fetch('context-graph-data.json')
+  .then(r => r.json())
+  .then(data => { DATA = data; init(); })
+  .catch(err => {
+    document.getElementById('graphWrap').innerHTML =
+      '<div style="padding:40px;color:var(--color-error)">Failed to load context-graph-data.json: ' + err.message + '</div>';
+  });
+
+function init() {
+  populateStats();
+  populateFilters();
+  buildGraph();
+}
+
+// =====================================================
+// STATS
+// =====================================================
+function populateStats() {
+  const s = DATA.stats;
+  document.getElementById('statNodes').textContent = s.totalNodes;
+  document.getElementById('statEdges').textContent = s.totalEdges;
+  document.getElementById('statContrib').textContent = s.contributors;
+  document.getElementById('statAvgAge').textContent = s.averageHypothesisAgeDays;
+
+  if (s.dateRange) {
+    const oldest = s.dateRange.oldest.split('T')[0];
+    const newest = s.dateRange.newest.split('T')[0];
+    document.getElementById('statDateRange').textContent = oldest + ' to ' + newest;
+  }
+
+  const hyps = DATA.nodes.filter(n => n.type === 'hypothesis');
+  document.getElementById('soFlames').textContent = hyps.filter(n => n.subtype === 'f').length;
+  document.getElementById('soEmbers').textContent = hyps.filter(n => n.subtype === 'e').length;
+  document.getElementById('soAlchemy').textContent = hyps.filter(n => n.subtype === 'a').length;
+  document.getElementById('soTech').textContent = DATA.nodes.filter(n => n.type === 'technique').length;
+  document.getElementById('soTactics').textContent = DATA.nodes.filter(n => n.type === 'tactic').length;
+  document.getElementById('soDS').textContent = DATA.nodes.filter(n => n.type === 'datasource').length;
+  document.getElementById('soEdges').textContent = DATA.edges.length;
+}
+
+// =====================================================
+// FILTERS
+// =====================================================
+function populateFilters() {
+  const filterBar = document.getElementById('filterBar');
+  const tactics = DATA.nodes.filter(n => n.type === 'tactic').map(n => n.label).sort();
+  const refBtn = filterBar.querySelector('.filter-sep');
+
+  tactics.forEach(tac => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn';
+    btn.dataset.tactic = tac;
+    btn.textContent = tac;
+    filterBar.insertBefore(btn, refBtn);
+  });
+}
+
+document.getElementById('filterBar').addEventListener('click', e => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+
+  // Handle contributor toggle
+  if (btn.id === 'btnContributors') {
+    showContributors = !showContributors;
+    btn.classList.toggle('active', showContributors);
+    if (showContributors) {
+      document.getElementById('legend').insertAdjacentHTML('beforeend',
+        '<div class="legend-item" id="legendContrib"><div class="legend-dot" style="background:var(--color-accent)"></div>Contributor</div>');
+    } else {
+      const lc = document.getElementById('legendContrib');
+      if (lc) lc.remove();
+    }
+    buildGraph();
+    return;
+  }
+
+  // Handle tactic filter
+  if (btn.dataset.tactic !== undefined) {
+    document.querySelectorAll('#filterBar .filter-btn:not(.toggle)').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeTactic = btn.dataset.tactic;
+    selectedNode = null;
+    document.getElementById('sidebar').classList.remove('open');
+    buildGraph();
+  }
+});
+
+// =====================================================
+// TEMPORAL COLOR CODING
+// =====================================================
+function getTemporalColor(node) {
+  if (node.type !== 'hypothesis' || !node.created_at) {
+    const colors = { f: '#a855f7', e: '#60a5fa', a: '#f59e0b' };
+    return colors[node.subtype] || '#a855f7';
+  }
+
+  const created = new Date(node.created_at).getTime();
+  const now = Date.now();
+  const oldest = DATA.stats.dateRange ? new Date(DATA.stats.dateRange.oldest).getTime() : created;
+  const range = now - oldest || 1;
+  const age = now - created;
+  const t = Math.max(0, Math.min(1, age / range)); // 0 = newest, 1 = oldest
+
+  // Brighter = newer, dimmer = older
+  // Blend from accent (#e457da) for newest to base color dimmed for oldest
+  const baseColors = { f: [168, 85, 247], e: [96, 165, 250], a: [245, 158, 11] };
+  const base = baseColors[node.subtype] || [168, 85, 247];
+  const accent = [228, 87, 218];
+
+  const r = Math.round(accent[0] * (1 - t) + base[0] * 0.5 * t);
+  const g = Math.round(accent[1] * (1 - t) + base[1] * 0.5 * t);
+  const b = Math.round(accent[2] * (1 - t) + base[2] * 0.5 * t);
+
+  return `rgb(${r},${g},${b})`;
+}
+
+function formatDate(iso) {
+  if (!iso) return 'Unknown';
+  return iso.split('T')[0];
+}
+
+// =====================================================
+// BUILD GRAPH
+// =====================================================
+function buildGraph() {
+  const svg = d3.select('#graph');
+  svg.selectAll('*').remove();
+
+  const wrap = document.getElementById('graphWrap');
+  const W = wrap.clientWidth;
+  const H = wrap.clientHeight;
+
+  svg.attr('width', W).attr('height', H);
+
+  // Filter nodes and edges
+  let visibleNodes = [];
+  let visibleEdges = [];
+  const nodeMap = {};
+  DATA.nodes.forEach(n => nodeMap[n.id] = n);
+
+  if (activeTactic === 'all') {
+    visibleNodes = DATA.nodes.filter(n => {
+      if (n.type === 'contributor') return showContributors;
+      return true;
+    });
+  } else {
+    // Show tactic node, its techniques, linked hypotheses, and data sources
+    const tacticId = 'tactic:' + activeTactic;
+    const tacticNode = nodeMap[tacticId];
+    if (tacticNode) visibleNodes.push({ ...tacticNode });
+
+    // Find techniques belonging to this tactic
+    const techIds = new Set();
+    DATA.edges.filter(e => e.type === 'BELONGS_TO' && e.target === tacticId)
+      .forEach(e => techIds.add(e.source));
+    techIds.forEach(tid => { if (nodeMap[tid]) visibleNodes.push({ ...nodeMap[tid] }); });
+
+    // Find hypotheses targeting those techniques
+    const hypIds = new Set();
+    DATA.edges.filter(e => e.type === 'TARGETS' && techIds.has(e.target))
+      .forEach(e => hypIds.add(e.source));
+    hypIds.forEach(hid => { if (nodeMap[hid]) visibleNodes.push({ ...nodeMap[hid] }); });
+
+    // Find data sources used by those hypotheses
+    const dsIds = new Set();
+    DATA.edges.filter(e => e.type === 'REQUIRES' && hypIds.has(e.source))
+      .forEach(e => dsIds.add(e.target));
+    dsIds.forEach(did => { if (nodeMap[did]) visibleNodes.push({ ...nodeMap[did] }); });
+
+    if (showContributors) {
+      const contribIds = new Set();
+      DATA.edges.filter(e => e.type === 'AUTHORED_BY' && hypIds.has(e.source))
+        .forEach(e => contribIds.add(e.target));
+      contribIds.forEach(cid => { if (nodeMap[cid]) visibleNodes.push({ ...nodeMap[cid] }); });
+    }
+  }
+
+  const visibleIds = new Set(visibleNodes.map(n => n.id));
+
+  // Build edges between visible nodes
+  DATA.edges.forEach(e => {
+    if (visibleIds.has(e.source) && visibleIds.has(e.target)) {
+      visibleEdges.push({ ...e });
+    }
+  });
+
+  // D3 force simulation needs source/target as objects or indices
+  const nodeById = {};
+  const simNodes = visibleNodes.map((n, i) => {
+    const sn = { ...n, index: i };
+    nodeById[n.id] = sn;
+    return sn;
+  });
+
+  const simLinks = visibleEdges.map(e => ({
+    source: nodeById[e.source],
+    target: nodeById[e.target],
+    type: e.type
+  })).filter(l => l.source && l.target);
+
+  // Create zoom container
+  const g = svg.append('g');
+
+  const zoom = d3.zoom()
+    .scaleExtent([0.08, 5])
+    .on('zoom', (event) => g.attr('transform', event.transform));
+  svg.call(zoom);
+  currentZoom = zoom;
+  currentSvg = svg;
+  currentG = g;
+
+  // Force simulation
+  simulation = d3.forceSimulation(simNodes)
+    .force('link', d3.forceLink(simLinks).id(d => d.id).distance(d => {
+      if (d.type === 'BELONGS_TO') return 80;
+      if (d.type === 'TARGETS') return 100;
+      if (d.type === 'REQUIRES') return 120;
+      if (d.type === 'AUTHORED_BY') return 140;
+      return 100;
+    }).strength(d => {
+      if (d.type === 'BELONGS_TO') return 0.6;
+      if (d.type === 'TARGETS') return 0.3;
+      return 0.15;
+    }))
+    .force('charge', d3.forceManyBody().strength(d => {
+      if (d.type === 'tactic') return -500;
+      if (d.type === 'technique') return -150;
+      if (d.type === 'contributor') return -200;
+      return -80;
+    }))
+    .force('center', d3.forceCenter(W / 2, H / 2))
+    .force('collision', d3.forceCollide().radius(d => nodeRadius(d) + 4))
+    .force('x', d3.forceX(W / 2).strength(0.03))
+    .force('y', d3.forceY(H / 2).strength(0.03));
+
+  // Draw edges
+  const link = g.append('g')
+    .selectAll('line')
+    .data(simLinks)
+    .join('line')
+    .attr('stroke', d => {
+      if (d.type === 'TARGETS') return 'rgba(168,85,247,0.12)';
+      if (d.type === 'REQUIRES') return 'rgba(34,197,94,0.1)';
+      if (d.type === 'BELONGS_TO') return 'rgba(138,71,255,0.15)';
+      if (d.type === 'OBSERVES') return 'rgba(34,197,94,0.06)';
+      if (d.type === 'AUTHORED_BY') return 'rgba(228,87,218,0.12)';
+      return 'rgba(255,255,255,0.05)';
+    })
+    .attr('stroke-width', d => d.type === 'BELONGS_TO' ? 1.5 : 0.8);
+
+  // Draw nodes
+  const node = g.append('g')
+    .selectAll('g')
+    .data(simNodes)
+    .join('g')
+    .attr('cursor', 'pointer')
+    .call(d3.drag()
+      .on('start', dragStarted)
+      .on('drag', dragged)
+      .on('end', dragEnded));
+
+  // Render each node type
+  node.each(function(d) {
+    const el = d3.select(this);
+
+    if (d.type === 'tactic') {
+      // Large rounded rectangle for tactics
+      el.append('rect')
+        .attr('rx', 8).attr('ry', 8)
+        .attr('width', 120).attr('height', 36)
+        .attr('x', -60).attr('y', -18)
+        .attr('fill', 'rgba(138,71,255,0.12)')
+        .attr('stroke', '#8a47ff')
+        .attr('stroke-width', 2);
+      el.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('dy', '0.35em')
+        .attr('fill', '#f7f5ff')
+        .attr('font-size', '10px')
+        .attr('font-weight', '700')
+        .text(d.label.length > 18 ? d.label.substring(0, 16) + '...' : d.label);
+    }
+    else if (d.type === 'technique') {
+      el.append('circle')
+        .attr('r', 16)
+        .attr('fill', 'rgba(249,115,22,0.12)')
+        .attr('stroke', '#f97316')
+        .attr('stroke-width', 1.5);
+      el.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('dy', '0.35em')
+        .attr('fill', '#f7f5ff')
+        .attr('font-size', '8px')
+        .attr('font-weight', '700')
+        .text(d.label);
+    }
+    else if (d.type === 'hypothesis') {
+      const color = getTemporalColor(d);
+      el.append('circle')
+        .attr('r', 12)
+        .attr('fill', color + '22')
+        .attr('stroke', color)
+        .attr('stroke-width', 1.2);
+      el.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('dy', '0.35em')
+        .attr('fill', color)
+        .attr('font-size', '8px')
+        .attr('font-weight', '700')
+        .text(d.label);
+    }
+    else if (d.type === 'datasource') {
+      const label = d.label;
+      const w = Math.max(50, label.length * 5.5 + 14);
+      el.append('rect')
+        .attr('rx', 10).attr('ry', 10)
+        .attr('width', w).attr('height', 20)
+        .attr('x', -w/2).attr('y', -10)
+        .attr('fill', 'rgba(34,197,94,0.08)')
+        .attr('stroke', '#22c55e')
+        .attr('stroke-width', 1);
+      el.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('dy', '0.35em')
+        .attr('fill', '#22c55e')
+        .attr('font-size', '8px')
+        .attr('font-weight', '600')
+        .text(label);
+    }
+    else if (d.type === 'contributor') {
+      const r = Math.max(14, Math.min(30, 8 + (d.hypothesisCount || 1) * 0.8));
+      d._r = r;
+      el.append('circle')
+        .attr('r', r)
+        .attr('fill', 'rgba(228,87,218,0.1)')
+        .attr('stroke', '#e457da')
+        .attr('stroke-width', 1.5)
+        .attr('stroke-dasharray', '4,2');
+      el.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('dy', '0.35em')
+        .attr('fill', '#e457da')
+        .attr('font-size', Math.max(7, Math.min(10, r * 0.5)) + 'px')
+        .attr('font-weight', '600')
+        .text(d.label.length > 12 ? d.label.substring(0, 10) + '..' : d.label);
+    }
+  });
+
+  // Hover and click
+  node.on('mouseover', function(event, d) {
+    // Highlight connected edges
+    link.attr('stroke-opacity', l =>
+      (l.source.id === d.id || l.target.id === d.id) ? 1 : 0.3
+    ).attr('stroke-width', l =>
+      (l.source.id === d.id || l.target.id === d.id) ? 2.5 : 0.5
+    ).attr('stroke', l => {
+      if (l.source.id !== d.id && l.target.id !== d.id) {
+        return 'rgba(255,255,255,0.03)';
+      }
+      if (l.type === 'TARGETS') return 'rgba(168,85,247,0.6)';
+      if (l.type === 'REQUIRES') return 'rgba(34,197,94,0.5)';
+      if (l.type === 'BELONGS_TO') return 'rgba(138,71,255,0.5)';
+      if (l.type === 'AUTHORED_BY') return 'rgba(228,87,218,0.5)';
+      return 'rgba(255,255,255,0.2)';
+    });
+
+    showTooltip(event, d);
+  })
+  .on('mouseout', function() {
+    link.attr('stroke-opacity', 1)
+      .attr('stroke-width', d => d.type === 'BELONGS_TO' ? 1.5 : 0.8)
+      .attr('stroke', d => {
+        if (d.type === 'TARGETS') return 'rgba(168,85,247,0.12)';
+        if (d.type === 'REQUIRES') return 'rgba(34,197,94,0.1)';
+        if (d.type === 'BELONGS_TO') return 'rgba(138,71,255,0.15)';
+        if (d.type === 'OBSERVES') return 'rgba(34,197,94,0.06)';
+        if (d.type === 'AUTHORED_BY') return 'rgba(228,87,218,0.12)';
+        return 'rgba(255,255,255,0.05)';
+      });
+    hideTooltip();
+  })
+  .on('click', function(event, d) {
+    event.stopPropagation();
+    selectedNode = d;
+    showSidebar(d);
+  });
+
+  // Click background to deselect
+  svg.on('click', () => {
+    selectedNode = null;
+    document.getElementById('sidebar').classList.remove('open');
+  });
+
+  // Tick
+  simulation.on('tick', () => {
+    link
+      .attr('x1', d => d.source.x)
+      .attr('y1', d => d.source.y)
+      .attr('x2', d => d.target.x)
+      .attr('y2', d => d.target.y);
+
+    node.attr('transform', d => `translate(${d.x},${d.y})`);
+  });
+
+  // Fit to view after settling
+  simulation.on('end', () => {
+    fitToView(svg, g, simNodes, W, H, zoom);
+  });
+
+  currentSimNodes = simNodes;
+
+  // Also fit after a delay
+  setTimeout(() => fitToView(svg, g, simNodes, W, H, zoom), 2000);
+}
+
+function nodeRadius(d) {
+  if (d.type === 'tactic') return 30;
+  if (d.type === 'technique') return 16;
+  if (d.type === 'hypothesis') return 12;
+  if (d.type === 'contributor') return d._r || 16;
+  return 12;
+}
+
+// =====================================================
+// FIT TO VIEW
+// =====================================================
+function fitToView(svg, g, nodes, W, H, zoom) {
+  if (!nodes.length) return;
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  nodes.forEach(n => {
+    const r = nodeRadius(n) + 20;
+    if (n.x - r < x0) x0 = n.x - r;
+    if (n.y - r < y0) y0 = n.y - r;
+    if (n.x + r > x1) x1 = n.x + r;
+    if (n.y + r > y1) y1 = n.y + r;
+  });
+  const bw = x1 - x0, bh = y1 - y0;
+  const scale = Math.min(0.9 * W / bw, 0.9 * H / bh, 2);
+  const tx = W / 2 - (x0 + bw / 2) * scale;
+  const ty = H / 2 - (y0 + bh / 2) * scale;
+  svg.transition().duration(500).call(zoom.transform,
+    d3.zoomIdentity.translate(tx, ty).scale(scale));
+}
+
+// =====================================================
+// DRAG
+// =====================================================
+function dragStarted(event, d) {
+  if (!event.active) simulation.alphaTarget(0.3).restart();
+  d.fx = d.x; d.fy = d.y;
+}
+function dragged(event, d) {
+  d.fx = event.x; d.fy = event.y;
+}
+function dragEnded(event, d) {
+  if (!event.active) simulation.alphaTarget(0);
+  d.fx = null; d.fy = null;
+}
+
+// =====================================================
+// TOOLTIP
+// =====================================================
+function showTooltip(event, d) {
+  const tt = document.getElementById('tooltip');
+  const ttTitle = document.getElementById('ttTitle');
+  const ttSub = document.getElementById('ttSub');
+  const ttDate = document.getElementById('ttDate');
+
+  if (d.type === 'hypothesis') {
+    ttTitle.textContent = d.label + ' (' + d.category + ')';
+    ttSub.textContent = (d.title || '').substring(0, 120);
+    ttDate.textContent = d.created_at ? 'Created: ' + formatDate(d.created_at) : '';
+  } else if (d.type === 'technique') {
+    ttTitle.textContent = d.label + ' — ' + techName(d.label);
+    const count = DATA.edges.filter(e => e.type === 'TARGETS' && e.target === d.id).length;
+    ttSub.textContent = count + ' hypotheses target this technique';
+    ttDate.textContent = (d.tactics || []).join(', ');
+  } else if (d.type === 'tactic') {
+    ttTitle.textContent = d.label;
+    ttSub.textContent = (d.techniqueCount || 0) + ' techniques in this tactic';
+    ttDate.textContent = '';
+  } else if (d.type === 'datasource') {
+    ttTitle.textContent = d.label;
+    const count = DATA.edges.filter(e => e.type === 'REQUIRES' && e.target === d.id).length;
+    ttSub.textContent = count + ' hypotheses use this data source';
+    ttDate.textContent = '';
+  } else if (d.type === 'contributor') {
+    ttTitle.textContent = d.label;
+    ttSub.textContent = (d.hypothesisCount || 0) + ' hypotheses, ' + (d.contributionCount || 0) + ' commits';
+    ttDate.textContent = '';
+  }
+
+  const wrap = document.getElementById('graphWrap');
+  const rect = wrap.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+
+  tt.style.display = 'block';
+  tt.style.left = Math.min(x + 14, wrap.clientWidth - 280) + 'px';
+  tt.style.top = (y - 50) + 'px';
+}
+
+function hideTooltip() {
+  document.getElementById('tooltip').style.display = 'none';
+}
+
+// =====================================================
+// SIDEBAR
+// =====================================================
+function showSidebar(node) {
+  const sb = document.getElementById('sidebar');
+  const content = document.getElementById('sidebarContent');
+  sb.classList.add('open');
+
+  let html = '';
+
+  if (node.type === 'hypothesis') {
+    const typeNames = { f: 'Flame (hypothesis-driven)', e: 'Ember (baseline)', a: 'Alchemy (model-assisted)' };
+    html = `<h2>${node.label}</h2>
+      <div class="detail-row"><div class="detail-label">Type</div>${typeNames[node.subtype] || node.subtype}</div>
+      <div class="detail-row"><div class="detail-label">Hypothesis</div>${node.title || ''}</div>
+      <div class="detail-row"><div class="detail-label">Tactic</div>${(node.tactics || []).join(', ')}</div>
+      <div class="detail-row"><div class="detail-label">Submitter</div>${node.submitter || '—'}</div>
+      <div class="detail-row"><div class="detail-label">Created</div>${formatDate(node.created_at)}</div>
+      <div class="detail-row"><div class="detail-label">Updated</div>${formatDate(node.updated_at)}</div>
+      <h3>Techniques (${(node.techniques || []).length})</h3>
+      ${(node.techniques || []).map(t => `<span class="tag tech">${t}</span>`).join(' ')}
+      <h3>Data Sources (${(node.dataSources || []).length})</h3>
+      ${(node.dataSources || []).map(d => `<span class="tag ds">${d}</span>`).join(' ') || '<span style="color:var(--color-text-secondary)">None specified</span>'}
+      <h3>Tags</h3>
+      ${(node.tags || []).map(t => `<span class="tag">${t}</span>`).join(' ')}`;
+  }
+  else if (node.type === 'technique') {
+    const hypEdges = DATA.edges.filter(e => e.type === 'TARGETS' && e.target === node.id);
+    const hyps = hypEdges.map(e => DATA.nodes.find(n => n.id === e.source)).filter(Boolean);
+    const tacticEdges = DATA.edges.filter(e => e.type === 'BELONGS_TO' && e.source === node.id);
+    const tactics = tacticEdges.map(e => e.target.replace('tactic:', ''));
+
+    html = `<h2>${node.label}</h2>
+      <div class="detail-row"><div class="detail-label">Name</div>${techName(node.label)}</div>
+      <div class="detail-row"><div class="detail-label">ATT&CK Link</div><a href="https://attack.mitre.org/techniques/${node.label.replace('.', '/')}/" target="_blank">View on MITRE ATT&CK</a></div>
+      <h3>Tactics</h3>
+      ${tactics.map(t => `<span class="tag tactic-tag">${t}</span>`).join(' ')}
+      <h3>Hypotheses (${hyps.length})</h3>
+      ${hyps.map(h => `<div class="hyp-link"><span class="tag ${h.subtype === 'f' ? 'flame' : h.subtype === 'e' ? 'ember' : 'alchemy'}">${h.id}</span> ${(h.title || '').substring(0, 55)}${(h.title || '').length > 55 ? '...' : ''}</div>`).join('')}`;
+  }
+  else if (node.type === 'tactic') {
+    const techEdges = DATA.edges.filter(e => e.type === 'BELONGS_TO' && e.target === node.id);
+    const techs = techEdges.map(e => DATA.nodes.find(n => n.id === e.source)).filter(Boolean);
+    html = `<h2>${node.label}</h2>
+      <div class="detail-row"><div class="detail-label">Type</div>MITRE ATT&CK Tactic</div>
+      <div class="detail-row"><div class="detail-label">Techniques</div>${techs.length} techniques mapped</div>
+      <h3>Techniques</h3>
+      ${techs.map(t => `<div class="hyp-link"><span class="tag tech">${t.label}</span> ${techName(t.label)}</div>`).join('')}`;
+  }
+  else if (node.type === 'datasource') {
+    const reqEdges = DATA.edges.filter(e => e.type === 'REQUIRES' && e.target === node.id);
+    const hyps = reqEdges.map(e => DATA.nodes.find(n => n.id === e.source)).filter(Boolean);
+    html = `<h2>${node.label}</h2>
+      <div class="detail-row"><div class="detail-label">Type</div>Data Source</div>
+      <h3>Used by Hypotheses (${hyps.length})</h3>
+      ${hyps.map(h => `<div class="hyp-link"><span class="tag ${h.subtype === 'f' ? 'flame' : h.subtype === 'e' ? 'ember' : 'alchemy'}">${h.id}</span> ${(h.title || '').substring(0, 55)}</div>`).join('')}`;
+  }
+  else if (node.type === 'contributor') {
+    const authEdges = DATA.edges.filter(e => e.type === 'AUTHORED_BY' && e.target === node.id);
+    const hyps = authEdges.map(e => DATA.nodes.find(n => n.id === e.source)).filter(Boolean);
+    html = `<h2>${node.label}</h2>
+      <div class="detail-row"><div class="detail-label">Type</div>Contributor</div>
+      <div class="detail-row"><div class="detail-label">Commits</div>${node.contributionCount || 0}</div>
+      <div class="detail-row"><div class="detail-label">Hypotheses</div>${node.hypothesisCount || 0}</div>
+      <h3>Hypotheses</h3>
+      ${hyps.map(h => `<div class="hyp-link"><span class="tag ${h.subtype === 'f' ? 'flame' : h.subtype === 'e' ? 'ember' : 'alchemy'}">${h.id}</span> ${(h.title || '').substring(0, 55)}</div>`).join('')}`;
+  }
+
+  content.innerHTML = html;
+}
+
+document.getElementById('sidebarClose').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.remove('open');
+  selectedNode = null;
+});
+
+// =====================================================
+// CONTROLS
+// =====================================================
+document.getElementById('btnFit').addEventListener('click', () => {
+  if (!currentSvg || !currentG || !currentSimNodes || !currentZoom) return;
+  const wrap = document.getElementById('graphWrap');
+  fitToView(currentSvg, currentG, currentSimNodes, wrap.clientWidth, wrap.clientHeight, currentZoom);
+});
+
+document.getElementById('btnZoomIn').addEventListener('click', () => {
+  if (!currentSvg || !currentZoom) return;
+  currentSvg.transition().duration(300).call(currentZoom.scaleBy, 1.4);
+});
+
+document.getElementById('btnZoomOut').addEventListener('click', () => {
+  if (!currentSvg || !currentZoom) return;
+  currentSvg.transition().duration(300).call(currentZoom.scaleBy, 0.7);
+});
+
+// =====================================================
+// RESIZE
+// =====================================================
+window.addEventListener('resize', () => {
+  if (DATA) buildGraph();
+});
+</script>
+</body>
+</html>
