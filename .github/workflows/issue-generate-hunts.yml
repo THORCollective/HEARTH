@@ -7,10 +7,7 @@ on:
 jobs:
   generate_draft:
     if: >-
-      (github.event.label.name == 'intel-submission' || github.event.label.name == 'regenerate') && (
-      github.event.issue.author_association == 'OWNER' ||
-      github.event.issue.author_association == 'MEMBER' ||
-      github.event.issue.author_association == 'COLLABORATOR')
+      github.event.label.name == 'intel-submission' || github.event.label.name == 'regenerate'
     runs-on: ubuntu-latest
     permissions:
       contents: write
