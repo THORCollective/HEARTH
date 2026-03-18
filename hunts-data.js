@@ -2199,6 +2199,129 @@ const HUNTS_DATA = [
     "file_path": "Flames/H091.md"
   },
   {
+    "id": "H092",
+    "category": "Flames",
+    "title": "An adversary is performing automated scanning for unauthenticated AI agent API export endpoints (CVE-2026-25253 pattern), targeting cloud-hosted AI agent deployments, to harvest stored LLM service credentials for downstream API abuse.",
+    "tactic": "Credential Access (T1552)",
+    "notes": "CVE-2026-25253 (Hunt.io research, Mar 2026): unauthenticated `/api/export-auth` endpoint in OpenClaw, Clawdbot, and Moltbot exposes AI service credentials (Claude, OpenAI, Google AI). 17,500+ internet-exposed instances identified; 68.9% Clawdbot, 22.3% Moltbot, 8.8% OpenClaw. 98.6% on cloud infrastructure across 52 countries.",
+    "tags": [
+      "credential_access",
+      "T1552",
+      "cve_2026_25253",
+      "ai_agent_security",
+      "api_key_exfil",
+      "openclaw",
+      "clawdbot"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- 17,500+ confirmed internet-exposed AI agent instances make this an extremely high-value mass-exploitation target\n- Stolen LLM API keys enable adversaries to conduct further AI-assisted attacks or sell access — substantial financial and operational risk\n- Unauthenticated endpoints are trivially exploitable with a single HTTP GET — no authentication bypass required\n- Web/API gateway logs may show burst GET requests to `/api/export-auth` from scanning infrastructure, but many orgs lack visibility into AI agent HTTP logs\n- Data sources: web application firewall logs, HTTP access logs for AI agent services, network flow data (scanning patterns), threat intel feeds for CVE exploitation in the wild",
+    "references": "- https://attack.mitre.org/techniques/T1552/\n- https://hunt.io/blog/cve-2026-25253-openclaw-ai-agent-exposure",
+    "file_path": "Flames/H092.md"
+  },
+  {
+    "id": "H093",
+    "category": "Flames",
+    "title": "An adversary is deploying AI-vibe-coded malware compiled in obscure languages (Nim, Zig, Crystal) to evade signature-based antivirus detection, targeting Windows endpoints in government and defense sectors, to achieve persistent execution while bypassing conventional security tooling.",
+    "tactic": "Defense Evasion (T1027)",
+    "notes": "APT36/Transparent Tribe campaign (Mar 2026, Bitdefender): Pakistan-aligned APT uses AI code generation (\"vibe-coding\") to mass-produce unique Nim, Zig, and Crystal malware samples; volume combined with obscure language compilation produces AV-unknown binaries at scale; paired with C2 over Slack/Discord/Google Sheets (see H091).",
+    "tags": [
+      "defense_evasion",
+      "T1027",
+      "nim",
+      "zig",
+      "crystal",
+      "obscure_language_malware",
+      "apt36",
+      "ai_generated_malware"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- Major AV engines have minimal signatures for Nim/Zig/Crystal binaries — APT36 is exploiting this gap at scale using AI-assisted mass production of unique variants\n- AI vibe-coding enables rapid generation of functionally unique samples, defeating hash-based detection and exhausting analyst triage capacity\n- Behavioral detection (process injection, suspicious parent-child chains, network callbacks) is more reliable than signature matching for these payloads\n- Hunt for unusual PE characteristics: Nim runtime strings (`NimMain`, `nimGC`), Zig stdlib artifacts, Crystal runtime patterns; EDR process tree anomalies are the primary signal\n- Data sources: EDR telemetry (process creation, file writes), PE metadata analysis, AV scan logs showing low/zero detection rates on new binaries",
+    "references": "- https://attack.mitre.org/techniques/T1027/\n- https://businessinsights.bitdefender.com/apt36-nightmare-vibeware",
+    "file_path": "Flames/H093.md"
+  },
+  {
+    "id": "H094",
+    "category": "Flames",
+    "title": "An adversary is distributing malicious AI agent skill packages targeting macOS endpoints running OpenClaw or similar agentic platforms to achieve credential theft, keychain access, and browser data exfiltration.",
+    "tactic": "Initial Access (T1195.001)",
+    "notes": "Hundreds of malicious skills distributed via ClawHub/SkillsMP deliver AMOS (Atomic macOS Stealer) via a trusted install chain: SKILL.md installs a prerequisite that downloads an unsigned Mach-O binary which immediately begins exfiltration. Same technique family as Vidar/Lumma on Windows — supply chain abuse via trusted package registries. Developer team ID `GNJLS3UYZ4` observed for related MacSync variant. (VLM-2026-03-12-001, radar.offseq.com, Mar 2026)",
+    "tags": [
+      "initial_access",
+      "supply_chain",
+      "T1195_001",
+      "macos",
+      "infostealer",
+      "amos",
+      "agentic_ai",
+      "openclaw"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- AI agent skill marketplaces (ClawHub, SkillsMP) have no code signing or runtime execution controls — a malicious `SKILL.md` is functionally a weaponized install script with full user-level access\n- The install chain is trusted by design: users explicitly approve skill installs, making this invisible to traditional \"user was tricked\" detection models\n- AMOS targets macOS keychains, browser cookies/passwords, crypto wallets, and 2FA seeds in a single execution — high-value credential sweep with minimal dwell time\n- Most macOS endpoint telemetry doesn't capture SKILL.md-triggered process chains; defenders are blind to this vector without agent-aware process lineage\n- Broadly applicable: any org deploying OpenClaw, Claude Desktop, Cursor, or similar agentic AI tools on macOS is in scope",
+    "references": "- https://attack.mitre.org/techniques/T1195/001/\n- https://attack.mitre.org/techniques/T1059/004/\n- https://attack.mitre.org/techniques/T1555/\n- https://radar.offseq.com (VLM-2026-03-12-001, Mar 12 2026)",
+    "file_path": "Flames/H094.md"
+  },
+  {
+    "id": "H095",
+    "category": "Flames",
+    "title": "An adversary is exploiting n8n workflow automation servers via expression injection (CVE-2025-68613) to execute arbitrary commands and use the platform's internal trust and integrations for lateral movement and credential access.",
+    "tactic": "Execution (T1059)",
+    "notes": "CVE-2025-68613: Improper Control of Dynamically-Managed Code Resources (CVSS 9.9) in n8n expression evaluation. Added to CISA KEV 2026-03-11, due date 2026-03-25. 24,700 instances remain internet-exposed per The Hacker News at time of KEV addition. n8n instances typically hold API keys, OAuth tokens, and database credentials in workflow configs — a compromised node is a credential treasure chest and a trusted pivot point into internal APIs. (VLM-2026-03-12-002/013, CISA KEV)",
+    "tags": [
+      "execution",
+      "T1059",
+      "rce",
+      "n8n",
+      "cisa_kev",
+      "CVE_2025_68613",
+      "workflow_automation",
+      "lateral_movement",
+      "credential_access"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- n8n runs with broad access by design: it holds credentials for dozens of downstream integrations (SaaS, databases, internal APIs) — post-exploitation value is extremely high\n- Workflow automation platforms are rarely monitored for anomalous process execution; defenders treat them as trusted internal tooling\n- CVSS 9.9 + CISA KEV = actively exploited in the wild; the 2026-03-25 remediation deadline means many orgs are still patching during active exploitation\n- Shell commands spawned from an n8n service process are abnormal by definition — process lineage is a reliable, low-false-positive detection anchor\n- Broadly applicable: n8n is widely deployed in SMBs, startups, and enterprise automation teams; 24,700 exposed instances confirm the attack surface is large",
+    "references": "- https://attack.mitre.org/techniques/T1059/\n- https://attack.mitre.org/techniques/T1046/\n- https://attack.mitre.org/techniques/T1078/\n- https://www.cisa.gov/known-exploited-vulnerabilities-catalog\n- https://thehackernews.com (CVE-2025-68613 detail, Mar 12 2026)",
+    "file_path": "Flames/H095.md"
+  },
+  {
+    "id": "H096",
+    "category": "Flames",
+    "title": "An adversary is exploiting FortiGate NGFW vulnerabilities to exfiltrate device configuration files containing plaintext Active Directory and LDAP service account credentials for subsequent lateral movement and privileged access.",
+    "tactic": "Credential Access (T1552.001)",
+    "notes": "Active campaign abusing CVE-2024-47575 and CVE-2024-55591 (FortiGate auth bypass / command injection) to extract config files containing plaintext AD/LDAP service account credentials. Targets observed: healthcare, government, MSPs — sectors with high-value AD environments. Credentials extracted from FortiGate configs are often service accounts with broad internal access, enabling fast lateral movement post-extraction. (VLM-2026-03-12-004, SentinelOne / kensai.app, Mar 12 2026)",
+    "tags": [
+      "credential_access",
+      "T1552_001",
+      "fortinet",
+      "fortigate",
+      "active_directory",
+      "ldap",
+      "lateral_movement",
+      "healthcare",
+      "government",
+      "CVE_2024_47575",
+      "CVE_2024_55591"
+    ],
+    "submitter": {
+      "name": "Jinx (THOR Collective)",
+      "link": ""
+    },
+    "why": "- FortiGate config files frequently contain LDAP bind credentials in plaintext — a known but widely unmitigated exposure in enterprise deployments\n- Service accounts stored in firewall configs often have broad AD permissions (domain read, sometimes admin-level) because they were provisioned for VPN authentication or identity lookups\n- Exploitation of the initial CVEs may leave no obvious alert; the credential exfil and subsequent AD abuse are the detectable downstream behaviors\n- Auth events from service accounts suddenly authenticating from unexpected workstations or using anomalous LDAP queries are reliably detectable with existing SIEM/AD telemetry\n- Sectors targeted (healthcare, government, MSPs) manage large AD environments where a single compromised service account can cascade across tenants or patient-care systems",
+    "references": "- https://attack.mitre.org/techniques/T1552/001/\n- https://attack.mitre.org/techniques/T1078/\n- https://attack.mitre.org/techniques/T1087/\n- https://www.fortiguard.com/psirt/FG-IR-24-423 (CVE-2024-47575)\n- https://www.fortiguard.com/psirt/FG-IR-24-535 (CVE-2024-55591)\n- https://kensai.app (VLM-2026-03-12-004, Mar 12 2026)",
+    "file_path": "Flames/H096.md"
+  },
+  {
     "id": "H097",
     "category": "Flames",
     "title": "An adversary is using ClickFix lure pages impersonating legitimate software (Microsoft Teams, Homebrew, Ledger Live) to social-engineer users into executing malicious commands that deploy the Odyssey infostealer for credential and session token theft.",
@@ -2301,154 +2424,23 @@ const HUNTS_DATA = [
   {
     "id": "H101",
     "category": "Flames",
-    "title": "An adversary is cloning legitimate CLI tool installation pages and purchasing sponsored search placement to deliver infostealers via malicious `curl",
-    "tactic": "bash` one-liners targeting developers attempting to install trusted software such as Claude Code.",
-    "notes": "Execution (T1204.002)",
-    "tags": [],
+    "title": "Threat actors are using compromised Microsoft Intune administrative credentials to issue remote wipe commands across enterprise-enrolled mobile devices and workstations to destroy data at scale and disrupt business operations.",
+    "tactic": "Impact",
+    "notes": "Based on ATT&CK technique T1485. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
+    "tags": [
+      "impact",
+      "T1485",
+      "intune",
+      "mdm",
+      "wiper"
+    ],
     "submitter": {
-      "name": "#execution #T1204_002 #T1059_004 #installfix #clickfix #curl_bash #malvertising #developer_supply_chain #ai_tools #infostealer #macos",
+      "name": "Alan G",
       "link": ""
     },
-    "why": "- InstallFix eliminates the social engineering gap entirely — the user genuinely wants to install the software, and the attack page delivers exactly that experience with a swapped command; traditional security awareness training (\"don't run untrusted commands\") provides no protection when the command appears to originate from a trusted vendor page\n- Sponsored search results appear above organic results, meaning even security-conscious developers who navigate directly to Google rather than bookmarking install pages will encounter the malicious page first\n- Detection requires correlating web browsing context (navigation to lookalike domains) with subsequent Terminal/shell process execution of curl piped to bash — most EDR tools treat these as separate, unrelated event streams\n- Data sources: DNS queries to recently registered domains mimicking legitimate tool vendors, process creation events for `curl | bash` or `curl | sh` patterns, network connections from shell processes to non-vendor infrastructure immediately after browser navigation to sponsored search results\n- The attack extends beyond Claude Code to any CLI tool installed via `curl | bash` — the technique is tool-agnostic and will likely be replicated across the developer tooling ecosystem",
-    "references": "- [MITRE ATT&CK T1204.002 - User Execution: Malicious File](https://attack.mitre.org/techniques/T1204/002/)\n- [MITRE ATT&CK T1059.004 - Command and Scripting Interpreter: Unix Shell](https://attack.mitre.org/techniques/T1059/004/)\n- [Push Security - InstallFix Campaign](https://pushsecurity.com/blog/installfix)\n- [SecurityWeek - Cloned AI Tool Sites Distribute Malware](https://www.securityweek.com/cloned-ai-tool-sites-distribute-malware-in-installfix-campaign/)",
+    "why": "- Microsoft Intune provides centralized mobile device management with the capability to remotely wipe thousands of devices from a single administrative console, making it an extremely high-impact target for destructive attacks\n- The Handala group's abuse of Intune to wipe over 200,000 systems at Stryker demonstrates how legitimate enterprise management tools can be weaponized for mass data destruction, affecting critical healthcare supply chains\n- This technique is particularly dangerous because remote wipe commands are legitimate administrative functions that may bypass traditional security controls and appear as authorized actions in audit logs\n- Detection of anomalous Intune wipe operations is critical for preventing catastrophic data loss across enterprise environments, especially in sectors like healthcare where operational continuity directly impacts patient care",
+    "references": "- [MITRE ATT&CK T1485 - Data Destruction](https://attack.mitre.org/techniques/T1485/)\n- [Source CTI Report](https://krebsonsecurity.com/2026/03/iran-backed-hackers-claim-wiper-attack-on-medtech-firm-stryker/)",
     "file_path": "Flames/H101.md"
-  },
-  {
-    "id": "H102",
-    "category": "Flames",
-    "title": "An adversary is using stolen GitHub credentials harvested from compromised IDE extensions to perform force-push attacks that rewrite repository history and inject obfuscated malware into hundreds of Python repositories, using Solana blockchain memo transactions as a covert C2 channel.",
-    "tactic": "Persistence (T1195.001)",
-    "notes": "ForceMemo campaign by GlassWorm actor (active since March 8, 2026); 240+ Python repos compromised via account takeover + force-push; force-push preserves original author/date but diverges committer date; payload uses 3-layer obfuscation (base64/zlib/XOR); same Solana wallet (BjVeAjPrSKFiingBn4vZvghsGj9KCE8AJVtbc9S8o8SC) links to all GlassWorm waves; Russia exclusion check; credentials stolen from git credential fill, VS Code storage, ~/.git-credentials, GITHUB_TOKEN env var",
-    "tags": [
-      "persistence",
-      "supply_chain",
-      "T1195_001",
-      "T1098",
-      "T1567",
-      "forcememo",
-      "glassworm",
-      "github",
-      "force_push",
-      "solana",
-      "credential_theft",
-      "python",
-      "developer_tooling"
-    ],
-    "submitter": {
-      "name": "Jinx (automated)",
-      "link": ""
-    },
-    "why": "- Force-push rewrites commit history while preserving original author names and dates, leaving no pull request trail in the GitHub UI — the only reliable detection signal is the discrepancy between author date and committer date (gaps exceeding 30 days) and divergent before/after commit SHAs in push events\n- This represents a full developer supply chain cycle: compromised extensions steal GitHub tokens → stolen tokens poison repositories → poisoned repositories infect new developers → cycle repeats at scale\n- Solana blockchain C2 is extremely difficult to block or monitor — DNS queries to `api.mainnet-beta.solana.com` from Python or pip processes are the primary network-level detection opportunity, but the C2 domain itself is legitimate infrastructure\n- Detection data sources: GitHub audit logs for force-push events on default branches with committer email set to \"null\", git push webhook events with before/after SHA divergence, DNS resolution of Solana RPC endpoints from Python/pip process trees, process execution chains showing base64/zlib decode operations in Python contexts\n- The campaign's 240+ repository scope means any organization with developers using Python pip dependencies is potentially exposed to transitive compromise",
-    "references": "- [MITRE ATT&CK T1195.001 - Supply Chain Compromise: Compromise Software Dependencies](https://attack.mitre.org/techniques/T1195/001/)\n- [MITRE ATT&CK T1098 - Account Manipulation](https://attack.mitre.org/techniques/T1098/)\n- [StepSecurity - ForceMemo: Hundreds of GitHub Python Repos Compromised](https://www.stepsecurity.io/blog/forcememo-hundreds-of-github-python-repos-compromised-via-account-takeover-and-force-push)",
-    "file_path": "Flames/H102.md"
-  },
-  {
-    "id": "H103",
-    "category": "Flames",
-    "title": "An adversary is using Claude AI Artifacts and Medium.com posts as trusted staging platforms for macOS infostealer delivery, serving malicious Terminal commands disguised as legitimate system administration advice through content that cannot be blocked by domain-based security controls.",
-    "tactic": "Defense Evasion (T1583.006)",
-    "notes": "Documented by Moonlock Lab and AdGuard (March 2026); malicious Google ads direct to Claude Artifacts or Medium posts containing \"helpful\" Terminal commands (install Homebrew, optimize storage) that execute MacSync loader; all Artifact URLs are under claude.ai — domain-level blocking breaks legitimate AI tool usage; distinct from InstallFix (H101) which clones vendor install pages",
-    "tags": [
-      "defense_evasion",
-      "T1583_006",
-      "T1204_002",
-      "T1059_004",
-      "claude_artifacts",
-      "medium",
-      "macsync",
-      "applesauce",
-      "malvertising",
-      "trusted_platform_abuse",
-      "macos"
-    ],
-    "submitter": {
-      "name": "Jinx (automated)",
-      "link": ""
-    },
-    "why": "- Claude Artifacts exist entirely under the claude.ai domain, making domain-based blocking impossible without disrupting legitimate AI tool usage — this is a category-defining evasion technique that neutralizes traditional URL/domain filtering\n- The content appears as AI-generated or editorial macOS advice rather than a software installation page, expanding the victim pool beyond developers to any macOS user seeking system optimization guidance\n- Detection must be behavioral rather than IOC-based: the key signal is Terminal or bash process execution following browser navigation to claude.ai/artifacts/* or medium.com URLs, particularly when the executed command fetches remote payloads\n- Data sources: process creation events for bash/zsh/Terminal spawned within seconds of browser activity on claude.ai or medium.com, network connections from shell processes to non-Apple/non-Homebrew infrastructure, osascript execution from shell context following web browsing\n- This technique will likely expand to other trusted content platforms (Notion, Google Docs, GitHub Gists) as attackers recognize the domain-blocking immunity pattern",
-    "references": "- [MITRE ATT&CK T1583.006 - Acquire Infrastructure: Web Services](https://attack.mitre.org/techniques/T1583/006/)\n- [MITRE ATT&CK T1204.002 - User Execution: Malicious File](https://attack.mitre.org/techniques/T1204/002/)\n- [Nodal NYC - Claude AI macOS Infostealer](https://www.nodalnyc.com/blog/2026/3/11/claude-ai-mac-os-infostealer)",
-    "file_path": "Flames/H103.md"
-  },
-  {
-    "id": "H104",
-    "category": "Flames",
-    "title": "An adversary is patching Ledger Live cryptocurrency wallet application bundles by modifying the app.asar archive to inject seed phrase exfiltration scripts, updating Info.plist for checksum integrity, and re-signing with ad-hoc signatures to maintain macOS app verification while silently stealing cryptocurrency wallet recovery phrases.",
-    "tactic": "Collection (T1005)",
-    "notes": "MacSync February 2026 variant documented by Sophos X-Ops \"Evil Evolution\"; complete architectural rewrite from earlier variants — loader-as-a-service model using shell scripts (not MachO), API key-gated C2 with unique token auth, dynamic AppleScript via osascript in-memory execution; patches both /Applications/Ledger Wallet.app and /Applications/Ledger Live.app .asar bundles; all I/O redirected to /dev/null; checks /tmp/osalogging.zip; operator comments in Russian with CIS-exclusion runtime check; Telegram bot for victim analytics",
-    "tags": [
-      "collection",
-      "T1005",
-      "T1059_002",
-      "T1553_002",
-      "macsync",
-      "applesauce",
-      "ledger_live",
-      "asar_patching",
-      "crypto_wallet",
-      "seed_exfiltration",
-      "macos",
-      "code_signing_abuse"
-    ],
-    "submitter": {
-      "name": "Jinx (automated)",
-      "link": ""
-    },
-    "why": "- The .asar bundle patching with Info.plist update and ad-hoc re-signing is a sophisticated post-compromise technique that makes the tampered Ledger Live application appear legitimate to macOS Gatekeeper and the user — standard app verification checks will pass on the modified binary\n- Cryptocurrency seed phrase theft is a high-impact, irreversible action — once exfiltrated, attackers can drain wallets at any time and victims have no recourse; this creates urgency for proactive detection before the exfiltration completes\n- Detection data sources: file modification events on .asar files within /Applications/Ledger*.app bundles, codesign operations (ad-hoc signing) on Ledger application paths, osascript process execution with stdin/pipes (in-memory AppleScript), Info.plist modifications outside of legitimate App Store or auto-update contexts\n- The loader-as-a-service architecture using shell scripts instead of compiled binaries evades static analysis and signature-based detection — hunting must focus on behavioral indicators like shell processes modifying application bundles and performing code signing operations\n- The campaign's use of API key-gated C2 with unique victim tokens actively prevents sandbox analysis, meaning automated malware analysis pipelines may fail to capture the full attack chain — manual hunting on endpoint telemetry is required",
-    "references": "- [MITRE ATT&CK T1005 - Data from Local System](https://attack.mitre.org/techniques/T1005/)\n- [MITRE ATT&CK T1059.002 - Command and Scripting Interpreter: AppleScript](https://attack.mitre.org/techniques/T1059/002/)\n- [MITRE ATT&CK T1553.002 - Subvert Trust Controls: Code Signing](https://attack.mitre.org/techniques/T1553/002/)\n- [Sophos X-Ops - Evil Evolution: ClickFix and macOS Infostealers](https://www.sophos.com/en-us/blog/evil-evolution-clickfix-and-macos-infostealers)",
-    "file_path": "Flames/H104.md"
-  },
-  {
-    "id": "H105",
-    "category": "Flames",
-    "title": "An adversary is delivering malicious payloads by manipulating ZIP archive header fields to exploit inconsistencies between archive parsing libraries and antivirus scanning engines, bypassing initial static detection on 50+ endpoint security products to execute malware that evades first-scan analysis.",
-    "tactic": "Defense Evasion (T1027)",
-    "notes": "CVE-2026-0866 \"Zombie ZIP\" — technique published by researcher Chris Aziz (Bombadil Systems), March 2026; manipulated ZIP headers cause AV engines to skip or misparse archive contents while the OS/application parser successfully extracts and executes the payload; reported 98% bypass rate across 50/51 tested AV engines; bypass is first-scan only — rescans after initial execution may detect; requires a custom loader to exploit the header discrepancy; coverage: SANS ISC, BleepingComputer, SC Media",
-    "tags": [
-      "defense_evasion",
-      "T1027",
-      "T1027_001",
-      "CVE_2026_0866",
-      "zombie_zip",
-      "archive_manipulation",
-      "av_bypass",
-      "zip_header",
-      "first_scan_bypass"
-    ],
-    "submitter": {
-      "name": "Jinx (THOR Collective)",
-      "link": ""
-    },
-    "why": "- The technique exploits a fundamental parsing discrepancy between how AV engines inspect ZIP archives and how OS decompression libraries extract them — behavioral detection becomes the primary (and often only) effective layer once static AV is bypassed\n- A 98% bypass rate across commercial AV products is operationally significant; threat actors will rapidly operationalize publicly disclosed bypass techniques, especially those with low implementation cost\n- First-scan bypass is particularly dangerous in environments that rely on initial file drop detection (EDR file-write events, email gateway scanning, web proxy inspection) — payloads may execute before any re-scan occurs\n- Detection data sources: process execution following archive extraction events (especially unusual parent processes spawned by archive utilities), archive files with non-standard header structures (file carving/YARA), download-then-extract-then-execute behavior chains in process telemetry, and volume of child processes spawned by common archive handlers (7zip, WinRAR, native OS unzip)\n- The bypass relies on inconsistent library behavior rather than signature-specific evasion — traditional signature updates will not address the root cause, making behavioral hunt strategies more durable",
-    "references": "- [MITRE ATT&CK T1027 - Obfuscated Files or Information](https://attack.mitre.org/techniques/T1027/)\n- [MITRE ATT&CK T1027.001 - Binary Padding](https://attack.mitre.org/techniques/T1027/001/)\n- [MITRE ATT&CK T1562 - Impair Defenses](https://attack.mitre.org/techniques/T1562/)\n- [SANS ISC - Zombie ZIP CVE-2026-0866 Coverage](https://isc.sans.edu)\n- [BleepingComputer - Zombie ZIP AV Bypass Technique](https://www.bleepingcomputer.com)",
-    "file_path": "Flames/H105.md"
-  },
-  {
-    "id": "H106",
-    "category": "Flames",
-    "title": "An adversary is using fake AI tool installer lures — including spoofed ChatGPT desktop applications and fabricated AI browser installers — distributed via fake GitHub pages and ChatGPT shared conversation links to deliver macOS infostealers through ClickFix-style social engineering execution chains.",
-    "tactic": "Execution (T1059)",
-    "notes": "MacSync campaign (Nov/Dec 2025 + Jan 2026 waves) documented by Sophos X-Ops \"Evil Evolution\" (March 2026); dominant lure shift from generic software cracks to fake AI tool installers (ChatGPT Atlas browser, generic \"AI assistant\" apps); staging infrastructure abuses ChatGPT shared conversations and fake GitHub pages for legitimacy; extends prior MacSync ClickFix pattern with new high-trust lure category; APPLESAUCE tracks ongoing MacSync activity; relates to H104 (Ledger Live patching payload) and H101 (earlier MacSync ClickFix variants)",
-    "tags": [
-      "execution",
-      "T1059",
-      "T1059_004",
-      "T1566_002",
-      "macsync",
-      "clickfix",
-      "fake_ai_installer",
-      "infostealer",
-      "macos",
-      "social_engineering",
-      "applesauce",
-      "chatgpt_lure"
-    ],
-    "submitter": {
-      "name": "Jinx (THOR Collective)",
-      "link": ""
-    },
-    "why": "- The shift to fake AI tool installers is a high-signal lure evolution — AI assistant tools have high install intent across technical and non-technical users alike, and spoofed ChatGPT applications carry inherent legitimacy trust that traditional crack/warez lures lack\n- ChatGPT shared conversation links as staging infrastructure is particularly deceptive: the initial click goes to a legitimate `chat.openai.com` URL, meaning URL reputation and proxy category filtering will not flag the referral chain as malicious\n- ClickFix execution chains requiring the victim to paste clipboard commands into Terminal lower the barrier for attackers (no signed binary required) while bypassing macOS Gatekeeper entirely — behavioral detection on shell process lineage from non-shell parent processes is the primary detection path\n- Detection data sources: Terminal/shell processes spawned via clipboard paste patterns (short TTL between process creation and command input), downloads from GitHub pages with low repo age or zero stars, browser-to-shell execution chains, osascript execution from browser child processes, and process trees matching `browser → terminal → curl/wget → bash` patterns\n- The three-wave campaign pattern (Nov 2025, Dec 2025, Jan 2026) confirms this is an active, iterating operation — defenders should expect continued lure refinement targeting AI tool interest",
-    "references": "- [MITRE ATT&CK T1059 - Command and Scripting Interpreter](https://attack.mitre.org/techniques/T1059/)\n- [MITRE ATT&CK T1059.004 - Unix Shell](https://attack.mitre.org/techniques/T1059/004/)\n- [MITRE ATT&CK T1566.002 - Phishing: Spearphishing Link](https://attack.mitre.org/techniques/T1566/002/)\n- [Sophos X-Ops - Evil Evolution: ClickFix and macOS Infostealers](https://www.sophos.com/en-us/blog/evil-evolution-clickfix-and-macos-infostealers)\n- [HEARTH H101 - MacSync ClickFix Infostealer](../Flames/H101.md)\n- [HEARTH H104 - Ledger Live .asar Bundle Patching](../Flames/H104.md)",
-    "file_path": "Flames/H106.md"
   },
   {
     "id": "M001",
