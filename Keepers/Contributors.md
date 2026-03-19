@@ -6,8 +6,8 @@ Everyone listed below has submitted ideas that have been added to HEARTH. This l
 
 | Rank | Contributor | Hunts Submitted |
 |------|-------------|-----------------|
-| 1 | Sydney Marrone | 29 |
-| 2 | Jinx (THOR Collective) | 29 |
+| 1 | Jinx (THOR Collective) | 39 |
+| 2 | Sydney Marrone | 29 |
 | 3 | John Grageda | 6 |
 | 4 | Lauren Proehl | 4 |
 | 5 | Jamie Williams | 3 |
@@ -18,19 +18,20 @@ Everyone listed below has submitted ideas that have been added to HEARTH. This l
 | 10 | Siddhant Mishra | 2 |
 | 11 | DarkWizardCatcher | 2 |
 | 12 | Joshua Hines | 2 |
-| 13 | Ryan Fetterman | 2 |
-| 14 | hu983r | 1 |
-| 15 | Cody Lunday | 1 |
-| 16 | wikijm | 1 |
-| 17 | Apramey "Apps" S | 1 |
-| 18 | _(No response)_ | 1 |
-| 19 | Shaimon Weslley | 1 |
-| 20 | Duc Viet Hoang | 1 |
-| 21 | @samuel-lucas6 | 1 |
-| 22 | @tsof-smoky | 1 |
-| 23 | p-o-s-t | 1 |
-| 24 | @p-o-s-t | 1 |
-| 25 | odanh | 1 |
-| 26 | Claire Stromboe | 1 |
-| 27 | Jon Perez | 1 |
-| 28 | Collin McClaine | 1 |
+| 13 | Alan G | 2 |
+| 14 | Ryan Fetterman | 2 |
+| 15 | hu983r | 1 |
+| 16 | Cody Lunday | 1 |
+| 17 | wikijm | 1 |
+| 18 | Apramey "Apps" S | 1 |
+| 19 | _(No response)_ | 1 |
+| 20 | Shaimon Weslley | 1 |
+| 21 | Duc Viet Hoang | 1 |
+| 22 | @samuel-lucas6 | 1 |
+| 23 | @tsof-smoky | 1 |
+| 24 | p-o-s-t | 1 |
+| 25 | @p-o-s-t | 1 |
+| 26 | odanh | 1 |
+| 27 | Claire Stromboe | 1 |
+| 28 | Jon Perez | 1 |
+| 29 | Collin McClaine | 1 |
