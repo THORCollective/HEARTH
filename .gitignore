@@ -40,7 +40,7 @@ Thumbs.db
 
 # Generated data / build artifacts
 database/hunts.db
-public/hunts-data.json
+# public/hunts-data.json — now tracked; needed for Vite build → GitHub Pages
 
 # Local drafts and scoring
 drafts/
