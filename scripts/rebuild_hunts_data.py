@@ -8,12 +8,49 @@ import re
 from pathlib import Path
 
 
+# Canonical submitter names — coalesce duplicates and add links
+SUBMITTER_MAP = {
+    # Jinx variants
+    "Jinx (THOR Collective)": {"name": "Jinx (THOR Collective)", "link": ""},
+    "Jinx (automated)": {"name": "Jinx (THOR Collective)", "link": ""},
+    # Bot submissions
+    "hearth-auto-intel": {"name": "HEARTH Bot", "link": "https://github.com/THORCollective/HEARTH"},
+    # p-o-s-t variants
+    "p-o-s-t": {"name": "p-o-s-t", "link": "https://github.com/p-o-s-t"},
+    "@p-o-s-t": {"name": "p-o-s-t", "link": "https://github.com/p-o-s-t"},
+    # Azrara variants
+    "Azrara": {"name": "Azrara", "link": "https://www.linkedin.com/in/azrara/"},
+    # tsof-smoky
+    "@tsof-smoky": {"name": "tsof-smoky", "link": ""},
+    # samuel-lucas6
+    "@samuel-lucas6": {"name": "samuel-lucas6", "link": ""},
+    # Cleanup
+    "_(No response)_": {"name": "Anonymous", "link": ""},
+    "**Submitter**": None,  # Header row — skip
+}
+
+
 def parse_submitter(raw):
-    """Extract name and link from markdown link syntax."""
+    """Extract name and link from markdown link syntax, then normalize."""
+    # Try markdown link first
     match = re.match(r'\[([^\]]+)\]\(([^)]+)\)', raw)
     if match:
-        return {"name": match.group(1), "link": match.group(2)}
-    return {"name": raw.strip(), "link": ""}
+        name, link = match.group(1), match.group(2)
+        # Check if the extracted name has a canonical override
+        if name in SUBMITTER_MAP:
+            override = SUBMITTER_MAP[name]
+            if override is None:
+                return None
+            return override
+        return {"name": name, "link": link}
+
+    stripped = raw.strip()
+    if stripped in SUBMITTER_MAP:
+        override = SUBMITTER_MAP[stripped]
+        if override is None:
+            return None
+        return override
+    return {"name": stripped, "link": ""}
 
 
 def parse_tags(raw):
@@ -76,7 +113,7 @@ def parse_hunt_file(path, category):
         "tactic": re.sub(r'\*\*', '', cells[2]).strip(),
         "notes": re.sub(r'\*\*', '', cells[3]).strip(),
         "tags": parse_tags(cells[4]),
-        "submitter": parse_submitter(cells[5]),
+        "submitter": parse_submitter(cells[5]) or {"name": "Anonymous", "link": ""},
         "why": extract_section(content, 'Why'),
         "references": extract_section(content, 'References'),
         "file_path": f"{category}/{path.name}"

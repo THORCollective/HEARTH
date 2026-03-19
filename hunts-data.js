@@ -533,7 +533,7 @@ const HUNTS_DATA = [
     ],
     "submitter": {
       "name": "Azrara",
-      "link": "https://github.com/Azrara"
+      "link": "https://www.linkedin.com/in/azrara/"
     },
     "why": "- Hunting for malicious mshta.exe activity provides critical early detection of potential threats by targeting a commonly exploited Windows utility that attackers use to evade security defenses.\n- This hunt improves threat visibility, enhances detection accuracy, and mitigates the risk of full-scale attacks by catching adversaries in the early stages.",
     "references": "- https://attack.mitre.org/techniques/T1218/005/\n- https://redcanary.com/threat-detection-report/techniques/mshta/",
@@ -551,7 +551,7 @@ const HUNTS_DATA = [
     ],
     "submitter": {
       "name": "Azrara",
-      "link": "https://github.com/Azrara"
+      "link": "https://www.linkedin.com/in/azrara/"
     },
     "why": "- Hunting for adversarial activity involving network share exploration on compromised systems is crucial for detecting potential data theft early.\n- By monitoring access to shared network drives and tracking unusual usage of command shell functions, defenders can identify attempts to locate and collect sensitive data before it is exfiltrated.",
     "references": "- https://research.splunk.com/endpoint/4dc3951f-b3f8-4f46-b412-76a483f72277/\n- https://attack.mitre.org/techniques/T1039/",
@@ -678,7 +678,7 @@ const HUNTS_DATA = [
       "SonicWall"
     ],
     "submitter": {
-      "name": "hearth-auto-intel",
+      "name": "HEARTH Bot",
       "link": "https://github.com/THORCollective/HEARTH"
     },
     "why": "- Detecting the use of compromised VPN credentials is critical as it is often the first step in an attack chain, allowing adversaries to gain a foothold in the network.\n- If this technique succeeds, adversaries can gain access to the internal network, potentially bypassing perimeter defenses and giving them the ability to move laterally, escalate privileges, or perform other malicious activities.\n- This specific implementation is tied to larger campaigns by the Fog ransomware group, which has been observed using compromised VPN credentials for initial access in multiple incidents.\n- The use of compromised SonicWall VPN credentials was chosen over other techniques mentioned in the CTI due to its actionability (evident in VPN logs), impact (directly enables adversary objectives), uniqueness (distinctive of this specific threat), and detection gap (commonly missed by security tools).",
@@ -698,7 +698,7 @@ const HUNTS_DATA = [
       "T1068"
     ],
     "submitter": {
-      "name": "hearth-auto-intel",
+      "name": "HEARTH Bot",
       "link": "https://github.com/THORCollective/HEARTH"
     },
     "why": "- Detecting this precise behavior is crucial as it allows adversaries to gain elevated privileges, potentially giving them full control over the compromised Apache web server.\n- If this specific technique succeeds, adversaries can execute arbitrary code with high privileges, leading to further system compromise, data theft, or disruption of services.\n- This specific implementation ties to larger campaigns as it allows adversaries to compromise web servers, which can be used as a stepping stone to infiltrate the internal network or to host malicious content.\n- This technique was chosen over others mentioned in the CTI due to its high impact (arbitrary code execution with elevated privileges) and its actionability, as exploitation attempts can be detected in web server logs.",
@@ -718,7 +718,7 @@ const HUNTS_DATA = [
       "T1098"
     ],
     "submitter": {
-      "name": "hearth-auto-intel",
+      "name": "HEARTH Bot",
       "link": "https://github.com/THORCollective/HEARTH"
     },
     "why": "- Detecting this behavior is crucial as it can lead to unauthorized access to sensitive data and systems in the cloud environment.\n- If successful, the threat actors can escalate their privileges, potentially gaining full control over the cloud environment and enabling them to exfiltrate sensitive data.\n- This technique has been observed in larger campaigns targeting cloud environments, indicating a broader threat landscape.",
@@ -739,7 +739,7 @@ const HUNTS_DATA = [
       "T1204"
     ],
     "submitter": {
-      "name": "hearth-auto-intel",
+      "name": "HEARTH Bot",
       "link": "https://github.com/THORCollective/HEARTH"
     },
     "why": "- Detecting the use of ELF files to deploy malware is critical as it signifies a targeted attack on Linux-based cloud infrastructure, which is widely used in enterprise environments.\n- The tactical impact of a successful attack includes unauthorized access to cloud infrastructure, potential data breaches, and the ability for the threat actor to maintain persistence within the compromised system.\n- This behavior could be linked to larger campaigns targeting cloud infrastructure, given the increasing trend of threat actors weaponizing ELF files.",
@@ -758,7 +758,7 @@ const HUNTS_DATA = [
       "WMI"
     ],
     "submitter": {
-      "name": "hearth-auto-intel",
+      "name": "HEARTH Bot",
       "link": "https://github.com/THORCollective/HEARTH"
     },
     "why": "- Detecting this behavior is crucial as it allows threat actors to gain control over critical systems, potentially leading to data theft, system disruption, or further lateral movement within the network.\n- If successful, the threat actors can manipulate the compromised system to their advantage, potentially leading to significant financial and reputational damage for the targeted organization.\n- This technique has been linked to larger campaigns targeting the financial sector, indicating a strategic focus on high-value targets.",
@@ -777,7 +777,7 @@ const HUNTS_DATA = [
       "WSC"
     ],
     "submitter": {
-      "name": "hearth-auto-intel",
+      "name": "HEARTH Bot",
       "link": "https://github.com/THORCollective/HEARTH"
     },
     "why": "- Detecting this behavior is crucial as it allows threat actors to disable Windows Defender, one of the primary security solutions on Windows systems, thereby significantly lowering the barrier for subsequent malware deployment and execution.\n- If successful, this technique can lead to a compromised system, data breaches, and potential lateral movement within the network.\n- This technique has been associated with the tool \"defendnot\", which represents a sophisticated approach to bypassing Windows Defender.",
@@ -1472,7 +1472,7 @@ const HUNTS_DATA = [
       "systeminfo"
     ],
     "submitter": {
-      "name": "_(No response)_",
+      "name": "Anonymous",
       "link": ""
     },
     "why": "- This specific PowerShell reconnaissance pattern occurs within 20 minutes of initial Gootloader infection and represents the earliest detectable post-compromise activity before lateral movement begins\n- The combination of Get-CimInstance Win32_OperatingSystem queries, ConvertTo-Csv parsing for MainWindowTitle extraction, Shell.Application COM object usage for desktop enumeration, and the distinctive 99-character environment variable filter creates a highly specific behavioral signature unique to Gootloader's second-stage payload\n- Detecting this reconnaissance activity provides defenders with a critical 16+ hour window before Domain Controller compromise occurs, as observed in multiple Huntress cases where DC compromise happened 17 hours after initial infection\n- The MainWindowTitle extraction technique is particularly unusual as it reveals sensitive information like open documents and credentials visible in window titles, making it a high-fidelity detection opportunity\n- This activity directly precedes hands-on-keyboard operations by Vanilla Tempest, including Kerberoasting, lateral movement via WinRM, and ransomware deployment, making early detection essential to prevent domain-wide compromise",
@@ -1554,7 +1554,7 @@ const HUNTS_DATA = [
       "IF018.002"
     ],
     "submitter": {
-      "name": "@samuel-lucas6",
+      "name": "samuel-lucas6",
       "link": ""
     },
     "why": "- Reckless sharing on AI chatbot platforms risks exposing sensitive data to the provider. This data could also potentially be used for training or made public via a breach/account compromise.\n- With an account, an insider can transfer sensitive data to a personal device, potentially bypassing other DLP controls (e.g., for email).",
@@ -1575,7 +1575,7 @@ const HUNTS_DATA = [
       "firewall"
     ],
     "submitter": {
-      "name": "@tsof-smoky",
+      "name": "tsof-smoky",
       "link": ""
     },
     "why": "This hunt matters because attackers can temporarily weaken host-based firewall protections to enable command-and-control or payload delivery while leaving little to no persistent evidence. By detecting the act of firewall manipulation rather than the final rule state, defenders can identify stealthy defense-evasion techniques that traditional audits miss. Catching this behavior early helps prevent unauthorized network access, lateral movement, and data exfiltration, reducing overall breach impact.",
@@ -1617,8 +1617,8 @@ const HUNTS_DATA = [
       "t1102"
     ],
     "submitter": {
-      "name": "@p-o-s-t",
-      "link": ""
+      "name": "p-o-s-t",
+      "link": "https://github.com/p-o-s-t"
     },
     "why": "- Adversaries may tunnel network communications to and from a victim system within a separate protocol to avoid detection/network filtering and enable access to otherwise unreachable systems.\n- Dev Tunnels (Microsoft) create a secure, tempory URL that maps to a local service running on a machine, which works across firewalls and NAT.\n- Reverse tunneling tools allow software running on an endpoint to establish an outbound connection to the internet-based tunnel provider, who then provides the \"inbound\" path to the client system using the reverse tunnel. This can flip the script on typical taffic behavior.\n- These services may conceal malicious traffic by blending in with existing traffic and provide an outer layer of encryption.",
     "references": "- https://isc.sans.edu/diary/31724\n- https://www.sentinelone.com/labs/operation-digital-eye-chinese-apt-compromises-critical-digital-infrastructure-via-visual-studio-code-tunnels/\n- https://blog.phylum.io/a-deep-dive-into-powerat-a-newly-discovered-stealer-rat-combo-polluting-pypi/\n- https://www.esentire.com/blog/quartet-of-trouble-xworm-asyncrat-venomrat-and-purelogs-stealer-leverage-trycloudflare\n- https://www.proofpoint.com/us/blog/threat-insight/threat-actor-abuses-cloudflare-tunnels-deliver-rats\n- https://learn.microsoft.com/en-us/azure/developer/dev-tunnels/overview\n- https://code.visualstudio.com/docs/remote/tunnels\n- [H036](https://github.com/THORCollective/HEARTH/blob/main/Flames/H036.md)",
@@ -2596,7 +2596,7 @@ const HUNTS_DATA = [
       "macos"
     ],
     "submitter": {
-      "name": "Jinx (automated)",
+      "name": "Jinx (THOR Collective)",
       "link": ""
     },
     "why": "- Claude Artifacts exist entirely under the claude.ai domain, making domain-based blocking impossible without disrupting legitimate AI tool usage — this is a category-defining evasion technique that neutralizes traditional URL/domain filtering\n- The content appears as AI-generated or editorial macOS advice rather than a software installation page, expanding the victim pool beyond developers to any macOS user seeking system optimization guidance\n- Detection must be behavioral rather than IOC-based: the key signal is Terminal or bash process execution following browser navigation to claude.ai/artifacts/* or medium.com URLs, particularly when the executed command fetches remote payloads\n- Data sources: process creation events for bash/zsh/Terminal spawned within seconds of browser activity on claude.ai or medium.com, network connections from shell processes to non-Apple/non-Homebrew infrastructure, osascript execution from shell context following web browsing\n- This technique will likely expand to other trusted content platforms (Notion, Google Docs, GitHub Gists) as attackers recognize the domain-blocking immunity pattern",
@@ -2624,7 +2624,7 @@ const HUNTS_DATA = [
       "code_signing_abuse"
     ],
     "submitter": {
-      "name": "Jinx (automated)",
+      "name": "Jinx (THOR Collective)",
       "link": ""
     },
     "why": "- The .asar bundle patching with Info.plist update and ad-hoc re-signing is a sophisticated post-compromise technique that makes the tampered Ledger Live application appear legitimate to macOS Gatekeeper and the user — standard app verification checks will pass on the modified binary\n- Cryptocurrency seed phrase theft is a high-impact, irreversible action — once exfiltrated, attackers can drain wallets at any time and victims have no recourse; this creates urgency for proactive detection before the exfiltration completes\n- Detection data sources: file modification events on .asar files within /Applications/Ledger*.app bundles, codesign operations (ad-hoc signing) on Ledger application paths, osascript process execution with stdin/pipes (in-memory AppleScript), Info.plist modifications outside of legitimate App Store or auto-update contexts\n- The loader-as-a-service architecture using shell scripts instead of compiled binaries evades static analysis and signature-based detection — hunting must focus on behavioral indicators like shell processes modifying application bundles and performing code signing operations\n- The campaign's use of API key-gated C2 with unique victim tokens actively prevents sandbox analysis, meaning automated malware analysis pipelines may fail to capture the full attack chain — manual hunting on endpoint telemetry is required",
