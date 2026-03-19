@@ -40,31 +40,16 @@
 
     <main>
         <section class="intro">
-            <div class="intro-content">
-                <h2>Threat Hunting Database</h2>
-                <p>Explore curated threat hunting ideas organized using the PEAK threat hunting framework.</p>
-                <div class="intro-meta">
-                    <span class="meta-pill">Live library</span>
-                    <span class="meta-pill">Community powered</span>
-                    <span class="meta-pill">PEAK aligned</span>
-                </div>
-                <div class="intro-highlights" aria-live="polite">
-                    <article class="highlight-card">
-                        <span class="highlight-label">Hunts cataloged</span>
-                        <span class="highlight-value" id="introTotalHunts">0</span>
-                        <span class="highlight-sub">Across all categories</span>
-                    </article>
-                    <article class="highlight-card">
-                        <span class="highlight-label">Distinct tactics</span>
-                        <span class="highlight-value" id="introTotalTactics">0</span>
-                        <span class="highlight-sub">MITRE ATT&CK coverage</span>
-                    </article>
-                    <article class="highlight-card">
-                        <span class="highlight-label">Community authors</span>
-                        <span class="highlight-value" id="introTotalContributors">0</span>
-                        <span class="highlight-sub">Sharing research insights</span>
-                    </article>
-                </div>
+            <div class="intro-stats-bar" aria-live="polite">
+                <span class="intro-stat"><strong id="introTotalHunts">0</strong> hypotheses</span>
+                <span class="intro-stat-sep">·</span>
+                <span class="intro-stat"><strong id="introTotalTactics">0</strong> techniques</span>
+                <span class="intro-stat-sep">·</span>
+                <span class="intro-stat"><strong id="introTotalContributors">0</strong> contributors</span>
+                <span class="intro-stat-sep">·</span>
+                <span class="intro-stat">PEAK aligned</span>
+                <span class="intro-stat-sep">·</span>
+                <span class="intro-stat">Community powered</span>
             </div>
         </section>
 
