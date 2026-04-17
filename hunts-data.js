@@ -251,119 +251,6 @@ const HUNTS_DATA = [
     "file_path": "Embers/B012.md"
   },
   {
-    "id": "B013",
-    "category": "Embers",
-    "title": "Baseline DNS query volumes, top queried domains, and resolution patterns across the environment to identify deviations that may indicate DNS tunneling, beaconing, or data exfiltration.",
-    "tactic": "Command and Control",
-    "notes": "DNS is ubiquitous and rarely monitored at a per-host level. Establishing what normal query patterns look like — volume, frequency, domain diversity, query types (A, AAAA, TXT, MX, CNAME) — creates a foundation to detect anomalies such as high-entropy subdomain queries, unusual TXT record lookups, or sudden spikes in NXDomain responses.",
-    "tags": [
-      "command_and_control",
-      "T1071_004",
-      "dns",
-      "baselining",
-      "beaconing",
-      "tunneling",
-      "exfiltration"
-    ],
-    "submitter": {
-      "name": "Jinx (THOR Collective)",
-      "link": ""
-    },
-    "why": "- DNS is one of the most abused protocols for C2 communication and data exfiltration because it is almost always allowed through firewalls and rarely inspected at depth — without a baseline, distinguishing malicious DNS from normal resolution is nearly impossible\n- Most organizations lack visibility into per-host DNS behavior, making it trivial for adversaries to use DNS tunneling tools (iodine, dnscat2, Cobalt Strike DNS beacon) to blend into legitimate traffic\n- Data sources include DNS server query logs, passive DNS sensors, EDR telemetry with DNS enrichment, and network flow data — correlating these against a known-good baseline enables high-confidence anomaly detection",
-    "references": "- [MITRE ATT&CK T1071.004 - Application Layer Protocol: DNS](https://attack.mitre.org/techniques/T1071/004/)\n- [SANS - Detecting DNS Tunneling (2019)](https://www.sans.org/white-papers/detecting-dns-tunneling/)\n- [Akamai - DNS Exfiltration and Tunneling Detection](https://www.akamai.com/blog/security/dns-exfiltration-detection)",
-    "file_path": "Embers/B013.md"
-  },
-  {
-    "id": "B014",
-    "category": "Embers",
-    "title": "Inventory and baseline all scheduled tasks, cron jobs, and recurring automation across endpoints and servers to detect unauthorized persistence mechanisms or task hijacking.",
-    "tactic": "Persistence",
-    "notes": "Scheduled tasks and cron jobs are a well-known persistence mechanism. Without a comprehensive inventory, new or modified tasks created by adversaries blend in with legitimate automation. Baselining task names, execution paths, owners, schedules, and associated binaries establishes a reference point for detecting unauthorized additions or modifications.",
-    "tags": [
-      "persistence",
-      "T1053_005",
-      "scheduled_task",
-      "cron",
-      "baselining",
-      "inventory"
-    ],
-    "submitter": {
-      "name": "Jinx (THOR Collective)",
-      "link": ""
-    },
-    "why": "- Adversaries routinely use scheduled tasks (T1053.005) and cron jobs (T1053.003) for persistence, privilege escalation, and execution — these are among the most common persistence techniques observed in the wild\n- Many organizations have hundreds of legitimate scheduled tasks across their fleet with no centralized inventory, making it trivial for an attacker-created task to go unnoticed indefinitely\n- Data sources include Windows Task Scheduler logs (Event IDs 4698, 4702), Sysmon Event ID 1 with schtasks.exe, crontab files, systemd timers, and EDR scheduled task telemetry — a baseline enables alerting on any net-new or modified task",
-    "references": "- [MITRE ATT&CK T1053.005 - Scheduled Task/Job: Scheduled Task](https://attack.mitre.org/techniques/T1053/005/)\n- [MITRE ATT&CK T1053.003 - Scheduled Task/Job: Cron](https://attack.mitre.org/techniques/T1053/003/)\n- [Red Canary - Threat Detection Report: Scheduled Tasks](https://redcanary.com/threat-detection-report/techniques/scheduled-task-job/)",
-    "file_path": "Embers/B014.md"
-  },
-  {
-    "id": "B015",
-    "category": "Embers",
-    "title": "Profile PowerShell usage across endpoints to establish normal execution patterns — including script paths, cmdlets, users, and execution policies — so that anomalous or malicious PowerShell activity can be identified.",
-    "tactic": "Execution",
-    "notes": "PowerShell is both a critical admin tool and a top attacker utility. Without understanding who uses it, how often, and what commands are typical, detection rules either drown in false positives or miss real threats. Baselining script block contents, module loads, invocation methods (console, ISE, encoded commands), and user-to-host mappings creates a foundation for behavioral detection.",
-    "tags": [
-      "execution",
-      "T1059_001",
-      "powershell",
-      "baselining",
-      "script_block_logging",
-      "encoded_commands"
-    ],
-    "submitter": {
-      "name": "Jinx (THOR Collective)",
-      "link": ""
-    },
-    "why": "- PowerShell is consistently one of the most abused LOLBins — used for download cradles, credential theft, lateral movement, and C2 — but it is also essential for legitimate IT operations, making blanket blocking impractical\n- Many environments have PowerShell Script Block Logging and Module Logging enabled but no baseline to compare against, resulting in either ignored logs or alert fatigue from normal admin activity\n- Data sources include PowerShell Script Block Logging (Event ID 4104), Module Logging (Event ID 4103), Transcription Logs, Sysmon Event ID 1 for powershell.exe/pwsh.exe process creation, and EDR command-line telemetry",
-    "references": "- [MITRE ATT&CK T1059.001 - Command and Scripting Interpreter: PowerShell](https://attack.mitre.org/techniques/T1059/001/)\n- [SANS - Hunting for PowerShell Abuse](https://www.sans.org/white-papers/hunting-powershell-abuse/)\n- [Microsoft - About Logging in PowerShell](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_logging)",
-    "file_path": "Embers/B015.md"
-  },
-  {
-    "id": "B016",
-    "category": "Embers",
-    "title": "Baseline service account authentication patterns — including login times, source hosts, target resources, and protocols — to detect credential abuse or unauthorized use of service accounts for lateral movement.",
-    "tactic": "Credential Access",
-    "notes": "Service accounts are high-value targets because they often have elevated privileges, rarely change passwords, and lack MFA. Baselining their expected behavior — which hosts they authenticate from, what times, what services they access — makes it possible to detect when a stolen service account credential is used from an unexpected source or at an unusual time.",
-    "tags": [
-      "credential_access",
-      "T1078_001",
-      "service_account",
-      "lateral_movement",
-      "authentication",
-      "baselining"
-    ],
-    "submitter": {
-      "name": "Jinx (THOR Collective)",
-      "link": ""
-    },
-    "why": "- Service accounts frequently have over-provisioned privileges and static credentials, making them prime targets for credential theft — adversaries who compromise a service account can move laterally with minimal detection\n- Unlike human accounts, service accounts have highly predictable behavior (same source, same destination, same schedule), which makes even slight deviations highly suspicious — but only if a baseline exists to compare against\n- Data sources include Windows Security Event Logs (4624, 4625, 4648), Kerberos authentication logs, Active Directory audit logs, cloud IAM sign-in logs, and SIEM/UEBA platforms that can model entity behavior over time",
-    "references": "- [MITRE ATT&CK T1078.001 - Valid Accounts: Default Accounts](https://attack.mitre.org/techniques/T1078/001/)\n- [MITRE ATT&CK T1078.002 - Valid Accounts: Domain Accounts](https://attack.mitre.org/techniques/T1078/002/)\n- [CrowdStrike - Service Account Security Best Practices](https://www.crowdstrike.com/cybersecurity-101/identity-security/service-account/)",
-    "file_path": "Embers/B016.md"
-  },
-  {
-    "id": "B017",
-    "category": "Embers",
-    "title": "Baseline TLS/SSL certificate inventory, issuance sources, validity periods, and renewal patterns across the environment to detect rogue certificates, expired certificates in production, or adversary-issued certificates used for interception.",
-    "tactic": "Defense Evasion",
-    "notes": "Certificates underpin trust in encrypted communications. Without a baseline of which CAs issue certificates for your domains, what validity periods are normal, and which hosts present which certificates, adversaries can deploy rogue or self-signed certificates for man-in-the-middle attacks or to encrypt C2 traffic. Expired certificates also create security gaps that attackers exploit.",
-    "tags": [
-      "defense_evasion",
-      "T1587_003",
-      "certificate",
-      "tls",
-      "ssl",
-      "pki",
-      "baselining",
-      "inventory"
-    ],
-    "submitter": {
-      "name": "Jinx (THOR Collective)",
-      "link": ""
-    },
-    "why": "- Adversaries use fraudulently obtained or self-signed certificates to encrypt C2 channels, perform SSL interception, or impersonate legitimate services — a certificate baseline makes unauthorized issuance immediately visible\n- Expired or misconfigured certificates in production create both security vulnerabilities and operational risk, yet many organizations lack a comprehensive certificate inventory and only discover issues during outages\n- Data sources include Certificate Transparency (CT) logs, internal PKI/CA logs, network TLS handshake metadata, cloud provider certificate managers (ACM, Let's Encrypt), and endpoint certificate stores — correlating these builds a full picture of the certificate landscape",
-    "references": "- [MITRE ATT&CK T1587.003 - Develop Capabilities: Digital Certificates](https://attack.mitre.org/techniques/T1587/003/)\n- [MITRE ATT&CK T1553.004 - Subvert Trust Controls: Install Root Certificate](https://attack.mitre.org/techniques/T1553/004/)\n- [Certificate Transparency - How CT Works](https://certificate.transparency.dev/howctworks/)",
-    "file_path": "Embers/B017.md"
-  },
-  {
     "id": "H001",
     "category": "Flames",
     "title": "An adversary is attempting to brute force the admin account on the externally facing VPN gateway.",
@@ -2579,110 +2466,23 @@ const HUNTS_DATA = [
   {
     "id": "H103",
     "category": "Flames",
-    "title": "An adversary is using Claude AI Artifacts and Medium.com posts as trusted staging platforms for macOS infostealer delivery, serving malicious Terminal commands disguised as legitimate system administration advice through content that cannot be blocked by domain-based security controls.",
-    "tactic": "Defense Evasion (T1583.006)",
-    "notes": "Documented by Moonlock Lab and AdGuard (March 2026); malicious Google ads direct to Claude Artifacts or Medium posts containing \"helpful\" Terminal commands (install Homebrew, optimize storage) that execute MacSync loader; all Artifact URLs are under claude.ai — domain-level blocking breaks legitimate AI tool usage; distinct from InstallFix (H101) which clones vendor install pages",
-    "tags": [
-      "defense_evasion",
-      "T1583_006",
-      "T1204_002",
-      "T1059_004",
-      "claude_artifacts",
-      "medium",
-      "macsync",
-      "applesauce",
-      "malvertising",
-      "trusted_platform_abuse",
-      "macos"
-    ],
-    "submitter": {
-      "name": "Jinx (THOR Collective)",
-      "link": ""
-    },
-    "why": "- Claude Artifacts exist entirely under the claude.ai domain, making domain-based blocking impossible without disrupting legitimate AI tool usage — this is a category-defining evasion technique that neutralizes traditional URL/domain filtering\n- The content appears as AI-generated or editorial macOS advice rather than a software installation page, expanding the victim pool beyond developers to any macOS user seeking system optimization guidance\n- Detection must be behavioral rather than IOC-based: the key signal is Terminal or bash process execution following browser navigation to claude.ai/artifacts/* or medium.com URLs, particularly when the executed command fetches remote payloads\n- Data sources: process creation events for bash/zsh/Terminal spawned within seconds of browser activity on claude.ai or medium.com, network connections from shell processes to non-Apple/non-Homebrew infrastructure, osascript execution from shell context following web browsing\n- This technique will likely expand to other trusted content platforms (Notion, Google Docs, GitHub Gists) as attackers recognize the domain-blocking immunity pattern",
-    "references": "- [MITRE ATT&CK T1583.006 - Acquire Infrastructure: Web Services](https://attack.mitre.org/techniques/T1583/006/)\n- [MITRE ATT&CK T1204.002 - User Execution: Malicious File](https://attack.mitre.org/techniques/T1204/002/)\n- [Nodal NYC - Claude AI macOS Infostealer](https://www.nodalnyc.com/blog/2026/3/11/claude-ai-mac-os-infostealer)",
-    "file_path": "Flames/H103.md"
-  },
-  {
-    "id": "H104",
-    "category": "Flames",
-    "title": "An adversary is patching Ledger Live cryptocurrency wallet application bundles by modifying the app.asar archive to inject seed phrase exfiltration scripts, updating Info.plist for checksum integrity, and re-signing with ad-hoc signatures to maintain macOS app verification while silently stealing cryptocurrency wallet recovery phrases.",
-    "tactic": "Collection (T1005)",
-    "notes": "MacSync February 2026 variant documented by Sophos X-Ops \"Evil Evolution\"; complete architectural rewrite from earlier variants — loader-as-a-service model using shell scripts (not MachO), API key-gated C2 with unique token auth, dynamic AppleScript via osascript in-memory execution; patches both /Applications/Ledger Wallet.app and /Applications/Ledger Live.app .asar bundles; all I/O redirected to /dev/null; checks /tmp/osalogging.zip; operator comments in Russian with CIS-exclusion runtime check; Telegram bot for victim analytics",
-    "tags": [
-      "collection",
-      "T1005",
-      "T1059_002",
-      "T1553_002",
-      "macsync",
-      "applesauce",
-      "ledger_live",
-      "asar_patching",
-      "crypto_wallet",
-      "seed_exfiltration",
-      "macos",
-      "code_signing_abuse"
-    ],
-    "submitter": {
-      "name": "Jinx (THOR Collective)",
-      "link": ""
-    },
-    "why": "- The .asar bundle patching with Info.plist update and ad-hoc re-signing is a sophisticated post-compromise technique that makes the tampered Ledger Live application appear legitimate to macOS Gatekeeper and the user — standard app verification checks will pass on the modified binary\n- Cryptocurrency seed phrase theft is a high-impact, irreversible action — once exfiltrated, attackers can drain wallets at any time and victims have no recourse; this creates urgency for proactive detection before the exfiltration completes\n- Detection data sources: file modification events on .asar files within /Applications/Ledger*.app bundles, codesign operations (ad-hoc signing) on Ledger application paths, osascript process execution with stdin/pipes (in-memory AppleScript), Info.plist modifications outside of legitimate App Store or auto-update contexts\n- The loader-as-a-service architecture using shell scripts instead of compiled binaries evades static analysis and signature-based detection — hunting must focus on behavioral indicators like shell processes modifying application bundles and performing code signing operations\n- The campaign's use of API key-gated C2 with unique victim tokens actively prevents sandbox analysis, meaning automated malware analysis pipelines may fail to capture the full attack chain — manual hunting on endpoint telemetry is required",
-    "references": "- [MITRE ATT&CK T1005 - Data from Local System](https://attack.mitre.org/techniques/T1005/)\n- [MITRE ATT&CK T1059.002 - Command and Scripting Interpreter: AppleScript](https://attack.mitre.org/techniques/T1059/002/)\n- [MITRE ATT&CK T1553.002 - Subvert Trust Controls: Code Signing](https://attack.mitre.org/techniques/T1553/002/)\n- [Sophos X-Ops - Evil Evolution: ClickFix and macOS Infostealers](https://www.sophos.com/en-us/blog/evil-evolution-clickfix-and-macos-infostealers)",
-    "file_path": "Flames/H104.md"
-  },
-  {
-    "id": "H105",
-    "category": "Flames",
-    "title": "An adversary is delivering malicious payloads by manipulating ZIP archive header fields to exploit inconsistencies between archive parsing libraries and antivirus scanning engines, bypassing initial static detection on 50+ endpoint security products to execute malware that evades first-scan analysis.",
-    "tactic": "Defense Evasion (T1027)",
-    "notes": "CVE-2026-0866 \"Zombie ZIP\" — technique published by researcher Chris Aziz (Bombadil Systems), March 2026; manipulated ZIP headers cause AV engines to skip or misparse archive contents while the OS/application parser successfully extracts and executes the payload; reported 98% bypass rate across 50/51 tested AV engines; bypass is first-scan only — rescans after initial execution may detect; requires a custom loader to exploit the header discrepancy; coverage: SANS ISC, BleepingComputer, SC Media",
-    "tags": [
-      "defense_evasion",
-      "T1027",
-      "T1027_001",
-      "CVE_2026_0866",
-      "zombie_zip",
-      "archive_manipulation",
-      "av_bypass",
-      "zip_header",
-      "first_scan_bypass"
-    ],
-    "submitter": {
-      "name": "Jinx (THOR Collective)",
-      "link": ""
-    },
-    "why": "- The technique exploits a fundamental parsing discrepancy between how AV engines inspect ZIP archives and how OS decompression libraries extract them — behavioral detection becomes the primary (and often only) effective layer once static AV is bypassed\n- A 98% bypass rate across commercial AV products is operationally significant; threat actors will rapidly operationalize publicly disclosed bypass techniques, especially those with low implementation cost\n- First-scan bypass is particularly dangerous in environments that rely on initial file drop detection (EDR file-write events, email gateway scanning, web proxy inspection) — payloads may execute before any re-scan occurs\n- Detection data sources: process execution following archive extraction events (especially unusual parent processes spawned by archive utilities), archive files with non-standard header structures (file carving/YARA), download-then-extract-then-execute behavior chains in process telemetry, and volume of child processes spawned by common archive handlers (7zip, WinRAR, native OS unzip)\n- The bypass relies on inconsistent library behavior rather than signature-specific evasion — traditional signature updates will not address the root cause, making behavioral hunt strategies more durable",
-    "references": "- [MITRE ATT&CK T1027 - Obfuscated Files or Information](https://attack.mitre.org/techniques/T1027/)\n- [MITRE ATT&CK T1027.001 - Binary Padding](https://attack.mitre.org/techniques/T1027/001/)\n- [MITRE ATT&CK T1562 - Impair Defenses](https://attack.mitre.org/techniques/T1562/)\n- [SANS ISC - Zombie ZIP CVE-2026-0866 Coverage](https://isc.sans.edu)\n- [BleepingComputer - Zombie ZIP AV Bypass Technique](https://www.bleepingcomputer.com)",
-    "file_path": "Flames/H105.md"
-  },
-  {
-    "id": "H106",
-    "category": "Flames",
-    "title": "An adversary is using fake AI tool installer lures — including spoofed ChatGPT desktop applications and fabricated AI browser installers — distributed via fake GitHub pages and ChatGPT shared conversation links to deliver macOS infostealers through ClickFix-style social engineering execution chains.",
-    "tactic": "Execution (T1059)",
-    "notes": "MacSync campaign (Nov/Dec 2025 + Jan 2026 waves) documented by Sophos X-Ops \"Evil Evolution\" (March 2026); dominant lure shift from generic software cracks to fake AI tool installers (ChatGPT Atlas browser, generic \"AI assistant\" apps); staging infrastructure abuses ChatGPT shared conversations and fake GitHub pages for legitimacy; extends prior MacSync ClickFix pattern with new high-trust lure category; APPLESAUCE tracks ongoing MacSync activity; relates to H104 (Ledger Live patching payload) and H101 (earlier MacSync ClickFix variants)",
+    "title": "Threat actors are injecting malicious pre-install and post-install scripts into package.json files of compromised npm packages to execute infostealer payloads immediately upon npm install commands in CI/CD pipelines and developer workstations.",
+    "tactic": "Execution",
+    "notes": "Based on ATT&CK technique T1059.007. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "execution",
-      "T1059",
-      "T1059_004",
-      "T1566_002",
-      "macsync",
-      "clickfix",
-      "fake_ai_installer",
-      "infostealer",
-      "macos",
-      "social_engineering",
-      "applesauce",
-      "chatgpt_lure"
+      "T1059_007",
+      "supply_chain",
+      "npm",
+      "cicd"
     ],
     "submitter": {
-      "name": "Jinx (THOR Collective)",
+      "name": "_No response_",
       "link": ""
     },
-    "why": "- The shift to fake AI tool installers is a high-signal lure evolution — AI assistant tools have high install intent across technical and non-technical users alike, and spoofed ChatGPT applications carry inherent legitimacy trust that traditional crack/warez lures lack\n- ChatGPT shared conversation links as staging infrastructure is particularly deceptive: the initial click goes to a legitimate `chat.openai.com` URL, meaning URL reputation and proxy category filtering will not flag the referral chain as malicious\n- ClickFix execution chains requiring the victim to paste clipboard commands into Terminal lower the barrier for attackers (no signed binary required) while bypassing macOS Gatekeeper entirely — behavioral detection on shell process lineage from non-shell parent processes is the primary detection path\n- Detection data sources: Terminal/shell processes spawned via clipboard paste patterns (short TTL between process creation and command input), downloads from GitHub pages with low repo age or zero stars, browser-to-shell execution chains, osascript execution from browser child processes, and process trees matching `browser → terminal → curl/wget → bash` patterns\n- The three-wave campaign pattern (Nov 2025, Dec 2025, Jan 2026) confirms this is an active, iterating operation — defenders should expect continued lure refinement targeting AI tool interest",
-    "references": "- [MITRE ATT&CK T1059 - Command and Scripting Interpreter](https://attack.mitre.org/techniques/T1059/)\n- [MITRE ATT&CK T1059.004 - Unix Shell](https://attack.mitre.org/techniques/T1059/004/)\n- [MITRE ATT&CK T1566.002 - Phishing: Spearphishing Link](https://attack.mitre.org/techniques/T1566/002/)\n- [Sophos X-Ops - Evil Evolution: ClickFix and macOS Infostealers](https://www.sophos.com/en-us/blog/evil-evolution-clickfix-and-macos-infostealers)\n- [HEARTH H101 - MacSync ClickFix Infostealer](../Flames/H101.md)\n- [HEARTH H104 - Ledger Live .asar Bundle Patching](../Flames/H104.md)",
-    "file_path": "Flames/H106.md"
+    "why": "- This technique allows attackers to achieve automatic code execution in high-privilege environments (CI/CD runners, developer machines) without requiring user interaction beyond routine package installation\n- TeamPCP successfully weaponized this method to compromise 47 additional npm packages across @emilgroup, @opengov, and @v7 namespaces in under 60 seconds, demonstrating the speed and scale of automated supply chain propagation\n- The malicious scripts execute before developers or security tools can inspect the package contents, bypassing traditional code review processes and establishing immediate footholds for credential theft and lateral movement\n- Detection of this behavior is critical as it targets the software development lifecycle itself, potentially exposing cloud credentials, API keys, and secrets that enable follow-on attacks across entire organizations\n- This technique is particularly dangerous because npm install operations are ubiquitous in modern development workflows and CI/CD pipelines, making the attack surface extremely broad",
+    "references": "- [MITRE ATT&CK T1059.007 - Command and Scripting Interpreter: JavaScript](https://attack.mitre.org/techniques/T1059/007/)\n- [Source CTI Report](https://unit42.paloaltonetworks.com/teampcp-supply-chain-attacks/)",
+    "file_path": "Flames/H103.md"
   },
   {
     "id": "M001",
@@ -2838,126 +2638,6 @@ const HUNTS_DATA = [
     "why": "- Nearly every attack technique produces an abnormal process parent-child relationship — chrome.exe spawning finger.exe, winword.exe spawning powershell.exe, or svchost.exe spawning cmd.exe with encoded arguments all stand out when measured against fleet-wide frequency baselines\n- Frequency stacking across the fleet turns rarity into signal — a process pair seen on 3 out of 10,000 endpoints is worth investigating regardless of whether that specific combination appears in any detection rule\n- This approach catches novel techniques without prior signatures because it measures deviation from normal rather than matching known bad — new LOLBINs, renamed binaries, and zero-day exploitation all produce unusual lineages\n- Process creation data with parent process context is already collected by most EDR tools and Sysmon, making this immediately actionable without deploying additional telemetry",
     "references": "- [MITRE ATT&CK T1059 - Command and Scripting Interpreter](https://attack.mitre.org/techniques/T1059/)\n- [MITRE ATT&CK T1218 - System Binary Proxy Execution](https://attack.mitre.org/techniques/T1218/)",
     "file_path": "Alchemy/M008.md"
-  },
-  {
-    "id": "M009",
-    "category": "Alchemy",
-    "title": "Apply time-series anomaly detection to authentication event volumes per user and service account to identify credential abuse, brute-force campaigns, and compromised accounts producing abnormal login spikes or off-hours activity.",
-    "tactic": "Credential Access",
-    "notes": "Build per-user and per-service-account authentication baselines using rolling time-series models (e.g., STL decomposition, Prophet, or ARIMA). Flag deviations beyond 3 standard deviations from the seasonal norm — especially during non-business hours or from previously unseen source IPs. Service accounts are high-value targets since their authentication patterns are highly predictable, making anomalies extremely visible.",
-    "tags": [
-      "credential_access",
-      "T1110",
-      "T1078",
-      "time_series",
-      "anomaly_detection",
-      "authentication",
-      "brute_force",
-      "model_assisted"
-    ],
-    "submitter": {
-      "name": "Jinx (THOR Collective)",
-      "link": ""
-    },
-    "why": "- Credential-based attacks (password spraying, brute force, token replay) produce measurable spikes in authentication volume that blend into aggregate traffic but stand out at the per-user level when measured against temporal baselines\n- Time-series models capture daily, weekly, and seasonal patterns — a service account that authenticates 50 times per hour on weekdays but suddenly authenticates 500 times at 3 AM on a Saturday is trivially anomalous to a model but invisible to threshold-based rules\n- Authentication logs (Windows Security Event 4624/4625, Azure AD sign-in logs, Okta system logs) are universally available and high-fidelity, and time-series decomposition requires minimal compute compared to deep learning approaches",
-    "references": "- [MITRE ATT&CK T1110 - Brute Force](https://attack.mitre.org/techniques/T1110/)\n- [MITRE ATT&CK T1078 - Valid Accounts](https://attack.mitre.org/techniques/T1078/)\n- [Facebook Prophet for Anomaly Detection in Security Logs](https://engineering.fb.com/2017/02/06/core-infra/prophet-forecasting-at-scale/)\n- [Elastic ML Anomaly Detection for Authentication](https://www.elastic.co/guide/en/machine-learning/current/ootb-ml-jobs-siem.html)",
-    "file_path": "Alchemy/M009.md"
-  },
-  {
-    "id": "M010",
-    "category": "Alchemy",
-    "title": "Build a graph model of host-to-host authentication relationships and apply community detection and centrality analysis to identify anomalous lateral movement paths that deviate from established administrative and operational access patterns.",
-    "tactic": "Lateral Movement",
-    "notes": "Construct a directed graph where nodes are hosts and edges represent authentication events (RDP, SMB, WinRM, SSH). Apply community detection (Louvain, label propagation) to identify natural groupings — then flag cross-community edges that appear for the first time. Calculate betweenness centrality to identify hosts being used as pivot points. A workstation suddenly bridging the developer VLAN and the domain controller subnet is a high-fidelity lateral movement indicator.",
-    "tags": [
-      "lateral_movement",
-      "T1021",
-      "T1563",
-      "graph_analysis",
-      "community_detection",
-      "centrality",
-      "model_assisted"
-    ],
-    "submitter": {
-      "name": "Jinx (THOR Collective)",
-      "link": ""
-    },
-    "why": "- Lateral movement inherently creates new edges in the authentication graph — an attacker moving from a compromised workstation to a file server to a domain controller produces a path that likely never existed in the baseline graph\n- Graph-based community detection naturally segments the network into operational clusters (dev, finance, IT admin) without requiring manual asset classification — cross-community authentication is rare and high-signal by definition\n- Authentication and network flow logs from EDR, Windows Event Logs (4624 type 3/10), and firewall data provide the edges; tools like NetworkX, Neo4j, or Splunk's graph analytics commands make this operationally feasible at enterprise scale",
-    "references": "- [MITRE ATT&CK T1021 - Remote Services](https://attack.mitre.org/techniques/T1021/)\n- [MITRE ATT&CK T1563 - Remote Service Session Hijacking](https://attack.mitre.org/techniques/T1563/)\n- [Graphistry: Graph Analytics for Threat Hunting](https://www.graphistry.com/blog/graph-based-threat-hunting)\n- [SpecterOps BloodHound — Attack Path Analysis](https://bloodhound.readthedocs.io/)",
-    "file_path": "Alchemy/M010.md"
-  },
-  {
-    "id": "M011",
-    "category": "Alchemy",
-    "title": "Use Shannon entropy analysis combined with n-gram frequency scoring on DNS query strings to detect domain generation algorithm (DGA) activity, DNS tunneling, and algorithmically generated subdomains used for command and control or data exfiltration.",
-    "tactic": "Command and Control",
-    "notes": "Calculate character-level Shannon entropy and bigram/trigram frequency scores for each queried domain. Algorithmically generated domains exhibit high entropy and low natural-language n-gram frequency compared to legitimate domains. Combine both features with a simple threshold or lightweight classifier (logistic regression, random forest) to separate DGA from benign. Complements M006 (dictionary DGA via supervised classification) by targeting random-character DGAs and DNS tunneling payloads that dictionary-based classifiers may miss.",
-    "tags": [
-      "command_and_control",
-      "T1568.002",
-      "T1071.004",
-      "entropy",
-      "DGA",
-      "dns_tunneling",
-      "model_assisted",
-      "statistical"
-    ],
-    "submitter": {
-      "name": "Jinx (THOR Collective)",
-      "link": ""
-    },
-    "why": "- Random-character DGAs (used by families like Necurs, Conficker, and Ramnit) and DNS tunneling tools (iodine, dnscat2) produce domain strings with measurably higher entropy than legitimate domains — entropy alone catches a large percentage with minimal compute\n- Combining entropy with n-gram frequency scoring reduces false positives from legitimate high-entropy domains (CDN hashes, base64 tracking parameters) since those still contain natural language character distributions\n- DNS query logs are available from passive DNS sensors, recursive resolvers, and EDR agents; the statistical features can be computed in-line or batch with no GPU requirement, making this deployable even in resource-constrained environments",
-    "references": "- [MITRE ATT&CK T1568.002 - Dynamic Resolution: Domain Generation Algorithms](https://attack.mitre.org/techniques/T1568/002/)\n- [MITRE ATT&CK T1071.004 - Application Layer Protocol: DNS](https://attack.mitre.org/techniques/T1071/004/)\n- [Cisco Umbrella: Detecting DGAs with Entropy](https://umbrella.cisco.com/blog/detecting-dgas)\n- [SANS: Detecting DNS Tunneling](https://www.sans.org/white-papers/detecting-dns-tunneling/)",
-    "file_path": "Alchemy/M011.md"
-  },
-  {
-    "id": "M012",
-    "category": "Alchemy",
-    "title": "Apply text embedding similarity models to newly registered and recently observed domains to detect typosquatting, homoglyph attacks, and brand impersonation domains targeting the organization for credential harvesting or malware delivery.",
-    "tactic": "Resource Development",
-    "notes": "Generate character-level and word-level embeddings for the organization's legitimate domains and brand terms, then compute cosine similarity against newly registered domains (from Certificate Transparency logs, WHOIS feeds, or passive DNS). Domains exceeding a similarity threshold but not matching known-good assets are flagged as potential typosquats. Augment with visual similarity scoring (confusable Unicode characters, Levenshtein distance) to catch homoglyph and combosquatting variants.",
-    "tags": [
-      "resource_development",
-      "T1583.001",
-      "T1584.001",
-      "embedding",
-      "similarity",
-      "typosquatting",
-      "phishing",
-      "model_assisted"
-    ],
-    "submitter": {
-      "name": "Jinx (THOR Collective)",
-      "link": ""
-    },
-    "why": "- Typosquatting and brand impersonation domains are a primary vector for credential phishing, watering hole attacks, and supply chain compromise — catching them before employees interact with them is a high-impact proactive hunt\n- Embedding-based similarity captures semantic and visual resemblance that simple string matching misses — homoglyphs (rn vs m), character transpositions, and TLD variations all score high similarity in embedding space\n- Certificate Transparency logs, passive DNS feeds, and newly registered domain lists provide a continuous stream of candidates; lightweight embedding models (character CNNs, fastText) can score thousands of domains per second without heavy infrastructure",
-    "references": "- [MITRE ATT&CK T1583.001 - Acquire Infrastructure: Domains](https://attack.mitre.org/techniques/T1583/001/)\n- [MITRE ATT&CK T1584.001 - Compromise Infrastructure: Domains](https://attack.mitre.org/techniques/T1584/001/)\n- [dnstwist — Domain Name Permutation Engine](https://github.com/elceef/dnstwist)\n- [PhishCatcher: Detecting Phishing Domains via Certificate Transparency](https://github.com/x0rz/phishing_catcher)",
-    "file_path": "Alchemy/M012.md"
-  },
-  {
-    "id": "M013",
-    "category": "Alchemy",
-    "title": "Apply NLP classification and semantic analysis to email subjects, bodies, and metadata to detect business email compromise (BEC) attempts that evade keyword-based filters through social engineering language, urgency framing, and impersonation of executive communication patterns.",
-    "tactic": "Initial Access",
-    "notes": "Train or fine-tune a text classifier (BERT, DistilBERT, or TF-IDF + logistic regression) on labeled BEC/legitimate email corpora to score inbound emails for BEC indicators. Extract features including urgency markers, financial action requests, sender display-name vs. envelope-from mismatches, and stylometric deviation from the purported sender's historical writing patterns. Emails scoring above threshold are flagged for SOC review. This catches BEC variants that avoid traditional keywords by using natural conversational language.",
-    "tags": [
-      "initial_access",
-      "T1566.002",
-      "T1534",
-      "NLP",
-      "text_classification",
-      "BEC",
-      "phishing",
-      "social_engineering",
-      "model_assisted"
-    ],
-    "submitter": {
-      "name": "Jinx (THOR Collective)",
-      "link": ""
-    },
-    "why": "- BEC attacks caused over $2.9 billion in losses in 2023 (FBI IC3) and increasingly use conversational language without malicious links or attachments, making them invisible to traditional email security gateways\n- NLP models capture semantic meaning rather than keyword presence — phrases like \"can you handle a wire for me before end of day\" score high on urgency + financial action features even though no individual word is traditionally flagged\n- Email gateway logs, Exchange message trace data, and O365/Google Workspace audit logs provide the raw text and metadata; lightweight transformer models or even TF-IDF approaches can run retroactively against email corpora for hunting without requiring inline deployment",
-    "references": "- [MITRE ATT&CK T1566.002 - Phishing: Spearphishing Link](https://attack.mitre.org/techniques/T1566/002/)\n- [MITRE ATT&CK T1534 - Internal Spearphishing](https://attack.mitre.org/techniques/T1534/)\n- [FBI IC3 2023 Internet Crime Report — BEC Statistics](https://www.ic3.gov/AnnualReport/Reports/2023_IC3Report.pdf)\n- [Microsoft: Detecting BEC with Machine Learning](https://www.microsoft.com/en-us/security/blog/2023/06/08/detecting-and-mitigating-bec-attacks/)",
-    "file_path": "Alchemy/M013.md"
   },
   {
     "id": "M014",
