@@ -328,7 +328,7 @@ export class HuntFinder {
         <div class="hf-card__tags">${tags}</div>
         <div class="hf-card__footer">
           <span class="hf-card__submitter">by ${this.escapeHtml(hunt.submitter.name)}</span>
-          <a href="${this.escapeHtml(hunt.file_path)}" class="hf-card__link" target="_blank">View hypothesis</a>
+          <a href="https://github.com/THORCollective/HEARTH/blob/main/${this.escapeHtml(hunt.file_path)}" class="hf-card__link" target="_blank" rel="noopener">View hypothesis</a>
         </div>
       </article>`;
   }
