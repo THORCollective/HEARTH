@@ -32,6 +32,8 @@ Everyone listed below has submitted ideas that have been added to HEARTH. This l
 | 24 | p-o-s-t | 1 |
 | 25 | @p-o-s-t | 1 |
 | 26 | odanh | 1 |
-| 27 | Claire Stromboe | 1 |
-| 28 | Jon Perez | 1 |
-| 29 | Collin McClaine | 1 |
+| 27 | _No response_ | 1 |
+| 28 | smossmos | 1 |
+| 29 | Claire Stromboe | 1 |
+| 30 | Jon Perez | 1 |
+| 31 | Collin McClaine | 1 |
