@@ -248,7 +248,7 @@ export class HuntFinder {
             <strong>${gap.techniques.length}</strong> technique${gap.techniques.length > 1 ? 's' : ''}
             (${gap.techniques.slice(0, 3).map(t => this.escapeHtml(t)).join(', ')}${gap.techniques.length > 3 ? '...' : ''})
             have no HEARTH hypotheses.
-            <a href="https://github.com/THORCollective/HEARTH" target="_blank">Submit to the Forge!</a>
+            <a href="/submit.html">Submit to HEARTH</a>
           </div>
         </div>
       `).join('');
