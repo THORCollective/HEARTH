@@ -251,6 +251,74 @@ const HUNTS_DATA = [
     "file_path": "Embers/B012.md"
   },
   {
+    "id": "B013",
+    "category": "Embers",
+    "title": "Baseline all processes that legitimately access lsass.exe in the environment to identify anomalous access attempts indicative of credential dumping tools such as Mimikatz, procdump, or comsvcs.dll MiniDump.",
+    "tactic": "Credential Access",
+    "notes": "Establish a baseline using Sysmon Event ID 10 (ProcessAccess) where TargetImage ends with lsass.exe. Profile normal SourceImage values, GrantedAccess codes, and calling process signatures. Legitimate accessors typically include csrss.exe, services.exe, svchost.exe, lsm.exe, and the installed EDR/AV agent. Any unsigned or unexpected process accessing LSASS — particularly with GrantedAccess values 0x1010, 0x1410, or 0x1FFFFF — warrants immediate investigation.",
+    "tags": [
+      "baseline",
+      "credential_access",
+      "T1003_001",
+      "lsass",
+      "sysmon",
+      "process_access"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- LSASS holds cached credentials for every interactive and service logon on a Windows host — it is the single highest-value target for credential theft, and virtually every ransomware intrusion includes an LSASS dump as a prerequisite to lateral movement\n- The set of processes that legitimately access LSASS is small and stable — typically fewer than 10 system binaries and the installed security agent — making this one of the cleanest baselines to establish and maintain\n- Credential dumping tools use distinctive GrantedAccess values (0x1010 for PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_VM_READ) that differ from the access patterns of legitimate system processes, providing a high-fidelity detection signal once the baseline is established\n- Attackers increasingly use living-off-the-land approaches (comsvcs.dll MiniDump via rundll32, Task Manager dumps) that evade signature-based detection — a baseline approach catches these because the anomaly is the access to LSASS itself, not the specific tool used",
+    "references": "- [MITRE ATT&CK T1003.001 - OS Credential Dumping: LSASS Memory](https://attack.mitre.org/techniques/T1003/001/)\n- [The DFIR Report - Apache ActiveMQ Exploit Leads to LockBit Ransomware](https://thedfirreport.com/2026/02/23/apache-activemq-exploit-leads-to-lockbit-ransomware/)\n- [Microsoft - Sysmon Event ID 10 ProcessAccess](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon)\n- [Microsoft - How Credential Guard Works](https://learn.microsoft.com/en-us/windows/security/identity-protection/credential-guard/how-it-works)\n- [Microsoft - Configure Additional LSA Protection](https://learn.microsoft.com/en-us/windows-server/security/credentials-protection-and-management/configuring-additional-lsa-protection)\n- [Splunk - You Bet Your Lsass: Hunting LSASS Access](https://www.splunk.com/en_us/blog/security/you-bet-your-lsass-hunting-lsass-access.html)\n- [TrustedSec Sysmon Community Guide - Process Access](https://github.com/trustedsec/SysmonCommunityGuide/blob/master/chapters/process-access.md)",
+    "file_path": "Embers/B013.md"
+  },
+  {
+    "id": "B014",
+    "category": "Embers",
+    "title": "Baseline the sources and parent processes of MSI package installations across the environment to identify installations originating from unusual locations such as browser download directories, Temp folders, or remote URLs.",
+    "tactic": "Defense Evasion",
+    "notes": "Establish a baseline using Windows Installer Event IDs 1033 and 1040, Sysmon Event ID 1 for msiexec.exe process creation, and application logs showing MSI source paths. Profile normal installation sources (SCCM/MECM distribution points, GPO software deployment shares, vendor update services) and parent processes (sccm client, GPO, software updaters). Flag MSI installations where the source path is a user's Downloads folder, browser cache, %TEMP%, or an HTTP/HTTPS URL.",
+    "tags": [
+      "baseline",
+      "defense_evasion",
+      "T1218_007",
+      "msiexec",
+      "msi",
+      "software_installation"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- In the Bumblebee-to-Akira intrusion, a trojanized MSI installer downloaded via a poisoned search result was the initial infection vector — the MSI source path (browser download directory) would have been anomalous compared to the organization's normal software deployment channels\n- Enterprise environments typically deploy MSI packages through centralized management tools (SCCM, Intune, GPO) with consistent source paths — an MSI running from a user's Downloads folder or from an HTTP URL is abnormal and easy to detect once the baseline is established\n- The set of legitimate MSI installation sources is small and stable in most organizations, making this a low-noise baseline that produces actionable alerts with minimal tuning\n- This baseline also surfaces shadow IT installations, unauthorized software, and policy violations alongside malicious activity, providing additional security value beyond threat detection",
+    "references": "- [MITRE ATT&CK T1218.007 - System Binary Proxy Execution: Msiexec](https://attack.mitre.org/techniques/T1218/007/)\n- [The DFIR Report - From Bing Search to Ransomware: Bumblebee and AdaptixC2 Deliver Akira](https://thedfirreport.com/2025/11/04/from-bing-search-to-ransomware-bumblebee-and-adaptixc2-deliver-akira-2/)\n- [Elastic Detection Rule - Suspicious Execution via MSIEXEC](https://www.elastic.co/guide/en/security/current/suspicious-execution-via-msiexec.html)\n- [Splunk - Windows System Binary Proxy Execution MSIExec Analytics Story](https://research.splunk.com/stories/windows_system_binary_proxy_execution_msiexec/)\n- [LOLBAS Project - Msiexec](https://lolbas-project.github.io/lolbas/Binaries/Msiexec/)",
+    "file_path": "Embers/B014.md"
+  },
+  {
+    "id": "B015",
+    "category": "Embers",
+    "title": "Baseline all executions of ntdsutil.exe, wbadmin.exe, vssadmin.exe, and diskshadow.exe on domain controllers to identify usage outside of scheduled Active Directory maintenance windows that may indicate credential extraction.",
+    "tactic": "Credential Access",
+    "notes": "Establish a baseline using Sysmon Event ID 1 (process creation) and Windows Security Event ID 4688 with command-line auditing enabled on all domain controllers. Profile when these tools normally run (backup windows, patching cycles, DC promotion), who runs them (specific service accounts, backup software), and what arguments are used. Any execution outside these known patterns — especially ntdsutil with IFM arguments, wbadmin targeting system state, or vssadmin creating shadow copies — warrants immediate investigation. Also monitor Directory Service Event ID 1917 (ntds.dit backup).",
+    "tags": [
+      "baseline",
+      "credential_access",
+      "T1003_003",
+      "ntdsutil",
+      "wbadmin",
+      "vssadmin",
+      "domain_controller",
+      "active_directory"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Ntdsutil, wbadmin, and vssadmin are the primary tools used to extract the NTDS.dit database containing all domain credential hashes — in the Bumblebee-to-Akira intrusion, wbadmin was used to dump NTDS.dit from the domain controller\n- These tools have very few legitimate use cases on domain controllers — ntdsutil for AD maintenance and IFM media creation, wbadmin for system state backups, vssadmin for shadow copy management — and those legitimate uses follow predictable schedules tied to backup windows and maintenance cycles\n- The baseline is exceptionally tight: most domain controllers see these tools run only during weekly or monthly maintenance windows by specific service accounts, making any execution outside that pattern a high-fidelity alert\n- Because these are signed Microsoft binaries pre-installed on every domain controller, signature-based detection will not flag them — behavioral baselining based on timing, user context, and command-line arguments is the primary detection method",
+    "references": "- [MITRE ATT&CK T1003.003 - OS Credential Dumping: NTDS](https://attack.mitre.org/techniques/T1003/003/)\n- [The DFIR Report - From Bing Search to Ransomware: Bumblebee and AdaptixC2 Deliver Akira](https://thedfirreport.com/2025/11/04/from-bing-search-to-ransomware-bumblebee-and-adaptixc2-deliver-akira-2/)\n- [Splunk - Detection: Ntdsutil Export NTDS](https://research.splunk.com/endpoint/da63bc76-61ae-11eb-ae93-0242ac130002/)\n- [Insane Cyber - Hunting for APT28/Hafnium NTDS.dit Credential Harvesting](https://insanecyber.com/hunting-for-apt28-hafnium-ntds-dit-domain-controller-credential-harvesting-mitre-attck-t1003-003/)\n- [Red Canary Atomic Red Team - T1003.003 NTDS](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1003.003/T1003.003.md)",
+    "file_path": "Embers/B015.md"
+  },
+  {
     "id": "H001",
     "category": "Flames",
     "title": "An adversary is attempting to brute force the admin account on the externally facing VPN gateway.",
@@ -2505,6 +2573,288 @@ const HUNTS_DATA = [
     "file_path": "Flames/H104.md"
   },
   {
+    "id": "H105",
+    "category": "Flames",
+    "title": "An adversary is exploiting a known vulnerability in an internet-facing application such as Apache ActiveMQ (CVE-2023-46604) to achieve remote code execution and establish initial access to the environment.",
+    "tactic": "Initial Access",
+    "notes": "Focus on web application logs, WAF alerts, and endpoint telemetry from DMZ hosts. Look for ClassPathXmlApplicationContext abuse in ActiveMQ, unexpected child processes from Java/application server processes, and exploitation signatures in HTTP request bodies.",
+    "tags": [
+      "initial_access",
+      "T1190",
+      "CVE_2023_46604",
+      "activemq",
+      "exploit",
+      "rce"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- CVE-2023-46604 (CVSS 10.0) in Apache ActiveMQ has been widely exploited by ransomware operators including LockBit, and exploitation requires no authentication — a single crafted OpenWire command achieves remote code execution\n- Internet-facing applications are the most common initial access vector in ransomware intrusions, and many organizations run vulnerable versions long after patches are available\n- Exploitation of public-facing applications often leaves forensic artifacts in application logs, web server logs, and endpoint telemetry that differ from normal application behavior — such as Java processes spawning cmd.exe, PowerShell, or certutil\n- Early detection of exploitation attempts at the initial access phase provides the best opportunity to contain an intrusion before lateral movement and ransomware deployment",
+    "references": "- [MITRE ATT&CK T1190 - Exploit Public-Facing Application](https://attack.mitre.org/techniques/T1190/)\n- [The DFIR Report - Apache ActiveMQ Exploit Leads to LockBit Ransomware](https://thedfirreport.com/2026/02/23/apache-activemq-exploit-leads-to-lockbit-ransomware/)\n- [Rapid7 - Suspected Exploitation of Apache ActiveMQ CVE-2023-46604](https://www.rapid7.com/blog/post/2023/11/01/etr-suspected-exploitation-of-apache-activemq-cve-2023-46604/)\n- [Trend Micro - CVE-2023-46604 Exploited to Infect Systems With Cryptominers and Rootkits](https://www.trendmicro.com/en_us/research/23/k/cve-2023-46604-exploited-by-kinsing.html)\n- [Cybereason - Beware of the Messengers: Exploiting ActiveMQ Vulnerability](https://www.cybereason.com/blog/beware-of-the-messengers-exploiting-activemq-vulnerability)\n- [CISA Advisory AA23-325A - LockBit 3.0 Affiliates Exploit CVE 2023-4966 Citrix Bleed](https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-325a)",
+    "file_path": "Flames/H105.md"
+  },
+  {
+    "id": "H106",
+    "category": "Flames",
+    "title": "An adversary is using named pipe impersonation or token manipulation techniques such as Meterpreter's GetSystem command to escalate privileges from a local administrator context to NT AUTHORITY\\SYSTEM on a compromised Windows host.",
+    "tactic": "Privilege Escalation",
+    "notes": "Look for creation of short-lived Windows services with random names, named pipe creation by non-standard processes, and token impersonation API calls (ImpersonateNamedPipeClient, DuplicateTokenEx). Sysmon Event IDs 17/18 (pipe created/connected) and 1 (process creation) with ParentUser != ChildUser are key data sources.",
+    "tags": [
+      "privilege_escalation",
+      "T1134_005",
+      "T1134",
+      "named_pipe",
+      "getsystem",
+      "token_impersonation"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- GetSystem-style privilege escalation is a standard post-exploitation step observed in nearly every Metasploit and Cobalt Strike intrusion, and it leaves distinctive artifacts — ephemeral services with random names and named pipes that exist for only milliseconds\n- Detecting the pivot from admin to SYSTEM is a critical inflection point because SYSTEM-level access enables credential dumping from LSASS, unrestricted registry access, and the ability to manipulate security tooling\n- Named pipe impersonation creates a short-lived service (visible in System event log Event ID 7045) with a random name that immediately deletes itself after the pipe connection completes — a pattern that is highly anomalous in legitimate environments\n- Token manipulation via DuplicateTokenEx and ImpersonateNamedPipeClient leaves API call traces in EDR telemetry that differ from legitimate service account token usage",
+    "references": "- [MITRE ATT&CK T1134 - Access Token Manipulation](https://attack.mitre.org/techniques/T1134/)\n- [MITRE ATT&CK T1134.001 - Token Impersonation/Theft](https://attack.mitre.org/techniques/T1134/001/)\n- [The DFIR Report - Apache ActiveMQ Exploit Leads to LockBit Ransomware](https://thedfirreport.com/2026/02/23/apache-activemq-exploit-leads-to-lockbit-ransomware/)\n- [Elastic - How Attackers Abuse Access Token Manipulation](https://www.elastic.co/blog/how-attackers-abuse-access-token-manipulation)\n- [Elastic Detection Rule - Privilege Escalation via Named Pipe Impersonation](https://www.elastic.co/guide/en/security/current/privilege-escalation-via-named-pipe-impersonation.html)\n- [Red Canary Atomic Red Team - T1134.001 Token Impersonation/Theft](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1134.001/T1134.001.md)\n- [CTID Adversary Emulation Library - Named Pipes](https://github.com/center-for-threat-informed-defense/adversary_emulation_library/tree/master/micro_emulation_plans/src/named_pipes)",
+    "file_path": "Flames/H106.md"
+  },
+  {
+    "id": "H107",
+    "category": "Flames",
+    "title": "An adversary is clearing Windows event logs using wevtutil, Clear-EventLog, or similar utilities to destroy forensic evidence of their intrusion activity after achieving their objectives.",
+    "tactic": "Defense Evasion",
+    "notes": "Hunt for Event ID 1102 (Security log cleared), Event ID 104 (System log cleared), wevtutil.exe cl executions, and PowerShell Clear-EventLog cmdlet usage. Also look for gaps in event log continuity or event logs with abnormally small file sizes.",
+    "tags": [
+      "defense_evasion",
+      "T1070_001",
+      "event_log_clearing",
+      "anti_forensics"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Event log clearing is one of the final actions ransomware operators take before or after deployment — in the ActiveMQ-to-LockBit intrusion, the adversary cleared System, Application, and Security event logs to hinder incident response\n- Windows generates a meta-event (Event ID 1102) when the Security log is cleared, providing a reliable detection signal even after the logs themselves are destroyed — this is a high-fidelity indicator that is rarely triggered by legitimate administrative activity\n- Adversaries who clear logs often do so selectively (e.g., clearing Security but not PowerShell Operational), so correlation across log channels can reveal the clearing activity and help reconstruct the attack timeline\n- Log forwarding to a SIEM means cleared local logs can still be analyzed, but detection of the clearing action itself signals active adversary awareness of the environment's logging capabilities",
+    "references": "- [MITRE ATT&CK T1070.001 - Indicator Removal: Clear Windows Event Logs](https://attack.mitre.org/techniques/T1070/001/)\n- [The DFIR Report - Apache ActiveMQ Exploit Leads to LockBit Ransomware](https://thedfirreport.com/2026/02/23/apache-activemq-exploit-leads-to-lockbit-ransomware/)\n- [Splunk Security Content - Detection: Windows Event Log Cleared](https://research.splunk.com/endpoint/ad517544-aff9-4c96-bd99-d6eb43bfbb6a/)\n- [Elastic Detection Rule - Clearing Windows Event Logs](https://www.elastic.co/docs/reference/security/prebuilt-rules/rules/windows/defense_evasion_clearing_windows_event_logs)\n- [Sigma Rule - Suspicious Eventlog Clear or Configuration Change](https://detection.fyi/sigmahq/sigma/windows/process_creation/proc_creation_win_susp_eventlog_clear/)\n- [Red Canary Atomic Red Team - T1070.001 Clear Windows Event Logs](https://cyberbuff.github.io/TheAtomicPlaybook/tactics/defense-evasion/T1070.001.html)\n- [Unprotect Project - Clear Windows Event Logs](https://unprotect.it/technique/indicator-removal-clear-windows-event-logs/)",
+    "file_path": "Flames/H107.md"
+  },
+  {
+    "id": "H108",
+    "category": "Flames",
+    "title": "An adversary is dumping credentials from the LSASS process memory using tools such as Mimikatz, procdump, comsvcs.dll MiniDump, or direct API calls to access cached domain credentials for lateral movement.",
+    "tactic": "Credential Access",
+    "notes": "Key indicators include suspicious process access to lsass.exe with GrantedAccess values 0x1010, 0x1410, or 0x1FFFFF (Sysmon Event ID 10), unsigned binaries opening handles to LSASS, use of comsvcs.dll MiniDump via rundll32, and procdump targeting lsass.exe by PID or name.",
+    "tags": [
+      "credential_access",
+      "T1003_001",
+      "lsass",
+      "credential_dumping",
+      "mimikatz"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- LSASS credential dumping is the most common technique for obtaining domain credentials during an intrusion — in the ActiveMQ-to-LockBit case, attackers dumped LSASS to harvest domain admin credentials that enabled RDP-based lateral movement to file servers and backup infrastructure\n- The specific GrantedAccess value 0x1010 (PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_VM_READ) observed in this intrusion is a well-known signature of credential dumping tools and is rarely used by legitimate software accessing LSASS\n- Attackers increasingly use living-off-the-land techniques (comsvcs.dll MiniDump, Task Manager dumps) rather than dropping known tools like Mimikatz, requiring detection logic that focuses on the LSASS access pattern rather than specific tool signatures\n- Credential Dumping is a prerequisite for nearly all subsequent attack phases — detecting it early can prevent lateral movement, privilege escalation, and ultimately ransomware deployment",
+    "references": "- [MITRE ATT&CK T1003.001 - OS Credential Dumping: LSASS Memory](https://attack.mitre.org/techniques/T1003/001/)\n- [The DFIR Report - Apache ActiveMQ Exploit Leads to LockBit Ransomware](https://thedfirreport.com/2026/02/23/apache-activemq-exploit-leads-to-lockbit-ransomware/)\n- [Splunk - You Bet Your Lsass: Hunting LSASS Access](https://www.splunk.com/en_us/blog/security/you-bet-your-lsass-hunting-lsass-access.html)\n- [Splunk Security Content - Detect Credential Dumping through LSASS Access](https://research.splunk.com/endpoint/2c365e57-4414-4540-8dc0-73ab10729996/)\n- [TrustedSec Sysmon Community Guide - Process Access](https://github.com/trustedsec/SysmonCommunityGuide/blob/master/chapters/process-access.md)\n- [Security Scientist - 12 Questions and Answers About LSASS Memory (T1003.001)](https://www.securityscientist.net/blog/12-questions-and-answers-about-lsass-memory-t1003-001/)",
+    "file_path": "Flames/H108.md"
+  },
+  {
+    "id": "H109",
+    "category": "Flames",
+    "title": "An adversary is performing internal network reconnaissance by generating a spike in SMB connection attempts from a single host to many endpoints across the network, indicating enumeration of live hosts and accessible shares.",
+    "tactic": "Discovery",
+    "notes": "Look for a single source IP generating SMB (port 445) connections to many destinations in a short time window. Correlate with failed authentication events and compare against baseline SMB traffic patterns. Network flow data and Windows Security Event IDs 4624/4625 with Logon Type 3 are primary data sources.",
+    "tags": [
+      "discovery",
+      "T1018",
+      "smb_scanning",
+      "network_enumeration",
+      "reconnaissance"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- In the ActiveMQ-to-LockBit intrusion, the beachhead host generated a significant spike in SMB traffic to systems across the network immediately after initial compromise — this scanning pattern is a reliable indicator of an adversary mapping the environment before lateral movement\n- SMB scanning from a compromised host is a pre-cursor to multiple downstream attack phases including lateral movement via PsExec, share enumeration for data staging, and identification of high-value targets like domain controllers and backup servers\n- Legitimate SMB traffic patterns are typically predictable (file servers, print servers, domain controllers) — a workstation or application server suddenly initiating SMB connections to dozens or hundreds of hosts is highly anomalous\n- Detection at the discovery phase provides a critical early warning before the adversary has moved laterally, allowing containment of the compromised host before additional systems are affected",
+    "references": "- [MITRE ATT&CK T1018 - Remote System Discovery](https://attack.mitre.org/techniques/T1018/)\n- [The DFIR Report - Apache ActiveMQ Exploit Leads to LockBit Ransomware](https://thedfirreport.com/2026/02/23/apache-activemq-exploit-leads-to-lockbit-ransomware/)\n- [Corelight + MITRE ATT&CK: T1018 Remote System Discovery](https://www.corelight.com/mitre-attack/discovery/t1018-remote-system-discovery)\n- [Elastic Detection Rule - Remote System Discovery Commands](https://www.elastic.co/guide/en/security/current/remote-system-discovery-commands.html)\n- [Red Canary Atomic Red Team - T1018 Remote System Discovery](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1018/T1018.md)\n- [Picus Security - T1018 Remote System Discovery](https://www.picussecurity.com/resource/blog/t1018-remote-service-discovery-of-the-mitre-attck-framework)",
+    "file_path": "Flames/H109.md"
+  },
+  {
+    "id": "H110",
+    "category": "Flames",
+    "title": "An adversary is enumerating Active Directory accounts and group memberships using built-in Windows utilities such as net group, net user, nltest, or PowerShell AD cmdlets to identify privileged accounts for targeted credential theft.",
+    "tactic": "Discovery",
+    "notes": "Hunt for execution of net group \"Domain Admins\" /domain, net user /domain, nltest /dclist, and Get-ADGroupMember commands from non-administrative workstations or service accounts. Process creation logs (Sysmon Event ID 1, Windows Security Event ID 4688) with command-line auditing enabled are the primary data source.",
+    "tags": [
+      "discovery",
+      "T1087_002",
+      "T1087",
+      "account_enumeration",
+      "active_directory",
+      "net_commands"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Account enumeration is a standard reconnaissance step performed shortly after initial access — in the ActiveMQ-to-LockBit intrusion, the adversary used net group commands to identify domain administrators, directly enabling targeted credential theft via LSASS dumping\n- Built-in Windows utilities like net.exe and nltest.exe are living-off-the-land tools that do not trigger traditional malware detection, but their execution from non-admin workstations or by service accounts that do not normally perform AD queries is highly suspicious\n- A burst of AD enumeration commands from a single host (especially net group, net user, whoami /all, nltest in sequence) is a strong behavioral indicator of hands-on-keyboard post-exploitation activity\n- Early detection of account enumeration can trigger containment before the adversary identifies and compromises privileged accounts that enable domain-wide access",
+    "references": "- [MITRE ATT&CK T1087.002 - Account Discovery: Domain Account](https://attack.mitre.org/techniques/T1087/002/)\n- [The DFIR Report - Apache ActiveMQ Exploit Leads to LockBit Ransomware](https://thedfirreport.com/2026/02/23/apache-activemq-exploit-leads-to-lockbit-ransomware/)\n- [Elastic Detection Rule - Windows Account or Group Discovery](https://www.elastic.co/guide/en/security/current/windows-account-or-group-discovery.html)\n- [Red Canary Atomic Red Team - T1087.002 Domain Account Discovery](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1087.002/T1087.002.md)\n- [CISA Eviction Strategies - Account Discovery (T1087)](https://www.cisa.gov/eviction-strategies-tool/info-attack/T1087)",
+    "file_path": "Flames/H110.md"
+  },
+  {
+    "id": "H111",
+    "category": "Flames",
+    "title": "An adversary is performing network service discovery by deploying port scanning tools such as Advanced IP Scanner, SoftPerfect Network Scanner, or nmap to identify accessible services including RDP (3389), SMB (445), WinRM (5985/5986), and LDAP (389) across the internal network.",
+    "tactic": "Discovery",
+    "notes": "Look for execution of known scanner binaries (advanced_ip_scanner.exe, netscan.exe, nmap.exe), files masquerading as legitimate tools (e.g., scanner binary named as a different tool), and rapid sequential TCP SYN connections across multiple ports to many hosts. Network flow data showing a single host connecting to common service ports across many destinations is a key indicator.",
+    "tags": [
+      "discovery",
+      "T1046",
+      "port_scanning",
+      "network_scanning",
+      "advanced_ip_scanner"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- In the ActiveMQ-to-LockBit intrusion, the adversary deployed Advanced IP Scanner disguised as SoftPerfect Network Scanner to enumerate services across the network — tool masquerading adds an additional detection opportunity based on filename/hash mismatch\n- Port scanning tools targeting specific service ports (445, 3389, 5985, 5986, 389, 135, 139) reveal the adversary's intended lateral movement methods and can predict their next steps — RDP for interactive access, SMB for PsExec, WinRM for remote command execution\n- These scanning tools are rarely used on servers in production environments, and their presence on a host that was recently compromised via an application exploit is a strong indicator of post-exploitation reconnaissance\n- Detection of port scanning activity provides an opportunity to identify not only the compromised host performing the scan but also the specific services and hosts the adversary has identified as targets",
+    "references": "- [MITRE ATT&CK T1046 - Network Service Discovery](https://attack.mitre.org/techniques/T1046/)\n- [The DFIR Report - Apache ActiveMQ Exploit Leads to LockBit Ransomware](https://thedfirreport.com/2026/02/23/apache-activemq-exploit-leads-to-lockbit-ransomware/)\n- [Elastic Detection Rule - Potential Network Scan Detected](https://www.elastic.co/docs/reference/security/prebuilt-rules/rules/network/discovery_potential_port_scan_detected)\n- [Splunk - Detection: Internal Vertical Port Scan](https://research.splunk.com/network/40d2dc41-9bbf-421a-a34b-8611271a6770/)\n- [Splunk Lantern - Detecting Network and Port Scanning](https://lantern.splunk.com/Security_Use_Cases/Security_Monitoring/Detecting_network_and_port_scanning)\n- [Red Canary Atomic Red Team - T1046 Network Service Scanning](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1046/T1046.md)\n- [Microsoft Defender ATP - T1046 Network Service Scanning Hunting Queries](https://github.com/alexverboon/MDATP/blob/master/AdvancedHunting/T1046%20-%20Network%20Service%20Scanning.md)",
+    "file_path": "Flames/H111.md"
+  },
+  {
+    "id": "H112",
+    "category": "Flames",
+    "title": "An adversary is executing ransomware that rapidly encrypts files across local and network-accessible storage, indicated by a high rate of file modification events, mass file extension changes, and creation of ransom note files across multiple directories.",
+    "tactic": "Impact",
+    "notes": "Hunt for processes generating an abnormally high volume of file write/rename operations, creation of files with known ransomware extensions (.lockbit, .encrypted, .crypt), and identical ransom note filenames appearing in multiple directories simultaneously. Monitor for Volume Shadow Copy deletion (vssadmin delete shadows) and bcdedit modifications that often precede encryption.",
+    "tags": [
+      "impact",
+      "T1486",
+      "ransomware",
+      "encryption",
+      "lockbit",
+      "data_encrypted_for_impact"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- LockBit and other ransomware families can encrypt thousands of files per minute — in the ActiveMQ intrusion, the adversary deployed LockBit binaries via RDP to file servers and backup infrastructure with custom flags for targeted encryption paths\n- Ransomware execution is often preceded by Volume Shadow Copy deletion (T1490) and recovery service disabling (bcdedit /set recoveryenabled No) — detecting these precursor actions provides a narrow but critical window for response before encryption begins\n- LockBit's -psex flag triggers built-in PsExec-style SMB spreading, meaning a single execution can propagate across the network — detection of the initial execution on one host can prevent network-wide encryption\n- File system telemetry showing a single process performing thousands of file writes with entropy changes (plaintext to encrypted content) is a high-fidelity detection signal that produces very few false positives in normal environments",
+    "references": "- [MITRE ATT&CK T1486 - Data Encrypted for Impact](https://attack.mitre.org/techniques/T1486/)\n- [The DFIR Report - Apache ActiveMQ Exploit Leads to LockBit Ransomware](https://thedfirreport.com/2026/02/23/apache-activemq-exploit-leads-to-lockbit-ransomware/)\n- [CISA #StopRansomware: LockBit 3.0 (AA23-075A)](https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-075a)\n- [CISA - Understanding Ransomware Threat Actors: LockBit (AA23-165A)](https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-165a)\n- [CISA - LockBit 3.0 Affiliates Exploit Citrix Bleed (AA23-325A)](https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-325a)\n- [FS-ISAC - LockBit: Access, Encryption, Exfiltration, & Mitigation](https://www.fsisac.com/hubfs/Knowledge/LockBit-AccessEncryptionExfiltrationMitigation.pdf)\n- [Splunk Security Content - Detection: Common Ransomware Extensions](https://research.splunk.com/endpoint/a9e5c5db-db11-43ca-86a8-c852d1b2c0ec/)\n- [Splunk Lantern - Detecting a Ransomware Attack](https://lantern.splunk.com/Security/Use_Cases/Threat_Hunting/Detecting_a_ransomware_attack)\n- [Elastic - Ransomware Prevention with Elastic Defend](https://www.elastic.co/guide/en/security/8.19/ransomware-prevented-elastic-defend.html)",
+    "file_path": "Flames/H112.md"
+  },
+  {
+    "id": "H113",
+    "category": "Flames",
+    "title": "An adversary is modifying the desktop wallpaper, dropping ransom note files, or altering login screen settings via registry changes to display extortion messaging to users after ransomware deployment.",
+    "tactic": "Impact",
+    "notes": "Hunt for registry modifications to HKCU\\Control Panel\\Desktop\\Wallpaper and HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\legalnoticecaption by non-standard processes, creation of .txt/.hta/.html files with ransom-related keywords in multiple directories simultaneously, and changes to OEMBackground registry values.",
+    "tags": [
+      "impact",
+      "T1491_001",
+      "defacement",
+      "ransom_note",
+      "wallpaper",
+      "extortion"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Desktop wallpaper modification and ransom note distribution are the visible indicators of a completed ransomware attack — in the ActiveMQ-to-LockBit intrusion, the adversary changed desktop backgrounds to ensure users were immediately aware of the ransom demand\n- While these indicators appear late in the kill chain, detecting wallpaper changes or mass file drops by a single process can trigger automated containment responses (network isolation, account disabling) that limit the scope of an ongoing encryption event\n- Ransom note creation patterns (identical files dropped in every directory traversed) provide a reliable file system indicator that can be detected by endpoint telemetry even when the ransomware binary itself evades signature-based detection\n- Modern ransomware campaigns increasingly use alternative communication channels (Session, Tox) instead of standard infrastructure — detecting the ransom note content helps identify the specific threat actor and their communication preferences for incident response coordination",
+    "references": "- [MITRE ATT&CK T1491.001 - Defacement: Internal Defacement](https://attack.mitre.org/techniques/T1491/001/)\n- [The DFIR Report - Apache ActiveMQ Exploit Leads to LockBit Ransomware](https://thedfirreport.com/2026/02/23/apache-activemq-exploit-leads-to-lockbit-ransomware/)\n- [Red Canary Atomic Red Team - T1491.001 Internal Defacement](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1491.001/T1491.001.md)\n- [Detection.FYI - Sigma Rule: Potentially Suspicious Desktop Background Change Via Registry](https://detection.fyi/sigmahq/sigma/windows/registry/registry_set/registry_set_desktop_background_change/)\n- [Detection.FYI - T1491.001 Detection Rules](https://detection.fyi/tags/attack.t1491.001/)\n- [Splunk Security Content - Detection: Modification of Wallpaper](https://research.splunk.com/endpoint/accb0712-c381-11eb-8e5b-acde48001122/)\n- [Sigma Rule - Potential Ransomware Activity Using LegalNotice Message](https://detection.fyi/sigmahq/sigma/windows/registry/registry_set/registry_set_legalnotice_susp_message/)\n- [Splunk - From Registry With Love: Malware Registry Abuses](https://www.splunk.com/en_us/blog/security/from-registry-with-love-malware-registry-abuses.html)",
+    "file_path": "Flames/H113.md"
+  },
+  {
+    "id": "H114",
+    "category": "Flames",
+    "title": "An adversary is using SEO poisoning or malvertising to place trojanized software installers in search engine results, tricking users searching for legitimate IT tools into downloading malware-laced packages that deploy backdoors or ransomware precursors.",
+    "tactic": "Initial Access",
+    "notes": "Hunt for downloads of known IT administration tools (ManageEngine, PuTTY, WinSCP, AnyDesk, Teams) from domains that are not the vendor's official site. Correlate web proxy logs showing search engine referrers leading to non-vendor download domains, followed by MSI/EXE execution with suspicious child processes. Look for newly registered domains mimicking vendor names in DNS query logs.",
+    "tags": [
+      "initial_access",
+      "T1189",
+      "seo_poisoning",
+      "malvertising",
+      "trojanized_installer",
+      "drive_by"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- In the Bumblebee-to-Akira intrusion, a user searching Bing for \"ManageEngine OpManager\" was directed to a malicious site delivering a trojanized MSI installer — this pattern is increasingly common with groups like Rhysida, Velvet Tempest, and Akira affiliates\n- SEO poisoning targets high-intent searches for IT administration tools, meaning victims are often system administrators with elevated privileges — compromising their workstation provides immediate access to infrastructure management capabilities\n- Traditional email gateway and attachment scanning controls are completely bypassed because the user initiates the download themselves through a web browser after a search engine referral\n- Post-download execution chains (MSI loading malicious DLLs, legitimate software installed alongside malware) are detectable through process lineage analysis even when the initial download evades URL filtering",
+    "references": "- [MITRE ATT&CK T1189 - Drive-by Compromise](https://attack.mitre.org/techniques/T1189/)\n- [The DFIR Report - From Bing Search to Ransomware: Bumblebee and AdaptixC2 Deliver Akira](https://thedfirreport.com/2025/11/04/from-bing-search-to-ransomware-bumblebee-and-adaptixc2-deliver-akira-2/)\n- [Vectra - SEO Poisoning Attacks: Detection & Defense](https://www.vectra.ai/topics/seo-poisoning)\n- [Darktrace - SEO Poisoning and Fake PuTTY Sites: Investigation into the Oyster Backdoor](https://www.darktrace.com/blog/seo-poisoning-and-fake-putty-sites-darktraces-investigation-into-the-oyster-backdoor)\n- [The Hacker News - SEO Poisoning Campaign Targets 8,500+ SMB Users with Malware Disguised as AI Tools](https://thehackernews.com/2025/07/seo-poisoning-campaign-targets-8500.html)",
+    "file_path": "Flames/H114.md"
+  },
+  {
+    "id": "H115",
+    "category": "Flames",
+    "title": "An adversary is abusing msiexec.exe to proxy execution of malicious code through crafted MSI packages or DLL loading, bypassing application control solutions that trust the signed Windows Installer binary.",
+    "tactic": "Defense Evasion",
+    "notes": "Hunt for msiexec.exe executing MSI packages from unusual paths (Temp, Downloads, ProgramData, user profile directories), msiexec.exe with /q (quiet) flags installing packages from HTTP/HTTPS URLs, and msiexec.exe spawning unexpected child processes (cmd.exe, powershell.exe, rundll32.exe). Also detect msiexec.exe /y or /z switches used to load arbitrary DLLs via DllRegisterServer. Sysmon Event ID 1 (process creation) and Event ID 7 (image loaded) are key data sources.",
+    "tags": [
+      "defense_evasion",
+      "execution",
+      "T1218_007",
+      "msiexec",
+      "signed_binary_proxy",
+      "lolbin"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- In the Bumblebee-to-Akira intrusion, a trojanized MSI installer loaded Bumblebee malware via DLL side-loading during what appeared to be a legitimate software installation — msiexec.exe is a signed Microsoft binary trusted by most application control solutions\n- Msiexec can fetch and install packages from remote URLs (msiexec /i http://...), enabling initial payload delivery without dropping an intermediate file to disk — a technique that bypasses many endpoint detection rules focused on file-based indicators\n- The /y and /z switches allow msiexec to load arbitrary DLLs and call their DllRegisterServer or DllInstall exports, providing a code execution primitive that does not require a full MSI package\n- MSI installations are common in enterprise environments for legitimate software deployment, making malicious usage difficult to distinguish without baselining normal MSI installation sources and parent processes",
+    "references": "- [MITRE ATT&CK T1218.007 - System Binary Proxy Execution: Msiexec](https://attack.mitre.org/techniques/T1218/007/)\n- [The DFIR Report - From Bing Search to Ransomware: Bumblebee and AdaptixC2 Deliver Akira](https://thedfirreport.com/2025/11/04/from-bing-search-to-ransomware-bumblebee-and-adaptixc2-deliver-akira-2/)\n- [Elastic Detection Rule - Suspicious Execution via MSIEXEC](https://www.elastic.co/guide/en/security/current/suspicious-execution-via-msiexec.html)\n- [Splunk - Windows System Binary Proxy Execution MSIExec Analytics Story](https://research.splunk.com/stories/windows_system_binary_proxy_execution_msiexec/)\n- [Splunk - Detection: MSIExec Remote Download](https://research.splunk.com/endpoint/92cbbf0f-9a6b-4e9d-8c35-cc9244a4e3d5/)\n- [Red Canary Atomic Red Team - T1218.007 Msiexec](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1218.007/T1218.007.md)\n- [LOLBAS Project - Msiexec](https://lolbas-project.github.io/lolbas/Binaries/Msiexec/)",
+    "file_path": "Flames/H115.md"
+  },
+  {
+    "id": "H116",
+    "category": "Flames",
+    "title": "An adversary is extracting the Active Directory NTDS.dit database from a domain controller using built-in tools such as ntdsutil, wbadmin, vssadmin, or diskshadow to obtain all domain credential hashes for offline cracking and domain-wide compromise.",
+    "tactic": "Credential Access",
+    "notes": "Hunt for ntdsutil.exe execution with IFM (Install From Media) arguments, wbadmin.exe start backup commands targeting system state on DCs, vssadmin create shadow on the drive containing NTDS, and diskshadow.exe script execution. Monitor Directory Service Event ID 1917 (ntds.dit backup), System Event ID 7036 (VSS service start), and Security Event ID 4688 with command-line auditing on domain controllers. Also watch for copies of ntds.dit or SYSTEM registry hive appearing in non-standard directories.",
+    "tags": [
+      "credential_access",
+      "T1003_003",
+      "ntds",
+      "active_directory",
+      "ntdsutil",
+      "wbadmin",
+      "vssadmin",
+      "credential_dumping"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- In the Bumblebee-to-Akira intrusion, the adversary used wbadmin.exe to dump the NTDS.dit file from a domain controller — this single file contains every domain user's password hash, enabling offline cracking and complete domain compromise without triggering individual account lockout policies\n- NTDS.dit extraction uses signed Microsoft binaries (ntdsutil, wbadmin, vssadmin) that are pre-installed on domain controllers, making this a living-off-the-land technique that does not require dropping additional tools\n- Unlike DCSync (T1003.006) which generates replication traffic, NTDS.dit extraction via volume shadow copy or backup is a local operation on the DC that produces fewer network-based detection signals — endpoint monitoring on domain controllers is critical\n- Detection of NTDS.dit extraction is a high-fidelity signal because legitimate use of ntdsutil IFM or wbadmin system state backup on a domain controller should only occur during planned Active Directory maintenance windows",
+    "references": "- [MITRE ATT&CK T1003.003 - OS Credential Dumping: NTDS](https://attack.mitre.org/techniques/T1003/003/)\n- [The DFIR Report - From Bing Search to Ransomware: Bumblebee and AdaptixC2 Deliver Akira](https://thedfirreport.com/2025/11/04/from-bing-search-to-ransomware-bumblebee-and-adaptixc2-deliver-akira-2/)\n- [Splunk - Detection: Ntdsutil Export NTDS](https://research.splunk.com/endpoint/da63bc76-61ae-11eb-ae93-0242ac130002/)\n- [Insane Cyber - Hunting for APT28/Hafnium NTDS.dit Credential Harvesting](https://insanecyber.com/hunting-for-apt28-hafnium-ntds-dit-domain-controller-credential-harvesting-mitre-attck-t1003-003/)\n- [Red Canary Atomic Red Team - T1003.003 NTDS](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1003.003/T1003.003.md)\n- [Security Scientist - 12 Questions and Answers About NTDS (T1003.003)](https://www.securityscientist.net/blog/ntds-t1003-003-active-directory-credential-dumping/)\n- [Detection.FYI - T1003.003 Detection Rules](https://detection.fyi/tags/attack.t1003.003/)",
+    "file_path": "Flames/H116.md"
+  },
+  {
+    "id": "H117",
+    "category": "Flames",
+    "title": "An adversary is aggregating collected data into a central staging directory on a compromised host — such as ProgramData, Temp, or Recycle Bin — before compressing and exfiltrating it, indicated by a process writing numerous files from disparate source locations into a single directory.",
+    "tactic": "Collection",
+    "notes": "Hunt for unusual file write activity in common staging directories (C:\\ProgramData, C:\\Windows\\Temp, %APPDATA%, Recycle Bin, C:\\perflogs). Look for archive creation (7z.exe, rar.exe, zip utilities) in these locations, especially when preceded by file aggregation from multiple source directories. Monitor for command-line tools copying files with extensions associated with sensitive data (.docx, .xlsx, .pdf, .pst, .csv, .sql) into a single destination. Endpoint file creation telemetry and process command-line auditing are key data sources.",
+    "tags": [
+      "collection",
+      "T1074_001",
+      "data_staging",
+      "exfiltration_prep",
+      "archive"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- In the Bumblebee-to-Akira intrusion, the adversary staged reconnaissance output and collected data in ProgramData directories before exfiltrating via FileZilla SFTP — this staging step is a detectable precursor that provides a window for response before data leaves the network\n- Data staging is a prerequisite for most exfiltration operations — detecting the aggregation phase gives defenders an opportunity to intervene before data loss occurs, which is especially critical when exfiltration tools like FileZilla or rclone have already been deployed\n- Legitimate software rarely aggregates files from disparate locations into ProgramData, Temp, or Recycle Bin directories — this behavior is anomalous and produces few false positives when baselined against normal application activity\n- Archive creation (7zip, RAR, WinRAR) in staging directories, especially by processes that do not normally perform archival operations, is a high-confidence indicator of pre-exfiltration activity",
+    "references": "- [MITRE ATT&CK T1074.001 - Data Staged: Local Data Staging](https://attack.mitre.org/techniques/T1074/001/)\n- [The DFIR Report - From Bing Search to Ransomware: Bumblebee and AdaptixC2 Deliver Akira](https://thedfirreport.com/2025/11/04/from-bing-search-to-ransomware-bumblebee-and-adaptixc2-deliver-akira-2/)\n- [Splunk Lantern - Detecting Data Exfiltration Activities](https://lantern.splunk.com/Security/UCE/Guided_Insights/Anomaly_detection/Detecting_data_exfiltration_activities)\n- [MITRE D3FEND - Local Data Staging T1074.001](https://d3fend.mitre.org/offensive-technique/attack/T1074.001/)\n- [Red Canary Atomic Red Team - T1074.001 Local Data Staging](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1074.001/T1074.001.md)\n- [Security Scientist - 12 Questions and Answers About Data Staged (T1074)](https://www.securityscientist.net/blog/12-questions-and-answers-about-data-staged-t1074-2/)\n- [Jai Minton - MITRE ATT&CK Analysis T1074.001 Local Data Staging](https://www.jaiminton.com/Mitreatt&ck/T1074)",
+    "file_path": "Flames/H117.md"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
@@ -2684,5 +3034,28 @@ const HUNTS_DATA = [
     "why": "- The SANDWORM_MODE campaign deployed 19 malicious npm packages operating as a self-propagating worm through developer environments\n- The MCPInject module specifically targets Model Context Protocol servers — a brand new attack surface with almost zero defensive coverage\n- AI coding assistants often run with elevated filesystem and API access making them high-value pivot points for credential theft\n- Most organizations have zero visibility into what MCP servers their developers have connected to their AI tools",
     "references": "- [ATT&CK T1195.002](https://attack.mitre.org/techniques/T1195/002/)\n- [ATT&CK T1119](https://attack.mitre.org/techniques/T1119/)\n- [ATT&CK T1555](https://attack.mitre.org/techniques/T1555/)\n- SISA Weekly Threat Watch — SANDWORM_MODE campaign (Mar 2026)",
     "file_path": "Alchemy/M014.md"
+  },
+  {
+    "id": "M015",
+    "category": "Alchemy",
+    "title": "A machine learning model can detect software downloads from potentially malicious domains by scoring download source domains against features such as domain registration age, lexical similarity to known vendor names, TLS certificate age, and historical query volume to flag trojanized installer delivery via SEO poisoning or malvertising.",
+    "tactic": "Initial Access",
+    "notes": "Build a classifier using web proxy or DNS logs enriched with WHOIS/domain registration data. Key features: domain age (newly registered domains < 30 days), Levenshtein distance to known vendor domains (manageengine.com, putty.org, anydesk.com), TLS certificate issuance date, historical DNS query volume in the environment (never-before-seen domains), and whether the referrer was a search engine results page. Training data can combine known-good vendor download domains with threat intel feeds of confirmed malicious download sites.",
+    "tags": [
+      "initial_access",
+      "model_assisted",
+      "T1189",
+      "seo_poisoning",
+      "malvertising",
+      "domain_scoring",
+      "anomaly_detection"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- SEO poisoning campaigns targeting IT tool downloads are a growing initial access vector used by ransomware affiliates including Akira, Rhysida, and Velvet Tempest — in the Bumblebee-to-Akira intrusion, a user searching for ManageEngine was redirected to a malicious domain delivering a trojanized installer\n- Malicious download domains share common features that are individually weak signals but become strong indicators when combined: recent registration, lexical similarity to legitimate vendor names (typosquatting), newly issued TLS certificates, and no prior query history in the environment\n- Rule-based detection struggles with this technique because attackers constantly rotate domains — a model-based approach generalizes across campaigns by learning the feature patterns rather than relying on known-bad domain lists\n- False positives from legitimate new vendors or CDNs can be managed by maintaining an allowlist of approved software sources and only scoring downloads of executable file types (MSI, EXE, DMG) from domains not on the allowlist",
+    "references": "- [MITRE ATT&CK T1189 - Drive-by Compromise](https://attack.mitre.org/techniques/T1189/)\n- [The DFIR Report - From Bing Search to Ransomware: Bumblebee and AdaptixC2 Deliver Akira](https://thedfirreport.com/2025/11/04/from-bing-search-to-ransomware-bumblebee-and-adaptixc2-deliver-akira-2/)\n- [Unit 42 - Detecting Malicious Campaigns with Machine Learning](https://unit42.paloaltonetworks.com/unit42-detecting-malicious-campaigns-machine-learning/)\n- [CrowdStrike - Monitor for Malicious Domain Impersonations](https://www.crowdstrike.com/tech-hub/counter-adversary-operations/monitor-for-malicious-domain-impersonations/)\n- [Huntress - What is Typosquatting? Domain-Based Deception Explained](https://www.huntress.com/cybersecurity-101/topic/what-is-typosquatting)\n- [arXiv - DNS Typo-squatting Domain Detection: A Data Analytics & Machine Learning Based Approach](https://arxiv.org/abs/2012.13604)\n- [SentinelOne - What Is Typosquatting? Domain Attack Methods & Prevention](https://www.sentinelone.com/cybersecurity-101/cybersecurity/what-is-typosquatting/)",
+    "file_path": "Alchemy/M015.md"
   }
 ];
