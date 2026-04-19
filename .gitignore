@@ -52,3 +52,9 @@ tools/scores.md
 
 # CTI pipeline local state
 .hearth/
+
+# Claude Code local config
+.claude/
+
+# CTI pipeline script (lives in ~/.claude/scripts/)
+scripts/cti_pipeline.py
