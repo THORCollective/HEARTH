@@ -46,3 +46,9 @@ database/hunts.db
 drafts/
 tools/scores.json
 tools/scores.md
+
+# Python virtual environment
+.venv/
+
+# CTI pipeline local state
+.hearth/
