@@ -6,9 +6,9 @@ Everyone listed below has submitted ideas that have been added to HEARTH. This l
 
 | Rank | Contributor | Hunts Submitted |
 |------|-------------|-----------------|
-| 1 | Jinx (THOR Collective) | 39 |
-| 2 | Sydney Marrone | 29 |
-| 3 | Lauren Proehl | 21 |
+| 1 | Lauren Proehl | 41 |
+| 2 | Jinx (THOR Collective) | 39 |
+| 3 | Sydney Marrone | 29 |
 | 4 | John Grageda | 6 |
 | 5 | Jamie Williams | 3 |
 | 6 | Azrara | 3 |
