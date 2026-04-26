@@ -51,12 +51,24 @@ def migrate_file(path: Path, category: str, dry_run: bool) -> bool:
         return False  # already migrated
 
     parsed = _parse_legacy_table(raw, hunt_id=path.stem, category=category)
+
+    tags = parsed.get("tags", [])
+    if not tags:
+        # Fallback: derive snake_case tags from tactics so migration produces
+        # a schema-valid file even when the contributor only used MITRE technique
+        # tags (e.g. M007 had only #T1071.001 #T1203).
+        tags = [
+            re.sub(r"[^a-z0-9_]", "", t.strip().lower().replace(" ", "_"))
+            for t in parsed.get("tactics", [])
+        ]
+        tags = [t for t in tags if t]
+
     metadata = {
         "id": parsed["id"],
         "category": category,
         "hypothesis": parsed["hypothesis"],
         "tactics": parsed["tactics"],
-        "tags": parsed["tags"],
+        "tags": tags,
         "submitter": parsed["submitter"],
     }
     if parsed.get("techniques"):

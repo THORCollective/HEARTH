@@ -70,8 +70,38 @@ def _normalize_tags(text: str) -> list[str]:
 
 
 def _split_tactics(raw: str) -> list[str]:
-    parts = [p.strip() for p in re.split(r"[,/]| and ", raw) if p.strip()]
+    """Split a tactic cell on commas/slashes; preserve 'Command and Control' as one tactic."""
+    parts = [p.strip() for p in re.split(r"[,/]", raw) if p.strip()]
     return parts or [raw.strip()]
+
+
+def _split_table_row(row: str) -> list[str]:
+    """Split a markdown table row on unescaped pipes; treat `\\|` as a literal pipe.
+
+    Unlike the leaderboard helper, this one PRESERVES empty cells so positional
+    alignment is maintained (we drop only the leading/trailing bookend cells).
+    """
+    cells: list[str] = []
+    current: list[str] = []
+    i = 0
+    while i < len(row):
+        if row[i] == "\\" and i + 1 < len(row) and row[i + 1] == "|":
+            current.append("|")
+            i += 2
+        elif row[i] == "|":
+            cells.append("".join(current).strip())
+            current = []
+            i += 1
+        else:
+            current.append(row[i])
+            i += 1
+    cells.append("".join(current).strip())
+    # Drop leading/trailing bookends from "| a | b | c |"
+    if cells and cells[0] == "":
+        cells = cells[1:]
+    if cells and cells[-1] == "":
+        cells = cells[:-1]
+    return cells
 
 
 def _extract_section(body: str, header: str) -> str:
@@ -89,12 +119,7 @@ def _parse_legacy_table(content: str, hunt_id: str, category: str) -> dict[str, 
             break
     cells: list[str] = ["", "", "", "", "", ""]
     if table_start is not None and table_start + 2 < len(lines):
-        parts = lines[table_start + 2].split("|")
-        if parts and parts[0].strip() == "":
-            parts = parts[1:]
-        if parts and parts[-1].strip() == "":
-            parts = parts[:-1]
-        raw = [c.strip() for c in parts]
+        raw = _split_table_row(lines[table_start + 2])
         for j, c in enumerate(raw[:6]):
             cells[j] = c
 

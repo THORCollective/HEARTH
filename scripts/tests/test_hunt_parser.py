@@ -139,3 +139,35 @@ def test_parser_preserves_explicit_title_from_frontmatter(fixtures_dir):
     hunt = parse_hunt_file(fixtures_dir / "frontmatter_h001.md", "Flames")
     # The frontmatter fixture does not set title; ensure parser does not invent one.
     assert "title" not in hunt or hunt.get("title") is None
+
+
+def test_escaped_pipe_in_notes_does_not_shift_cells(tmp_path):
+    """\\| inside a cell must not split that cell — see H132 in production."""
+    f = tmp_path / "H991.md"
+    f.write_text(
+        "# H991\n\n"
+        "| Hunt # | Hypothesis | Tactic | Notes | Tags | Submitter |\n"
+        "|---|---|---|---|---|---|\n"
+        "| H991 | A hypothesis | Execution | Pattern: curl \\| osascript piping | "
+        "#execution #macos | [X](https://example.com/x) |\n"
+    )
+    hunt = parse_hunt_file(f, "Flames")
+    assert hunt["id"] == "H991"
+    assert hunt["tactics"] == ["Execution"]
+    assert "execution" in hunt["tags"]
+    assert "macos" in hunt["tags"]
+    assert hunt["submitter"]["name"] == "X"
+
+
+def test_command_and_control_is_single_tactic(tmp_path):
+    """The MITRE tactic 'Command and Control' must not split on the literal ' and '."""
+    f = tmp_path / "H990.md"
+    f.write_text(
+        "# H990\n\n"
+        "| Hunt # | Hypothesis | Tactic | Notes | Tags | Submitter |\n"
+        "|---|---|---|---|---|---|\n"
+        "| H990 | A long enough hypothesis | Command and Control, Exfiltration | x | "
+        "#example | [X](https://example.com/x) |\n"
+    )
+    hunt = parse_hunt_file(f, "Flames")
+    assert hunt["tactics"] == ["Command and Control", "Exfiltration"]

@@ -56,3 +56,23 @@ def test_skips_secret_marker_file(tmp_path):
     changed = migrate_file(f, category="Flames", dry_run=False)
     assert changed is False
     assert f.read_text().startswith("# Welcome")  # untouched
+
+
+def test_tag_fallback_to_tactics_when_only_techniques_present(tmp_path):
+    """If contributor used only #T1234-style tags, derive tags from tactics."""
+    import frontmatter
+
+    f = tmp_path / "M999.md"
+    f.write_text(
+        "# M999\n\n"
+        "| Hunt # | Hypothesis | Tactic | Notes | Tags | Submitter |\n"
+        "|---|---|---|---|---|---|\n"
+        "| M999 | A long enough hypothesis line | Command and Control, Execution | "
+        "x | #T1071.001 #T1203 | [X](https://example.com/x) |\n"
+    )
+    changed = migrate_file(f, category="Alchemy", dry_run=False)
+    assert changed is True
+    post = frontmatter.load(f)
+    assert "command_and_control" in post["tags"]
+    assert "execution" in post["tags"]
+    assert "T1071.001" in post["techniques"]
