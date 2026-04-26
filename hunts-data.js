@@ -3,16 +3,21 @@ const HUNTS_DATA = [
   {
     "id": "B001",
     "category": "Embers",
-    "title": "Unusual spikes in outbound network traffic over port 443 may indicate unauthorized data exfiltration.",
-    "tactic": "Command and Control, Exfiltration",
+    "title": "Unusual spikes in outbound network traffic over port 443 may indicate unauthoriz",
+    "tactic": "Command, Control, Exfiltration",
     "notes": "Establishing normal traffic patterns to detect deviations",
     "tags": [
       "baseline",
       "networktraffic",
-      "anomalydetection",
-      "T1071_001",
+      "anomalydetection"
+    ],
+    "techniques": [
+      "T1071.001",
       "T1041"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://x.com/letswastetime"
@@ -24,15 +29,20 @@ const HUNTS_DATA = [
   {
     "id": "B002",
     "category": "Embers",
-    "title": "AnyDesk Remote monitoring and management (RMM) tool not writing a file named \"gcapi.dll\" during installation may indicate a malicious version of AnyDesk was installed to establish persistence.",
+    "title": "AnyDesk Remote monitoring and management (RMM) tool not writing a file named \"gc",
     "tactic": "Persistence",
     "notes": "Establish a baseline of expected legitimate RMM tool behavior. Profile normal directory paths, remote connection domains, remote IP addresses and files written by RMM tools.",
     "tags": [
       "baseline",
       "persistence",
-      "anomalydetection",
+      "anomalydetection"
+    ],
+    "techniques": [
       "T1219"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "John Grageda",
       "link": "https://www.linkedin.com/in/johngrageda/"
@@ -44,15 +54,20 @@ const HUNTS_DATA = [
   {
     "id": "B003",
     "category": "Embers",
-    "title": "Executables or scripts set in the rdpwd StartupPrograms registry key may indicate that an adversary has achieved persistence by setting a program to execute during an RDP login session.",
+    "title": "Executables or scripts set in the rdpwd StartupPrograms registry key may indicat",
     "tactic": "Persistence",
     "notes": "Establish a baseline of expected programs that are set to execute via \"HKLM\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\Wds\\rdpwd\\StartupPrograms\" registry key.",
     "tags": [
       "baseline",
       "persistence",
-      "anomalydetection",
-      "T1547_001"
+      "anomalydetection"
     ],
+    "techniques": [
+      "T1547.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "John Grageda",
       "link": "https://www.linkedin.com/in/johngrageda/"
@@ -64,16 +79,21 @@ const HUNTS_DATA = [
   {
     "id": "B004",
     "category": "Embers",
-    "title": "Identifying anomalous accounts may uncover adversary attempts to maintain persistence to compromised assets.",
+    "title": "Identifying anomalous accounts may uncover adversary attempts to maintain persis",
     "tactic": "Persistence",
     "notes": "Establish a baseline of expected accounts and consider creating signals/alerts/review processes when new accounts are created.",
     "tags": [
       "baseline",
       "persistence",
       "anomalydetection",
-      "sus",
+      "sus"
+    ],
+    "techniques": [
       "T1136"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jamie Williams",
       "link": "https://x.com/jamieantisocial"
@@ -85,16 +105,21 @@ const HUNTS_DATA = [
   {
     "id": "B005",
     "category": "Embers",
-    "title": "Adversaries are exploiting the native Windows process Rundll32 in order to execute malicious code and bypass application control solutions.",
+    "title": "Adversaries are exploiting the native Windows process Rundll32 in order to execu",
     "tactic": "Execution, Defense Evasion",
     "notes": "The scope of this hunt could become too wide without defining an area of focus. For one hunt, it might be best to pursue one category of visibility such as command,k process, or module monitoring.",
     "tags": [
-      "Execution",
-      "DefenseEvasion",
-      "LOLBIN",
-      "Rundll32",
-      "T1218_011"
+      "execution",
+      "defenseevasion",
+      "lolbin",
+      "rundll32"
     ],
+    "techniques": [
+      "T1218.011"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Claire Stromboe",
       "link": "https://x.com/csthreathunting"
@@ -106,16 +131,21 @@ const HUNTS_DATA = [
   {
     "id": "B006",
     "category": "Embers",
-    "title": "Adversaries are leveraging suspicious browser extensions to collect and exfiltrate sensitive data.",
+    "title": "Adversaries are leveraging suspicious browser extensions to collect and exfiltra",
     "tactic": "Collection, Exfiltration",
     "notes": "The scope of this hunt could become too wide without defining what is considered known good browser extensions. Consider focusing your first baseline on a subsection of the business, specific browser, or by excluding allowed extensions.",
     "tags": [
-      "Collection",
-      "Exfiltration",
-      "BrowserExtensions",
+      "collection",
+      "exfiltration",
+      "browserextensions"
+    ],
+    "techniques": [
       "T1176",
       "T1005"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -127,17 +157,22 @@ const HUNTS_DATA = [
   {
     "id": "B007",
     "category": "Embers",
-    "title": "Adversaries are automatically exfiltrating email data using email forwarding rules.",
+    "title": "Adversaries are automatically exfiltrating email data using email forwarding rul",
     "tactic": "Collection, Exfiltration",
     "notes": "Email forwarding rules may be disabled in your organization, it may be beneficial to see what rules were setup regardless of success to identify potential malicious activity.",
     "tags": [
-      "Collection",
-      "Exfiltration",
-      "Email",
-      "MailForwarding",
-      "T1114_003",
+      "collection",
+      "exfiltration",
+      "email",
+      "mailforwarding"
+    ],
+    "techniques": [
+      "T1114.003",
       "T1020"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -149,15 +184,20 @@ const HUNTS_DATA = [
   {
     "id": "B008",
     "category": "Embers",
-    "title": "Threat actors added an existing or newly created (B004) user to a privileged Active Directory (AD) security group to maintain persistence or achieve other objectives in an elevated context.",
+    "title": "Threat actors added an existing or newly created (B004) user to a privileged Act",
     "tactic": "Privilege Escalation",
     "notes": "Establish a baseline for additions to privileged AD security groups using Windows event logs (e.g., 4732, 4728, 4756). Suggested target security groups include (built-in) Administrators, Domain Admins, Enterprise Admins, and Schema Admins. See reference 1 (R1) for a suggested list of security groups, the prioritization of specific groups is likely to depend on the defender's environment.",
     "tags": [
       "baseline",
       "privilege_escalation",
-      "anomalydetection",
+      "anomalydetection"
+    ],
+    "techniques": [
       "T1098"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jon Perez",
       "link": "https://bsky.app/profile/j-nohandle.bsky.social"
@@ -169,18 +209,23 @@ const HUNTS_DATA = [
   {
     "id": "B009",
     "category": "Embers",
-    "title": "Microsoft Playwright testing framework caches versions of various browsers for automated testing. In some version or configurations of this framework, the Firefox version is based on Firefox's Nightly.app, the developer-facing and, by Mozilla's own admission, least stable and secure version of the app. EDRs may flag this version of the app (often saved in this file hierarchy/structure: _\"~/Library/Caches/ms-playwright/firefox-<4-digit version number>/firefox/Nightly.app\"_) as vulnerable and thus a security concern. These vulnerable apps should be reviewed to determine (1) that it is indeed a legitimate file and not a spoof and (2) whether even a legitimate version of the app should be allowed. Dependencies for testing frameworks should be reviewed and allowed/disallowed as necessary.",
+    "title": "Microsoft Playwright testing framework caches versions of various browsers for a",
     "tactic": "Defense Evasion (TA0005), Trusted Developer Utilities Proxy Execution (T1127), Masquerading (T1036), Exploitation for Defense Evasion (T1211)",
     "notes": "Awareness should be raised about the flagging of Firefox Nightly.app by EDRs and the necessity for validating all dependencies associated with testing frameworks.",
     "tags": [
-      "DefenseEvasion",
-      "Masquerading",
-      "TrustedDeveloperUtilities",
-      "ProxyExecution",
+      "defenseevasion",
+      "masquerading",
+      "trusteddeveloperutilities",
+      "proxyexecution"
+    ],
+    "techniques": [
       "T1036",
       "T1127",
       "T1211"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Joshua Hines",
       "link": ""
@@ -192,14 +237,19 @@ const HUNTS_DATA = [
   {
     "id": "B010",
     "category": "Embers",
-    "title": "Establish a normal behavior baseline for VPC peering across your AWS environment, so that future deviations (e.g., unauthorized peering, unusual traffic patterns) can be more easily hunted/detected. Peering may be normal in your environment, but this is an opportunity to not only understand your cloud environment on a deeper level, but to collaborate with other teams to ensure the proper controls are in place.",
+    "title": "Establish a normal behavior baseline for VPC peering across your AWS environment",
     "tactic": "Lateral Movement",
     "notes": "Explore typical peering requests, initiators, unusual IPs, and connection events.",
     "tags": [
-      "LateralMovement",
+      "lateralmovement"
+    ],
+    "techniques": [
       "T1599",
       "T1021"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Bruce Breuer",
       "link": ""
@@ -211,14 +261,19 @@ const HUNTS_DATA = [
   {
     "id": "B011",
     "category": "Embers",
-    "title": "Establish a normal utilization of Xcode and Xcode projects across workstations/servers. Xcode projects are commonly used by software developers and can be targeted by MacOS malware.",
+    "title": "Establish a normal utilization of Xcode and Xcode projects across workstations/s",
     "tactic": "Initial Access",
     "notes": "Indicators of Xcode usage can be found in EDR telemetry and potential for detection if Xcode is not utilized/approved in the environment.",
     "tags": [
-      "InitialAccess",
-      "Baseline",
-      "T1195_001"
+      "initialaccess",
+      "baseline"
     ],
+    "techniques": [
+      "T1195.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Collin McClaine",
       "link": ""
@@ -230,18 +285,23 @@ const HUNTS_DATA = [
   {
     "id": "B012",
     "category": "Embers",
-    "title": "Baseline all non-human identities associated with AI agents, automation frameworks, and agentic tools across the environment to identify orphaned service accounts from decommissioned agents that retain active permissions.",
+    "title": "Baseline all non-human identities associated with AI agents, automation framewor",
     "tactic": "Persistence",
     "notes": "AI agent deployments are accelerating but no lifecycle management standard exists for their identities. Orphaned agent accounts with API keys, OAuth tokens, and service principals persist long after the agent is decommissioned — retaining permissions with no owner and no monitoring.",
     "tags": [
       "persistence",
-      "T1078_004",
       "non_human_identity",
       "service_account",
       "ai_agent",
       "orphan_account",
       "lifecycle"
     ],
+    "techniques": [
+      "T1078.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -253,17 +313,22 @@ const HUNTS_DATA = [
   {
     "id": "B013",
     "category": "Embers",
-    "title": "Baseline all processes that legitimately access lsass.exe in the environment to identify anomalous access attempts indicative of credential dumping tools such as Mimikatz, procdump, or comsvcs.dll MiniDump.",
+    "title": "Baseline all processes that legitimately access lsass.exe in the environment to ",
     "tactic": "Credential Access",
     "notes": "Establish a baseline using Sysmon Event ID 10 (ProcessAccess) where TargetImage ends with lsass.exe. Profile normal SourceImage values, GrantedAccess codes, and calling process signatures. Legitimate accessors typically include csrss.exe, services.exe, svchost.exe, lsm.exe, and the installed EDR/AV agent. Any unsigned or unexpected process accessing LSASS — particularly with GrantedAccess values 0x1010, 0x1410, or 0x1FFFFF — warrants immediate investigation.",
     "tags": [
       "baseline",
       "credential_access",
-      "T1003_001",
       "lsass",
       "sysmon",
       "process_access"
     ],
+    "techniques": [
+      "T1003.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -275,17 +340,22 @@ const HUNTS_DATA = [
   {
     "id": "B014",
     "category": "Embers",
-    "title": "Baseline the sources and parent processes of MSI package installations across the environment to identify installations originating from unusual locations such as browser download directories, Temp folders, or remote URLs.",
+    "title": "Baseline the sources and parent processes of MSI package installations across th",
     "tactic": "Defense Evasion",
     "notes": "Establish a baseline using Windows Installer Event IDs 1033 and 1040, Sysmon Event ID 1 for msiexec.exe process creation, and application logs showing MSI source paths. Profile normal installation sources (SCCM/MECM distribution points, GPO software deployment shares, vendor update services) and parent processes (sccm client, GPO, software updaters). Flag MSI installations where the source path is a user's Downloads folder, browser cache, %TEMP%, or an HTTP/HTTPS URL.",
     "tags": [
       "baseline",
       "defense_evasion",
-      "T1218_007",
       "msiexec",
       "msi",
       "software_installation"
     ],
+    "techniques": [
+      "T1218.007"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -297,19 +367,24 @@ const HUNTS_DATA = [
   {
     "id": "B015",
     "category": "Embers",
-    "title": "Baseline all executions of ntdsutil.exe, wbadmin.exe, vssadmin.exe, and diskshadow.exe on domain controllers to identify usage outside of scheduled Active Directory maintenance windows that may indicate credential extraction.",
+    "title": "Baseline all executions of ntdsutil.exe, wbadmin.exe, vssadmin.exe, and diskshad",
     "tactic": "Credential Access",
     "notes": "Establish a baseline using Sysmon Event ID 1 (process creation) and Windows Security Event ID 4688 with command-line auditing enabled on all domain controllers. Profile when these tools normally run (backup windows, patching cycles, DC promotion), who runs them (specific service accounts, backup software), and what arguments are used. Any execution outside these known patterns — especially ntdsutil with IFM arguments, wbadmin targeting system state, or vssadmin creating shadow copies — warrants immediate investigation. Also monitor Directory Service Event ID 1917 (ntds.dit backup).",
     "tags": [
       "baseline",
       "credential_access",
-      "T1003_003",
       "ntdsutil",
       "wbadmin",
       "vssadmin",
       "domain_controller",
       "active_directory"
     ],
+    "techniques": [
+      "T1003.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -321,7 +396,7 @@ const HUNTS_DATA = [
   {
     "id": "B016",
     "category": "Embers",
-    "title": "What does normal virtual machine and hypervisor binary usage look like across endpoints — which hosts legitimately run QEMU, VirtualBox, or VMware Workstation, and what are the expected binary paths, network patterns, and disk image locations?",
+    "title": "What does normal virtual machine and hypervisor binary usage look like across en",
     "tactic": "Defense Evasion",
     "notes": "Data collection (30 days): Collect process creation events for VM binaries: qemu-system-*.exe, VBoxManage.exe, VirtualBoxVM.exe, vmware.exe, vmrun.exe, vmwp.exe (Hyper-V worker), wsl.exe, utm (macOS). Record: hostname, username, binary path, binary hash, command-line arguments, parent process, and outbound network connections per session. Build the allowlist: Categorize each host as approved (developer workstations, QA, IT admin) or unapproved. For approved hosts, document expected binary paths (C:\\Program Files\\Oracle\\VirtualBox\\, C:\\Program Files\\QEMU\\), expected disk image locations, and typical network volume. Immediate flags (no baseline needed): VM binaries executing from ProgramData, Temp, AppData, Downloads, or any user-writable path. Headless flags: `-nographic`, `-display none`, `-daemonize`. NAT user-mode networking: `-nic user` or `-netdev user` (tunnels all traffic through host process, used in STXRAT and Payouts King). Minimal memory allocation: `-m 256M` or lower with tiny disk images. Disk image monitoring: Hunt for VM image files (.qcow2, .vmdk, .vdi, .raw, .vhd, .vhdx) in non-standard locations. Flag images < 200MB — legitimate dev VMs are typically >1GB, attack-focused Alpine/BusyBox images are ~50-100MB. Disk images disguised with non-VM extensions (.dll, .db) as seen in Payouts King. Network baseline: Establish per-host outbound volume from VM processes. Sustained high-volume outbound connections (hours of continuous transfer) from QEMU on a host that isn't a development machine is a strong exfil indicator. Output: Produce a host allowlist with approved VM binaries, paths, users, and network thresholds. This baseline directly enables detection for H127 (rclone+QEMU exfil tunnel).",
     "tags": [
@@ -331,6 +406,10 @@ const HUNTS_DATA = [
       "qemu",
       "evasion"
     ],
+    "techniques": [],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -342,15 +421,20 @@ const HUNTS_DATA = [
   {
     "id": "H001",
     "category": "Flames",
-    "title": "An adversary is attempting to brute force the admin account on the externally facing VPN gateway.",
+    "title": "An adversary is attempting to brute force the admin account on the externally fa",
     "tactic": "Credential Access",
     "notes": "Attackers want to gain initial access through elevated credentials and move laterally",
     "tags": [
       "credentialaccess",
       "bruteforce",
-      "vpn",
+      "vpn"
+    ],
+    "techniques": [
       "T1110"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://x.com/letswastetime"
@@ -362,16 +446,21 @@ const HUNTS_DATA = [
   {
     "id": "H002",
     "category": "Flames",
-    "title": "Adversaries are abusing response features included in EDR and other defensive tools that enable remote access.",
-    "tactic": "Command and Control",
+    "title": "Adversaries are abusing response features included in EDR and other defensive to",
+    "tactic": "Command, Control",
     "notes": "Attackers are very interested in using commercial tools or similar to \"live off the land\"",
     "tags": [
       "commandandcontrol",
       "remoteaccess",
       "edr",
-      "lolbin",
+      "lolbin"
+    ],
+    "techniques": [
       "T1219"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://x.com/letswastetime"
@@ -383,14 +472,19 @@ const HUNTS_DATA = [
   {
     "id": "H003",
     "category": "Flames",
-    "title": "An adversary has exfiltrated data off backup servers into small (1MB) .zip files.",
+    "title": "An adversary has exfiltrated data off backup servers into small (1MB) .zip files",
     "tactic": "Exfiltration",
     "notes": "Attackers often need to get data out, 1MB chunks sneak beneath big file anomaly detection. Consider different file sizes and types based on normal in your environment.",
     "tags": [
-      "exfiltration",
-      "T1030",
-      "T1560_001"
+      "exfiltration"
     ],
+    "techniques": [
+      "T1030",
+      "T1560.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -408,9 +502,14 @@ const HUNTS_DATA = [
     "tags": [
       "persistence",
       "lolbin",
-      "windows",
+      "windows"
+    ],
+    "techniques": [
       "T1197"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "John Grageda",
       "link": "https://www.linkedin.com/in/johngrageda/"
@@ -422,15 +521,20 @@ const HUNTS_DATA = [
   {
     "id": "H005",
     "category": "Flames",
-    "title": "An adversary is establishing persistence on Linux hosts by executing commands triggered by a user's shell via .bash_profile, .bashrc, and .bash_login/logout.",
+    "title": "An adversary is establishing persistence on Linux hosts by executing commands tr",
     "tactic": "Persistence",
     "notes": "Attackers are interested in using living off the land binaries and scripts (LOLBAS) to evade detection.",
     "tags": [
       "persistence",
       "lolbas",
-      "linux",
-      "T1546_004"
+      "linux"
     ],
+    "techniques": [
+      "T1546.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "John Grageda",
       "link": "https://www.linkedin.com/in/johngrageda/"
@@ -442,14 +546,19 @@ const HUNTS_DATA = [
   {
     "id": "H006",
     "category": "Flames",
-    "title": "After compromising an initial asset, an adversary may attempt to pivot to access additional resources within a victim network.",
+    "title": "After compromising an initial asset, an adversary may attempt to pivot to access",
     "tactic": "Lateral Movement",
     "notes": "Adversaries often abuse legitimate remote access features (such as RDP and SSH) already enabled in the environment.",
     "tags": [
       "lateralmovement",
-      "sus",
+      "sus"
+    ],
+    "techniques": [
       "T1021"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jamie Williams",
       "link": "https://x.com/jamieantisocial"
@@ -461,14 +570,19 @@ const HUNTS_DATA = [
   {
     "id": "H007",
     "category": "Flames",
-    "title": "After compromising a host, adversaries may attempt to execute malicious commands to complete additional tasks.",
+    "title": "After compromising a host, adversaries may attempt to execute malicious commands",
     "tactic": "Execution",
     "notes": "Adversaries often abuse legitimate command interpreters/applications, such as CMD, PowerShell, or bash/zsh.",
     "tags": [
       "execution",
-      "sus",
+      "sus"
+    ],
+    "techniques": [
       "T1059"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jamie Williams",
       "link": "https://x.com/jamieantisocial"
@@ -480,14 +594,19 @@ const HUNTS_DATA = [
   {
     "id": "H008",
     "category": "Flames",
-    "title": "Adversaries may create domain accounts to maintain access to systems with Active Directory.",
+    "title": "Adversaries may create domain accounts to maintain access to systems with Active",
     "tactic": "Persistence",
     "notes": "Domain Accounts can cover user, administrator, and service accounts.",
     "tags": [
-      "Persistence",
-      "ActiveDirectory",
-      "T1136_002"
+      "persistence",
+      "activedirectory"
     ],
+    "techniques": [
+      "T1136.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Audra Streetman",
       "link": "https://x.com/audrastreetman"
@@ -499,14 +618,19 @@ const HUNTS_DATA = [
   {
     "id": "H009",
     "category": "Flames",
-    "title": "Attackers may exploit mshta.exe, a trusted Windows utility, to execute malicious .hta files as well as JavaScript or VBScript indirectly. Mshta.exe is designed to run Microsoft HTML Applications (HTA) files, which are stand-alone applications that operate independently of the browser but use the same frameworks and technologies as Internet Explorer. This utility's trusted status can make it a valuable tool for adversaries seeking to evade detection and execute code stealthily.",
+    "title": "Attackers may exploit mshta.exe, a trusted Windows utility, to execute malicious",
     "tactic": "Defense Evasion",
     "notes": "Data requirements: Windows Sysmon, EDR telemetry, Proxy logs",
     "tags": [
-      "DefenseEvasion",
-      "SystemBinaryProxyExecutionMshta",
-      "T1218_005"
+      "defenseevasion",
+      "systembinaryproxyexecutionmshta"
     ],
+    "techniques": [
+      "T1218.005"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Azrara",
       "link": "https://www.linkedin.com/in/azrara/"
@@ -518,13 +642,19 @@ const HUNTS_DATA = [
   {
     "id": "H010",
     "category": "Flames",
-    "title": "Adversaries may search for network shares on compromised systems to locate files of interest. Sensitive data can be gathered from remote systems via shared network drives (host-shared directories, network file servers, etc.) that are accessible from the current system before exfiltration.",
+    "title": "Adversaries may search for network shares on compromised systems to locate files",
     "tactic": "Collection",
     "notes": "<ul><li>Data requirements: EDR telemetry, Windows event logs id 5140</li></br><li>Implementation examples in SIGMA:</li></br>Title: Suspicious Network Share Enumeration and Access</br>Id:xxxxx</br>Status: test</br>Description: Detects commands used for network share enumeration and correlates with Event ID 5140 for access to shared resources.</br>Author: Your Name</br>Date:2024/11/14</br>Tags:</br><ul><li>attack.discovery</br><li>attack.t1135</li></ul></br>logsource:</br>category: process_creation</br>product:windows</br>detection:</br>selection_cmd:</br>Image&#124;endswith:</br><ul><li>'\\cmd.exe'</br><li>'\\powershell.exe'</br>ComandLine&#124;contains&#124;all:</br><li>'net view'</br><li>'&bsol;'</br>selection_event:</br>EventID: 5140</br>condition: selection_cmd or selection_event</br>falsepositives:</br><li>Legitimate administrative tasks</br><li>Regular file-sharing activities</br>level: medium #T1039",
     "tags": [
       "collection",
-      "DatafromNetworkSharedDrive"
+      "datafromnetworkshareddrive"
     ],
+    "techniques": [
+      "T1039"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Azrara",
       "link": "https://www.linkedin.com/in/azrara/"
@@ -536,16 +666,21 @@ const HUNTS_DATA = [
   {
     "id": "H011",
     "category": "Flames",
-    "title": "For sideloading a DLL into vulnerable binary, a threat actors would be dropping (creating) EXE and DLL files under user writeable directories and then executing the same newly created EXE file so that it loads the newly created and unverified (Dig sign unverified) DLL from the same directory.",
+    "title": "For sideloading a DLL into vulnerable binary, a threat actors would be dropping ",
     "tactic": "Persistence, Privilege Escalation, Defense Evasion",
     "notes": "Limitations: There are no such limitations other than non-availability of required logs. Sometimes, we tend to not collect \"Module Load\" events due to their huge volume. In such case we would not be able to perform this hunt. Also, for correlation of data we need advance query language such as SQL, KQL or better enough if we can use Pandas.</br></br>Assumption: Assuming that threat actor is using standard user rights and is using a DLL that has unverifiable digital signature (DLL is signed but certificates are not verified).</br></br>Data sets required: EDR logs - \"File Creation\" and \"Module Load\" events.</br></br>Query creation steps:</br></br>1. Select .dll File Creation Events: From the \"File Creation\" logs, select all .dll file creation events. Ensure that the folder path of the newly created .dll file is not among the following: c:\\windows\\system32, c:\\windows\\syswow64, and c:\\windows\\sxs. Additionally, the verification status of the .dll file should be \"Not Verified\".</br></br>2. Select .exe File Creation Events: Next, from the \"File Creation\" logs, select all .exe file creation events. The condition for selection is that the folder path of the .exe file matches the folder path of the .dll files identified in the previous step. Furthermore, the absolute time difference between the .dll file creation event and the .exe file creation event should be less than one minute.</br></br>3. Select DLL Load Events: Finally, from the \"Module Load\" logs, select all DLL load events where the file name and path of the loaded DLL and the file name and path of the EXE loading that DLL match the names and paths of the .dll and .exe files identified in the previous steps. Additionally, the time of the module load event should be greater than the time of the DLL creation event.",
     "tags": [
-      "Persistence",
-      "Privilege",
-      "Defense",
-      "DLLSideloading",
-      "T1574_002"
+      "persistence",
+      "privilege_escalation",
+      "defense_evasion",
+      "dllsideloading"
     ],
+    "techniques": [
+      "T1574.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "hu983r",
       "link": "https://github.com/Communicateme"
@@ -561,12 +696,17 @@ const HUNTS_DATA = [
     "tactic": "Exfiltration",
     "notes": "Attackers are interested in finding unmonitored communication channels to evade detection.",
     "tags": [
-      "DNS",
-      "Tunneling",
-      "Exfiltration",
-      "T1048",
-      "T1071_004"
+      "dns",
+      "tunneling",
+      "exfiltration"
     ],
+    "techniques": [
+      "T1048",
+      "T1071.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Cody Lunday",
       "link": "https://www.linkedin.com/in/codylunday/"
@@ -578,17 +718,21 @@ const HUNTS_DATA = [
   {
     "id": "H013",
     "category": "Flames",
-    "title": "Attackers often utilize PowerShell, a powerful scripting language available on Windows systems, to execute malicious commands, download additional payloads, or manipulate system configurations. Detecting the execution of unauthorized or suspicious PowerShell scripts is crucial, as it may indicate the presence of an adversary attempting to compromise the system. Native windows Event ID 4104 is crucial to detect suspicious script executions.",
+    "title": "Attackers often utilize PowerShell, a powerful scripting language available on W",
     "tactic": "Execution",
     "notes": "Below are key implementation notes to guide this process: <br></br>1. Sysmon Configuration<br></br>Event ID 1 (Process Creation): Configure Sysmon to capture detailed information about process creations, focusing on powershell.exe executions. Ensure that command-line arguments are logged to detect potentially malicious scripts or commands.<br></br>Event ID 4104 (PowerShell Script Block Logging): While Sysmon does not natively capture PowerShell script block logging, enabling this feature in PowerShell settings can provide visibility into the content of executed scripts. This requires configuring PowerShell to log detailed script blocks to the Windows Event Log.<br></br>2. Detection Logic and Filtering<br></br>Baseline Normal Activity: Establish a baseline of normal PowerShell usage within the environment to differentiate between legitimate administrative activities and potential malicious behavior.<br></br>Anomaly Detection: Develop detection rules to identify anomalies, such as unusual command-line arguments, execution times, or user contexts that deviate from the established baseline.<br></br>Filtering Noise: Apply filters to exclude known legitimate PowerShell activities to reduce false positives and focus on suspicious events.<br></br>Limitations and Assumptions<br></br>Encrypted or Obfuscated Scripts: Attackers may use obfuscation or encryption to evade detection. Regularly update detection mechanisms to recognize and alert on such techniques.",
     "tags": [
-      "Powershell",
-      "Sysmon",
-      "Execution",
-      "TA0002",
-      "T1059.001",
-      "T1059_001"
+      "powershell",
+      "sysmon",
+      "execution",
+      "ta0002"
     ],
+    "techniques": [
+      "T1059.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Siddhant Mishra",
       "link": "https://www.linkedin.com/in/siddhant-mishra-b190b630/"
@@ -600,18 +744,23 @@ const HUNTS_DATA = [
   {
     "id": "H014",
     "category": "Flames",
-    "title": "An adversary is leveraging Windows named pipes to establish covert command-and-control (C2) channels, enabling lateral movement and maintaining persistence within the network. Named pipes, a common interprocess communication (IPC) mechanism in Windows, can be abused to facilitate stealthy data exchange between compromised systems.",
-    "tactic": "Command and Control",
+    "title": "An adversary is leveraging Windows named pipes to establish covert command-and-c",
+    "tactic": "Command, Control",
     "notes": "<ul> <li>Named Pipes as C2 Channels: Named pipes are inter-process communication mechanisms in Windows environments. Adversaries exploit them to create covert C2 channels, enabling stealthy communication between compromised systems.</li><br><li>Detection Strategy: Monitor Sysmon Event ID 17 (Pipe Creation) for the creation of suspicious named pipes. Correlate these events with process creation logs (Event ID 1) to identify unusual parent-child process relationships, which may indicate malicious activity.</li><br><li>Reference List: Utilize a curated list of named pipes commonly associated with adversary techniques to aid in identifying potential threats.</li></br>",
     "tags": [
-      "CobaltStrike",
-      "NamedPipes",
-      "CommandAndControl",
-      "Sysmon",
-      "ThreatHunting",
+      "cobaltstrike",
+      "namedpipes",
+      "commandandcontrol",
+      "sysmon",
+      "threathunting"
+    ],
+    "techniques": [
       "T1559",
       "T1090"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Siddhant Mishra",
       "link": "https://github.com/Blackbird2Raven"
@@ -623,17 +772,22 @@ const HUNTS_DATA = [
   {
     "id": "H015",
     "category": "Flames",
-    "title": "Adversaries are redirecting DNS queries to an inappropriate or false DNS server IP, effectively blocking legitimate communications and potentially compromising the security infrastructure.",
+    "title": "Adversaries are redirecting DNS queries to an inappropriate or false DNS server ",
     "tactic": "Defense Evasion",
     "notes": "<ul> <li><strong>Assumptions:</strong></li><ul><li>If done with local admin right, the attack creates new registry values in the registry key HKLM\\System\\CurrentControlSet\\Services\\Dnscache\\Parameters\\DnsPolicyConfig{UUID</li><li>Value of registry key listed upper contains a domain related to a cybersecurity tool, such as .endpoint.security.microsoft.com</li><li>Add-DnsClientNrptRule Powershell function can be used to reach such purpose</ul></li><li><strong>Data Requirements:</strong><ul><li>Works only on Windows 7 and later operating systems</li><li>Requires to log registry key changes and/or any way to log command execution</ul></li><li><strong>Notes on Limitation:</strong><ul><li>Defenders must have multiple ways to log registry key changes and/or command execution to detect the attack once it was executed by attacker, as it aims to silence cybersecurity tool(s)</ul></li></ul>",
     "tags": [
-      "Registry",
-      "EDR",
-      "DNS",
-      "DefenseEvasion",
-      "T1562_001",
+      "registry",
+      "edr",
+      "dns",
+      "defenseevasion"
+    ],
+    "techniques": [
+      "T1562.001",
       "T1112"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "wikijm",
       "link": "https://github.com/wikijm"
@@ -645,14 +799,19 @@ const HUNTS_DATA = [
   {
     "id": "H016",
     "category": "Flames",
-    "title": "Adversaries are using compromised SonicWall VPN credentials to gain initial access to corporate networks.",
+    "title": "Adversaries are using compromised SonicWall VPN credentials to gain initial acce",
     "tactic": "Initial Access",
     "notes": "Based on ATT&CK technique T1078, using compromised credentials.",
     "tags": [
-      "InitialAccess",
-      "T1078",
-      "SonicWall"
+      "initialaccess",
+      "sonicwall"
     ],
+    "techniques": [
+      "T1078"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "HEARTH Bot",
       "link": "https://github.com/THORCollective/HEARTH"
@@ -664,15 +823,20 @@ const HUNTS_DATA = [
   {
     "id": "H017",
     "category": "Flames",
-    "title": "Adversaries are exploiting memory safety issues in the Apache mod_lua module to execute arbitrary code with elevated privileges on Apache web servers.",
+    "title": "Adversaries are exploiting memory safety issues in the Apache mod_lua module to ",
     "tactic": "Privilege Escalation",
     "notes": "Based on ATT&CK technique T1068, using CVE-2021-44790",
     "tags": [
       "privilegeescalation",
       "exploit",
-      "apache",
+      "apache"
+    ],
+    "techniques": [
       "T1068"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "HEARTH Bot",
       "link": "https://github.com/THORCollective/HEARTH"
@@ -684,15 +848,20 @@ const HUNTS_DATA = [
   {
     "id": "H018",
     "category": "Flames",
-    "title": "Threat actors are exploiting insecure serverless functions in AWS, Azure, and Google Cloud to compromise serverless tokens, leading to privilege escalation and potential data exfiltration.",
+    "title": "Threat actors are exploiting insecure serverless functions in AWS, Azure, and Go",
     "tactic": "Credential Access",
     "notes": "Based on ATT&CK technique T1098, using serverless functions to compromise credentials.",
     "tags": [
       "credentialaccess",
       "serverlessfunctions",
-      "cloud",
+      "cloud"
+    ],
+    "techniques": [
       "T1098"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "HEARTH Bot",
       "link": "https://github.com/THORCollective/HEARTH"
@@ -704,16 +873,21 @@ const HUNTS_DATA = [
   {
     "id": "H019",
     "category": "Flames",
-    "title": "Threat actors are leveraging Linux Executable and Linkage Format (ELF) files to deploy malware families on cloud infrastructure endpoints running Linux OS, with the immediate tactical goal of gaining unauthorized access and maintaining persistence.",
+    "title": "Threat actors are leveraging Linux Executable and Linkage Format (ELF) files to ",
     "tactic": "Persistence, Initial Access",
     "notes": "Based on ATT&CK technique T1204 (User Execution), using ELF files.",
     "tags": [
       "persistence",
       "initialaccess",
       "userexecution",
-      "ELF",
+      "elf"
+    ],
+    "techniques": [
       "T1204"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "HEARTH Bot",
       "link": "https://github.com/THORCollective/HEARTH"
@@ -725,14 +899,19 @@ const HUNTS_DATA = [
   {
     "id": "H020",
     "category": "Flames",
-    "title": "Threat actors are using the Windows Management Instrumentation (WMI) system to execute PowerShell commands that establish a reverse shell, allowing them to gain remote control over Windows servers in the financial sector.",
+    "title": "Threat actors are using the Windows Management Instrumentation (WMI) system to e",
     "tactic": "Execution",
     "notes": "Based on ATT&CK technique T1047, using WMI for execution of PowerShell commands.",
     "tags": [
-      "Execution",
-      "T1047",
-      "WMI"
+      "execution",
+      "wmi"
     ],
+    "techniques": [
+      "T1047"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "HEARTH Bot",
       "link": "https://github.com/THORCollective/HEARTH"
@@ -744,14 +923,19 @@ const HUNTS_DATA = [
   {
     "id": "H021",
     "category": "Flames",
-    "title": "Threat actors are using the undocumented Windows Security Center (WSC) APIs to register a fabricated antivirus product, effectively disabling Windows Defender and creating an environment conducive for subsequent malware deployment and execution.",
+    "title": "Threat actors are using the undocumented Windows Security Center (WSC) APIs to r",
     "tactic": "Defense Evasion",
     "notes": "Based on ATT&CK technique T1562.001, using the undocumented Windows Security Center (WSC) APIs",
     "tags": [
       "defenseevasion",
-      "T1562_001",
-      "WSC"
+      "wsc"
     ],
+    "techniques": [
+      "T1562.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "HEARTH Bot",
       "link": "https://github.com/THORCollective/HEARTH"
@@ -763,14 +947,19 @@ const HUNTS_DATA = [
   {
     "id": "H022",
     "category": "Flames",
-    "title": "Threat actors are using social engineering tactics to convince targets to set up application specific passwords (ASPs), then obtaining these 16-character passcodes to establish persistent access to the victim's Google Mail accounts.",
+    "title": "Threat actors are using social engineering tactics to convince targets to set up",
     "tactic": "Credential Access",
     "notes": "Based on ATT&CK technique T1110. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "credentialaccess",
-      "T1110",
       "socialengineering"
     ],
+    "techniques": [
+      "T1110"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -782,14 +971,19 @@ const HUNTS_DATA = [
   {
     "id": "H023",
     "category": "Flames",
-    "title": "Threat actors are using the 'attrib +h' command to hide files and directories in the compromised Windows system to maintain stealth and evade detection.",
+    "title": "Threat actors are using the 'attrib +h' command to hide files and directories in",
     "tactic": "Defense Evasion",
     "notes": "Based on ATT&CK technique T1564. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
-      "DefenseEvasion",
-      "T1564",
-      "AttribCommand"
+      "defenseevasion",
+      "attribcommand"
     ],
+    "techniques": [
+      "T1564"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -801,16 +995,21 @@ const HUNTS_DATA = [
   {
     "id": "H024",
     "category": "Flames",
-    "title": "Threat actors are using the ClickFix social engineering technique to trick users into copying and pasting malicious PowerShell commands into their system's run dialog, resulting in the execution of the GHOSTPULSE loader and subsequent deployment of the ARECHCLIENT2 info-stealer on the victim's system.",
+    "title": "Threat actors are using the ClickFix social engineering technique to trick users",
     "tactic": "Initial Access",
     "notes": "Based on ATT&CK technique T1566.001 (Phishing: Spearphishing Link). Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "initialaccess",
       "phishing",
-      "spearphishinglink",
-      "T1566_001",
-      "T1204_002"
+      "spearphishinglink"
     ],
+    "techniques": [
+      "T1566.001",
+      "T1204.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -822,17 +1021,22 @@ const HUNTS_DATA = [
   {
     "id": "H025",
     "category": "Flames",
-    "title": "Threat actors are using a Python-based remote access trojan (RAT) called \"PylangGhost\" to target Windows systems of employees with experience in cryptocurrency and blockchain technologies. The actors trick users into downloading the trojan by creating fake job interview sites and instructing users to copy, paste, and execute a command to allegedly install required video drivers.",
+    "title": "Threat actors are using a Python-based remote access trojan (RAT) called \"Pylang",
     "tactic": "Initial Access, Execution",
     "notes": "Based on ATT&CK technique T1204.002 and T1059.006. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "initialaccess",
       "execution",
       "userexecution",
-      "commandandscriptinginterpreter",
-      "T1204_002",
-      "T1059_006"
+      "commandandscriptinginterpreter"
     ],
+    "techniques": [
+      "T1204.002",
+      "T1059.006"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -844,14 +1048,19 @@ const HUNTS_DATA = [
   {
     "id": "H026",
     "category": "Flames",
-    "title": "Threat actors are using Windows' built-in command-line tool, 'cipher.exe', with the '/w' option to overwrite free space on the victim's hard drive partitions, hindering forensic recovery of deleted files after deploying the CyberLock ransomware.",
+    "title": "Threat actors are using Windows' built-in command-line tool, 'cipher.exe', with ",
     "tactic": "Defense Evasion",
     "notes": "Based on ATT&CK technique T1070.004. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defenseevasion",
-      "T1070_004",
-      "cipher.exe"
+      "cipher_exe"
     ],
+    "techniques": [
+      "T1070.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -863,15 +1072,20 @@ const HUNTS_DATA = [
   {
     "id": "H027",
     "category": "Flames",
-    "title": "BlueNoroff threat actors are delivering malicious AppleScript files (.scpt) via fake Zoom domains with oversized files containing >10,000 blank lines to mask malicious payload delivery for initial access into cryptocurrency organizations.",
+    "title": "BlueNoroff threat actors are delivering malicious AppleScript files (.scpt) via ",
     "tactic": "Initial Access",
     "notes": "Based on ATT&CK technique T1566.002. BlueNoroff campaign targeting Web3 organizations using deepfake meetings and fake Zoom extensions.",
     "tags": [
       "initialaccess",
-      "T1566_002",
       "applescript",
       "bluenoroff"
     ],
+    "techniques": [
+      "T1566.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -883,15 +1097,20 @@ const HUNTS_DATA = [
   {
     "id": "H028",
     "category": "Flames",
-    "title": "Sophisticated threat actors are querying display state using system_profiler before executing malicious commands to avoid detection when users are actively using their systems.",
+    "title": "Sophisticated threat actors are querying display state using system_profiler bef",
     "tactic": "Defense Evasion",
     "notes": "Based on ATT&CK technique T1497.003. Using display state awareness to time malicious activities when users are away from their systems.",
     "tags": [
       "defenseevasion",
-      "T1497_003",
       "evasion",
       "macos"
     ],
+    "techniques": [
+      "T1497.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -903,15 +1122,20 @@ const HUNTS_DATA = [
   {
     "id": "H029",
     "category": "Flames",
-    "title": "Advanced threat actors are leveraging debugger entitlements and task_for_pid API calls to perform process injection on macOS systems, deploying malicious payloads into legitimate processes.",
+    "title": "Advanced threat actors are leveraging debugger entitlements and task_for_pid API",
     "tactic": "Defense Evasion",
     "notes": "Based on ATT&CK technique T1055. Using debugger entitlements for process injection with task_for_pid and mach_vm APIs on macOS.",
     "tags": [
       "defenseevasion",
-      "T1055",
       "processinjection",
       "macos"
     ],
+    "techniques": [
+      "T1055"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -923,15 +1147,20 @@ const HUNTS_DATA = [
   {
     "id": "H030",
     "category": "Flames",
-    "title": "Threat actors are establishing persistence on macOS systems using LaunchDaemons that impersonate legitimate messaging services (like \"Telegram2\") but execute malicious binaries from non-standard locations.",
+    "title": "Threat actors are establishing persistence on macOS systems using LaunchDaemons ",
     "tactic": "Persistence",
     "notes": "Based on ATT&CK technique T1543.004. Creating LaunchDaemon persistence using legitimate service names with suspicious execution paths.",
     "tags": [
       "persistence",
-      "T1543_004",
       "launchdaemon",
       "macos"
     ],
+    "techniques": [
+      "T1543.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -943,15 +1172,20 @@ const HUNTS_DATA = [
   {
     "id": "H031",
     "category": "Flames",
-    "title": "Threat actors are systematically enumerating and extracting sensitive data from cryptocurrency wallet browser extensions to support financial theft operations.",
+    "title": "Threat actors are systematically enumerating and extracting sensitive data from ",
     "tactic": "Collection",
     "notes": "Based on ATT&CK technique T1005. Automated collection of cryptocurrency wallet data from browser extensions including MetaMask, Phantom, Keplr, and others.",
     "tags": [
       "collection",
-      "T1005",
       "cryptocurrency",
       "bluenoroff"
     ],
+    "techniques": [
+      "T1005"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -963,16 +1197,21 @@ const HUNTS_DATA = [
   {
     "id": "H032",
     "category": "Flames",
-    "title": "Threat actors are using AppleScript to download and execute malicious payloads, bypassing network detections by using legitimate websites like Zoom as C2 infrastructure.",
+    "title": "Threat actors are using AppleScript to download and execute malicious payloads, ",
     "tactic": "Defense Evasion",
     "notes": "Based on ATT&CK technique T1059.002. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defense_evasion",
       "command_and_scripting_interpreter",
       "applescript",
-      "malware",
-      "T1059_002"
+      "malware"
     ],
+    "techniques": [
+      "T1059.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -984,16 +1223,21 @@ const HUNTS_DATA = [
   {
     "id": "H033",
     "category": "Flames",
-    "title": "Threat actors are using PowerShell's Invoke-RestMethod cmdlet to download ransomware payloads from recently registered low-reputation domains to encrypt files and demand payment.",
+    "title": "Threat actors are using PowerShell's Invoke-RestMethod cmdlet to download ransom",
     "tactic": "Execution, Impact",
     "notes": "Based on ATT&CK technique T1059.001. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "execution",
       "command_and_scripting_interpreter",
       "powershell",
-      "ransomware",
-      "T1059_001"
+      "ransomware"
     ],
+    "techniques": [
+      "T1059.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1005,16 +1249,21 @@ const HUNTS_DATA = [
   {
     "id": "H034",
     "category": "Flames",
-    "title": "Threat actors are using IDE plugins like \"Remote Code Runner\" or \"REST Client\" to launch unauthorized shells, scripts, or network connections from trusted developer tools such as VS Code, PyCharm, or Eclipse to enable persistence, C2 beaconing, or lateral movement on developer endpoints.",
+    "title": "Threat actors are using IDE plugins like \"Remote Code Runner\" or \"REST Client\" t",
     "tactic": "Persistence, Lateral Movement",
     "notes": "Based on ATT&CK technique T1546.016. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "persistence",
       "lateral_movement",
       "ide_plugin",
-      "event_triggered_execution",
-      "T1546_016"
+      "event_triggered_execution"
     ],
+    "techniques": [
+      "T1546.016"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1026,16 +1275,22 @@ const HUNTS_DATA = [
   {
     "id": "H035",
     "category": "Flames",
-    "title": "Adversaries are using USB devices with malicious payloads, such as Rubber Ducky, to gain initial access to air-gapped OT facilities and ICS networks.",
+    "title": "Adversaries are using USB devices with malicious payloads, such as Rubber Ducky,",
     "tactic": "Initial Access",
     "notes": "Based on ATT&CK technique T0847. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "initial_access",
       "hardware_additions",
-      "air_gap",
+      "air_gap"
+    ],
+    "techniques": [
+      "T0847",
       "T1091",
       "T1200"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1047,15 +1302,20 @@ const HUNTS_DATA = [
   {
     "id": "H036",
     "category": "Flames",
-    "title": "Threat actors are using Chisel, an open-source tunneling utility, to create SOCKS proxies on compromised hosts to bypass network security controls and conceal C2 traffic.",
+    "title": "Threat actors are using Chisel, an open-source tunneling utility, to create SOCK",
     "tactic": "Defense Evasion",
     "notes": "Based on ATT&CK technique T1090.001. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defense_evasion",
       "proxy",
-      "chisel",
-      "T1090_001"
+      "chisel"
     ],
+    "techniques": [
+      "T1090.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1067,16 +1327,21 @@ const HUNTS_DATA = [
   {
     "id": "H037",
     "category": "Flames",
-    "title": "Threat actors are injecting malicious JavaScript code into legitimate websites that uses JSFireTruck obfuscation composed primarily of the symbols []+${} to hide its true purpose of redirecting search engine traffic to malicious URLs serving malware or other harmful content.",
+    "title": "Threat actors are injecting malicious JavaScript code into legitimate websites t",
     "tactic": "Defense Evasion",
     "notes": "Based on ATT&CK technique T1027. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defense_evasion",
       "obfuscated_files_or_information",
       "javascript",
-      "malvertising",
+      "malvertising"
+    ],
+    "techniques": [
       "T1027"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1088,15 +1353,20 @@ const HUNTS_DATA = [
   {
     "id": "H038",
     "category": "Flames",
-    "title": "Threat actors are using PowerShell's Compress-Archive cmdlet to compress stolen victim data into ZIP archives for exfiltration to attacker-controlled servers.",
+    "title": "Threat actors are using PowerShell's Compress-Archive cmdlet to compress stolen ",
     "tactic": "Collection",
     "notes": "Based on ATT&CK technique T1560. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "collection",
       "archive_collected_data",
-      "powershell",
+      "powershell"
+    ],
+    "techniques": [
       "T1560"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1108,15 +1378,20 @@ const HUNTS_DATA = [
   {
     "id": "H039",
     "category": "Flames",
-    "title": "Threat actors are crafting TCP SYN packets with anomalous header values like 20-byte header length, zero window size, and zero initial sequence number to scan networks and exploit services while evading detection.",
+    "title": "Threat actors are crafting TCP SYN packets with anomalous header values like 20-",
     "tactic": "Reconnaissance",
     "notes": "Based on ATT&CK technique T1595.001. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "reconnaissance",
       "active_scanning",
-      "network_service_scanning",
-      "T1595_001"
+      "network_service_scanning"
     ],
+    "techniques": [
+      "T1595.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1128,15 +1403,20 @@ const HUNTS_DATA = [
   {
     "id": "H040",
     "category": "Flames",
-    "title": "Threat actors are conducting password spray attacks against internet-exposed RDP servers by attempting to authenticate with the same password across multiple domain accounts within a 4-hour window, targeting between 2-10 accounts per minute to evade detection thresholds.",
+    "title": "Threat actors are conducting password spray attacks against internet-exposed RDP",
     "tactic": "Initial Access",
     "notes": "Based on ATT&CK technique T1110.003. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "initial_access",
       "password_spraying",
-      "rdp",
-      "T1110_003"
+      "rdp"
     ],
+    "techniques": [
+      "T1110.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1148,15 +1428,20 @@ const HUNTS_DATA = [
   {
     "id": "H041",
     "category": "Flames",
-    "title": "Threat actors are using dd commands to write malicious shellcode directly into the memory of legitimate cat processes at specific offsets (0x4012f0 and 0x602820) to bypass Juniper veriexec protection and execute TINYSHELL backdoors on Juniper routers.",
+    "title": "Threat actors are using dd commands to write malicious shellcode directly into t",
     "tactic": "Privilege Escalation",
     "notes": "Based on ATT&CK technique T1055. Generated by hearth-auto-intel.",
     "tags": [
       "privilege_escalation",
       "tinyshell",
-      "juniper",
+      "juniper"
+    ],
+    "techniques": [
       "T1055"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jocko",
       "link": ""
@@ -1168,15 +1453,20 @@ const HUNTS_DATA = [
   {
     "id": "H042",
     "category": "Flames",
-    "title": "Threat actors are using PowerShell's Expand-Archive cmdlet to extract malicious CAB files containing encrypted DEMODEX rootkit configurations and shellcode payloads to C:\\Windows\\debug\\ before deleting the original archive to evade detection.",
+    "title": "Threat actors are using PowerShell's Expand-Archive cmdlet to extract malicious ",
     "tactic": "Defense Evasion",
     "notes": "Based on ATT&CK technique T1140. Generated by hearth-auto-intel.",
     "tags": [
       "defense_evasion",
       "deobfuscate_files",
-      "earth_estries",
+      "earth_estries"
+    ],
+    "techniques": [
       "T1140"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jocko",
       "link": ""
@@ -1188,15 +1478,20 @@ const HUNTS_DATA = [
   {
     "id": "H043",
     "category": "Flames",
-    "title": "Adversaries are modifying Windows Registry Run keys in HKCU\\Software\\CLASSES\\CLSID\\ID to store unique victim identifiers used for tracking C2 communications, deviating from standard CLSID format which requires GUIDs in curly brackets.",
+    "title": "Adversaries are modifying Windows Registry Run keys in HKCU\\Software\\CLASSES\\CLS",
     "tactic": "Defense Evasion",
     "notes": "Based on ATT&CK technique T1112. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defense_evasion",
       "registry_modification",
-      "persistence",
+      "persistence"
+    ],
+    "techniques": [
       "T1112"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jocko",
       "link": ""
@@ -1208,15 +1503,20 @@ const HUNTS_DATA = [
   {
     "id": "H044",
     "category": "Flames",
-    "title": "Threat actors are using PowerShell to execute PHP from non-standard AppData locations with specific extension directives to load malicious configuration files and establish RAT persistence on target Windows systems.",
+    "title": "Threat actors are using PowerShell to execute PHP from non-standard AppData loca",
     "tactic": "Execution",
     "notes": "Based on ATT&CK technique T1059.001. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "execution",
       "powershell",
-      "rat",
-      "T1059_001"
+      "rat"
     ],
+    "techniques": [
+      "T1059.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1228,15 +1528,20 @@ const HUNTS_DATA = [
   {
     "id": "H045",
     "category": "Flames",
-    "title": "Threat actors are using MSHTA.exe to download and execute HTA scripts from hardcoded IP addresses (e.g. http://[IP]/[PORT].hta) which contain Base64-encoded PowerShell reverse shell commands to establish persistent C2 connections.",
-    "tactic": "Command and Scripting Interpreter",
+    "title": "Threat actors are using MSHTA.exe to download and execute HTA scripts from hardc",
+    "tactic": "Command, Scripting Interpreter",
     "notes": "Based on ATT&CK technique T1218.005. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "execution",
       "mshta",
-      "living_off_the_land",
-      "T1218_005"
+      "living_off_the_land"
     ],
+    "techniques": [
+      "T1218.005"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1249,16 +1554,21 @@ const HUNTS_DATA = [
     "id": "H046",
     "category": "Flames",
     "title": "Evildoers might be using reverse ssh for Command and Control.",
-    "tactic": "Command and Control",
+    "tactic": "Command, Control",
     "notes": "Look for processes with \"ssh -R\" and use JA4SSH for TLS/JA4+ fingerprinting.",
     "tags": [
-      "CommandAndControl",
+      "commandandcontrol",
       "networktraffic",
       "ssh",
       "linux",
-      "windows",
+      "windows"
+    ],
+    "techniques": [
       "T1572"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "DarkWizardCatcher",
       "link": ""
@@ -1270,15 +1580,20 @@ const HUNTS_DATA = [
   {
     "id": "H047",
     "category": "Flames",
-    "title": "Threat actors are using PowerShell's Invoke-WebRequest cmdlet to download encrypted payloads from Discord CDN URLs ending in .dll or .exe to evade network detection and transfer malware to compromised Windows hosts.",
-    "tactic": "Command and Control",
+    "title": "Threat actors are using PowerShell's Invoke-WebRequest cmdlet to download encryp",
+    "tactic": "Command, Control",
     "notes": "Based on ATT&CK technique T1105. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "command_and_control",
       "ingress_tool_transfer",
-      "powershell",
+      "powershell"
+    ],
+    "techniques": [
       "T1105"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1290,18 +1605,23 @@ const HUNTS_DATA = [
   {
     "id": "H048",
     "category": "Flames",
-    "title": "The Cisco AnyConnect Secure Mobility Client updates for macOS are distributed via a download from https://disthost.umbrella.com/roaming/upgrade/mac_anyconnect/production/. The naming convention of the legitimate file is vpndownloader.app under a generated file path, perhaps like: _\"/private/tmp/vpn.<generated-suffix>/vpndownloader.app/Contents/MacOS/vpndownloader\"_. This generically named file / file path may be deemed malicious for several reasons: 1. Location - /private/tmp/ is a temporary directory on macOS, often used for short-lived files. Legitimate apps typically don’t install or run persistent binaries from there. 2. File Name - A generated suffix is often used by droppers or downloaders to avoid detection and to make each infection unique. 3. Binary Path - /Contents/MacOS/vpndownloader means it’s a compiled executable inside an .app bundle. If this were from a reputable VPN provider, it would normally live in /Applications/ or ~/Applications/, not inside /private/tmp Files showing these hallmarks (location, file name, binary path), should be reviewed for validity.",
+    "title": "The Cisco AnyConnect Secure Mobility Client updates for macOS are distributed vi",
     "tactic": "Defense Evasion (TA0005), Execution (TA0002), Masquerading (T1036), Signed Binary Proxy Execution (T1218), Ingress Tool Transfer (T1105)",
     "notes": "The legitimacy of the Cisco vpndownloader can be verified by identifying the running process and capturing command-line information.",
     "tags": [
-      "DefenseEvasion",
-      "Execution",
-      "Masquerading",
-      "ProxyExecution",
+      "defenseevasion",
+      "execution",
+      "masquerading",
+      "proxyexecution"
+    ],
+    "techniques": [
       "T1036",
       "T1218",
       "T1105"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Joshua Hines",
       "link": ""
@@ -1313,16 +1633,21 @@ const HUNTS_DATA = [
   {
     "id": "H049",
     "category": "Flames",
-    "title": "Adversaries are using mailbox rules to hide their presence within compromised email accounts by automatically deleting, redirecting, or marking messages as read.",
+    "title": "Adversaries are using mailbox rules to hide their presence within compromised em",
     "tactic": "Defense Evasion, Collection, Initial Access",
     "notes": "Apply a multi-faceted approach to detect malicious mailbox rules.",
     "tags": [
-      "DefenseEvasion",
-      "Phishing",
-      "Collection",
-      "T1564_008",
+      "defenseevasion",
+      "phishing",
+      "collection"
+    ],
+    "techniques": [
+      "T1564.008",
       "T1114"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Bruce Breuer",
       "link": ""
@@ -1334,16 +1659,21 @@ const HUNTS_DATA = [
   {
     "id": "H050",
     "category": "Flames",
-    "title": "An adversary successfully obtained AD password hashes by abusing replication permissions through a DC Sync operation.",
+    "title": "An adversary successfully obtained AD password hashes by abusing replication per",
     "tactic": "Credential Access",
     "notes": "DC sync attacks leave behind a variety of indicators.",
     "tags": [
-      "CredentialAccess",
-      "ActiveDirectory",
-      "Identity",
-      "Secretsdump",
-      "T1003_006"
+      "credentialaccess",
+      "activedirectory",
+      "identity",
+      "secretsdump"
     ],
+    "techniques": [
+      "T1003.006"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Bruce Breuer",
       "link": ""
@@ -1355,16 +1685,21 @@ const HUNTS_DATA = [
   {
     "id": "H051",
     "category": "Flames",
-    "title": "Threat actors are establishing persistent backdoor access by deploying Hidden Virtual Network Computing (HVNC) servers that create invisible virtual desktop sessions running outside the user's visible desktop environment, enabling attackers to perform reconnaissance, credential theft, and lateral movement activities without triggering visual alerts or appearing in standard process monitoring tools on compromised developer workstations.",
-    "tactic": "Command and Control",
+    "title": "Threat actors are establishing persistent backdoor access by deploying Hidden Vi",
+    "tactic": "Command, Control",
     "notes": "Based on ATT&CK technique T1219. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "commandandcontrol",
-      "T1219",
       "hvnc",
       "remoteaccess",
       "glassworm"
     ],
+    "techniques": [
+      "T1219"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Apramey \"Apps\" S",
       "link": ""
@@ -1376,16 +1711,21 @@ const HUNTS_DATA = [
   {
     "id": "H052",
     "category": "Flames",
-    "title": "Adversaries are using BackConnect VNC modules injected into dllhost.exe to execute Windows shell commands that open specific Explorer interfaces such as \"shell:mycomputerfolder\" for interactive file system browsing on compromised hosts.",
-    "tactic": "Command and Control",
+    "title": "Adversaries are using BackConnect VNC modules injected into dllhost.exe to execu",
+    "tactic": "Command, Control",
     "notes": "Based on ATT&CK technique T1219. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "command_and_control",
-      "T1219",
       "backconnect",
       "vnc",
       "dllhost"
     ],
+    "techniques": [
+      "T1219"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1397,14 +1737,20 @@ const HUNTS_DATA = [
   {
     "id": "H053",
     "category": "Flames",
-    "title": "Adversaries are using AI-powered tools to autonomously scan network infrastructure and enumerate high-value databases by executing thousands of reconnaissance requests per second against target systems, significantly accelerating the discovery phase of cyber espionage operations.",
+    "title": "Adversaries are using AI-powered tools to autonomously scan network infrastructu",
     "tactic": "Discovery",
     "notes": "Based on ATT&CK technique T1046. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "discovery",
       "networkscan",
-      "AI_powered"
+      "ai_powered"
     ],
+    "techniques": [
+      "T1046"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1416,16 +1762,21 @@ const HUNTS_DATA = [
   {
     "id": "H054",
     "category": "Flames",
-    "title": "Threat actors are using compiled AppleScript (.scpt) files with fake document extensions like .docx.scpt and .pptx.scpt, combined with custom icons stored in resource forks, to trick users into executing malicious scripts via Script Editor.app and bypass Gatekeeper quarantine restrictions on macOS systems.",
+    "title": "Threat actors are using compiled AppleScript (.scpt) files with fake document ex",
     "tactic": "Defense Evasion",
     "notes": "Based on ATT&CK technique T1553.001. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defense_evasion",
-      "T1553_001",
       "macos",
       "gatekeeper",
       "applescript"
     ],
+    "techniques": [
+      "T1553.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1437,16 +1788,21 @@ const HUNTS_DATA = [
   {
     "id": "H055",
     "category": "Flames",
-    "title": "Threat actors are using PowerShell's Get-CimInstance cmdlet to query Win32_OperatingSystem and ConvertTo-Csv to extract MainWindowTitle properties from running processes, exfiltrating environment variables under 99 characters, desktop file inventories via Shell.Application COM object, and mounted drive information to perform comprehensive host reconnaissance within 20 minutes of Gootloader JavaScript execution.",
+    "title": "Threat actors are using PowerShell's Get-CimInstance cmdlet to query Win32_Opera",
     "tactic": "Discovery",
     "notes": "Based on ATT&CK technique T1082. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "discovery",
-      "T1082",
       "gootloader",
       "powershell",
       "systeminfo"
     ],
+    "techniques": [
+      "T1082"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Anonymous",
       "link": ""
@@ -1458,15 +1814,20 @@ const HUNTS_DATA = [
   {
     "id": "H056",
     "category": "Flames",
-    "title": "Adversaries are invalidating active user sessions by revoking OAuth refresh tokens or session cookies through compromised administrative accounts in Microsoft Entra ID, forcing users to reauthenticate and triggering MFA prompts that attackers can then spam to gain persistent access to cloud applications.",
+    "title": "Adversaries are invalidating active user sessions by revoking OAuth refresh toke",
     "tactic": "Defense Evasion",
     "notes": "Based on ATT&CK technique T1550.001. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defense_evasion",
-      "T1550.001",
       "oauth",
       "session_hijacking"
     ],
+    "techniques": [
+      "T1550.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Azrara",
       "link": "https://www.linkedin.com/in/azrara/"
@@ -1478,15 +1839,20 @@ const HUNTS_DATA = [
   {
     "id": "H057",
     "category": "Flames",
-    "title": "Adversaries are executing PowerShell scripts that enumerate all accessible network shares and local drives to identify files containing authentication credentials such as passwords stored in batch files, administrative documents, spreadsheets, and configuration files for subsequent use in password spraying attacks against core banking systems.",
+    "title": "Adversaries are executing PowerShell scripts that enumerate all accessible netwo",
     "tactic": "Discovery",
     "notes": "Based on ATT&CK technique T1135. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "discovery",
-      "T1135",
       "financial",
       "powershell"
     ],
+    "techniques": [
+      "T1135"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Shaimon Weslley",
       "link": "https://www.linkedin.com/in/weslley-s-1540b356/"
@@ -1498,16 +1864,21 @@ const HUNTS_DATA = [
   {
     "id": "H058",
     "category": "Flames",
-    "title": "Threat actors are loading legitimate vulnerable drivers such as ThrottleStop.sys and rwdrv.sys from TechPowerUp to gain kernel-level write access, enabling the subsequent loading and execution of unsigned malicious kernel drivers like hlpdrv.sys that terminate security product processes and services.",
+    "title": "Threat actors are loading legitimate vulnerable drivers such as ThrottleStop.sys",
     "tactic": "Privilege Escalation",
     "notes": "Based on ATT&CK technique T1068. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "privilege_escalation",
-      "T1068",
-      "BYOVD",
-      "EDR_killer",
+      "byovd",
+      "edr_killer",
       "ransomware"
     ],
+    "techniques": [
+      "T1068"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Duc Viet Hoang",
       "link": "https://linkedin.com/in/hvdtsof/"
@@ -1523,12 +1894,17 @@ const HUNTS_DATA = [
     "tactic": "Exfiltration",
     "notes": "Identify and block unauthorized AI chatbot platforms used for data exfiltration.",
     "tags": [
-      "Exfiltration",
-      "Insider",
-      "T1567",
-      "IF001.006",
-      "IF018.002"
+      "exfiltration",
+      "insider",
+      "if001_006",
+      "if018_002"
     ],
+    "techniques": [
+      "T1567"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "samuel-lucas6",
       "link": ""
@@ -1540,16 +1916,21 @@ const HUNTS_DATA = [
   {
     "id": "H060",
     "category": "Flames",
-    "title": "Threat actors may abuse netsh.exe or PowerShell to create, modify, or delete Windows Firewall rules or profiles in order to weaken host-based defenses, permit inbound or outbound communication for malicious tooling, or remove restrictions on command-and-control (C2) traffic. By excluding System integrity level processes, this hypothesis focuses on firewall changes initiated from user or elevated contexts, which are less common during normal operations and more indicative of defense evasion or persistence-related activity.",
+    "title": "Threat actors may abuse netsh.exe or PowerShell to create, modify, or delete Win",
     "tactic": "Tactic: Defense Evasion (TA0005) - Technique: Impair Defenses: Disable or Modify System Firewall (T1562.004)",
     "notes": "The hunt focuses on detecting firewall modifications initiated from user or elevated contexts, assuming these are less common during normal operations and more indicative of defense evasion or persistence-related activity.",
     "tags": [
       "netsh",
       "powershell",
-      "TA0005",
-      "T1562.004",
+      "ta0005",
       "firewall"
     ],
+    "techniques": [
+      "T1562.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "tsof-smoky",
       "link": ""
@@ -1561,16 +1942,21 @@ const HUNTS_DATA = [
   {
     "id": "H061",
     "category": "Flames",
-    "title": "Adversaries are modifying the VIB acceptance level on ESXi hosts using esxcli commands to lower system integrity enforcement from VMwareCertified or VMwareAccepted to CommunitySupported, enabling the installation of unsigned or malicious vSphere Installation Bundles that can establish persistence or deploy backdoors.",
+    "title": "Adversaries are modifying the VIB acceptance level on ESXi hosts using esxcli co",
     "tactic": "Defense Evasion",
     "notes": "Based on ATT&CK technique T1562.001. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defense_evasion",
-      "T1562_001",
       "esxi",
       "hypervisor",
       "ransomware"
     ],
+    "techniques": [
+      "T1562.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "p-o-s-t",
       "link": "https://github.com/p-o-s-t"
@@ -1582,16 +1968,21 @@ const HUNTS_DATA = [
   {
     "id": "H062",
     "category": "Flames",
-    "title": "An adversary is making use of legitimate tunneling service(s) in their malware to bypass firewalls and establish a connection to a command and control server.",
-    "tactic": "Command and Control",
+    "title": "An adversary is making use of legitimate tunneling service(s) in their malware t",
+    "tactic": "Command, Control",
     "notes": "Tunneling services like TryCloudflare and Microsoft Dev Tunnels are used for legitimate purposes, their presence is not a strong indicator of malicious activity.",
     "tags": [
       "c2",
       "tunnel",
-      "TA0011",
-      "T1572",
+      "ta0011",
       "t1102"
     ],
+    "techniques": [
+      "T1572"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "p-o-s-t",
       "link": "https://github.com/p-o-s-t"
@@ -1603,16 +1994,21 @@ const HUNTS_DATA = [
   {
     "id": "H063",
     "category": "Flames",
-    "title": "Adversaries are directly modifying the user-specific TCC.db database file by leveraging Finder's Full Disk Access permissions to programmatically insert authorization entries, bypassing macOS privacy prompts to gain unauthorized access to protected user directories including Desktop, Documents, and Downloads.",
+    "title": "Adversaries are directly modifying the user-specific TCC.db database file by lev",
     "tactic": "Defense Evasion",
     "notes": "Based on ATT&CK technique T1562.001. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defense_evasion",
-      "T1562_001",
       "macos",
       "tcc",
       "unc1069"
     ],
+    "techniques": [
+      "T1562.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "odanh",
       "link": ""
@@ -1624,16 +2020,21 @@ const HUNTS_DATA = [
   {
     "id": "H064",
     "category": "Flames",
-    "title": "Threat actors are using Punycode-encoded International Domain Names (IDNs) with the \"xn--\" prefix in DNS queries to masquerade visually similar domain names that impersonate legitimate services for credential harvesting and malware delivery.",
+    "title": "Threat actors are using Punycode-encoded International Domain Names (IDNs) with ",
     "tactic": "Defense Evasion",
     "notes": "Based on ATT&CK technique T1036.005. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defense_evasion",
-      "T1036_005",
       "punycode",
       "idn",
       "dns"
     ],
+    "techniques": [
+      "T1036.005"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "DarkWizardCatcher",
       "link": ""
@@ -1645,17 +2046,22 @@ const HUNTS_DATA = [
   {
     "id": "H065",
     "category": "Flames",
-    "title": "An adversary is provisioning virtual machines through the vSphere API or web client targeting VMware virtualization infrastructure to deploy an unmonitored host for credential theft and data exfiltration.",
+    "title": "An adversary is provisioning virtual machines through the vSphere API or web cli",
     "tactic": "Defense Evasion",
     "notes": "Observed in Muddled Libra (Scattered Spider) September 2025 incident. Attackers provisioned a VM named \"New Virtual Machine\" via vSphere within 2 hours of initial access, then used it for 15+ hours as their primary operations host — no EDR coverage.",
     "tags": [
       "defense_evasion",
-      "T1564_006",
       "vmware",
       "vsphere",
       "rogue_vm",
       "muddled_libra"
     ],
+    "techniques": [
+      "T1564.006"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1667,18 +2073,23 @@ const HUNTS_DATA = [
   {
     "id": "H066",
     "category": "Flames",
-    "title": "An adversary is deploying malicious browser extensions that impersonate AI productivity tools to steal session tokens and conversation data from AI platforms targeting users of ChatGPT, DeepSeek, and similar services to harvest credentials and exfiltrate sensitive prompt data.",
+    "title": "An adversary is deploying malicious browser extensions that impersonate AI produ",
     "tactic": "Credential Access",
     "notes": "Multiple campaigns in late 2025/early 2026 — 16+ malicious Chrome/Edge extensions stealing ChatGPT session tokens, 900K+ users affected. Extensions clone legitimate tools and add token/conversation exfil under the guise of \"analytics data\" collection.",
     "tags": [
       "credential_access",
-      "T1528",
-      "T1185",
       "browser_extension",
       "ai_tokens",
       "chatgpt",
       "session_hijack"
     ],
+    "techniques": [
+      "T1528",
+      "T1185"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1690,18 +2101,23 @@ const HUNTS_DATA = [
   {
     "id": "H067",
     "category": "Flames",
-    "title": "An adversary is registering typosquatted or trojanized MCP server packages in public registries and package managers targeting developers and AI agents that consume MCP tooling to achieve code execution or data exfiltration through tool poisoning.",
+    "title": "An adversary is registering typosquatted or trojanized MCP server packages in pu",
     "tactic": "Initial Access",
     "notes": "First malicious MCP server found on npm in 2025. MCP servers have direct access to AI agents and connected systems — a compromised server can modify tool descriptions between sessions to inject prompts, exfiltrate context, or execute arbitrary code on the host.",
     "tags": [
       "initial_access",
-      "T1195_002",
       "mcp",
       "supply_chain",
       "typosquatting",
       "tool_poisoning",
       "ai_agent"
     ],
+    "techniques": [
+      "T1195.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1713,8 +2129,8 @@ const HUNTS_DATA = [
   {
     "id": "H068",
     "category": "Flames",
-    "title": "An adversary is bypassing Windows SmartScreen and MSHTML security warnings via crafted links targeting end users to deliver malware without triggering protective prompts",
-    "tactic": "Defense Evasion (T1218 / T1566.002)",
+    "title": "An adversary is bypassing Windows SmartScreen and MSHTML security warnings via c",
+    "tactic": "Defense Evasion (T1218, T1566.002)",
     "notes": "CVE-2026-21510 (SmartScreen) and CVE-2026-21513 (MSHTML) — both actively exploited zero-days from Feb 2026 Patch Tuesday. CISA KEV deadline March 3. Attackers dismantle warning systems to make social engineering exponentially more effective.",
     "tags": [
       "zerodday",
@@ -1723,6 +2139,10 @@ const HUNTS_DATA = [
       "defense_evasion",
       "cisa_kev"
     ],
+    "techniques": [],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1734,18 +2154,23 @@ const HUNTS_DATA = [
   {
     "id": "H069",
     "category": "Flames",
-    "title": "An adversary is abusing the native Windows utility finger.exe by copying and renaming it to a temporary directory to retrieve remote payloads over TCP port 79 targeting enterprise endpoints to establish command and control while evading application controls.",
-    "tactic": "Command and Control",
+    "title": "An adversary is abusing the native Windows utility finger.exe by copying and ren",
+    "tactic": "Command, Control",
     "notes": "Observed in CrashFix/KongTuke campaign (Jan 2026). finger.exe copied to %TEMP% and renamed to ct.exe to retrieve obfuscated PowerShell payloads. Selectively targets domain-joined machines. Finger protocol (TCP 79) is effectively dead in modern enterprises, making any activity highly anomalous.",
     "tags": [
       "command_and_control",
-      "T1105",
-      "T1036_003",
-      "T1218",
       "finger_exe",
       "lolbin",
       "crashfix"
     ],
+    "techniques": [
+      "T1105",
+      "T1036.003",
+      "T1218"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1757,7 +2182,7 @@ const HUNTS_DATA = [
   {
     "id": "H070",
     "category": "Flames",
-    "title": "An adversary is escalating privileges via Windows Remote Desktop Services targeting RDS-enabled servers to gain SYSTEM-level access in post-compromise scenarios",
+    "title": "An adversary is escalating privileges via Windows Remote Desktop Services target",
     "tactic": "Privilege Escalation (T1068)",
     "notes": "CVE-2026-21533 — RDS EoP zero-day discovered by CrowdStrike, actively exploited. Local access required but no user interaction. CISA KEV deadline March 3.",
     "tags": [
@@ -1767,6 +2192,10 @@ const HUNTS_DATA = [
       "cisa_kev",
       "post_compromise"
     ],
+    "techniques": [],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1778,7 +2207,7 @@ const HUNTS_DATA = [
   {
     "id": "H071",
     "category": "Flames",
-    "title": "An adversary is leveraging the ClickFix social engineering tactic via compromised WordPress sites targeting visitors to trick them into executing malicious commands",
+    "title": "An adversary is leveraging the ClickFix social engineering tactic via compromise",
     "tactic": "Execution (T1204.002)",
     "notes": "IClickFix framework identified by Sekoia — widespread WordPress campaign using fake browser/CAPTCHA prompts that instruct users to paste and run PowerShell commands. Uses TDS for targeting.",
     "tags": [
@@ -1788,6 +2217,10 @@ const HUNTS_DATA = [
       "execution",
       "powershell"
     ],
+    "techniques": [],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1799,7 +2232,7 @@ const HUNTS_DATA = [
   {
     "id": "H072",
     "category": "Flames",
-    "title": "An adversary is weaponizing WinRAR archive extraction to write malware into the Windows Startup folder targeting users who open phishing attachments to achieve persistence and automatic execution",
+    "title": "An adversary is weaponizing WinRAR archive extraction to write malware into the ",
     "tactic": "Persistence (T1547.001)",
     "notes": "CVE-2025-8088 — crafted archives extract payloads directly to Startup folder. Actively exploited for ransomware and credential theft. Patch available in WinRAR 7.13.",
     "tags": [
@@ -1809,6 +2242,10 @@ const HUNTS_DATA = [
       "phishing",
       "cve_2025_8088"
     ],
+    "techniques": [],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1820,18 +2257,23 @@ const HUNTS_DATA = [
   {
     "id": "H073",
     "category": "Flames",
-    "title": "An adversary is abusing legitimate cloud storage services as command-and-control channels delivering fileless payloads via weaponized Office documents targeting defense and diplomatic organizations to conduct espionage while evading network-based detection.",
-    "tactic": "Command and Control",
+    "title": "An adversary is abusing legitimate cloud storage services as command-and-control",
+    "tactic": "Command, Control",
     "notes": "Cloud storage C2 blends with legitimate traffic; fileless execution; compromised .gov sender accounts",
     "tags": [
       "command_and_control",
-      "T1102_002",
-      "T1203",
-      "T1055",
       "cloud_c2",
       "apt28",
       "filen"
     ],
+    "techniques": [
+      "T1102.002",
+      "T1203",
+      "T1055"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1843,19 +2285,24 @@ const HUNTS_DATA = [
   {
     "id": "H074",
     "category": "Flames",
-    "title": "An adversary is creating temporary virtual network interfaces on ESXi-hosted virtual machines to pivot into internal networks and SaaS infrastructure targeting organizations with VMware environments to maintain covert lateral movement channels.",
+    "title": "An adversary is creating temporary virtual network interfaces on ESXi-hosted vir",
     "tactic": "Lateral Movement",
     "notes": "UNC6201 ghost NIC technique; temporary vNICs removed after use; minimal forensic evidence",
     "tags": [
       "lateral_movement",
       "defense_evasion",
-      "T1021",
-      "T1497",
       "esxi",
       "vmware",
       "ghost_nic",
       "unc6201"
     ],
+    "techniques": [
+      "T1021",
+      "T1497"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1867,19 +2314,24 @@ const HUNTS_DATA = [
   {
     "id": "H075",
     "category": "Flames",
-    "title": "An adversary is deploying iptables-based Single Packet Authorization on compromised Linux appliances to create port-knocking backdoors targeting network infrastructure to maintain persistent covert access invisible to standard port scanning.",
+    "title": "An adversary is deploying iptables-based Single Packet Authorization on compromi",
     "tactic": "Persistence",
     "notes": "UNC6201 iptables SPA technique; magic hex string on 443; hidden backdoor port for 5 minutes",
     "tags": [
       "persistence",
       "defense_evasion",
-      "T1205_001",
-      "T1562_004",
       "iptables",
       "port_knocking",
       "spa",
       "unc6201"
     ],
+    "techniques": [
+      "T1205.001",
+      "T1562.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1891,20 +2343,25 @@ const HUNTS_DATA = [
   {
     "id": "H076",
     "category": "Flames",
-    "title": "An adversary is claiming expired domains and deployment URLs of abandoned Microsoft Office add-ins to serve credential phishing pages inside Outlook targeting enterprise users who have stale add-ins installed to harvest Microsoft 365 credentials at scale.",
+    "title": "An adversary is claiming expired domains and deployment URLs of abandoned Micros",
     "tactic": "Initial Access",
     "notes": "First malicious Outlook add-in in the wild; abandoned AgreeTo add-in reclaimed; 4000+ creds stolen; approve-once-trust-forever gap",
     "tags": [
       "initial_access",
       "credential_access",
-      "T1195_002",
-      "T1056_002",
-      "T1114",
       "outlook",
       "office_addin",
       "supply_chain",
-      "agreeToSteal"
+      "agreetosteal"
     ],
+    "techniques": [
+      "T1195.002",
+      "T1056.002",
+      "T1114"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1916,20 +2373,25 @@ const HUNTS_DATA = [
   {
     "id": "H077",
     "category": "Flames",
-    "title": "An adversary is creating unauthorized virtual network interface cards on VMware ESXi hosts to establish covert network paths targeting virtualized infrastructure to pivot laterally while evading network-based detection.",
+    "title": "An adversary is creating unauthorized virtual network interface cards on VMware ",
     "tactic": "Lateral Movement",
     "notes": "UNC6201 Ghost NICs bridge isolated segments; combined with iptables SPA for C2; vNIC changes often unmonitored",
     "tags": [
       "lateral_movement",
       "defense_evasion",
-      "T1021",
-      "T1599",
-      "T1049",
       "esxi",
       "vmware",
       "ghost_nic",
       "unc6201"
     ],
+    "techniques": [
+      "T1021",
+      "T1599",
+      "T1049"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1941,7 +2403,7 @@ const HUNTS_DATA = [
   {
     "id": "H078",
     "category": "Flames",
-    "title": "An adversary is exploiting Microsoft Office OLE objects to fetch payloads over WebDAV and establish an Outlook VBA backdoor targeting defense and logistics organizations to conduct long-term espionage via cloud-based command and control.",
+    "title": "An adversary is exploiting Microsoft Office OLE objects to fetch payloads over W",
     "tactic": "Initial Access",
     "notes": "APT28 CVE-2026-21509 zero-click OLE; NotDoor Outlook VBA backdoor; modified Covenant implant; filen.io C2; COM hijacking persistence",
     "tags": [
@@ -1949,14 +2411,19 @@ const HUNTS_DATA = [
       "execution",
       "persistence",
       "command_and_control",
-      "T1566_001",
-      "T1059_005",
-      "T1546_015",
-      "T1102",
       "apt28",
       "notdoor",
       "com_hijacking"
     ],
+    "techniques": [
+      "T1566.001",
+      "T1059.005",
+      "T1546.015",
+      "T1102"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1968,20 +2435,25 @@ const HUNTS_DATA = [
   {
     "id": "H079",
     "category": "Flames",
-    "title": "An adversary is abusing Group Policy Objects for lateral deployment and using bring-your-own-vulnerable-driver techniques to terminate security tools targeting enterprise Active Directory environments to disable defenses before executing ransomware with hybrid encryption.",
+    "title": "An adversary is abusing Group Policy Objects for lateral deployment and using br",
     "tactic": "Lateral Movement",
     "notes": "CrazyHunter ransomware; GPO abuse looks like legit admin activity; BYOVD to kill EDR; weak AD creds as entry",
     "tags": [
       "lateral_movement",
       "defense_evasion",
-      "T1484_001",
-      "T1562_001",
-      "T1106",
       "byovd",
       "gpo",
       "ransomware",
       "crazyhunter"
     ],
+    "techniques": [
+      "T1484.001",
+      "T1562.001",
+      "T1106"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1993,20 +2465,25 @@ const HUNTS_DATA = [
   {
     "id": "H080",
     "category": "Flames",
-    "title": "An adversary is using fake human-verification prompts to trick users into executing clipboard-injected commands targeting hospitality sector organizations to deploy remote access trojans for credential theft and data exfiltration.",
+    "title": "An adversary is using fake human-verification prompts to trick users into execut",
     "tactic": "Initial Access",
     "notes": "ClickFix technique; fake CAPTCHA prompts; clipboard command injection; bypasses email security; user-initiated execution",
     "tags": [
       "initial_access",
       "execution",
       "command_and_control",
-      "T1566_002",
-      "T1204_002",
-      "T1219",
       "clickfix",
       "social_engineering",
       "rat"
     ],
+    "techniques": [
+      "T1566.002",
+      "T1204.002",
+      "T1219"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2018,21 +2495,26 @@ const HUNTS_DATA = [
   {
     "id": "H081",
     "category": "Flames",
-    "title": "An adversary is publishing typosquatted npm packages with MCP server injection targeting developer environments using AI coding assistants to harvest SSH keys, cloud credentials, and LLM API keys via prompt injection.",
+    "title": "An adversary is publishing typosquatted npm packages with MCP server injection t",
     "tactic": "Initial Access",
     "notes": "SANDWORM_MODE campaign; typosquatted npm packages; MCP server injection; worm propagates via stolen npm/GitHub tokens; 48h delayed second stage",
     "tags": [
       "initial_access",
       "credential_access",
       "collection",
-      "T1195_002",
-      "T1555",
-      "T1119",
       "npm",
       "supply_chain",
       "mcp",
       "ai_coding_assistant"
     ],
+    "techniques": [
+      "T1195.002",
+      "T1555",
+      "T1119"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2044,19 +2526,24 @@ const HUNTS_DATA = [
   {
     "id": "H082",
     "category": "Flames",
-    "title": "An adversary is poisoning AI coding tool project configurations such as hooks, MCP servers, and environment variables in shared repositories targeting developer workstations to achieve remote code execution and API credential theft.",
+    "title": "An adversary is poisoning AI coding tool project configurations such as hooks, M",
     "tactic": "Initial Access",
     "notes": "CVE-2025-59536 / CVE-2026-21852; malicious .claude/settings.json and .mcp.json execute shell on clone; AI dev tools poorly monitored",
     "tags": [
       "initial_access",
       "execution",
-      "T1195_001",
-      "T1059_004",
       "supply_chain",
       "mcp",
       "ai_coding_tools",
       "claude_code"
     ],
+    "techniques": [
+      "T1195.001",
+      "T1059.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2068,19 +2555,24 @@ const HUNTS_DATA = [
   {
     "id": "H083",
     "category": "Flames",
-    "title": "An adversary is exploiting MSHTML framework flaws in crafted Windows Shortcut files with embedded HTML to bypass Mark-of-the-Web and browser security boundaries targeting Windows enterprise endpoints to achieve arbitrary code execution outside the browser sandbox.",
+    "title": "An adversary is exploiting MSHTML framework flaws in crafted Windows Shortcut fi",
     "tactic": "Initial Access",
     "notes": "APT28 zero-day CVE-2026-21513; LNK with embedded HTML; bypasses MotW and IE Enhanced Security; ieframe.dll code path exploitable beyond LNK",
     "tags": [
       "initial_access",
       "defense_evasion",
-      "T1566_001",
-      "T1553_005",
       "mshtml",
       "motw_bypass",
       "lnk",
       "apt28"
     ],
+    "techniques": [
+      "T1566.001",
+      "T1553.005"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2092,21 +2584,26 @@ const HUNTS_DATA = [
   {
     "id": "H084",
     "category": "Flames",
-    "title": "An adversary is deploying a malicious Ruby interpreter disguised as a legitimate USB utility on removable media targeting air-gapped networks in critical infrastructure and research sectors to establish a bidirectional covert C2 relay that bridges isolated network segments for data exfiltration and command delivery.",
+    "title": "An adversary is deploying a malicious Ruby interpreter disguised as a legitimate",
     "tactic": "Initial Access",
     "notes": "APT37 RubyJumper; Ruby 3.3.0 disguised as usbspeed.exe; RubyGems operating_system.rb hijack; THUMBSBD hidden dirs on USB; FOOTWINE full surveillance suite",
     "tags": [
       "initial_access",
       "command_and_control",
       "defense_evasion",
-      "T1091",
-      "T1092",
-      "T1036_005",
       "usb",
       "air_gap",
       "apt37",
       "rubyjumper"
     ],
+    "techniques": [
+      "T1091",
+      "T1092",
+      "T1036.005"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2118,17 +2615,22 @@ const HUNTS_DATA = [
   {
     "id": "H085",
     "category": "Flames",
-    "title": "An adversary is using Google Drive API calls as command-and-control communication targeting government and critical sector organizations to exfiltrate data and maintain persistent remote access while evading network-based detection.",
-    "tactic": "Command and Control",
+    "title": "An adversary is using Google Drive API calls as command-and-control communicatio",
+    "tactic": "Command, Control",
     "notes": "Silver Dragon/APT41 GearDoor backdoor; Google Drive API for C2; file-based tasking via extensions; blends with legitimate Workspace traffic",
     "tags": [
       "command_and_control",
-      "T1102_002",
       "google_drive",
       "cloud_c2",
       "apt41",
       "silver_dragon"
     ],
+    "techniques": [
+      "T1102.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2140,19 +2642,24 @@ const HUNTS_DATA = [
   {
     "id": "H086",
     "category": "Flames",
-    "title": "An adversary is compromising software update infrastructure to deliver malicious DLLs sideloaded by legitimate signed executables targeting organizations in government finance and IT sectors to establish persistent backdoor access.",
+    "title": "An adversary is compromising software update infrastructure to deliver malicious",
     "tactic": "Defense Evasion",
     "notes": "Notepad++ supply chain Jun-Dec 2025; three infection chains; Chrysalis backdoor masquerades as DeepSeek API; DLL sideloading via signed ProShow/GameHook/BluetoothService",
     "tags": [
       "defense_evasion",
       "initial_access",
-      "T1574_002",
-      "T1195_002",
       "dll_sideloading",
       "supply_chain",
       "notepadpp",
       "chrysalis"
     ],
+    "techniques": [
+      "T1574.002",
+      "T1195.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2164,19 +2671,24 @@ const HUNTS_DATA = [
   {
     "id": "H087",
     "category": "Flames",
-    "title": "An adversary is injecting malicious preinstall scripts into npm packages using stolen developer tokens targeting software development organizations to harvest credentials across cloud platforms and propagate through the software supply chain.",
+    "title": "An adversary is injecting malicious preinstall scripts into npm packages using s",
     "tactic": "Initial Access",
     "notes": "Shai-Hulud v2 worm; steals npm tokens and republishes poisoned packages; harvests GitHub/AWS/GCP/Azure creds; Trufflehog against home dirs; dead man switch for destruction",
     "tags": [
       "initial_access",
       "credential_access",
-      "T1195_001",
-      "T1552_001",
       "npm",
       "supply_chain",
       "worm",
       "shai_hulud"
     ],
+    "techniques": [
+      "T1195.001",
+      "T1552.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2188,21 +2700,26 @@ const HUNTS_DATA = [
   {
     "id": "H088",
     "category": "Flames",
-    "title": "An adversary is using ClickFix social engineering via the Windows Terminal application targeting enterprise endpoints to deploy commodity loaders and backdoors for ransomware pre-positioning.",
+    "title": "An adversary is using ClickFix social engineering via the Windows Terminal appli",
     "tactic": "Initial Access",
     "notes": "Velvet Tempest/DEV-0504 ransomware affiliate; shift from Run dialog to Windows Terminal; finger.exe for payload retrieval; csc.exe runtime .NET compilation; Python persistence in ProgramData",
     "tags": [
       "initial_access",
       "execution",
       "defense_evasion",
-      "T1204_002",
-      "T1059_001",
-      "T1027_004",
       "clickfix",
       "windows_terminal",
       "ransomware",
       "velvet_tempest"
     ],
+    "techniques": [
+      "T1204.002",
+      "T1059.001",
+      "T1027.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2214,20 +2731,25 @@ const HUNTS_DATA = [
   {
     "id": "H089",
     "category": "Flames",
-    "title": "An adversary is using social engineering to trick users into executing hex-encoded commands in Windows Terminal to deploy information-stealing malware targeting enterprise users to harvest credentials and session tokens.",
+    "title": "An adversary is using social engineering to trick users into executing hex-encod",
     "tactic": "Execution",
     "notes": "ClickFix shift from Run dialog to Windows Terminal; hex-encoded command execution in wt.exe; Lumma Stealer targets 100+ browsers and apps; strong anomaly signal from wt.exe parent-child process chains",
     "tags": [
       "execution",
       "credential_access",
-      "T1204_002",
-      "T1059_001",
-      "T1555",
       "clickfix",
       "windows_terminal",
       "lumma_stealer",
       "infostealer"
     ],
+    "techniques": [
+      "T1204.002",
+      "T1059.001",
+      "T1555"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2239,20 +2761,25 @@ const HUNTS_DATA = [
   {
     "id": "H090",
     "category": "Flames",
-    "title": "An adversary is using ClickFix social engineering to trick users into executing obfuscated commands that leverage finger.exe as a LOLBin to fetch malware payloads targeting enterprise endpoints to deploy ransomware precursor tooling.",
+    "title": "An adversary is using ClickFix social engineering to trick users into executing ",
     "tactic": "Initial Access",
     "notes": "Velvet Tempest/DEV-0504; finger.exe rarely used — any execution is anomalous; user pastes command bypassing email gateways; Chrome cred harvesting via PowerShell; csc.exe compilation in temp dirs",
     "tags": [
       "initial_access",
       "defense_evasion",
-      "T1204_002",
-      "T1218",
       "clickfix",
       "lolbin",
       "finger_exe",
       "ransomware",
       "velvet_tempest"
     ],
+    "techniques": [
+      "T1204.002",
+      "T1218"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2264,21 +2791,26 @@ const HUNTS_DATA = [
   {
     "id": "H091",
     "category": "Flames",
-    "title": "An adversary is abusing VS Code extension dependency mechanisms to turn initially benign marketplace extensions into transitive delivery vehicles for credential theft and cryptomining malware targeting software developers.",
+    "title": "An adversary is abusing VS Code extension dependency mechanisms to turn initiall",
     "tactic": "Initial Access",
     "notes": "GlassWorm campaign; 72+ malicious Open VSX extensions since Jan 2026; extensionPack/extensionDependencies abuse; trust-then-pivot pattern; concurrent Unicode injection in 151+ GitHub repos",
     "tags": [
       "initial_access",
       "persistence",
       "credential_access",
-      "T1195_001",
-      "T1554",
-      "T1555",
       "vscode",
       "supply_chain",
       "glassworm",
       "developer_tooling"
     ],
+    "techniques": [
+      "T1195.001",
+      "T1554",
+      "T1555"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2290,18 +2822,23 @@ const HUNTS_DATA = [
   {
     "id": "H092",
     "category": "Flames",
-    "title": "An adversary is performing automated scanning for unauthenticated AI agent API export endpoints (CVE-2026-25253 pattern), targeting cloud-hosted AI agent deployments, to harvest stored LLM service credentials for downstream API abuse.",
+    "title": "An adversary is performing automated scanning for unauthenticated AI agent API e",
     "tactic": "Credential Access (T1552)",
     "notes": "CVE-2026-25253 (Hunt.io research, Mar 2026): unauthenticated `/api/export-auth` endpoint in OpenClaw, Clawdbot, and Moltbot exposes AI service credentials (Claude, OpenAI, Google AI). 17,500+ internet-exposed instances identified; 68.9% Clawdbot, 22.3% Moltbot, 8.8% OpenClaw. 98.6% on cloud infrastructure across 52 countries.",
     "tags": [
       "credential_access",
-      "T1552",
       "cve_2026_25253",
       "ai_agent_security",
       "api_key_exfil",
       "openclaw",
       "clawdbot"
     ],
+    "techniques": [
+      "T1552"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2313,12 +2850,11 @@ const HUNTS_DATA = [
   {
     "id": "H093",
     "category": "Flames",
-    "title": "An adversary is deploying AI-vibe-coded malware compiled in obscure languages (Nim, Zig, Crystal) to evade signature-based antivirus detection, targeting Windows endpoints in government and defense sectors, to achieve persistent execution while bypassing conventional security tooling.",
+    "title": "An adversary is deploying AI-vibe-coded malware compiled in obscure languages (N",
     "tactic": "Defense Evasion (T1027)",
     "notes": "APT36/Transparent Tribe campaign (Mar 2026, Bitdefender): Pakistan-aligned APT uses AI code generation (\"vibe-coding\") to mass-produce unique Nim, Zig, and Crystal malware samples; volume combined with obscure language compilation produces AV-unknown binaries at scale; paired with C2 over Slack/Discord/Google Sheets (see H091).",
     "tags": [
       "defense_evasion",
-      "T1027",
       "nim",
       "zig",
       "crystal",
@@ -2326,6 +2862,12 @@ const HUNTS_DATA = [
       "apt36",
       "ai_generated_malware"
     ],
+    "techniques": [
+      "T1027"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2337,19 +2879,24 @@ const HUNTS_DATA = [
   {
     "id": "H094",
     "category": "Flames",
-    "title": "An adversary is distributing malicious AI agent skill packages targeting macOS endpoints running OpenClaw or similar agentic platforms to achieve credential theft, keychain access, and browser data exfiltration.",
+    "title": "An adversary is distributing malicious AI agent skill packages targeting macOS e",
     "tactic": "Initial Access (T1195.001)",
     "notes": "Hundreds of malicious skills distributed via ClawHub/SkillsMP deliver AMOS (Atomic macOS Stealer) via a trusted install chain: SKILL.md installs a prerequisite that downloads an unsigned Mach-O binary which immediately begins exfiltration. Same technique family as Vidar/Lumma on Windows — supply chain abuse via trusted package registries. Developer team ID `GNJLS3UYZ4` observed for related MacSync variant. (VLM-2026-03-12-001, radar.offseq.com, Mar 2026)",
     "tags": [
       "initial_access",
       "supply_chain",
-      "T1195_001",
       "macos",
       "infostealer",
       "amos",
       "agentic_ai",
       "openclaw"
     ],
+    "techniques": [
+      "T1195.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2361,20 +2908,25 @@ const HUNTS_DATA = [
   {
     "id": "H095",
     "category": "Flames",
-    "title": "An adversary is exploiting n8n workflow automation servers via expression injection (CVE-2025-68613) to execute arbitrary commands and use the platform's internal trust and integrations for lateral movement and credential access.",
+    "title": "An adversary is exploiting n8n workflow automation servers via expression inject",
     "tactic": "Execution (T1059)",
     "notes": "CVE-2025-68613: Improper Control of Dynamically-Managed Code Resources (CVSS 9.9) in n8n expression evaluation. Added to CISA KEV 2026-03-11, due date 2026-03-25. 24,700 instances remain internet-exposed per The Hacker News at time of KEV addition. n8n instances typically hold API keys, OAuth tokens, and database credentials in workflow configs — a compromised node is a credential treasure chest and a trusted pivot point into internal APIs. (VLM-2026-03-12-002/013, CISA KEV)",
     "tags": [
       "execution",
-      "T1059",
       "rce",
       "n8n",
       "cisa_kev",
-      "CVE_2025_68613",
+      "cve_2025_68613",
       "workflow_automation",
       "lateral_movement",
       "credential_access"
     ],
+    "techniques": [
+      "T1059"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2386,12 +2938,11 @@ const HUNTS_DATA = [
   {
     "id": "H096",
     "category": "Flames",
-    "title": "An adversary is exploiting FortiGate NGFW vulnerabilities to exfiltrate device configuration files containing plaintext Active Directory and LDAP service account credentials for subsequent lateral movement and privileged access.",
+    "title": "An adversary is exploiting FortiGate NGFW vulnerabilities to exfiltrate device c",
     "tactic": "Credential Access (T1552.001)",
     "notes": "Active campaign abusing CVE-2024-47575 and CVE-2024-55591 (FortiGate auth bypass / command injection) to extract config files containing plaintext AD/LDAP service account credentials. Targets observed: healthcare, government, MSPs — sectors with high-value AD environments. Credentials extracted from FortiGate configs are often service accounts with broad internal access, enabling fast lateral movement post-extraction. (VLM-2026-03-12-004, SentinelOne / kensai.app, Mar 12 2026)",
     "tags": [
       "credential_access",
-      "T1552_001",
       "fortinet",
       "fortigate",
       "active_directory",
@@ -2399,9 +2950,15 @@ const HUNTS_DATA = [
       "lateral_movement",
       "healthcare",
       "government",
-      "CVE_2024_47575",
-      "CVE_2024_55591"
+      "cve_2024_47575",
+      "cve_2024_55591"
     ],
+    "techniques": [
+      "T1552.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2413,13 +2970,12 @@ const HUNTS_DATA = [
   {
     "id": "H097",
     "category": "Flames",
-    "title": "An adversary is using ClickFix lure pages impersonating legitimate software (Microsoft Teams, Homebrew, Ledger Live) to social-engineer users into executing malicious commands that deploy the Odyssey infostealer for credential and session token theft.",
+    "title": "An adversary is using ClickFix lure pages impersonating legitimate software (Mic",
     "tactic": "Execution (T1204.002)",
     "notes": "Odyssey Stealer campaign expanding from Eastern Europe to UK, Germany, Italy, Canada, Brazil, India, and Africa/Asia. Uses ClickFix technique: fake browser/app error pages instruct users to paste and run a command to \"fix\" the issue. Exclusions for CIS countries suggest Russian-aligned threat actor. Targets credentials, session tokens, and browser-stored secrets across Windows and macOS. Active as of March 2026.",
     "tags": [
       "execution",
       "initial_access",
-      "T1204_002",
       "clickfix",
       "infostealer",
       "odyssey_stealer",
@@ -2427,6 +2983,12 @@ const HUNTS_DATA = [
       "credential_theft",
       "session_hijacking"
     ],
+    "techniques": [
+      "T1204.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2438,12 +3000,11 @@ const HUNTS_DATA = [
   {
     "id": "H098",
     "category": "Flames",
-    "title": "An adversary is deploying AI-generated PowerShell backdoors as part of financially motivated ransomware intrusions, leveraging LLM-assisted code generation to produce novel malware variants that evade signature-based detection.",
+    "title": "An adversary is deploying AI-generated PowerShell backdoors as part of financial",
     "tactic": "Execution (T1059.001)",
     "notes": "Hive0163 \"Slopoly\" campaign — financially motivated threat actor using AI-generated PowerShell for backdoor deployment. Represents expansion of AI-assisted malware beyond nation-state actors into financially motivated cybercrime. AI-generated code tends to produce functionally equivalent but syntactically diverse variants that bypass static signatures, while retaining detectable behavioral patterns (network beaconing, persistence mechanisms, staging). Active March 2026.",
     "tags": [
       "execution",
-      "T1059_001",
       "powershell",
       "ai_generated_malware",
       "ransomware",
@@ -2452,6 +3013,12 @@ const HUNTS_DATA = [
       "backdoor",
       "financial_crime"
     ],
+    "techniques": [
+      "T1059.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2463,13 +3030,12 @@ const HUNTS_DATA = [
   {
     "id": "H099",
     "category": "Flames",
-    "title": "An adversary is exploiting CVE-2026-26144 (Microsoft Excel + Copilot Agent zero-click vulnerability) to silently exfiltrate sensitive spreadsheet data through an AI agent execution chain without requiring any user interaction beyond opening a malicious file.",
+    "title": "An adversary is exploiting CVE-2026-26144 (Microsoft Excel + Copilot Agent zero-",
     "tactic": "Exfiltration (T1048)",
     "notes": "CVE-2026-26144 — zero-click data exfil via Excel + Microsoft Copilot Agent. Malicious Excel file triggers Copilot Agent execution on open; agent can read and exfiltrate workbook contents without user action. Patched in Microsoft Patch Tuesday March 2026. Unpatched systems exposed to phishing/document delivery attacks. High-value targets: finance, legal, healthcare (spreadsheet-heavy data environments).",
     "tags": [
       "exfiltration",
-      "T1048",
-      "CVE_2026_26144",
+      "cve_2026_26144",
       "microsoft_excel",
       "copilot",
       "ai_agent",
@@ -2477,6 +3043,12 @@ const HUNTS_DATA = [
       "document_delivery",
       "patch_tuesday"
     ],
+    "techniques": [
+      "T1048"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2488,20 +3060,25 @@ const HUNTS_DATA = [
   {
     "id": "H100",
     "category": "Flames",
-    "title": "An adversary is exploiting MCP server authentication bypass vulnerabilities (CVE-2026-27896 and related) to gain unauthorized tool execution access within AI agent pipelines, enabling data exfiltration, command injection, or privilege escalation through trusted agent infrastructure.",
+    "title": "An adversary is exploiting MCP server authentication bypass vulnerabilities (CVE",
     "tactic": "Defense Evasion (T1078)",
     "notes": "CVE cluster from March 2026 Patch Tuesday: CVE-2026-27896 (Go SDK auth bypass), CVE-2026-3484 (nmap-server RCE), CVE-2026-2178 (xcode-mcp-server), CVE-2026-29787 (mcp-memory-service info disclosure). MCP servers often run with elevated local privileges and trust; auth bypass enables adversaries to invoke tools (filesystem, network scan, memory read) without valid credentials. Emerging attack surface as MCP adoption accelerates.",
     "tags": [
       "defense_evasion",
       "initial_access",
-      "T1078",
       "mcp",
       "model_context_protocol",
       "auth_bypass",
-      "CVE_2026_27896",
+      "cve_2026_27896",
       "ai_agent",
       "tool_execution"
     ],
+    "techniques": [
+      "T1078"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2513,16 +3090,21 @@ const HUNTS_DATA = [
   {
     "id": "H101",
     "category": "Flames",
-    "title": "Threat actors are using compromised Microsoft Intune administrative credentials to issue remote wipe commands across enterprise-enrolled mobile devices and workstations to destroy data at scale and disrupt business operations.",
+    "title": "Threat actors are using compromised Microsoft Intune administrative credentials ",
     "tactic": "Impact",
     "notes": "Based on ATT&CK technique T1485. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "impact",
-      "T1485",
       "intune",
       "mdm",
       "wiper"
     ],
+    "techniques": [
+      "T1485"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Alan G",
       "link": ""
@@ -2534,16 +3116,21 @@ const HUNTS_DATA = [
   {
     "id": "H102",
     "category": "Flames",
-    "title": "Adversaries are deploying modified UPX-packed ARM 32-bit Big Endian malware binaries to /usr/bin/iocontrol on Linux-based IoT/OT devices to evade signature-based detection while maintaining command and control capabilities over MQTT.",
+    "title": "Adversaries are deploying modified UPX-packed ARM 32-bit Big Endian malware bina",
     "tactic": "Defense Evasion",
     "notes": "Based on ATT&CK technique T1027.002. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defense_evasion",
-      "T1027_002",
       "iocontrol",
       "ot_iot",
       "upx"
     ],
+    "techniques": [
+      "T1027.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Alan G",
       "link": ""
@@ -2555,16 +3142,21 @@ const HUNTS_DATA = [
   {
     "id": "H103",
     "category": "Flames",
-    "title": "Threat actors are injecting malicious pre-install and post-install scripts into package.json files of compromised npm packages to execute infostealer payloads immediately upon npm install commands in CI/CD pipelines and developer workstations.",
+    "title": "Threat actors are injecting malicious pre-install and post-install scripts into ",
     "tactic": "Execution",
     "notes": "Based on ATT&CK technique T1059.007. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "execution",
-      "T1059_007",
       "supply_chain",
       "npm",
       "cicd"
     ],
+    "techniques": [
+      "T1059.007"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "_No response_",
       "link": ""
@@ -2576,15 +3168,20 @@ const HUNTS_DATA = [
   {
     "id": "H104",
     "category": "Flames",
-    "title": "Threat actors are injecting HTTP headers X-SSL-CLIENT-VERIFY with value \"SUCCESS\" and X-SSL-CLIENT-CERT containing forged certificate chains to bypass authentication on FortiClient EMS web interfaces listening on port 443, gaining unauthorized API access to endpoint management functions.",
+    "title": "Threat actors are injecting HTTP headers X-SSL-CLIENT-VERIFY with value \"SUCCESS",
     "tactic": "Defense Evasion",
     "notes": "Based on ATT&CK technique T1550.004. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defense_evasion",
-      "T1550_004",
       "forticlient",
       "authentication_bypass"
     ],
+    "techniques": [
+      "T1550.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "smossmos",
       "link": "https://github.com/smossmos"
@@ -2596,17 +3193,22 @@ const HUNTS_DATA = [
   {
     "id": "H105",
     "category": "Flames",
-    "title": "An adversary is exploiting a known vulnerability in an internet-facing application such as Apache ActiveMQ (CVE-2023-46604) to achieve remote code execution and establish initial access to the environment.",
+    "title": "An adversary is exploiting a known vulnerability in an internet-facing applicati",
     "tactic": "Initial Access",
     "notes": "Focus on web application logs, WAF alerts, and endpoint telemetry from DMZ hosts. Look for ClassPathXmlApplicationContext abuse in ActiveMQ, unexpected child processes from Java/application server processes, and exploitation signatures in HTTP request bodies.",
     "tags": [
       "initial_access",
-      "T1190",
-      "CVE_2023_46604",
+      "cve_2023_46604",
       "activemq",
       "exploit",
       "rce"
     ],
+    "techniques": [
+      "T1190"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2618,17 +3220,22 @@ const HUNTS_DATA = [
   {
     "id": "H106",
     "category": "Flames",
-    "title": "An adversary is using named pipe impersonation or token manipulation techniques such as Meterpreter's GetSystem command to escalate privileges from a local administrator context to NT AUTHORITY\\SYSTEM on a compromised Windows host.",
+    "title": "An adversary is using named pipe impersonation or token manipulation techniques ",
     "tactic": "Privilege Escalation",
     "notes": "Look for creation of short-lived Windows services with random names, named pipe creation by non-standard processes, and token impersonation API calls (ImpersonateNamedPipeClient, DuplicateTokenEx). Sysmon Event IDs 17/18 (pipe created/connected) and 1 (process creation) with ParentUser != ChildUser are key data sources.",
     "tags": [
       "privilege_escalation",
-      "T1134_005",
-      "T1134",
       "named_pipe",
       "getsystem",
       "token_impersonation"
     ],
+    "techniques": [
+      "T1134.005",
+      "T1134"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2640,15 +3247,20 @@ const HUNTS_DATA = [
   {
     "id": "H107",
     "category": "Flames",
-    "title": "An adversary is clearing Windows event logs using wevtutil, Clear-EventLog, or similar utilities to destroy forensic evidence of their intrusion activity after achieving their objectives.",
+    "title": "An adversary is clearing Windows event logs using wevtutil, Clear-EventLog, or s",
     "tactic": "Defense Evasion",
     "notes": "Hunt for Event ID 1102 (Security log cleared), Event ID 104 (System log cleared), wevtutil.exe cl executions, and PowerShell Clear-EventLog cmdlet usage. Also look for gaps in event log continuity or event logs with abnormally small file sizes.",
     "tags": [
       "defense_evasion",
-      "T1070_001",
       "event_log_clearing",
       "anti_forensics"
     ],
+    "techniques": [
+      "T1070.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2660,16 +3272,21 @@ const HUNTS_DATA = [
   {
     "id": "H108",
     "category": "Flames",
-    "title": "An adversary is dumping credentials from the LSASS process memory using tools such as Mimikatz, procdump, comsvcs.dll MiniDump, or direct API calls to access cached domain credentials for lateral movement.",
+    "title": "An adversary is dumping credentials from the LSASS process memory using tools su",
     "tactic": "Credential Access",
     "notes": "Key indicators include suspicious process access to lsass.exe with GrantedAccess values 0x1010, 0x1410, or 0x1FFFFF (Sysmon Event ID 10), unsigned binaries opening handles to LSASS, use of comsvcs.dll MiniDump via rundll32, and procdump targeting lsass.exe by PID or name.",
     "tags": [
       "credential_access",
-      "T1003_001",
       "lsass",
       "credential_dumping",
       "mimikatz"
     ],
+    "techniques": [
+      "T1003.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2681,16 +3298,21 @@ const HUNTS_DATA = [
   {
     "id": "H109",
     "category": "Flames",
-    "title": "An adversary is performing internal network reconnaissance by generating a spike in SMB connection attempts from a single host to many endpoints across the network, indicating enumeration of live hosts and accessible shares.",
+    "title": "An adversary is performing internal network reconnaissance by generating a spike",
     "tactic": "Discovery",
     "notes": "Look for a single source IP generating SMB (port 445) connections to many destinations in a short time window. Correlate with failed authentication events and compare against baseline SMB traffic patterns. Network flow data and Windows Security Event IDs 4624/4625 with Logon Type 3 are primary data sources.",
     "tags": [
       "discovery",
-      "T1018",
       "smb_scanning",
       "network_enumeration",
       "reconnaissance"
     ],
+    "techniques": [
+      "T1018"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2702,17 +3324,22 @@ const HUNTS_DATA = [
   {
     "id": "H110",
     "category": "Flames",
-    "title": "An adversary is enumerating Active Directory accounts and group memberships using built-in Windows utilities such as net group, net user, nltest, or PowerShell AD cmdlets to identify privileged accounts for targeted credential theft.",
+    "title": "An adversary is enumerating Active Directory accounts and group memberships usin",
     "tactic": "Discovery",
     "notes": "Hunt for execution of net group \"Domain Admins\" /domain, net user /domain, nltest /dclist, and Get-ADGroupMember commands from non-administrative workstations or service accounts. Process creation logs (Sysmon Event ID 1, Windows Security Event ID 4688) with command-line auditing enabled are the primary data source.",
     "tags": [
       "discovery",
-      "T1087_002",
-      "T1087",
       "account_enumeration",
       "active_directory",
       "net_commands"
     ],
+    "techniques": [
+      "T1087.002",
+      "T1087"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2724,16 +3351,21 @@ const HUNTS_DATA = [
   {
     "id": "H111",
     "category": "Flames",
-    "title": "An adversary is performing network service discovery by deploying port scanning tools such as Advanced IP Scanner, SoftPerfect Network Scanner, or nmap to identify accessible services including RDP (3389), SMB (445), WinRM (5985/5986), and LDAP (389) across the internal network.",
+    "title": "An adversary is performing network service discovery by deploying port scanning ",
     "tactic": "Discovery",
     "notes": "Look for execution of known scanner binaries (advanced_ip_scanner.exe, netscan.exe, nmap.exe), files masquerading as legitimate tools (e.g., scanner binary named as a different tool), and rapid sequential TCP SYN connections across multiple ports to many hosts. Network flow data showing a single host connecting to common service ports across many destinations is a key indicator.",
     "tags": [
       "discovery",
-      "T1046",
       "port_scanning",
       "network_scanning",
       "advanced_ip_scanner"
     ],
+    "techniques": [
+      "T1046"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2745,17 +3377,22 @@ const HUNTS_DATA = [
   {
     "id": "H112",
     "category": "Flames",
-    "title": "An adversary is executing ransomware that rapidly encrypts files across local and network-accessible storage, indicated by a high rate of file modification events, mass file extension changes, and creation of ransom note files across multiple directories.",
+    "title": "An adversary is executing ransomware that rapidly encrypts files across local an",
     "tactic": "Impact",
     "notes": "Hunt for processes generating an abnormally high volume of file write/rename operations, creation of files with known ransomware extensions (.lockbit, .encrypted, .crypt), and identical ransom note filenames appearing in multiple directories simultaneously. Monitor for Volume Shadow Copy deletion (vssadmin delete shadows) and bcdedit modifications that often precede encryption.",
     "tags": [
       "impact",
-      "T1486",
       "ransomware",
       "encryption",
       "lockbit",
       "data_encrypted_for_impact"
     ],
+    "techniques": [
+      "T1486"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2767,17 +3404,22 @@ const HUNTS_DATA = [
   {
     "id": "H113",
     "category": "Flames",
-    "title": "An adversary is modifying the desktop wallpaper, dropping ransom note files, or altering login screen settings via registry changes to display extortion messaging to users after ransomware deployment.",
+    "title": "An adversary is modifying the desktop wallpaper, dropping ransom note files, or ",
     "tactic": "Impact",
     "notes": "Hunt for registry modifications to HKCU\\Control Panel\\Desktop\\Wallpaper and HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\legalnoticecaption by non-standard processes, creation of .txt/.hta/.html files with ransom-related keywords in multiple directories simultaneously, and changes to OEMBackground registry values.",
     "tags": [
       "impact",
-      "T1491_001",
       "defacement",
       "ransom_note",
       "wallpaper",
       "extortion"
     ],
+    "techniques": [
+      "T1491.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2789,17 +3431,22 @@ const HUNTS_DATA = [
   {
     "id": "H114",
     "category": "Flames",
-    "title": "An adversary is using SEO poisoning or malvertising to place trojanized software installers in search engine results, tricking users searching for legitimate IT tools into downloading malware-laced packages that deploy backdoors or ransomware precursors.",
+    "title": "An adversary is using SEO poisoning or malvertising to place trojanized software",
     "tactic": "Initial Access",
     "notes": "Hunt for downloads of known IT administration tools (ManageEngine, PuTTY, WinSCP, AnyDesk, Teams) from domains that are not the vendor's official site. Correlate web proxy logs showing search engine referrers leading to non-vendor download domains, followed by MSI/EXE execution with suspicious child processes. Look for newly registered domains mimicking vendor names in DNS query logs.",
     "tags": [
       "initial_access",
-      "T1189",
       "seo_poisoning",
       "malvertising",
       "trojanized_installer",
       "drive_by"
     ],
+    "techniques": [
+      "T1189"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2811,17 +3458,22 @@ const HUNTS_DATA = [
   {
     "id": "H115",
     "category": "Flames",
-    "title": "An adversary is abusing msiexec.exe to proxy execution of malicious code through crafted MSI packages or DLL loading, bypassing application control solutions that trust the signed Windows Installer binary.",
+    "title": "An adversary is abusing msiexec.exe to proxy execution of malicious code through",
     "tactic": "Defense Evasion",
     "notes": "Hunt for msiexec.exe executing MSI packages from unusual paths (Temp, Downloads, ProgramData, user profile directories), msiexec.exe with /q (quiet) flags installing packages from HTTP/HTTPS URLs, and msiexec.exe spawning unexpected child processes (cmd.exe, powershell.exe, rundll32.exe). Also detect msiexec.exe /y or /z switches used to load arbitrary DLLs via DllRegisterServer. Sysmon Event ID 1 (process creation) and Event ID 7 (image loaded) are key data sources.",
     "tags": [
       "defense_evasion",
       "execution",
-      "T1218_007",
       "msiexec",
       "signed_binary_proxy",
       "lolbin"
     ],
+    "techniques": [
+      "T1218.007"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2833,12 +3485,11 @@ const HUNTS_DATA = [
   {
     "id": "H116",
     "category": "Flames",
-    "title": "An adversary is extracting the Active Directory NTDS.dit database from a domain controller using built-in tools such as ntdsutil, wbadmin, vssadmin, or diskshadow to obtain all domain credential hashes for offline cracking and domain-wide compromise.",
+    "title": "An adversary is extracting the Active Directory NTDS.dit database from a domain ",
     "tactic": "Credential Access",
     "notes": "Hunt for ntdsutil.exe execution with IFM (Install From Media) arguments, wbadmin.exe start backup commands targeting system state on DCs, vssadmin create shadow on the drive containing NTDS, and diskshadow.exe script execution. Monitor Directory Service Event ID 1917 (ntds.dit backup), System Event ID 7036 (VSS service start), and Security Event ID 4688 with command-line auditing on domain controllers. Also watch for copies of ntds.dit or SYSTEM registry hive appearing in non-standard directories.",
     "tags": [
       "credential_access",
-      "T1003_003",
       "ntds",
       "active_directory",
       "ntdsutil",
@@ -2846,6 +3497,12 @@ const HUNTS_DATA = [
       "vssadmin",
       "credential_dumping"
     ],
+    "techniques": [
+      "T1003.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2857,16 +3514,21 @@ const HUNTS_DATA = [
   {
     "id": "H117",
     "category": "Flames",
-    "title": "An adversary is aggregating collected data into a central staging directory on a compromised host — such as ProgramData, Temp, or Recycle Bin — before compressing and exfiltrating it, indicated by a process writing numerous files from disparate source locations into a single directory.",
+    "title": "An adversary is aggregating collected data into a central staging directory on a",
     "tactic": "Collection",
     "notes": "Hunt for unusual file write activity in common staging directories (C:\\ProgramData, C:\\Windows\\Temp, %APPDATA%, Recycle Bin, C:\\perflogs). Look for archive creation (7z.exe, rar.exe, zip utilities) in these locations, especially when preceded by file aggregation from multiple source directories. Monitor for command-line tools copying files with extensions associated with sensitive data (.docx, .xlsx, .pdf, .pst, .csv, .sql) into a single destination. Endpoint file creation telemetry and process command-line auditing are key data sources.",
     "tags": [
       "collection",
-      "T1074_001",
       "data_staging",
       "exfiltration_prep",
       "archive"
     ],
+    "techniques": [
+      "T1074.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2878,16 +3540,21 @@ const HUNTS_DATA = [
   {
     "id": "H118",
     "category": "Flames",
-    "title": "An adversary is impersonating IT helpdesk personnel via Microsoft Teams external messaging to socially engineer users into launching remote access tools like Quick Assist, enabling hands-on-keyboard intrusion from a cross-tenant attacker-controlled account.",
+    "title": "An adversary is impersonating IT helpdesk personnel via Microsoft Teams external",
     "tactic": "Initial Access",
     "notes": "Defender XDR Advanced Hunting (primary approach): Use CloudAppEvents where Application == \"Microsoft Teams\" and ActionType == \"ChatCreated\" with RawEventData.ParticipantInfo.HasForeignTenantUsers == true and CommunicationType == \"OneOnOne\" — filter on display names impersonating support roles (\"Help Desk\", \"Microsoft Security\", \"IT Support\"). Cross-join with DeviceProcessEvents to correlate the target user launching QuickAssist.exe, AnyDesk.exe, ScreenConnect, or TeamViewer.exe within 30 minutes. The source article provides a full KQL query (Query A) that joins MessageEvents with DeviceProcessEvents on VictimAccountObjectId within a 30-minute window. Quick Assist-anchored recon detection (Query J): Join RMM tool launches with immediate reconnaissance commands (whoami, systeminfo, ipconfig, nltest, net user) within 10 minutes. Email bombing precursor (Query from Storm-1811): Use EmailEvents with series_decompose_anomalies to detect inbound email volume spikes (AnomalyScore >= 10) — attackers flood the inbox before calling as \"helpdesk\" to remediate. Also monitor for external Teams chats from recently registered domains or tenants using ParticipatingDomains/ParticipatingSIPDomains fields.",
     "tags": [
       "initial_access",
-      "T1566_003",
       "phishing_via_service",
       "teams",
       "social_engineering"
     ],
+    "techniques": [
+      "T1566.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2899,16 +3566,21 @@ const HUNTS_DATA = [
   {
     "id": "H119",
     "category": "Flames",
-    "title": "An adversary is using PsExec or similar tools to laterally move via SMB administrative shares (C$, ADMIN$), indicated by service installation events on remote hosts and authenticated SMB connections from a single source to multiple destinations in a short timeframe.",
+    "title": "An adversary is using PsExec or similar tools to laterally move via SMB administ",
     "tactic": "Lateral Movement",
     "notes": "Hunt for Windows Event ID 7045 (new service installed) with service names matching PsExec patterns (PSEXESVC) or random-character names. Correlate with Sysmon Event ID 3 or firewall logs showing SMB (TCP 445) connections from a single host to multiple destinations. Monitor for Sysmon Event ID 17/18 (pipe created/connected) for PsExec's named pipe (\\\\.\\pipe\\PSEXESVC). Check Windows Security Event ID 5145 (network share object access) for ADMIN$ and C$ share access from non-admin workstations. Monitor for Impacket's atexec.py artifacts including cmd.exe spawned by services.exe with /C flags, and CrackMapExec/NetExec SMB execution patterns. Look for failed authentication attempts (Event ID 4625) across admin shares from a single source — this may indicate password spray preceding lateral movement.",
     "tags": [
       "lateral_movement",
-      "T1021_002",
       "smb",
       "admin_shares",
       "psexec"
     ],
+    "techniques": [
+      "T1021.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2920,16 +3592,21 @@ const HUNTS_DATA = [
   {
     "id": "H120",
     "category": "Flames",
-    "title": "An adversary is executing commands on remote hosts via WMI or DCOM, indicated by wmiprvse.exe spawning unexpected child processes or remote WMI connections targeting identity infrastructure such as Entra Connect servers.",
+    "title": "An adversary is executing commands on remote hosts via WMI or DCOM, indicated by",
     "tactic": "Lateral Movement",
     "notes": "Hunt for wmiprvse.exe spawning cmd.exe, PowerShell, or other execution engines (Sysmon Event ID 1). Correlate with network connections on RPC/DCOM ports (TCP 135, 49152-65535) from non-admin workstations. Check Windows Security Event ID 4648 (logon with explicit credentials) paired with WMI activity — this reveals the credential used for remote WMI execution. Monitor WMI activity logs (Microsoft-Windows-WMI-Activity/Operational) for Win32_Process Create method invocations, especially with encoded or obfuscated command lines (Impacket WmiExec pattern). Pay special attention to WMI connections targeting Entra Connect, ADFS, or PKI servers, as these indicate attempts to access identity synchronization credentials. Also monitor for WinRM (ports 5985/5986) activity from the same source hosts, as attackers often use WMI and WinRM interchangeably.",
     "tags": [
       "lateral_movement",
-      "T1021_003",
       "dcom",
       "wmi",
       "wmiexec"
     ],
+    "techniques": [
+      "T1021.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2941,18 +3618,23 @@ const HUNTS_DATA = [
   {
     "id": "H121",
     "category": "Flames",
-    "title": "An adversary is remotely creating scheduled tasks on domain controllers to execute NTDS.dit snapshot or credential harvesting operations, indicated by schtasks.exe or at.exe creating tasks under SYSTEM context on DC hostnames.",
+    "title": "An adversary is remotely creating scheduled tasks on domain controllers to execu",
     "tactic": "Execution",
     "notes": "Hunt for Windows Security Event ID 4698 (scheduled task created) on domain controllers, especially tasks executing ntdsutil.exe, vssadmin.exe, esentutl.exe, DiskShadow.exe, makecab.exe, or PowerShell scripts. Correlate with Event ID 4688 (process creation) showing schtasks.exe with /create /s flags targeting remote DC hostnames. Monitor for Event ID 4699 (scheduled task deleted) shortly after 4698 — attackers typically create, execute, and delete the task within minutes to minimize forensic artifacts. Check Task Scheduler Operational Log Event IDs 106 (task registered), 200 (action started), 201 (action completed) for the full execution timeline. NTDS harvesting chain: The attacker needs both ntds.dit AND the SYSTEM registry hive to decrypt credentials — hunt for ntdsutil \"ac i ntds\" \"ifm\" \"create full\" commands, or vssadmin \"create shadow /for=C:\" followed by copy operations targeting \\Windows\\NTDS\\ntds.dit and \\Windows\\System32\\config\\SYSTEM. Also monitor for esentutl.exe /y /vss (direct VSS-aware copy) and DiskShadow.exe script-based extraction. Look for Directory Service Event ID 1917 (ntds.dit backup notification) and makecab.exe compressing NTDS-related files for staging. Cross-reference with T1003.003 (NTDS credential dumping) — the scheduled task is the execution vehicle, but the objective is domain credential harvesting.",
     "tags": [
       "execution",
       "persistence",
-      "T1053_005",
-      "T1003_003",
       "scheduled_task",
       "domain_controller",
       "ntds"
     ],
+    "techniques": [
+      "T1003.003",
+      "T1053.005"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2964,17 +3646,22 @@ const HUNTS_DATA = [
   {
     "id": "H122",
     "category": "Flames",
-    "title": "An adversary is abusing Exchange mailbox permissions to gain broad access to organizational email, indicated by Add-MailboxPermission or ApplicationImpersonation role assignments granting a single account access to multiple mailboxes.",
+    "title": "An adversary is abusing Exchange mailbox permissions to gain broad access to org",
     "tactic": "Collection",
     "notes": "Exchange/On-Prem: Hunt in Exchange Admin Audit Logs and M365 Unified Audit Logs for Add-MailboxPermission cmdlet executions granting FullAccess to a non-standard delegate. Monitor for New-ManagementRoleAssignment operations adding ApplicationImpersonation roles — use `Get-ManagementRoleAssignment -Role ApplicationImpersonation -GetEffectiveUsers` to enumerate current holders. Also check Add-MailboxFolderPermission for subtler folder-level delegation grants. MailItemsAccessed (E5/E3): Hunt for MailItemsAccessed audit events showing a single account or service principal accessing messages across multiple mailboxes — this covers all protocols (EWS, MAPI, REST, POP, IMAP, ActiveSync). Note: throttling kicks in at 1,000+ events in 24 hours, which is itself an indicator of bulk collection. Graph API / OAuth abuse: Monitor for Entra ID app registrations or consent grants with Mail.Read or Mail.ReadWrite application-level permissions (not delegated). Hunt for service principals with full_access_as_app Exchange role — Midnight Blizzard used an abandoned OAuth app with this role to read employee mailboxes. Check CloudAppEvents for EWS or Graph API access from service principals that don't normally access mail. Look for remote PowerShell sessions to Exchange from unusual source IPs or through Impacket atexec.py execution chains.",
     "tags": [
       "collection",
-      "T1114_002",
       "email_collection",
       "exchange",
       "mailbox_delegation",
       "oauth"
     ],
+    "techniques": [
+      "T1114.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2986,16 +3673,21 @@ const HUNTS_DATA = [
   {
     "id": "H123",
     "category": "Flames",
-    "title": "An adversary has deployed a web shell on a public-facing web server (IIS, Exchange, Tomcat) for persistent command execution, indicated by w3wp.exe, tomcat.exe, or java.exe spawning cmd.exe, PowerShell, or other execution engines.",
+    "title": "An adversary has deployed a web shell on a public-facing web server (IIS, Exchan",
     "tactic": "Persistence",
     "notes": "Hunt for web server processes (w3wp.exe, httpd.exe, tomcat*.exe, java.exe) spawning cmd.exe, powershell.exe, certutil.exe, or whoami.exe using process creation logs (Sysmon Event ID 1, Windows Event ID 4688). Monitor for new file creation in web server directories (wwwroot, webapps, OWA/forms) with extensions .aspx, .asp, .jsp, .php. Use file integrity monitoring on Exchange and Tomcat application directories. Look for HTTP POST requests to newly created files with unusual response sizes.",
     "tags": [
       "persistence",
-      "T1505_003",
       "web_shell",
       "godzilla",
       "exchange"
     ],
+    "techniques": [
+      "T1505.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3007,16 +3699,21 @@ const HUNTS_DATA = [
   {
     "id": "H124",
     "category": "Flames",
-    "title": "An adversary is side-loading a malicious DLL (such as CRYPTBASE.dll) by placing it in the same directory as a legitimate signed executable, indicated by known-abused DLLs loading from user-writable paths rather than System32.",
+    "title": "An adversary is side-loading a malicious DLL (such as CRYPTBASE.dll) by placing ",
     "tactic": "Defense Evasion",
     "notes": "Hunt for Sysmon Event ID 7 (image loaded) where known-abused DLLs (CRYPTBASE.dll, VERSION.dll, dbghelp.dll, winmm.dll) load from user-writable paths (Downloads, AppData, ProgramData, Temp) instead of C:\\Windows\\System32. Cross-reference with HijackLibs for the full list of vulnerable DLL/application pairs. Monitor for unsigned DLLs loaded by signed executables in non-standard directories. Look for recently created DLL files co-located with legitimate portable executables.",
     "tags": [
       "defense_evasion",
-      "T1574_001",
       "dll_search_order_hijacking",
       "sideloading",
       "cryptbase"
     ],
+    "techniques": [
+      "T1574.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3028,16 +3725,21 @@ const HUNTS_DATA = [
   {
     "id": "H125",
     "category": "Flames",
-    "title": "An adversary is using InstallUtil.exe with the /u (uninstall) flag to proxy-execute a malicious .NET assembly from a Temp directory, bypassing application whitelisting controls.",
+    "title": "An adversary is using InstallUtil.exe with the /u (uninstall) flag to proxy-exec",
     "tactic": "Defense Evasion",
     "notes": "Hunt for InstallUtil.exe process creation (Sysmon Event ID 1) with the /u flag targeting DLL or EXE files in %TEMP%, %APPDATA%, or other user-writable directories. Monitor for InstallUtil.exe making outbound network connections (Sysmon Event ID 3) — legitimate installations rarely require network access. Correlate with preceding csc.exe compilations in Temp directories, which indicate dynamic .NET assembly generation before proxy execution. Look for InstallUtil.exe executed outside of software deployment windows. Also monitor .NET CLR ETW events (Microsoft-Windows-DotNETRuntime provider) for assembly loads triggered by InstallUtil from non-standard paths. Note that attackers may copy InstallUtil.exe to a different directory — hunt for any process calling System.Configuration.Install.ManagedInstallerClass from user-writable locations.",
     "tags": [
       "defense_evasion",
-      "T1218_004",
       "installutil",
       "lolbin",
       "proxy_execution"
     ],
+    "techniques": [
+      "T1218.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3049,16 +3751,21 @@ const HUNTS_DATA = [
   {
     "id": "H126",
     "category": "Flames",
-    "title": "An adversary is harvesting stored browser credentials by spawning headless Chrome or Edge instances with --no-sandbox flags from an unexpected parent process, indicating infostealer activity targeting browser password stores.",
+    "title": "An adversary is harvesting stored browser credentials by spawning headless Chrom",
     "tactic": "Credential Access",
     "notes": "Hunt for chrome.exe or msedge.exe process creation with --no-sandbox and --disable-gpu flags where the parent process is not explorer.exe, a browser updater, or a known browser launcher. The STXRAT case showed calc.exe spawning browsers — any non-browser parent should be investigated. Monitor for non-browser processes accessing Chrome \"Login Data\" or Edge \"Login Data\" SQLite databases in user profile directories. Look for temporary user-data-dir arguments pointing to randomly-named Temp subdirectories (e.g., AppData\\Local\\Temp\\{random}).",
     "tags": [
       "credential_access",
-      "T1555_003",
       "browser_credentials",
       "infostealer",
       "chrome"
     ],
+    "techniques": [
+      "T1555.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3070,17 +3777,22 @@ const HUNTS_DATA = [
   {
     "id": "H127",
     "category": "Flames",
-    "title": "An adversary is exfiltrating data using rclone tunneled through a local QEMU virtual machine to obscure the true source of network traffic, indicated by rclone serving a WebDAV share on localhost followed by QEMU VM network activity to external destinations.",
+    "title": "An adversary is exfiltrating data using rclone tunneled through a local QEMU vir",
     "tactic": "Exfiltration",
     "notes": "Hunt for rclone.exe process creation with \"serve webdav\" arguments, especially when exposing broad paths (C:\\) on localhost. Monitor for QEMU binaries (qemu-system-*.exe) executing from non-standard locations like ProgramData, particularly with user-mode networking (-nic user) and no display (-nographic -display none). Correlate rclone localhost listeners with QEMU outbound connections to identify the tunnel pattern. Look for PowerShell downloading rclone from downloads.rclone.org and QEMU images from bitbucket.org. Alert on sustained high-volume TLS connections from QEMU processes.",
     "tags": [
       "exfiltration",
-      "T1048_001",
       "rclone",
       "qemu",
       "data_exfiltration",
       "vm_tunnel"
     ],
+    "techniques": [
+      "T1048.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3092,16 +3804,21 @@ const HUNTS_DATA = [
   {
     "id": "H128",
     "category": "Flames",
-    "title": "An adversary is hooking credential APIs or injecting into browser processes to intercept authentication material in real-time, indicated by unexpected process injection into browser processes or anomalous credential store access patterns from non-browser parent processes.",
+    "title": "An adversary is hooking credential APIs or injecting into browser processes to i",
     "tactic": "Credential Access",
     "notes": "Hunt for Sysmon Event ID 8 (CreateRemoteThread) targeting browser processes (chrome.exe, msedge.exe, firefox.exe) where the source process is NOT a known legitimate injector. Critical: filter noise by excluding source processes signed by Microsoft, Google, Mozilla, and your EDR vendor — AV/EDR tools, accessibility software, and GPU drivers routinely inject into browsers. Focus on unsigned source processes or those running from Temp/AppData/ProgramData paths. Use Sysmon Event ID 10 (ProcessAccess) with GrantedAccess values of 0x1F0FFF (PROCESS_ALL_ACCESS) or 0x0040 (PROCESS_DUP_HANDLE) targeting browser processes from non-standard parents. Look specifically for calc.exe, notepad.exe, svchost.exe (non-standard service), or other LOLBins accessing DPAPI master keys (Windows Security Event ID 4692) or Chrome/Edge \"Login Data\" SQLite databases. Correlate with Sysmon Event ID 7 showing unsigned DLLs loaded into browser process space from Temp directories. The STXRAT case showed PureLogs injected into calc.exe — filter your CreateRemoteThread results by source process global prevalence to surface rare injectors.",
     "tags": [
       "credential_access",
-      "T1056_004",
       "api_hooking",
       "credential_interception",
       "process_injection"
     ],
+    "techniques": [
+      "T1056.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3113,17 +3830,22 @@ const HUNTS_DATA = [
   {
     "id": "H129",
     "category": "Flames",
-    "title": "An adversary is reflectively loading encrypted PE payloads directly into memory on Windows to avoid disk-based detection, indicated by PowerShell or .NET processes calling Assembly.Load, Reflection APIs, or VirtualAlloc+CreateThread sequences without corresponding DLL file writes to disk.",
+    "title": "An adversary is reflectively loading encrypted PE payloads directly into memory ",
     "tactic": "Defense Evasion",
     "notes": "Hunt for PowerShell Script Block Logging (Event ID 4104) containing Reflection.Assembly, Assembly.Load, [System.Reflection], or Invoke-Expression patterns with byte array arguments. The PhantomPulse PHANTOMPULL loader reflectively loaded an AES-256-CBC encrypted PE entirely in memory. Monitor .NET CLR ETW events (Microsoft-Windows-DotNETRuntime provider, keyword 0x8 for Loader events) for AssemblyLoad events where the assembly path is empty or points to a memory address — this indicates in-memory loading without a backing file. Look for Sysmon Event ID 7 (image loaded) where the loaded image is unsigned and has no corresponding file on disk. Hunt for processes with anomalously high private memory (WorkingSet) relative to their on-disk module list — a process loading large payloads in memory will show a significant gap between committed memory and loaded DLLs. Also monitor for VirtualAlloc/VirtualProtect API calls changing memory permissions to RWX (PAGE_EXECUTE_READWRITE) via ETW or EDR telemetry — this is required for executing reflectively loaded code.",
     "tags": [
       "defense_evasion",
-      "T1620",
       "reflective_loading",
       "memory_only",
       "fileless",
       "windows"
     ],
+    "techniques": [
+      "T1620"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3135,16 +3857,21 @@ const HUNTS_DATA = [
   {
     "id": "H130",
     "category": "Flames",
-    "title": "An adversary has manipulated the macOS TCC database to grant unauthorized privacy permissions (camera, microphone, AppleEvents, Full Disk Access) to a malicious process, indicated by sqlite3 operations targeting TCC.db or unexpected TCC directory renaming.",
+    "title": "An adversary has manipulated the macOS TCC database to grant unauthorized privac",
     "tactic": "Defense Evasion",
     "notes": "Hunt for sqlite3 process creation with arguments containing \"TCC.db\", \"TCC/TCC.db\", or the table name \"access\" — the injection command typically looks like `INSERT OR REPLACE INTO access VALUES('kTCCServiceAppleEvents', ...)`. Key service identifiers to watch for: kTCCServiceAppleEvents (Finder/app automation), kTCCServiceCamera, kTCCServiceMicrophone, kTCCServiceSystemPolicyAllFiles (Full Disk Access). Rename-inject-restore technique (Sapphire Sleet): Monitor ESF ES_EVENT_TYPE_NOTIFY_RENAME on both the user TCC directory (~/Library/Application Support/com.apple.TCC/) and system TCC directory (/Library/Application Support/com.apple.TCC/). The user-level TCC.db does NOT require root to modify but IS protected by FDA since Mojave — the rename trick bypasses FDA by moving the directory so tccd loses track, injecting via sqlite3, then restoring it. macOS 15.4+: Apple added ESF `tcc_modify` event type — use this for direct detection of TCC database changes. Note: this event may not fire when the database is modified via sqlite3 with root after a directory rename, so the rename detection remains critical. dscl home directory bypass (HM Surf / CVE-2024-44133): Hunt for `dscl . -change` commands modifying the NFSHomeDirectory attribute — attackers change the user's home directory, modify TCC-protected files at the real path, then change it back. Also hunt for `tccutil reset` process creation (resets all TCC permissions for a bundle ID). Unified Log: Query `log show --predicate 'subsystem == \"com.apple.TCC\"'` for permission checks, resets, and errors — unexpected permission grants without corresponding user consent prompts are indicators. Legitimate TCC grants come from user consent prompts or MDM PPPC profiles, never from direct sqlite3 modification.",
     "tags": [
       "defense_evasion",
-      "T1562_001",
       "tcc_bypass",
       "macos",
       "privacy_controls"
     ],
+    "techniques": [
+      "T1562.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3156,16 +3883,21 @@ const HUNTS_DATA = [
   {
     "id": "H131",
     "category": "Flames",
-    "title": "An adversary has installed a malicious Launch Daemon on macOS masquerading as a legitimate Apple or Google service, indicated by plist file creation in /Library/LaunchDaemons with non-Apple-signed binaries or suspicious naming patterns (com.google.webkit.service, com.apple.cli).",
+    "title": "An adversary has installed a malicious Launch Daemon on macOS masquerading as a ",
     "tactic": "Persistence",
     "notes": "Hunt for new plist file creation in /Library/LaunchDaemons/ using file creation events (es_event_create_t or Endpoint Security Framework). Cross-reference the ProgramArguments binary against code signing using `codesign -dvvv` — legitimate Apple daemons are signed by Apple, legitimate Google daemons by Google. The Sapphire Sleet campaign installed com.google.webkit.service.plist pointing to an unsigned backdoor. Monitor for launchctl load/bootstrap commands immediately following plist creation. Check for plists with RunAtLoad set to true pointing to unsigned or ad-hoc signed binaries. Inspect KeepAlive and StartInterval keys — persistent restart behavior is common in implants. Use `launchctl list` to enumerate loaded daemons and cross-reference against known-good baselines.",
     "tags": [
       "persistence",
-      "T1543_004",
       "launch_daemon",
       "macos",
       "masquerading"
     ],
+    "techniques": [
+      "T1543.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3177,10 +3909,14 @@ const HUNTS_DATA = [
   {
     "id": "H132",
     "category": "Flames",
-    "title": "An adversary is using cascading curl-to-osascript or curl-to-shell chains on macOS to download and immediately execute multi-stage payloads without writing intermediate files to disk, indicated by curl output piped directly to osascript, bash, or zsh.",
+    "title": "An adversary is using cascading curl-to-osascript or curl-to-shell chains on mac",
     "tactic": "Execution",
     "notes": "Hunt for process creation events where curl's output is piped to osascript, sh, bash, or zsh — this pattern appears in command-line arguments as \"curl ... \\",
     "tags": [],
+    "techniques": [],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "#execution #T1059_002 #applescript #curl_pipe #macos #fileless",
       "link": ""
@@ -3192,16 +3928,21 @@ const HUNTS_DATA = [
   {
     "id": "H133",
     "category": "Flames",
-    "title": "An adversary has established persistence on macOS by creating or modifying a Launch Agent plist in ~/Library/LaunchAgents/ that executes a hidden or unsigned binary on user login, indicated by plist file creation events followed by immediate launchctl load commands or login-triggered process execution from non-standard paths.",
+    "title": "An adversary has established persistence on macOS by creating or modifying a Lau",
     "tactic": "Persistence",
     "notes": "Hunt for new plist file creation in ~/Library/LaunchAgents/ using file creation monitoring (es_event_create_t, FSEvents, or Endpoint Security Framework). Cross-reference the ProgramArguments binary path against code signing using `codesign -dvvv` — legitimate agents are Apple-signed or from verified developers. The Sapphire Sleet campaign used ~/Library/LaunchAgents/ for user-level persistence pointing to binaries in hidden directories. The PhantomPulse campaign abused Obsidian's plugin system to load malicious code at application launch. Monitor for launchctl load/bootstrap commands executed shortly after plist creation. Check for plists with RunAtLoad set to true and KeepAlive enabled — this combination ensures the agent starts at login and restarts if killed, which is standard implant behavior. Flag agents with StandardOutPath/StandardErrorPath set to /dev/null (suppressing output). Also check for plists pointing to binaries in /tmp, /var/tmp, dot-prefixed hidden directories (e.g., ~/.hidden/), or user-writable locations outside /Applications.",
     "tags": [
       "persistence",
-      "T1543_001",
       "launch_agent",
       "plist",
       "macos"
     ],
+    "techniques": [
+      "T1543.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3213,16 +3954,21 @@ const HUNTS_DATA = [
   {
     "id": "H134",
     "category": "Flames",
-    "title": "An adversary is using environmental keying and pre-execution system checks to gate payload detonation, indicated by processes checking for the existence of specific legitimate applications (FindWindow, file existence checks), performing WMI hardware enumeration (Win32_ComputerSystem, Win32_BIOS), or using GetTickCount timing gates before executing a second-stage payload.",
+    "title": "An adversary is using environmental keying and pre-execution system checks to ga",
     "tactic": "Defense Evasion",
     "notes": "Hunt for processes performing multiple system property queries in rapid succession — WMI queries for Win32_ComputerSystem (Model, Manufacturer), Win32_BIOS, Win32_DiskDrive within a short time window from a single process. JanelaRAT checked for Magnifier.exe (magnify.exe) via FindWindow as a host-validation gate — hunt for processes calling FindWindow or CreateToolhelp32Snapshot targeting legitimate Windows accessibility or utility binaries (magnify.exe, narrator.exe, osk.exe) before payload execution. Monitor for GetTickCount/GetTickCount64 calls where the returned value is compared against a threshold (sandbox uptime < 10-20 minutes indicates analysis environment) — the PhantomPulse PHANTOMPULL loader used this before reflective loading. Look for registry queries to HKLM\\SYSTEM\\CurrentControlSet\\Services\\Disk\\Enum or HKLM\\HARDWARE\\DESCRIPTION\\System\\BIOS for VM vendor strings. Check for processes querying MAC address prefixes associated with VM vendors (00:0C:29, 00:50:56 for VMware; 08:00:27 for VirtualBox). Correlate: a process performing 3+ of these checks and then spawning a child process or loading a DLL is a strong detonation-gate pattern.",
     "tags": [
       "defense_evasion",
-      "T1497_001",
       "sandbox_evasion",
       "environmental_keying",
       "vm_detection"
     ],
+    "techniques": [
+      "T1497.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3234,17 +3980,22 @@ const HUNTS_DATA = [
   {
     "id": "H135",
     "category": "Flames",
-    "title": "An adversary is encrypting command-and-control traffic using custom or non-standard AES encryption with application-layer key derivation (MD5/SHA-based key generation from hardcoded strings), indicated by processes establishing persistent outbound connections with high-entropy payloads that do not match known TLS/SSL fingerprints.",
-    "tactic": "Command and Control",
+    "title": "An adversary is encrypting command-and-control traffic using custom or non-stand",
+    "tactic": "Command, Control",
     "notes": "Hunt for outbound network connections from non-browser processes where traffic lacks a valid TLS handshake (no ClientHello/ServerHello) but carries encrypted payloads. JanelaRAT used Rijndael (AES) encryption with MD5-derived keys from hardcoded strings to encrypt C2 traffic — this produces traffic without standard TLS negotiation. Network-side detection: Use Zeek or Suricata to flag TCP connections on common ports (80, 443, 8080) where the initial bytes do not match expected protocol signatures (no HTTP verbs, no TLS record headers). Monitor for regular beacon intervals (fixed or jittered check-in patterns) from non-browser processes — use connection metadata (duration, bytes sent/received ratio, interval regularity) rather than payload inspection. Look for connections to dynamic DNS providers (duckdns.org, no-ip.com, dynu.com) or IP-literal URLs over non-standard ports. Host-side detection: Hunt for .NET processes importing System.Security.Cryptography.RijndaelManaged or AesManaged alongside System.Net.Sockets — this combination in a non-standard application strongly suggests custom encrypted C2. Use Sysmon Event ID 3 to correlate network connections with process creation and identify unsigned binaries making persistent outbound connections.",
     "tags": [
       "command_and_control",
-      "T1573_001",
       "encrypted_channel",
       "aes",
       "custom_crypto",
       "c2"
     ],
+    "techniques": [
+      "T1573.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3256,17 +4007,22 @@ const HUNTS_DATA = [
   {
     "id": "H136",
     "category": "Flames",
-    "title": "An adversary is reflectively loading code into memory on macOS using NSCreateObjectFileImageFromMemory or custom Mach-O loaders to bypass Gatekeeper, file quarantine, and notarization, indicated by temporary files matching the NSCreateObjectFileImageFromMemory pattern or unsigned dylib loads from non-standard paths.",
+    "title": "An adversary is reflectively loading code into memory on macOS using NSCreateObj",
     "tactic": "Defense Evasion",
     "notes": "Key insight: On modern macOS (dyld3+), NSCreateObjectFileImageFromMemory no longer loads purely in memory — NSLinkModule now writes the payload to a temp file at `/private/var/folders/.../NSCreateObjectFileImageFromMemory-XXXXXXXX` before loading it via dlopen. Hunt for these temp files using file creation monitoring on /private/var/folders/ matching the NSCreateObjectFileImageFromMemory-* pattern — this is a high-fidelity indicator that catches the standard API path. The Sapphire Sleet campaign used these APIs to load the icloudz backdoor. For custom loaders (attackers using reimplemented loader code to bypass the temp file, as demonstrated by Patrick Wardle): Use ESF ES_EVENT_TYPE_NOTIFY_MMAP with PROT_EXEC on anonymous memory regions (no backing file). Filter noise by focusing on processes that receive network data (curl, osascript) followed by executable memory mapping without intervening file writes. Elastic Defend 8.11+ captures dylib load events with signature data — hunt for unsigned dylib loads from non-standard paths or memory-backed regions. Hardened runtime context: macOS restricts PROT_WRITE + PROT_EXEC without MAP_JIT and the `com.apple.security.cs.allow-jit` entitlement — processes without hardened runtime that map RWX memory are suspicious. On systems with dtrace, probe dyld_image_notifier for images loaded from anonymous memory regions (no backing file path).",
     "tags": [
       "defense_evasion",
-      "T1620",
       "reflective_loading",
       "macos",
       "fileless",
       "gatekeeper_bypass"
     ],
+    "techniques": [
+      "T1620"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3278,7 +4034,7 @@ const HUNTS_DATA = [
   {
     "id": "M001",
     "category": "Alchemy",
-    "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
+    "title": "A machine learning model can detect anomalies in user login patterns that indica",
     "tactic": "Initial Access",
     "notes": "Machine learning model trained on historical login data to identify deviations from normal behavior",
     "tags": [
@@ -3287,6 +4043,10 @@ const HUNTS_DATA = [
       "anomalydetection",
       "userbehavior"
     ],
+    "techniques": [],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://x.com/letswastetime"
@@ -3298,8 +4058,8 @@ const HUNTS_DATA = [
   {
     "id": "M002",
     "category": "Alchemy",
-    "title": "Beaconing behavior can be detected in encrypted DNS traffic patterns by applying machine learning models that identify anomalous, periodic communication indicative of command and control activity.",
-    "tactic": "Command and Control",
+    "title": "Beaconing behavior can be detected in encrypted DNS traffic patterns by applying",
+    "tactic": "Command, Control",
     "notes": "Encrypted DNS traffic (e.g., DoH) may be used to hide beaconing communications, making it harder to detect.",
     "tags": [
       "commandandcontrol",
@@ -3307,6 +4067,10 @@ const HUNTS_DATA = [
       "dns",
       "machinelearning"
     ],
+    "techniques": [],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://x.com/letswastetime"
@@ -3318,13 +4082,17 @@ const HUNTS_DATA = [
   {
     "id": "M003",
     "category": "Alchemy",
-    "title": "Machine learning models can identify anomalies with user or systems initiating outbound traffic with unusually large byte sizes that may indicate potential data exfiltration activity.",
+    "title": "Machine learning models can identify anomalies with user or systems initiating o",
     "tactic": "Exfiltration",
     "notes": "Unusual Byte Size: Outbound packets significantly larger than the typical size associated with normal business transactions.",
     "tags": [
       "exfiltration",
       "machinelearning"
     ],
+    "techniques": [],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "John Grageda",
       "link": "https://www.linkedin.com/in/johngrageda/"
@@ -3336,13 +4104,17 @@ const HUNTS_DATA = [
   {
     "id": "M004",
     "category": "Alchemy",
-    "title": "Machine learning models can identify database query anomalies indicating potential data manipulation or exfiltration activity.",
+    "title": "Machine learning models can identify database query anomalies indicating potenti",
     "tactic": "Impact",
     "notes": "If a user or system executes an unusually high number of data modification queries (e.gl, INSERT, UPDATE, DELETE) within a short timeframe, particularly in sensitive databases, it may indicate potential data manipulation or exfiltration activities.",
     "tags": [
       "impact",
       "machinelearning"
     ],
+    "techniques": [],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "John Grageda",
       "link": "https://www.linkedin.com/in/johngrageda/"
@@ -3354,13 +4126,17 @@ const HUNTS_DATA = [
   {
     "id": "M005",
     "category": "Alchemy",
-    "title": "Machine learning models can detect command-line obfuscation via Base64 encoding, which adversaries may use to evade detection.",
+    "title": "Machine learning models can detect command-line obfuscation via Base64 encoding,",
     "tactic": "Defense Evasion",
     "notes": "Adversaries can use Base64 encoded commands and scripts in a variety of interpreters, such as PowerShell, Windows Command Shell, and Bash.",
     "tags": [
-      "DefenseEvasion",
-      "Obfuscation"
+      "defenseevasion",
+      "obfuscation"
     ],
+    "techniques": [],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Audra Streetman",
       "link": "https://x.com/audrastreetman"
@@ -3372,14 +4148,20 @@ const HUNTS_DATA = [
   {
     "id": "M006",
     "category": "Alchemy",
-    "title": "Dictionary-based DGAs are a rare threat that require a model-based approach. These domains are algorithmically generated based on a dictionary of source words. Like traditional Domain Generation Algorithms, machine learning models can distinguish DGA / Non-DGA domains by training on sample data to learn on lexical features separating the classes.",
-    "tactic": "Command and Control",
+    "title": "Dictionary-based DGAs are a rare threat that require a model-based approach. The",
+    "tactic": "Command, Control",
     "notes": "<ul><li>Deploying a model-based detection against a high-volume logging source like web traffic can be costly and resource-intensive. For this task, I recommend a retroactive hunt using a deduplicated list of domains, enabling a quick and efficient M-ATH method for finding threats, or at least reducing our dataset for hunting.</br><li>This is an evolving research area. Efficacy of a model may be heavily tied to the timeliness of the data, or the inclusion of the target malware family in the underlying training set.</br><li>Sample data and pre-trained models are available for this hunt, however it is also possible to generate new data by modifying the reverse-engineered DGA algorithms [here](https://github.com/baderj/domain_generation_algorithms).</br><li>False positives may be caused by Content Delivery Networks, Ad-tracking mechanisms.",
     "tags": [
-      "CommandandControl",
-      "T1568.002",
-      "DGA"
+      "commandandcontrol",
+      "t1568_002",
+      "dga"
     ],
+    "techniques": [
+      "T1568.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Ryan Fetterman",
       "link": "https://github.com/fetterm4n"
@@ -3391,13 +4173,17 @@ const HUNTS_DATA = [
   {
     "id": "M007",
     "category": "Alchemy",
-    "title": "Compare text-based features of artifacts (User agent strings, Malware / Executables, Browser Extensions) by encoding them with a text-vectorizer. Vectorization creates a numerical representation of the text-based feature which can then be clustered, or directly compared via a variety of similarity measures.",
-    "tactic": "Command and Control, Execution",
+    "title": "Compare text-based features of artifacts (User agent strings, Malware / Executab",
+    "tactic": "Command, Control, Execution",
     "notes": "<ul><li>Data Collection and Preparation: Gather and encode data into numerical formats to support analysis (e.g., text vectorization or image hashing).</br><li>Similarity Analysis: Use similarity metrics (e.g., Levenshtein, cosine, or hash-based) to find related patterns or anomalies.</br><li>Clustering: Apply clustering (e.g., K-means) to group similar items, visualizing patterns and outliers.</br><li>Prioritization and Investigation: Flag clusters or anomalies for deeper analysis, focusing on items of interest or risk.",
-    "tags": [
+    "tags": [],
+    "techniques": [
       "T1071.001",
       "T1203"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Ryan Fetterman",
       "link": "https://github.com/fetterm4n"
@@ -3409,7 +4195,7 @@ const HUNTS_DATA = [
   {
     "id": "M008",
     "category": "Alchemy",
-    "title": "Cluster process parent-child execution chains across the endpoint fleet to establish baseline lineage frequency, then identify rare or never-seen process trees that deviate from the norm to detect living-off-the-land abuse, novel malware execution, and compromised applications.",
+    "title": "Cluster process parent-child execution chains across the endpoint fleet to estab",
     "tactic": "Execution",
     "notes": "Build frequency counts of parent→child process pairs across the fleet over a baseline period. Pairs seen on less than 1% of endpoints or appearing for the first time are flagged for review. Effective across multiple ATT&CK tactics since most attack chains produce abnormal process trees regardless of the specific technique used.",
     "tags": [
@@ -3418,10 +4204,15 @@ const HUNTS_DATA = [
       "model_assisted",
       "process_lineage",
       "clustering",
-      "anomaly_detection",
+      "anomaly_detection"
+    ],
+    "techniques": [
       "T1059",
       "T1218"
     ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -3433,21 +4224,26 @@ const HUNTS_DATA = [
   {
     "id": "M014",
     "category": "Alchemy",
-    "title": "An adversary is deploying malicious npm packages with embedded MCPInject modules targeting developer environments to compromise AI coding assistants and exfiltrate LLM API keys, secrets, and cryptocurrency wallet data.",
+    "title": "An adversary is deploying malicious npm packages with embedded MCPInject modules",
     "tactic": "Initial Access",
     "notes": "SANDWORM_MODE campaign; 19 malicious npm packages; MCPInject targets MCP servers; self-propagating worm; AI coding tools as pivot points",
     "tags": [
       "initial_access",
       "collection",
       "credential_access",
-      "T1195_002",
-      "T1119",
-      "T1555",
       "npm",
       "mcp",
       "supply_chain",
       "ai_coding_assistant"
     ],
+    "techniques": [
+      "T1195.002",
+      "T1119",
+      "T1555"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -3459,18 +4255,23 @@ const HUNTS_DATA = [
   {
     "id": "M015",
     "category": "Alchemy",
-    "title": "A machine learning model can detect software downloads from potentially malicious domains by scoring download source domains against features such as domain registration age, lexical similarity to known vendor names, TLS certificate age, and historical query volume to flag trojanized installer delivery via SEO poisoning or malvertising.",
+    "title": "A machine learning model can detect software downloads from potentially maliciou",
     "tactic": "Initial Access",
     "notes": "Build a classifier using web proxy or DNS logs enriched with WHOIS/domain registration data. Key features: domain age (newly registered domains < 30 days), Levenshtein distance to known vendor domains (manageengine.com, putty.org, anydesk.com), TLS certificate issuance date, historical DNS query volume in the environment (never-before-seen domains), and whether the referrer was a search engine results page. Training data can combine known-good vendor download domains with threat intel feeds of confirmed malicious download sites.",
     "tags": [
       "initial_access",
       "model_assisted",
-      "T1189",
       "seo_poisoning",
       "malvertising",
       "domain_scoring",
       "anomaly_detection"
     ],
+    "techniques": [
+      "T1189"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"

@@ -30,94 +30,42 @@ SUBMITTER_MAP = {
 }
 
 
-def parse_submitter(raw):
-    """Extract name and link from markdown link syntax, then normalize."""
-    # Try markdown link first
-    match = re.match(r'\[([^\]]+)\]\(([^)]+)\)', raw)
-    if match:
-        name, link = match.group(1), match.group(2)
-        # Check if the extracted name has a canonical override
-        if name in SUBMITTER_MAP:
-            override = SUBMITTER_MAP[name]
-            if override is None:
-                return None
-            return override
-        return {"name": name, "link": link}
-
-    stripped = raw.strip()
-    if stripped in SUBMITTER_MAP:
-        override = SUBMITTER_MAP[stripped]
-        if override is None:
-            return None
-        return override
-    return {"name": stripped, "link": ""}
-
-
-def parse_tags(raw):
-    """Extract tags from #tag format."""
-    return [t.strip().lstrip('#').replace('-', '_') for t in re.findall(r'#[\w\-\.]+', raw)]
-
-
-def extract_section(content, header):
-    """Extract content under a ## header."""
-    pattern = rf'^## {header}\s*\n(.*?)(?=^## |\Z)'
-    match = re.search(pattern, content, re.MULTILINE | re.DOTALL)
-    return match.group(1).strip() if match else ""
-
-
 def parse_hunt_file(path, category):
-    """Parse a single hunt markdown file."""
-    content = path.read_text(encoding='utf-8')
-    hunt_id = path.stem
+    """Delegate to scripts.hunt_parser; reshape for frontend consumption."""
+    from scripts.hunt_parser import parse_hunt_file as _parse
 
-    if hunt_id.lower() == 'secret':
+    parsed = _parse(path, category)
+    if parsed["id"].lower() == "secret":
         return None
 
-    lines = content.split('\n')
-
-    # Find table data row (skip header + separator)
-    table_start = None
-    for i, line in enumerate(lines):
-        if '|' in line and ('Hunt #' in line or 'Hunt#' in line or 'Idea' in line):
-            table_start = i
-            break
-
-    if table_start is None:
-        # Try finding any table-like structure
-        for i, line in enumerate(lines):
-            if line.startswith('|') and '---' not in line:
-                table_start = i
-                break
-
-    cells = ['', '', '', '', '', '']
-    if table_start is not None:
-        data_row_idx = table_start + 2
-        if data_row_idx < len(lines):
-            raw_cells = [c.strip() for c in lines[data_row_idx].split('|') if c.strip()]
-            for j, c in enumerate(raw_cells[:6]):
-                cells[j] = c
-
-    title = re.sub(r'\*\*', '', cells[1]).strip() if cells[1] else ""
-    # Fallback: use first non-header, non-empty line
-    if not title:
-        for line in lines:
-            line = line.strip()
-            if line and not line.startswith('#') and not line.startswith('|'):
-                title = line
-                break
-
+    submitter = parse_submitter_from_dict(parsed["submitter"])
     return {
-        "id": cells[0].strip() or hunt_id,
+        "id": parsed["id"],
         "category": category,
-        "title": title,
-        "tactic": re.sub(r'\*\*', '', cells[2]).strip(),
-        "notes": re.sub(r'\*\*', '', cells[3]).strip(),
-        "tags": parse_tags(cells[4]),
-        "submitter": parse_submitter(cells[5]) or {"name": "Anonymous", "link": ""},
-        "why": extract_section(content, 'Why'),
-        "references": extract_section(content, 'References'),
-        "file_path": f"{category}/{path.name}"
+        "title": parsed.get("title") or parsed["hypothesis"],
+        "tactic": ", ".join(parsed.get("tactics", [])),
+        "notes": parsed.get("notes", ""),
+        "tags": parsed.get("tags", []),
+        "techniques": parsed.get("techniques", []),
+        "severity": parsed.get("severity"),
+        "status": parsed.get("status", "current"),
+        "related_hunt_ids": parsed.get("related_hunt_ids", []),
+        "submitter": submitter,
+        "why": parsed["why"],
+        "references": parsed["references"],
+        "file_path": parsed["file_path"],
     }
+
+
+def parse_submitter_from_dict(submitter):
+    """Apply SUBMITTER_MAP normalization to a {name, link} dict."""
+    name = submitter.get("name", "").strip()
+    if name in SUBMITTER_MAP:
+        override = SUBMITTER_MAP[name]
+        if override is None:
+            return {"name": "Anonymous", "link": ""}
+        return override
+    return {"name": name or "Anonymous", "link": submitter.get("link", "")}
 
 
 def main():
