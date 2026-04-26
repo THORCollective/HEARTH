@@ -6,6 +6,8 @@ must carry. Used by the parser at runtime and by the validator in CI.
 """
 from __future__ import annotations
 
+from jsonschema import Draft202012Validator, FormatChecker
+
 CATEGORIES = ("Flames", "Embers", "Alchemy")
 SEVERITIES = ("critical", "high", "medium", "low", "informational")
 STATUSES = ("current", "stale", "retired")
@@ -32,10 +34,12 @@ HUNT_SCHEMA: dict = {
         },
         "techniques": {
             "type": "array",
+            "minItems": 1,
             "items": {"type": "string", "pattern": r"^T\d{4}(\.\d{3})?$"},
         },
         "tags": {
             "type": "array",
+            "minItems": 1,
             "items": {"type": "string", "pattern": r"^[a-z0-9_]+$"},
         },
         "submitter": {
@@ -53,10 +57,12 @@ HUNT_SCHEMA: dict = {
         "last_reviewed": {"type": "string", "format": "date"},
         "related_hunt_ids": {
             "type": "array",
+            "minItems": 1,
             "items": {"type": "string", "pattern": r"^[HBM]\d{3,}$"},
         },
         "required_data_sources": {
             "type": "array",
+            "minItems": 1,
             "items": {"type": "string"},
         },
         "false_positive_notes": {"type": "string"},
@@ -77,14 +83,13 @@ HUNT_SCHEMA: dict = {
     },
 }
 
+_VALIDATOR = Draft202012Validator(HUNT_SCHEMA, format_checker=FormatChecker())
+
 
 def validate_hunt(data: dict) -> list[str]:
     """Return a list of human-readable validation errors (empty if valid)."""
-    from jsonschema import Draft202012Validator, FormatChecker
-
-    validator = Draft202012Validator(HUNT_SCHEMA, format_checker=FormatChecker())
     errors = []
-    for err in sorted(validator.iter_errors(data), key=lambda e: list(e.path)):
+    for err in sorted(_VALIDATOR.iter_errors(data), key=lambda e: list(e.path)):
         path = ".".join(str(p) for p in err.path) or "<root>"
         errors.append(f"{path}: {err.message}")
     return errors
