@@ -21,6 +21,9 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
       - name: Run script to update hunt data
         run: python3 scripts/rebuild_hunts_data.py
 

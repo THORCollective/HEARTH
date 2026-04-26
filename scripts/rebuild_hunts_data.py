@@ -5,7 +5,12 @@ No external dependencies — pure stdlib.
 """
 import json
 import re
+import sys
 from pathlib import Path
+
+_REPO_ROOT = str(Path(__file__).resolve().parent.parent)
+if _REPO_ROOT not in sys.path:
+    sys.path.insert(0, _REPO_ROOT)
 
 
 # Canonical submitter names — coalesce duplicates and add links

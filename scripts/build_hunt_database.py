@@ -19,6 +19,10 @@ from datetime import datetime
 import sys
 import hashlib
 
+_REPO_ROOT = str(Path(__file__).resolve().parent.parent)
+if _REPO_ROOT not in sys.path:
+    sys.path.insert(0, _REPO_ROOT)
+
 
 def get_file_hash(filepath):
     """Calculate MD5 hash of file content to detect changes."""
@@ -26,7 +30,7 @@ def get_file_hash(filepath):
         return hashlib.md5(f.read()).hexdigest()
 
 
-def extract_hunt_info(content, filepath):
+def extract_hunt_info(filepath):
     """Adapter that delegates to scripts.hunt_parser for unified parsing."""
     from scripts.hunt_parser import parse_hunt_file
 
@@ -158,8 +162,7 @@ def scan_and_update_hunts(conn, hunt_directories, verbose=True):
                     if verbose:
                         print(f"  🔄 Updating {hunt_file.name}...")
 
-                    content = hunt_file.read_text()
-                    hunt_info = extract_hunt_info(content, str(hunt_file))
+                    hunt_info = extract_hunt_info(str(hunt_file))
 
                     created_date, last_modified = get_git_dates(hunt_file)
 
@@ -188,8 +191,7 @@ def scan_and_update_hunts(conn, hunt_directories, verbose=True):
                     if verbose:
                         print(f"  ✅ Adding {hunt_file.name}...")
 
-                    content = hunt_file.read_text()
-                    hunt_info = extract_hunt_info(content, str(hunt_file))
+                    hunt_info = extract_hunt_info(str(hunt_file))
 
                     created_date, last_modified = get_git_dates(hunt_file)
 

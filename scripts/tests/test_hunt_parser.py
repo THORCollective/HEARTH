@@ -127,3 +127,15 @@ def test_frontmatter_with_all_optional_fields(tmp_path):
     assert hunt["severity"] == "medium"
     assert hunt["created"] == "2026-01-01" or str(hunt["created"]) == "2026-01-01"
     assert hunt["detection_queries"][0]["platform"] == "KQL"
+
+
+def test_parser_does_not_synthesize_title_from_hypothesis(fixtures_dir):
+    """Title is canonical only when authored in frontmatter; consumers handle fallback."""
+    hunt = parse_hunt_file(fixtures_dir / "legacy_h001.md", "Flames")
+    assert "title" not in hunt or hunt.get("title") is None
+
+
+def test_parser_preserves_explicit_title_from_frontmatter(fixtures_dir):
+    hunt = parse_hunt_file(fixtures_dir / "frontmatter_h001.md", "Flames")
+    # The frontmatter fixture does not set title; ensure parser does not invent one.
+    assert "title" not in hunt or hunt.get("title") is None

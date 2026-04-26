@@ -13,6 +13,11 @@ import warnings
 from pathlib import Path
 from typing import Any
 
+import sys as _sys
+_REPO_ROOT = str(Path(__file__).resolve().parent.parent)
+if _REPO_ROOT not in _sys.path:
+    _sys.path.insert(0, _REPO_ROOT)
+
 import frontmatter
 
 from scripts.hunt_schema import validate_hunt
@@ -149,9 +154,8 @@ def parse_hunt_file(path: str | Path, category: str) -> dict[str, Any]:
         data = _parse_legacy_table(raw, hunt_id=path.stem, category=category)
         body = raw
 
-    hypothesis = data.get("hypothesis", "").strip()
-    if hypothesis:
-        data.setdefault("title", hypothesis[:80])
+    # Title is canonical only when authored explicitly in frontmatter.
+    # Consumers are responsible for fallback display logic.
     data["why"] = _extract_section(body, "Why")
     data["references"] = _extract_section(body, "References")
     data["file_path"] = f"{category}/{path.name}"
