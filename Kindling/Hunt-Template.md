@@ -1,30 +1,54 @@
-# [H/B/M][Unique Hunt Number]
+---
+id: H000   # Replace with next available ID. H = Flames, B = Embers, M = Alchemy.
+category: Flames   # One of: Flames, Embers, Alchemy
+hypothesis: >-
+  Brief one-sentence description of the adversary behavior you suspect.
+tactics:
+  - Persistence   # Canonical MITRE ATT&CK tactic name(s)
+techniques:
+  - T1547.001    # Optional: MITRE technique IDs in dot notation
+tags:
+  - persistence  # Lowercase, no `#`, underscores instead of dashes
+  - registry
+submitter:
+  name: Your Name
+  link: https://github.com/your-handle  # Optional
+# Optional fields below — fill in if you have the info, otherwise omit.
+# severity: medium                 # critical | high | medium | low | informational
+# status: current                  # current | stale | retired (default: current)
+# related_hunt_ids: [H012, B003]
+# required_data_sources:
+#   - Sysmon EventID 13 (RegistryEvent)
+# false_positive_notes: |
+#   Common admin tooling can trip this; baseline against known scheduled tasks.
+# detection_queries:
+#   - platform: KQL
+#     description: Suspicious Run-key writes
+#     query: |
+#       DeviceRegistryEvents
+#       | where RegistryKey contains "CurrentVersion\\Run"
+---
 
-[Provide a brief description of the adversary’s potential actions, explaining what behavior or activity you suspect.]
+# H000 — Short Hunt Title
 
-| **Hunt #**       | **Hypothesis**                                                                                     | **Tactic**            | **Notes**                                 | **Tags**                                | **Submitter**      |  
-|------------------|----------------------------------------------------------------------------------------------------|-----------------------|-------------------------------------------|-----------------------------------------|--------------------|
-| [H/B/M][Number]   | [Describe what the adversary might be trying to accomplish, e.g., accessing sensitive files, escalating privileges, etc.] | [Relevant MITRE ATT&CK tactic (e.g., Persistence, Defense Evasion)] | [Notes on limitations, assumptions, or details about the systems in question] | #[Tactic] #[Keywords related to the activity] | [Submitter’s name or handle] |
+## Why
 
-## Why  
+- Why this hunt matters: risks, business impact, threat actor relevance.
+- Potential consequences if the behavior is found.
+- Connection to known campaigns or critical assets.
 
-- [Explain why this hypothesis is important. What risks does this behavior pose to the organization?]
-- [Discuss potential consequences if the hypothesis is proven true, e.g., what could a successful attack lead to?]
-- [Mention if this hypothesis connects to larger campaigns or targets high-value assets.]
+## Next Steps
 
-## Next Steps  
+- What data, queries, or follow-up validation is needed.
 
-- [Outline the next steps required to complete the investigation or further develop this hypothesis.]
-- [Mention any additional data sources, tools, or queries that could help validate or refine this hypothesis.]
+## References
 
-## References  
-
-- [Include any relevant MITRE ATT&CK links or other references that support the hypothesis.]
-- [Link to articles, reports, or blogs that provide further context or background information.]
+- https://attack.mitre.org/techniques/T1547/001/
+- Add report / blog / writeup links here.
 
 ---
 
-### Hunt Types:
-- **H (Hypothesis-Driven)**: Based on assumptions about adversary behavior or specific activities.
-- **B (Baseline)**: Focused on identifying deviations from typical behavior.
-- **M (Model-Assisted)**: Hunts driven by models like anomaly detection or machine learning.
+### Hunt Types
+- **H (Flames)**: Hypothesis-driven hunts.
+- **B (Embers)**: Baselining and exploration.
+- **M (Alchemy)**: Model-assisted detection.
