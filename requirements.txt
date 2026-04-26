@@ -24,3 +24,4 @@ jsonschema==4.23.0
 
 # Optional: For local GitHub Actions testing
 # act (install via brew or binary, not pip)
+pytest==8.3.3
