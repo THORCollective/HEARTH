@@ -7,6 +7,7 @@ format during the transition period — emits a DeprecationWarning when it does.
 """
 from __future__ import annotations
 
+import datetime as _dt
 import re
 import warnings
 from pathlib import Path
@@ -40,14 +41,24 @@ def _normalize_techniques(text: str) -> list[str]:
 
 
 def _normalize_tags(text: str) -> list[str]:
-    raw = _TAG_RE.findall(text)
+    """Extract hashtags including multi-word ones (#Defense Evasion → defense_evasion).
+
+    Splits on '#' rather than regex-matching, so spaces inside a tag are
+    preserved up to the next '#' or end of input.
+    """
     out: list[str] = []
     seen: set[str] = set()
-    for t in raw:
-        if _TECHNIQUE_RE.fullmatch(t):
+    parts = text.split("#")
+    for raw in parts[1:]:  # skip leading text before first '#'
+        tag = raw.strip()
+        if not tag:
+            continue
+        if _TECHNIQUE_RE.fullmatch(tag.replace(" ", "")):
             continue  # techniques live in their own field
-        norm = t.lower().replace("-", "_").replace(".", "_")
-        if norm not in seen:
+        norm = re.sub(r"\s+", "_", tag.strip().lower())
+        norm = norm.replace("-", "_").replace(".", "_")
+        norm = re.sub(r"[^a-z0-9_]", "", norm)
+        if norm and norm not in seen:
             seen.add(norm)
             out.append(norm)
     return out
@@ -73,7 +84,12 @@ def _parse_legacy_table(content: str, hunt_id: str, category: str) -> dict[str, 
             break
     cells: list[str] = ["", "", "", "", "", ""]
     if table_start is not None and table_start + 2 < len(lines):
-        raw = [c.strip() for c in lines[table_start + 2].split("|") if c.strip()]
+        parts = lines[table_start + 2].split("|")
+        if parts and parts[0].strip() == "":
+            parts = parts[1:]
+        if parts and parts[-1].strip() == "":
+            parts = parts[:-1]
+        raw = [c.strip() for c in parts]
         for j, c in enumerate(raw[:6]):
             cells[j] = c
 
@@ -111,6 +127,11 @@ def parse_hunt_file(path: str | Path, category: str) -> dict[str, Any]:
 
     if post.metadata:
         data = dict(post.metadata)
+        # Coerce date/datetime metadata to ISO strings for schema validation
+        # (PyYAML auto-parses ISO dates into datetime.date objects).
+        for k, v in list(data.items()):
+            if isinstance(v, (_dt.date, _dt.datetime)):
+                data[k] = v.isoformat()
         data.setdefault("category", category)
         errors = validate_hunt(data)
         if errors:
@@ -128,7 +149,9 @@ def parse_hunt_file(path: str | Path, category: str) -> dict[str, Any]:
         data = _parse_legacy_table(raw, hunt_id=path.stem, category=category)
         body = raw
 
-    data.setdefault("title", data.get("hypothesis", "")[:80])
+    hypothesis = data.get("hypothesis", "").strip()
+    if hypothesis:
+        data.setdefault("title", hypothesis[:80])
     data["why"] = _extract_section(body, "Why")
     data["references"] = _extract_section(body, "References")
     data["file_path"] = f"{category}/{path.name}"
