@@ -23,6 +23,8 @@ _REPO_ROOT = str(Path(__file__).resolve().parent.parent)
 if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
 
+from scripts.migrate_to_frontmatter import SKIP_FILENAMES
+
 
 def get_file_hash(filepath):
     """Calculate MD5 hash of file content to detect changes."""
@@ -140,6 +142,8 @@ def scan_and_update_hunts(conn, hunt_directories, verbose=True):
             print(f"📁 Scanning {directory_name}/ ({len(hunt_files)} files)...")
 
         for hunt_file in hunt_files:
+            if hunt_file.name in SKIP_FILENAMES:
+                continue
             try:
                 # Calculate current file hash
                 current_hash = get_file_hash(hunt_file)
