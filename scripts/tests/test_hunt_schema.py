@@ -32,9 +32,14 @@ def test_minimal_valid_hunt_has_no_errors():
 
 def test_missing_required_fields_reported():
     errors = validate_hunt({})
-    joined = "\n".join(errors)
+    paths = {e.split(":", 1)[0] for e in errors}
+    # Required-field errors all live at <root> in jsonschema's reporting.
+    root_messages = [e.split(": ", 1)[1] for e in errors if e.startswith("<root>:")]
     for field in ("id", "category", "hypothesis", "tactics", "tags", "submitter"):
-        assert field in joined
+        assert any(f"'{field}' is a required property" in m for m in root_messages), (
+            f"missing required-field error for {field}; got: {errors}"
+        )
+    assert paths == {"<root>"}, f"unexpected non-root errors: {errors}"
 
 
 def test_bad_id_pattern_rejected():
@@ -93,3 +98,41 @@ def test_anonymous_submitter_with_empty_link_allowed():
     hunt = _valid_hunt()
     hunt["submitter"] = {"name": "Anonymous", "link": ""}
     assert validate_hunt(hunt) == []
+
+
+def test_frontmatter_fixture_is_schema_valid(fixtures_dir):
+    """The canonical 'after' fixture must parse and validate cleanly — this is
+    the contract every migrated hunt file is expected to satisfy."""
+    import frontmatter
+
+    post = frontmatter.load(fixtures_dir / "frontmatter_h001.md")
+    errors = validate_hunt(dict(post.metadata))
+    assert errors == [], errors
+
+
+def test_invalid_severity_rejected():
+    hunt = _valid_hunt()
+    hunt["severity"] = "scary"
+    errors = validate_hunt(hunt)
+    assert any("severity" in e for e in errors)
+
+
+def test_invalid_status_rejected():
+    hunt = _valid_hunt()
+    hunt["status"] = "deprecated"
+    errors = validate_hunt(hunt)
+    assert any("status" in e for e in errors)
+
+
+def test_b_and_m_id_prefixes_accepted():
+    for hunt_id in ("B016", "M015"):
+        hunt = _valid_hunt()
+        hunt["id"] = hunt_id
+        assert validate_hunt(hunt) == [], f"{hunt_id} should be valid"
+
+
+def test_short_hypothesis_rejected():
+    hunt = _valid_hunt()
+    hunt["hypothesis"] = "too short"  # under 10 chars
+    errors = validate_hunt(hunt)
+    assert any("hypothesis" in e for e in errors)

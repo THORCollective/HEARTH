@@ -1,3 +1,5 @@
+<!-- Frozen snapshot of Flames/H001.md as of commit ef04f6e — used as legacy-format input for parser tests. Do not edit unless intentionally updating the snapshot. -->
+
 # H001
 An adversary is attempting to brute force the admin account on the externally facing VPN gateway.
 
