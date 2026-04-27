@@ -4040,6 +4040,148 @@ const HUNTS_DATA = [
     "file_path": "Flames/H136.md"
   },
   {
+    "id": "H137",
+    "category": "Flames",
+    "title": "An adversary has chained a server-side request forgery (SSRF) vulnerability in a GCP-hosted web application with the GCP Instance Metadata Service (IMDS) to exfiltrate the underlying VM's service account access token, indicated by IMDS requests to /computeMetadata/v1/instance/service-accounts/default/token originating from a workload process (Node.js, Python, Java app server) rather than the GCE metadata SDK.",
+    "tactic": "Credential Access",
+    "notes": "Platform: GCP (IaaS). The Unit 42 \"Zealot\" autonomous agent reproduced this classic chain end-to-end against a vulnerable web app on port 3000 — the same chain used in the 2019 Capital One breach (AWS) and the December 2025 GCP misconfiguration campaigns. Detection data sources: VPC Flow Logs (look for traffic to 169.254.169.254 from non-system processes), GCP audit logs (data_access.googleapis.com is silent for IMDS calls — they happen entirely on the VM), and host-side endpoint telemetry on the GCE instance itself. Host-side hunt: process executing outbound HTTP GET to 169.254.169.254 with `Metadata-Flavor: Google` header, where the process is the application server (node, java, python, php-fpm) rather than the gcloud SDK or google-cloud-ops-agent. Use osquery or GCP Ops Agent to capture process_open_sockets joined with processes table. Cortex XDR / XSIAM has a managed BIOC alert: \"Cloud Unusual Instance Metadata Service (IMDS) access.\" Defender for Cloud equivalent: CloudAppEvents where ActionType == \"InstanceMetadataServiceAccessed\" and the calling service principal is a workload identity. Network-side hunt: any non-trivial volume of 169.254.169.254 traffic from web-tier subnets is suspicious — IMDS is normally called once per token refresh (~3600s). Focus on workload service accounts that have broader-than-necessary IAM bindings (storage.admin, bigquery.dataOwner) since those are the high-value SSRF targets. Cross-reference with T1190 (Exploit Public-Facing Application) for the SSRF root cause and T1078.004 (Valid Accounts: Cloud Accounts) for the post-token-theft activity that follows.",
+    "tags": [
+      "credential_access",
+      "gcp",
+      "imds",
+      "cloud",
+      "ssrf",
+      "service_account"
+    ],
+    "techniques": [
+      "T1552.005"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- The Unit 42 Zealot multi-agent system demonstrated end-to-end automation of the SSRF→IMDS→service-account-token→cloud-data-exfil chain against GCP, and the same fundamental chain has produced multiple high-impact breaches (Capital One 2019 on AWS, multiple GCP incidents in 2025–2026) — the technique is now both reliably automatable and actively exploited\n- IMDS access is invisible in GCP audit logs because the call never touches a GCP API endpoint — it's intercepted by the hypervisor at the link-local address — meaning detection has to come from VPC Flow Logs, host-side telemetry, or workload identity audit on the *uses* of the stolen token after the fact\n- Legitimate IMDS access patterns are extremely narrow: the GCE metadata SDK, gcloud CLI, the Ops Agent, and a handful of Google-supplied workload SDKs — any other process making the call is highly anomalous, and modifying applications to call IMDS directly is rare in well-architected services that use Workload Identity Federation\n- A stolen service account token grants the same effective permissions as the workload itself for up to one hour — and the attacker's first action is almost always rapid IAM enumeration (T1069.003) followed by data discovery (T1619, T1526) to map what the token can reach, creating a detectable burst of cross-service API calls from a single token",
+    "references": "- [MITRE ATT&CK T1552.005 - Unsecured Credentials: Cloud Instance Metadata API](https://attack.mitre.org/techniques/T1552/005/)\n- [Unit 42 - Can AI Attack the Cloud? Lessons from the Zealot Autonomous Agent](https://unit42.paloaltonetworks.com/autonomous-ai-cloud-attacks/)\n- [Google Cloud - Best Practices for Securing the Metadata Server](https://cloud.google.com/compute/docs/metadata/overview#querying_metadata)\n- [Datadog Security Labs - The State of GCP Threats: SSRF and IMDS Exploitation](https://securitylabs.datadoghq.com/articles/the-state-of-gcp-threats/)\n- [Wiz - The Top Cloud Threats of 2025: IMDS Token Theft Patterns](https://www.wiz.io/blog/cloud-threats-2025)\n- [Sigma Rule - Suspicious Cloud Metadata Service Access](https://github.com/SigmaHQ/sigma/blob/master/rules/cloud/gcp/audit/gcp_metadata_service_access.yml)\n- [Red Canary Atomic Red Team - T1552.005 Cloud Instance Metadata API](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1552.005/T1552.005.md)",
+    "file_path": "Flames/H137.md"
+  },
+  {
+    "id": "H138",
+    "category": "Flames",
+    "title": "An adversary using a stolen or compromised GCP service account token is performing a rapid enumeration sequence — listing projects, services, IAM bindings, and compute resources within minutes — to map the blast radius of the compromised identity, indicated by a burst of resourcemanager.projects.list, serviceusage.services.list, iam.roles.list, and compute.instances.list calls from a single principal within a short time window.",
+    "tactic": "Discovery",
+    "notes": "Platform: GCP (IaaS). Covers three chained techniques: T1580 (Cloud Infrastructure Discovery — compute/network/image enumeration), T1526 (Cloud Service Discovery — what GCP services are enabled in the project), and T1069.003 (Permission Groups Discovery: Cloud Groups — IAM roles and bindings). The Zealot agent executed all three in sequence within minutes of stealing the IMDS token. Detection data sources: GCP Cloud Audit Logs, specifically the Admin Activity log stream (always on, free) and Data Access logs (must be explicitly enabled per service). Key methodNames to hunt as a sequence within ~10 minutes from a single principalEmail: google.cloud.resourcemanager.v3.Projects.ListProjects, google.iam.admin.v1.ListServiceAccounts, google.iam.admin.v1.ListRoles, google.iam.v1.IAMPolicy.GetIamPolicy, google.cloud.serviceusage.v1.ServiceUsage.ListServices, google.cloud.compute.v1.Instances.AggregatedList. KQL/CloudAppEvents (Defender for Cloud Apps GCP connector): CloudAppEvents | where Application == \"Google Cloud Platform\" | where ActionType in (\"ListProjects\", \"ListServiceAccounts\", \"ListRoles\", \"GetIamPolicy\", \"AggregatedListInstances\") | summarize distinct_actions = dcount(ActionType), action_list = make_set(ActionType) by AccountObjectId, bin(Timestamp, 10m) | where distinct_actions >= 4. Cortex XDR managed alert: \"Cloud infrastructure enumeration activity\" (T1580, T1526). Baseline expectation: human admins enumerate occasionally (e.g., when running terraform plan); workload service accounts almost never enumerate broadly — a service account that suddenly enumerates outside its normal API call set is the strongest signal. Cross-reference H137 (IMDS token theft) as the typical precursor and H139 (service account impersonation) as a typical follow-on if the attacker finds a higher-privileged target. AWS analog: same hunt works for ListBuckets + ListUsers + ListRoles + DescribeInstances burst from a single principal.",
+    "tags": [
+      "discovery",
+      "gcp",
+      "cloud",
+      "iam_enumeration",
+      "service_account"
+    ],
+    "techniques": [
+      "T1580",
+      "T1526",
+      "T1069.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- The Zealot agent's \"Cloud Reconnaissance Agent\" and \"Cloud Security Agent\" in the Unit 42 study performed the full project/service/IAM/compute enumeration sequence in under 10 minutes — this rapid breadth-first survey is the canonical opening move for any cloud attacker (human or AI) because it determines what's worth attacking next\n- Service account enumeration patterns are radically different from human admin patterns: humans tend to focus on what they already know, while a token-stealing attacker hits multiple unrelated APIs (IAM + Compute + Storage + BigQuery) trying to find any open door — the breadth itself is the signal, not any single API call\n- GCP Admin Activity logs are enabled and retained by default for 400 days — the data is already there for free in every GCP environment, but most organizations don't have a hunt or alert that ties together the \"burst of distinct enumerations from one principal\" pattern\n- Combining T1580 + T1526 + T1069.003 into a single sequence-based hunt is more useful operationally than three separate technique hunts, because the techniques almost never appear in isolation in real cloud attacks — defenders want to catch the attacker mid-enumeration, not after they've moved on to data exfil",
+    "references": "- [MITRE ATT&CK T1580 - Cloud Infrastructure Discovery](https://attack.mitre.org/techniques/T1580/)\n- [MITRE ATT&CK T1526 - Cloud Service Discovery](https://attack.mitre.org/techniques/T1526/)\n- [MITRE ATT&CK T1069.003 - Permission Groups Discovery: Cloud Groups](https://attack.mitre.org/techniques/T1069/003/)\n- [Unit 42 - Can AI Attack the Cloud? Lessons from the Zealot Autonomous Agent](https://unit42.paloaltonetworks.com/autonomous-ai-cloud-attacks/)\n- [Google Cloud - Audit Logs Reference: Admin Activity vs Data Access](https://cloud.google.com/logging/docs/audit)\n- [Mitiga - Detection Engineering for GCP: Hunting Service Account Abuse](https://www.mitiga.io/blog/gcp-service-account-abuse-detection)\n- [Splunk - Detecting Cloud Reconnaissance Across AWS, Azure, and GCP](https://www.splunk.com/en_us/blog/security/cloud-reconnaissance-detection.html)\n- [SigmaHQ - GCP Service Account Enumeration Rule](https://github.com/SigmaHQ/sigma/blob/master/rules/cloud/gcp/audit/gcp_service_account_enumeration.yml)",
+    "file_path": "Flames/H138.md"
+  },
+  {
+    "id": "H139",
+    "category": "Flames",
+    "title": "An adversary holding a low-privilege GCP service account token is escalating privilege by impersonating a higher-privileged service account via the iam.serviceAccounts.generateAccessToken or iam.serviceAccounts.signJwt API, indicated by a service account calling generateAccessToken against a target principal it has not previously impersonated, especially when the source principal is a workload identity (compute-default, GKE node SA) and the target is a privileged role-bound SA (storage-admin, bq-admin, owner).",
+    "tactic": "Privilege Escalation, Defense Evasion",
+    "notes": "Platform: GCP (IaaS). Technique T1548.005 (Temporary Elevated Cloud Access) — adversary uses GCP's native service-account impersonation primitive, which is legitimate but commonly abused after a workload-identity compromise. Detection data source: GCP Cloud Audit Logs (Admin Activity stream), specifically methodName == \"google.iam.credentials.v1.IAMCredentials.GenerateAccessToken\" or \"google.iam.credentials.v1.IAMCredentials.SignJwt\". Key fields to extract: protoPayload.authenticationInfo.principalEmail (the source SA), protoPayload.request.name (the target SA being impersonated, format: projects/-/serviceAccounts/<email>), and protoPayload.response.expireTime (token lifetime). KQL hunt (Defender for Cloud Apps GCP connector): CloudAppEvents | where Application == \"Google Cloud Platform\" | where ActionType == \"GenerateAccessToken\" | extend Source = AccountObjectId, Target = tostring(RawEventData.request.name) | join kind=leftanti (CloudAppEvents | where ActionType == \"GenerateAccessToken\" | where Timestamp < ago(30d) | distinct Source, Target) on Source, Target | project Timestamp, Source, Target, IPAddress. Cortex XDR managed alert: \"GCP service account impersonation attempt.\" Baseline behavior: most workloads impersonate the same 1-3 SAs repeatedly (CI runners impersonating deploy SAs is common); adversary behavior is impersonating a never-before-seen, more-privileged SA. High-fidelity flag: source SA is a compute-default or GKE node SA AND target SA has an *Admin or owner role binding. Cross-reference H137 (IMDS token theft) as the typical precursor; once the attacker has a workload token, T1548.005 is how they reach the admin-tier permissions needed for T1537 (data exfil). Required IAM permission: roles/iam.serviceAccountTokenCreator on the target — flag any unexpected grants of this role.",
+    "tags": [
+      "privilege_escalation",
+      "defense_evasion",
+      "gcp",
+      "cloud",
+      "service_account_impersonation"
+    ],
+    "techniques": [
+      "T1548.005"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Service account impersonation is the canonical privilege-escalation path in GCP because workload identities are typically scoped to least privilege, and admin-tier capabilities are deliberately gated behind roles/iam.serviceAccountTokenCreator — but once an attacker compromises any workload that has been granted that role on an admin SA, escalation is a single API call\n- The Zealot agent demonstrated this exact pivot in the Unit 42 study, going from compute-default service account (via IMDS) to a project-owner-bound SA via generateAccessToken before attempting BigQuery exfiltration\n- generateAccessToken calls are logged in the always-on Admin Activity audit stream, which means the data is universally available — the gap is detection logic that catches *novel* impersonation pairs (Source SA → Target SA combinations not seen in the prior 30-day baseline), not just the API call itself\n- Misconfigured roles/iam.serviceAccountTokenCreator bindings are extremely common: a 2024 Wiz study found ~38% of GCP projects had at least one workload identity with token-creator on an admin SA, often granted \"temporarily\" during setup and never revoked — making this a high-prevalence, high-impact privilege path",
+    "references": "- [MITRE ATT&CK T1548.005 - Abuse Elevation Control Mechanism: Temporary Elevated Cloud Access](https://attack.mitre.org/techniques/T1548/005/)\n- [Unit 42 - Can AI Attack the Cloud? Lessons from the Zealot Autonomous Agent](https://unit42.paloaltonetworks.com/autonomous-ai-cloud-attacks/)\n- [Google Cloud - Service Account Impersonation: How It Works](https://cloud.google.com/iam/docs/service-account-impersonation)\n- [Wiz - The Top Cloud IAM Misconfigurations (2024 Cloud Security Report)](https://www.wiz.io/blog/cloud-iam-misconfigurations-2024)\n- [Mitiga - Privilege Escalation in GCP via Service Account Impersonation](https://www.mitiga.io/blog/privilege-escalation-gcp-service-account-impersonation)\n- [SigmaHQ - GCP Service Account Token Generation Rule](https://github.com/SigmaHQ/sigma/blob/master/rules/cloud/gcp/audit/gcp_iam_credentials_generateaccesstoken.yml)\n- [Datadog Security Labs - Hunting Privilege Escalation in GCP](https://securitylabs.datadoghq.com/articles/hunting-privilege-escalation-in-gcp/)\n- [Red Canary - Cloud IAM Privilege Escalation Detection Patterns](https://redcanary.com/blog/cloud-iam-privilege-escalation/)",
+    "file_path": "Flames/H139.md"
+  },
+  {
+    "id": "H140",
+    "category": "Flames",
+    "title": "An adversary with stolen GCP credentials is exfiltrating BigQuery data by exporting query results or table contents to a Cloud Storage bucket in a project outside the organization's known projects, indicated by jobservice.jobcompleted or BigQuery extract jobs whose destinationUris reference gs:// buckets in foreign projects, or by storage.objects.create activity from a BigQuery service principal targeting a previously-unseen bucket.",
+    "tactic": "Exfiltration, Discovery",
+    "notes": "Platform: GCP (IaaS, BigQuery, Cloud Storage). Covers T1537 (Transfer Data to Cloud Account) and T1619 (Cloud Storage Object Discovery — the enumeration step that precedes the exfil). The Zealot agent executed an end-to-end BigQuery extract → cross-project gs:// bucket pattern in the Unit 42 study. Detection data sources: BigQuery audit logs (resourceName starts with \"projects/<proj>/jobs/\") and Cloud Storage Data Access logs (must be explicitly enabled — many environments do not have this on, which is the first gap to close). Key methodNames: jobservice.jobcompleted with metadataJson.jobChange.job.jobConfig.type == \"EXPORT\", and google.cloud.bigquery.v2.JobService.InsertJob for jobs.insert with type EXPORT or COPY. KQL hunt (Defender for Cloud Apps): CloudAppEvents | where Application == \"Google Cloud Platform\" | where ActionType == \"BigQueryExportJob\" | extend dest_uri = tostring(RawEventData.destinationUris[0]) | extend dest_project = extract(\"gs://([^/]+)/\", 1, dest_uri) | where dest_project !in (known_org_buckets) | project Timestamp, AccountObjectId, dest_uri. Cortex XDR managed alert: \"BigQuery table or query results exfiltrated to a foreign project.\" Cross-project exfil signal: resource.labels.project_id (where job runs) != extracted project from destinationUris[0] (where data lands). For T1619, hunt for storage.buckets.list and storage.objects.list calls across many buckets within minutes from a single principal — the discovery step before the export. High-fidelity flags: (1) any BigQuery export to a gs:// URI whose bucket name doesn't match the org's naming convention, (2) any storage.objects.create to a bucket in a project outside the GCP organization, (3) any BigQuery query with result size >100 MB followed within 5 minutes by an export job. Baseline expectation: legitimate exports go to a small set of well-known analytics buckets with predictable naming — anything outside that pattern from a service account is suspicious. Cross-reference H137 (IMDS), H138 (enumeration), and H139 (impersonation) as typical precursors.",
+    "tags": [
+      "exfiltration",
+      "discovery",
+      "gcp",
+      "cloud",
+      "bigquery",
+      "cloud_storage"
+    ],
+    "techniques": [
+      "T1537",
+      "T1619"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- BigQuery is the highest-value data target in GCP environments — it routinely contains years of customer, financial, and PII data that competitors and ransomware groups will pay for — and the EXPORT job type is a single API call that can move terabytes to an attacker-controlled bucket in seconds\n- The destination of a BigQuery EXPORT can be any gs:// URI the calling principal has write access to — including buckets in *other GCP projects outside the victim organization* — and this cross-project signal is the single most reliable detection for this technique because legitimate exports almost always stay within the org's project set\n- The Zealot agent in the Unit 42 study completed the BigQuery → cross-project bucket exfil in under 60 seconds end-to-end after privilege escalation, which means alerting on \"completed\" exfil is too late — the value is in detecting the bucket-creation/enumeration burst (T1619) that precedes the export, giving defenders a chance to revoke the token before data moves\n- Cloud Storage Data Access logs are off by default on most projects, creating a major blind spot — turning them on for production projects is a low-cost configuration change that materially improves detection of all storage-tier exfiltration, not just BigQuery EXPORT",
+    "references": "- [MITRE ATT&CK T1537 - Transfer Data to Cloud Account](https://attack.mitre.org/techniques/T1537/)\n- [MITRE ATT&CK T1619 - Cloud Storage Object Discovery](https://attack.mitre.org/techniques/T1619/)\n- [Unit 42 - Can AI Attack the Cloud? Lessons from the Zealot Autonomous Agent](https://unit42.paloaltonetworks.com/autonomous-ai-cloud-attacks/)\n- [Google Cloud - BigQuery Data Exfiltration: Detection and Prevention](https://cloud.google.com/bigquery/docs/exporting-data)\n- [Mandiant - Cloud Data Exfiltration Patterns Across AWS, Azure, and GCP](https://cloud.google.com/blog/topics/threat-intelligence/cloud-data-exfiltration-patterns)\n- [Wiz - Hunting BigQuery Exfiltration in Production GCP Environments](https://www.wiz.io/blog/bigquery-exfiltration-detection)\n- [SigmaHQ - GCP BigQuery Job Export to Foreign Project](https://github.com/SigmaHQ/sigma/blob/master/rules/cloud/gcp/audit/gcp_bigquery_export_foreign_project.yml)\n- [Splunk - Detecting Data Exfiltration via Cloud Storage Buckets](https://www.splunk.com/en_us/blog/security/detecting-cloud-storage-exfiltration.html)",
+    "file_path": "Flames/H140.md"
+  },
+  {
+    "id": "H141",
+    "category": "Flames",
+    "title": "A malicious npm package executed during `npm install` on a developer workstation or CI runner is harvesting environment variables, dotfiles (~/.npmrc, ~/.aws/credentials, ~/.ssh/id_*), and cloud-credential files via a preinstall or postinstall lifecycle hook, then exfiltrating them over HTTPS POST to an endpoint themed as legitimate analytics or telemetry, indicated by a Node child process reading credential files and making outbound HTTPS to a non-allowlisted domain within seconds of an `npm install` invocation.",
+    "tactic": "Initial Access, Credential Access",
+    "notes": "Platform: developer workstations and CI/CD runners across Windows, macOS, and Linux (this hunt is platform-agnostic by design — the npm install attack surface is the same across all three). Primary techniques: T1195.002 (Compromise Software Supply Chain) for the install-time vector and T1555 (Credentials from Password Stores — extended interpretation covering the dotfile pattern). The Unit 42 npm threat landscape paper (Apr 2026) documented the Bun-runtime variant beaconing to audit.checkmarx[.]cx (94.154.172.43) using AES-256-GCM-encrypted POST bodies and a fallback C2 lookup via GitHub Search API. Detection data sources: Sysmon (Windows) Event ID 1 (process create) + Event ID 3 (network connect) joined by ProcessGuid; ESF on macOS (ES_EVENT_TYPE_NOTIFY_EXEC, ES_EVENT_TYPE_NOTIFY_OPEN on credential file paths); auditd on Linux (execve + connect syscalls); for CI: GitHub Actions / GitLab Runner workflow logs and self-hosted runner host telemetry. KQL (DeviceProcessEvents): DeviceProcessEvents | where InitiatingProcessFileName in (\"npm.cmd\", \"npm.ps1\", \"node.exe\") | where FileName in~ (\"node.exe\", \"bun.exe\", \"node\") | join kind=inner (DeviceNetworkEvents | where ActionType == \"ConnectionSuccess\") on DeviceId, $left.ProcessId == $right.InitiatingProcessId | where RemoteUrl !in (allowlisted_npm_endpoints) | project Timestamp, DeviceName, ProcessCommandLine, RemoteUrl, RemoteIP. High-fidelity host signals: (1) any process spawned by `npm install` (parent npm, grandparent shell) that reads ~/.npmrc, ~/.aws/credentials, ~/.ssh/id_rsa, or enumerates process.env entirely (auditd execve with `printenv` or equivalent JS env dump), (2) Bun runtime download from github.com/oven-sh/bun/releases followed by execution from a non-system path, (3) outbound HTTPS POST with high-entropy body (>0.8 bits/byte) from a node child within 60s of npm install start, (4) creation of `.github/workflows/format-check.yml` or similar transient workflow file in a CI checkout. Baseline allowlist for outbound domains: registry.npmjs.org, *.npmjs.com, github.com (clone/fetch), raw.githubusercontent.com (limited), and the org's own artifact registry — any other destination from a node child process during install is suspicious. Skip-detection bypass to watch for: Signal handlers catching SIGINT/SIGTERM with no-ops (the Bun loader does this) — an `npm install` that takes longer than expected or appears to ignore Ctrl+C is a manual-investigation signal. Cross-reference: this is the developer-endpoint side of the same supply-chain attack surface that appears in cloud telemetry as anomalous CloudAppEvents from CI runners reading AWS_*, AZURE_*, GCP_* env vars.",
+    "tags": [
+      "initial_access",
+      "credential_access",
+      "supply_chain",
+      "npm",
+      "developer_endpoint",
+      "ci_cd"
+    ],
+    "techniques": [
+      "T1195.002",
+      "T1555"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- The npm ecosystem averaged a new credential-stealing package campaign every ~9 days through 2025–2026 per the Unit 42 landscape paper, and the Bun-runtime variant (audit.checkmarx[.]cx) demonstrated that attackers are now bundling full secondary runtimes inside packages to evade Node-based EDR signatures — making generic detection that doesn't depend on a specific package name essential\n- Developer workstations are the most under-monitored asset class in most enterprises: they're not in the same scope as production servers, they have legitimate reason to read credential files locally (gcloud auth, aws configure, ssh-agent), and they generate enormous noise — making the *install-time* window (the seconds immediately after `npm install`) the highest-fidelity hunt window\n- The \"npm install → child process reads ~/.aws/credentials → outbound HTTPS POST\" chain is detectable using only stock Sysmon/ESF/auditd telemetry that most orgs already collect, but the join across process and network events keyed on the npm parent process is rarely written as a hunt rule — this hunt closes that specific gap\n- CI runners amplify the impact because they hold higher-value secrets (cloud admin credentials, signing keys, deploy tokens) and run untrusted package code on every PR — the same hunt logic applies but the data sources shift to GitHub Actions audit logs and self-hosted runner host telemetry, which often aren't piped to the SIEM at all",
+    "references": "- [MITRE ATT&CK T1195.002 - Supply Chain Compromise: Compromise Software Supply Chain](https://attack.mitre.org/techniques/T1195/002/)\n- [MITRE ATT&CK T1555 - Credentials from Password Stores](https://attack.mitre.org/techniques/T1555/)\n- [Unit 42 - The npm Threat Landscape: Attack Surface and Mitigations](https://unit42.paloaltonetworks.com/monitoring-npm-supply-chain-attacks/)\n- [Checkmarx - Anatomy of an npm Supply Chain Attack: The Bun Loader Pattern](https://checkmarx.com/blog/npm-supply-chain-bun-loader/)\n- [Snyk - Malicious npm Packages: Detection Strategies for Developer Endpoints](https://snyk.io/blog/malicious-npm-packages-detection/)\n- [GitHub Security Lab - Detecting Workflow Injection from Untrusted Dependencies](https://securitylab.github.com/research/github-actions-untrusted-input/)\n- [Sigma Rule - Suspicious Process Spawned by Node/NPM During Install](https://github.com/SigmaHQ/sigma/blob/master/rules/category/process_creation/proc_creation_node_install_suspicious.yml)\n- [Red Canary Atomic Red Team - T1195.002 Software Supply Chain Compromise](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1195.002/T1195.002.md)\n- [Datadog Security Labs - Hunting npm Package Compromise on Developer Workstations](https://securitylabs.datadoghq.com/articles/hunting-npm-package-compromise/)",
+    "file_path": "Flames/H141.md"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
