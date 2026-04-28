@@ -339,6 +339,12 @@ jobs:
             [**View Hunt Draft**](https://github.com/${{ github.repository }}/blob/draft/issue-${{ github.event.issue.number }}/${{ steps.generate_draft_file.outputs.HUNT_FILE_PATH }})
 
             ---
+            ${{ steps.generate_draft_file.outputs.DUPLICATE_ANALYSIS && format('
+
+            **🔍 Duplicate Detection Results:**
+            {0}
+
+            ---', steps.generate_draft_file.outputs.DUPLICATE_ANALYSIS) || '' }}
 
             If you want to regenerate, **please leave a comment on this issue with your feedback or what you'd like changed, then add the `regenerate` label**.
             

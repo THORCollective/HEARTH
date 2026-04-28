@@ -19,6 +19,13 @@ except ImportError:
     print("⚠️ MITRE ATT&CK data not available. Using fallback tactic matching.")
     MITRE_AVAILABLE = False
 
+# Import duplicate detection
+try:
+    from duplicate_detection import check_duplicates_for_new_submission
+    DUPLICATE_DETECTION_AVAILABLE = True
+except ImportError:
+    DUPLICATE_DETECTION_AVAILABLE = False
+
 load_dotenv()
 
 # AI provider selection
@@ -502,6 +509,17 @@ if __name__ == "__main__":
                     print('HYPOTHESIS<<EOF', file=f)
                     print(hypothesis, file=f)
                     print('EOF', file=f)
+
+            # 7. Run duplicate detection
+            if DUPLICATE_DETECTION_AVAILABLE:
+                duplicate_analysis = check_duplicates_for_new_submission(
+                    final_content, out_md_path.name
+                )
+                if 'GITHUB_OUTPUT' in os.environ:
+                    with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                        print('DUPLICATE_ANALYSIS<<EOF', file=f)
+                        print(duplicate_analysis, file=f)
+                        print('EOF', file=f)
 
         else:
             print("Could not generate hunt content. Skipping file creation.")
