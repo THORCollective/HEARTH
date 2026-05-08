@@ -9,7 +9,9 @@ const HUNTS_DATA = [
     "tags": [
       "baseline",
       "networktraffic",
-      "anomalydetection"
+      "anomalydetection",
+      "T1071.001",
+      "T1041"
     ],
     "techniques": [
       "T1071.001",
@@ -35,7 +37,8 @@ const HUNTS_DATA = [
     "tags": [
       "baseline",
       "persistence",
-      "anomalydetection"
+      "anomalydetection",
+      "T1219"
     ],
     "techniques": [
       "T1219"
@@ -60,7 +63,8 @@ const HUNTS_DATA = [
     "tags": [
       "baseline",
       "persistence",
-      "anomalydetection"
+      "anomalydetection",
+      "T1547.001"
     ],
     "techniques": [
       "T1547.001"
@@ -86,7 +90,8 @@ const HUNTS_DATA = [
       "baseline",
       "persistence",
       "anomalydetection",
-      "sus"
+      "sus",
+      "T1136"
     ],
     "techniques": [
       "T1136"
@@ -112,7 +117,8 @@ const HUNTS_DATA = [
       "execution",
       "defenseevasion",
       "lolbin",
-      "rundll32"
+      "rundll32",
+      "T1218.011"
     ],
     "techniques": [
       "T1218.011"
@@ -137,7 +143,9 @@ const HUNTS_DATA = [
     "tags": [
       "collection",
       "exfiltration",
-      "browserextensions"
+      "browserextensions",
+      "T1176",
+      "T1005"
     ],
     "techniques": [
       "T1176",
@@ -164,7 +172,9 @@ const HUNTS_DATA = [
       "collection",
       "exfiltration",
       "email",
-      "mailforwarding"
+      "mailforwarding",
+      "T1114.003",
+      "T1020"
     ],
     "techniques": [
       "T1114.003",
@@ -190,7 +200,8 @@ const HUNTS_DATA = [
     "tags": [
       "baseline",
       "privilege_escalation",
-      "anomalydetection"
+      "anomalydetection",
+      "T1098"
     ],
     "techniques": [
       "T1098"
@@ -216,7 +227,10 @@ const HUNTS_DATA = [
       "defenseevasion",
       "masquerading",
       "trusteddeveloperutilities",
-      "proxyexecution"
+      "proxyexecution",
+      "T1036",
+      "T1127",
+      "T1211"
     ],
     "techniques": [
       "T1036",
@@ -241,7 +255,9 @@ const HUNTS_DATA = [
     "tactic": "Lateral Movement",
     "notes": "Explore typical peering requests, initiators, unusual IPs, and connection events.",
     "tags": [
-      "lateralmovement"
+      "lateralmovement",
+      "T1599",
+      "T1021"
     ],
     "techniques": [
       "T1599",
@@ -266,7 +282,8 @@ const HUNTS_DATA = [
     "notes": "Indicators of Xcode usage can be found in EDR telemetry and potential for detection if Xcode is not utilized/approved in the environment.",
     "tags": [
       "initialaccess",
-      "baseline"
+      "baseline",
+      "T1195.001"
     ],
     "techniques": [
       "T1195.001"
@@ -294,7 +311,8 @@ const HUNTS_DATA = [
       "service_account",
       "ai_agent",
       "orphan_account",
-      "lifecycle"
+      "lifecycle",
+      "T1078.004"
     ],
     "techniques": [
       "T1078.004"
@@ -321,7 +339,8 @@ const HUNTS_DATA = [
       "credential_access",
       "lsass",
       "sysmon",
-      "process_access"
+      "process_access",
+      "T1003.001"
     ],
     "techniques": [
       "T1003.001"
@@ -348,7 +367,8 @@ const HUNTS_DATA = [
       "defense_evasion",
       "msiexec",
       "msi",
-      "software_installation"
+      "software_installation",
+      "T1218.007"
     ],
     "techniques": [
       "T1218.007"
@@ -377,7 +397,8 @@ const HUNTS_DATA = [
       "wbadmin",
       "vssadmin",
       "domain_controller",
-      "active_directory"
+      "active_directory",
+      "T1003.003"
     ],
     "techniques": [
       "T1003.003"
@@ -427,7 +448,8 @@ const HUNTS_DATA = [
     "tags": [
       "credentialaccess",
       "bruteforce",
-      "vpn"
+      "vpn",
+      "T1110"
     ],
     "techniques": [
       "T1110"
@@ -453,7 +475,8 @@ const HUNTS_DATA = [
       "commandandcontrol",
       "remoteaccess",
       "edr",
-      "lolbin"
+      "lolbin",
+      "T1219"
     ],
     "techniques": [
       "T1219"
@@ -476,7 +499,9 @@ const HUNTS_DATA = [
     "tactic": "Exfiltration",
     "notes": "Attackers often need to get data out, 1MB chunks sneak beneath big file anomaly detection. Consider different file sizes and types based on normal in your environment.",
     "tags": [
-      "exfiltration"
+      "exfiltration",
+      "T1030",
+      "T1560.001"
     ],
     "techniques": [
       "T1030",
@@ -502,7 +527,8 @@ const HUNTS_DATA = [
     "tags": [
       "persistence",
       "lolbin",
-      "windows"
+      "windows",
+      "T1197"
     ],
     "techniques": [
       "T1197"
@@ -527,7 +553,8 @@ const HUNTS_DATA = [
     "tags": [
       "persistence",
       "lolbas",
-      "linux"
+      "linux",
+      "T1546.004"
     ],
     "techniques": [
       "T1546.004"
@@ -551,7 +578,8 @@ const HUNTS_DATA = [
     "notes": "Adversaries often abuse legitimate remote access features (such as RDP and SSH) already enabled in the environment.",
     "tags": [
       "lateralmovement",
-      "sus"
+      "sus",
+      "T1021"
     ],
     "techniques": [
       "T1021"
@@ -575,7 +603,8 @@ const HUNTS_DATA = [
     "notes": "Adversaries often abuse legitimate command interpreters/applications, such as CMD, PowerShell, or bash/zsh.",
     "tags": [
       "execution",
-      "sus"
+      "sus",
+      "T1059"
     ],
     "techniques": [
       "T1059"
@@ -599,7 +628,8 @@ const HUNTS_DATA = [
     "notes": "Domain Accounts can cover user, administrator, and service accounts.",
     "tags": [
       "persistence",
-      "activedirectory"
+      "activedirectory",
+      "T1136.002"
     ],
     "techniques": [
       "T1136.002"
@@ -623,7 +653,8 @@ const HUNTS_DATA = [
     "notes": "Data requirements: Windows Sysmon, EDR telemetry, Proxy logs",
     "tags": [
       "defenseevasion",
-      "systembinaryproxyexecutionmshta"
+      "systembinaryproxyexecutionmshta",
+      "T1218.005"
     ],
     "techniques": [
       "T1218.005"
@@ -647,7 +678,8 @@ const HUNTS_DATA = [
     "notes": "<ul><li>Data requirements: EDR telemetry, Windows event logs id 5140</li></br><li>Implementation examples in SIGMA:</li></br>Title: Suspicious Network Share Enumeration and Access</br>Id:xxxxx</br>Status: test</br>Description: Detects commands used for network share enumeration and correlates with Event ID 5140 for access to shared resources.</br>Author: Your Name</br>Date:2024/11/14</br>Tags:</br><ul><li>attack.discovery</br><li>attack.t1135</li></ul></br>logsource:</br>category: process_creation</br>product:windows</br>detection:</br>selection_cmd:</br>Image&#124;endswith:</br><ul><li>'\\cmd.exe'</br><li>'\\powershell.exe'</br>ComandLine&#124;contains&#124;all:</br><li>'net view'</br><li>'&bsol;'</br>selection_event:</br>EventID: 5140</br>condition: selection_cmd or selection_event</br>falsepositives:</br><li>Legitimate administrative tasks</br><li>Regular file-sharing activities</br>level: medium #T1039",
     "tags": [
       "collection",
-      "datafromnetworkshareddrive"
+      "datafromnetworkshareddrive",
+      "T1039"
     ],
     "techniques": [
       "T1039"
@@ -673,7 +705,8 @@ const HUNTS_DATA = [
       "persistence",
       "privilege_escalation",
       "defense_evasion",
-      "dllsideloading"
+      "dllsideloading",
+      "T1574.002"
     ],
     "techniques": [
       "T1574.002"
@@ -698,7 +731,9 @@ const HUNTS_DATA = [
     "tags": [
       "dns",
       "tunneling",
-      "exfiltration"
+      "exfiltration",
+      "T1048",
+      "T1071.004"
     ],
     "techniques": [
       "T1048",
@@ -725,7 +760,8 @@ const HUNTS_DATA = [
       "powershell",
       "sysmon",
       "execution",
-      "ta0002"
+      "ta0002",
+      "T1059.001"
     ],
     "techniques": [
       "T1059.001"
@@ -752,7 +788,9 @@ const HUNTS_DATA = [
       "namedpipes",
       "commandandcontrol",
       "sysmon",
-      "threathunting"
+      "threathunting",
+      "T1559",
+      "T1090"
     ],
     "techniques": [
       "T1559",
@@ -779,7 +817,9 @@ const HUNTS_DATA = [
       "registry",
       "edr",
       "dns",
-      "defenseevasion"
+      "defenseevasion",
+      "T1562.001",
+      "T1112"
     ],
     "techniques": [
       "T1562.001",
@@ -804,7 +844,8 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1078, using compromised credentials.",
     "tags": [
       "initialaccess",
-      "sonicwall"
+      "sonicwall",
+      "T1078"
     ],
     "techniques": [
       "T1078"
@@ -829,7 +870,8 @@ const HUNTS_DATA = [
     "tags": [
       "privilegeescalation",
       "exploit",
-      "apache"
+      "apache",
+      "T1068"
     ],
     "techniques": [
       "T1068"
@@ -854,7 +896,8 @@ const HUNTS_DATA = [
     "tags": [
       "credentialaccess",
       "serverlessfunctions",
-      "cloud"
+      "cloud",
+      "T1098"
     ],
     "techniques": [
       "T1098"
@@ -880,7 +923,8 @@ const HUNTS_DATA = [
       "persistence",
       "initialaccess",
       "userexecution",
-      "elf"
+      "elf",
+      "T1204"
     ],
     "techniques": [
       "T1204"
@@ -904,7 +948,8 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1047, using WMI for execution of PowerShell commands.",
     "tags": [
       "execution",
-      "wmi"
+      "wmi",
+      "T1047"
     ],
     "techniques": [
       "T1047"
@@ -928,7 +973,8 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1562.001, using the undocumented Windows Security Center (WSC) APIs",
     "tags": [
       "defenseevasion",
-      "wsc"
+      "wsc",
+      "T1562.001"
     ],
     "techniques": [
       "T1562.001"
@@ -952,7 +998,8 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1110. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "credentialaccess",
-      "socialengineering"
+      "socialengineering",
+      "T1110"
     ],
     "techniques": [
       "T1110"
@@ -976,7 +1023,8 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1564. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defenseevasion",
-      "attribcommand"
+      "attribcommand",
+      "T1564"
     ],
     "techniques": [
       "T1564"
@@ -1001,7 +1049,9 @@ const HUNTS_DATA = [
     "tags": [
       "initialaccess",
       "phishing",
-      "spearphishinglink"
+      "spearphishinglink",
+      "T1566.001",
+      "T1204.002"
     ],
     "techniques": [
       "T1566.001",
@@ -1028,7 +1078,9 @@ const HUNTS_DATA = [
       "initialaccess",
       "execution",
       "userexecution",
-      "commandandscriptinginterpreter"
+      "commandandscriptinginterpreter",
+      "T1204.002",
+      "T1059.006"
     ],
     "techniques": [
       "T1204.002",
@@ -1053,7 +1105,8 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1070.004. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defenseevasion",
-      "cipher_exe"
+      "cipher_exe",
+      "T1070.004"
     ],
     "techniques": [
       "T1070.004"
@@ -1078,7 +1131,8 @@ const HUNTS_DATA = [
     "tags": [
       "initialaccess",
       "applescript",
-      "bluenoroff"
+      "bluenoroff",
+      "T1566.002"
     ],
     "techniques": [
       "T1566.002"
@@ -1103,7 +1157,8 @@ const HUNTS_DATA = [
     "tags": [
       "defenseevasion",
       "evasion",
-      "macos"
+      "macos",
+      "T1497.003"
     ],
     "techniques": [
       "T1497.003"
@@ -1128,7 +1183,8 @@ const HUNTS_DATA = [
     "tags": [
       "defenseevasion",
       "processinjection",
-      "macos"
+      "macos",
+      "T1055"
     ],
     "techniques": [
       "T1055"
@@ -1153,7 +1209,8 @@ const HUNTS_DATA = [
     "tags": [
       "persistence",
       "launchdaemon",
-      "macos"
+      "macos",
+      "T1543.004"
     ],
     "techniques": [
       "T1543.004"
@@ -1178,7 +1235,8 @@ const HUNTS_DATA = [
     "tags": [
       "collection",
       "cryptocurrency",
-      "bluenoroff"
+      "bluenoroff",
+      "T1005"
     ],
     "techniques": [
       "T1005"
@@ -1204,7 +1262,8 @@ const HUNTS_DATA = [
       "defense_evasion",
       "command_and_scripting_interpreter",
       "applescript",
-      "malware"
+      "malware",
+      "T1059.002"
     ],
     "techniques": [
       "T1059.002"
@@ -1230,7 +1289,8 @@ const HUNTS_DATA = [
       "execution",
       "command_and_scripting_interpreter",
       "powershell",
-      "ransomware"
+      "ransomware",
+      "T1059.001"
     ],
     "techniques": [
       "T1059.001"
@@ -1256,7 +1316,8 @@ const HUNTS_DATA = [
       "persistence",
       "lateral_movement",
       "ide_plugin",
-      "event_triggered_execution"
+      "event_triggered_execution",
+      "T1546.016"
     ],
     "techniques": [
       "T1546.016"
@@ -1281,7 +1342,10 @@ const HUNTS_DATA = [
     "tags": [
       "initial_access",
       "hardware_additions",
-      "air_gap"
+      "air_gap",
+      "T0847",
+      "T1091",
+      "T1200"
     ],
     "techniques": [
       "T0847",
@@ -1308,7 +1372,8 @@ const HUNTS_DATA = [
     "tags": [
       "defense_evasion",
       "proxy",
-      "chisel"
+      "chisel",
+      "T1090.001"
     ],
     "techniques": [
       "T1090.001"
@@ -1334,7 +1399,8 @@ const HUNTS_DATA = [
       "defense_evasion",
       "obfuscated_files_or_information",
       "javascript",
-      "malvertising"
+      "malvertising",
+      "T1027"
     ],
     "techniques": [
       "T1027"
@@ -1359,7 +1425,8 @@ const HUNTS_DATA = [
     "tags": [
       "collection",
       "archive_collected_data",
-      "powershell"
+      "powershell",
+      "T1560"
     ],
     "techniques": [
       "T1560"
@@ -1384,7 +1451,8 @@ const HUNTS_DATA = [
     "tags": [
       "reconnaissance",
       "active_scanning",
-      "network_service_scanning"
+      "network_service_scanning",
+      "T1595.001"
     ],
     "techniques": [
       "T1595.001"
@@ -1409,7 +1477,8 @@ const HUNTS_DATA = [
     "tags": [
       "initial_access",
       "password_spraying",
-      "rdp"
+      "rdp",
+      "T1110.003"
     ],
     "techniques": [
       "T1110.003"
@@ -1434,7 +1503,8 @@ const HUNTS_DATA = [
     "tags": [
       "privilege_escalation",
       "tinyshell",
-      "juniper"
+      "juniper",
+      "T1055"
     ],
     "techniques": [
       "T1055"
@@ -1459,7 +1529,8 @@ const HUNTS_DATA = [
     "tags": [
       "defense_evasion",
       "deobfuscate_files",
-      "earth_estries"
+      "earth_estries",
+      "T1140"
     ],
     "techniques": [
       "T1140"
@@ -1484,7 +1555,8 @@ const HUNTS_DATA = [
     "tags": [
       "defense_evasion",
       "registry_modification",
-      "persistence"
+      "persistence",
+      "T1112"
     ],
     "techniques": [
       "T1112"
@@ -1509,7 +1581,8 @@ const HUNTS_DATA = [
     "tags": [
       "execution",
       "powershell",
-      "rat"
+      "rat",
+      "T1059.001"
     ],
     "techniques": [
       "T1059.001"
@@ -1534,7 +1607,8 @@ const HUNTS_DATA = [
     "tags": [
       "execution",
       "mshta",
-      "living_off_the_land"
+      "living_off_the_land",
+      "T1218.005"
     ],
     "techniques": [
       "T1218.005"
@@ -1561,7 +1635,8 @@ const HUNTS_DATA = [
       "networktraffic",
       "ssh",
       "linux",
-      "windows"
+      "windows",
+      "T1572"
     ],
     "techniques": [
       "T1572"
@@ -1586,7 +1661,8 @@ const HUNTS_DATA = [
     "tags": [
       "command_and_control",
       "ingress_tool_transfer",
-      "powershell"
+      "powershell",
+      "T1105"
     ],
     "techniques": [
       "T1105"
@@ -1612,7 +1688,10 @@ const HUNTS_DATA = [
       "defenseevasion",
       "execution",
       "masquerading",
-      "proxyexecution"
+      "proxyexecution",
+      "T1036",
+      "T1218",
+      "T1105"
     ],
     "techniques": [
       "T1036",
@@ -1639,7 +1718,9 @@ const HUNTS_DATA = [
     "tags": [
       "defenseevasion",
       "phishing",
-      "collection"
+      "collection",
+      "T1564.008",
+      "T1114"
     ],
     "techniques": [
       "T1564.008",
@@ -1666,7 +1747,8 @@ const HUNTS_DATA = [
       "credentialaccess",
       "activedirectory",
       "identity",
-      "secretsdump"
+      "secretsdump",
+      "T1003.006"
     ],
     "techniques": [
       "T1003.006"
@@ -1692,7 +1774,8 @@ const HUNTS_DATA = [
       "commandandcontrol",
       "hvnc",
       "remoteaccess",
-      "glassworm"
+      "glassworm",
+      "T1219"
     ],
     "techniques": [
       "T1219"
@@ -1718,7 +1801,8 @@ const HUNTS_DATA = [
       "command_and_control",
       "backconnect",
       "vnc",
-      "dllhost"
+      "dllhost",
+      "T1219"
     ],
     "techniques": [
       "T1219"
@@ -1743,7 +1827,8 @@ const HUNTS_DATA = [
     "tags": [
       "discovery",
       "networkscan",
-      "ai_powered"
+      "ai_powered",
+      "T1046"
     ],
     "techniques": [
       "T1046"
@@ -1769,7 +1854,8 @@ const HUNTS_DATA = [
       "defense_evasion",
       "macos",
       "gatekeeper",
-      "applescript"
+      "applescript",
+      "T1553.001"
     ],
     "techniques": [
       "T1553.001"
@@ -1795,7 +1881,8 @@ const HUNTS_DATA = [
       "discovery",
       "gootloader",
       "powershell",
-      "systeminfo"
+      "systeminfo",
+      "T1082"
     ],
     "techniques": [
       "T1082"
@@ -1820,7 +1907,8 @@ const HUNTS_DATA = [
     "tags": [
       "defense_evasion",
       "oauth",
-      "session_hijacking"
+      "session_hijacking",
+      "T1550.001"
     ],
     "techniques": [
       "T1550.001"
@@ -1845,7 +1933,8 @@ const HUNTS_DATA = [
     "tags": [
       "discovery",
       "financial",
-      "powershell"
+      "powershell",
+      "T1135"
     ],
     "techniques": [
       "T1135"
@@ -1871,7 +1960,8 @@ const HUNTS_DATA = [
       "privilege_escalation",
       "byovd",
       "edr_killer",
-      "ransomware"
+      "ransomware",
+      "T1068"
     ],
     "techniques": [
       "T1068"
@@ -1897,7 +1987,8 @@ const HUNTS_DATA = [
       "exfiltration",
       "insider",
       "if001_006",
-      "if018_002"
+      "if018_002",
+      "T1567"
     ],
     "techniques": [
       "T1567"
@@ -1923,7 +2014,8 @@ const HUNTS_DATA = [
       "netsh",
       "powershell",
       "ta0005",
-      "firewall"
+      "firewall",
+      "T1562.004"
     ],
     "techniques": [
       "T1562.004"
@@ -1949,7 +2041,8 @@ const HUNTS_DATA = [
       "defense_evasion",
       "esxi",
       "hypervisor",
-      "ransomware"
+      "ransomware",
+      "T1562.001"
     ],
     "techniques": [
       "T1562.001"
@@ -1975,7 +2068,8 @@ const HUNTS_DATA = [
       "c2",
       "tunnel",
       "ta0011",
-      "t1102"
+      "t1102",
+      "T1572"
     ],
     "techniques": [
       "T1572"
@@ -2001,7 +2095,8 @@ const HUNTS_DATA = [
       "defense_evasion",
       "macos",
       "tcc",
-      "unc1069"
+      "unc1069",
+      "T1562.001"
     ],
     "techniques": [
       "T1562.001"
@@ -2027,7 +2122,8 @@ const HUNTS_DATA = [
       "defense_evasion",
       "punycode",
       "idn",
-      "dns"
+      "dns",
+      "T1036.005"
     ],
     "techniques": [
       "T1036.005"
@@ -2054,7 +2150,8 @@ const HUNTS_DATA = [
       "vmware",
       "vsphere",
       "rogue_vm",
-      "muddled_libra"
+      "muddled_libra",
+      "T1564.006"
     ],
     "techniques": [
       "T1564.006"
@@ -2081,7 +2178,9 @@ const HUNTS_DATA = [
       "browser_extension",
       "ai_tokens",
       "chatgpt",
-      "session_hijack"
+      "session_hijack",
+      "T1528",
+      "T1185"
     ],
     "techniques": [
       "T1528",
@@ -2110,7 +2209,8 @@ const HUNTS_DATA = [
       "supply_chain",
       "typosquatting",
       "tool_poisoning",
-      "ai_agent"
+      "ai_agent",
+      "T1195.002"
     ],
     "techniques": [
       "T1195.002"
@@ -2161,7 +2261,10 @@ const HUNTS_DATA = [
       "command_and_control",
       "finger_exe",
       "lolbin",
-      "crashfix"
+      "crashfix",
+      "T1105",
+      "T1036.003",
+      "T1218"
     ],
     "techniques": [
       "T1105",
@@ -2264,7 +2367,10 @@ const HUNTS_DATA = [
       "command_and_control",
       "cloud_c2",
       "apt28",
-      "filen"
+      "filen",
+      "T1102.002",
+      "T1203",
+      "T1055"
     ],
     "techniques": [
       "T1102.002",
@@ -2294,7 +2400,9 @@ const HUNTS_DATA = [
       "esxi",
       "vmware",
       "ghost_nic",
-      "unc6201"
+      "unc6201",
+      "T1021",
+      "T1497"
     ],
     "techniques": [
       "T1021",
@@ -2323,7 +2431,9 @@ const HUNTS_DATA = [
       "iptables",
       "port_knocking",
       "spa",
-      "unc6201"
+      "unc6201",
+      "T1205.001",
+      "T1562.004"
     ],
     "techniques": [
       "T1205.001",
@@ -2352,7 +2462,10 @@ const HUNTS_DATA = [
       "outlook",
       "office_addin",
       "supply_chain",
-      "agreetosteal"
+      "agreetosteal",
+      "T1195.002",
+      "T1056.002",
+      "T1114"
     ],
     "techniques": [
       "T1195.002",
@@ -2382,7 +2495,10 @@ const HUNTS_DATA = [
       "esxi",
       "vmware",
       "ghost_nic",
-      "unc6201"
+      "unc6201",
+      "T1021",
+      "T1599",
+      "T1049"
     ],
     "techniques": [
       "T1021",
@@ -2413,7 +2529,11 @@ const HUNTS_DATA = [
       "command_and_control",
       "apt28",
       "notdoor",
-      "com_hijacking"
+      "com_hijacking",
+      "T1566.001",
+      "T1059.005",
+      "T1546.015",
+      "T1102"
     ],
     "techniques": [
       "T1566.001",
@@ -2444,7 +2564,10 @@ const HUNTS_DATA = [
       "byovd",
       "gpo",
       "ransomware",
-      "crazyhunter"
+      "crazyhunter",
+      "T1484.001",
+      "T1562.001",
+      "T1106"
     ],
     "techniques": [
       "T1484.001",
@@ -2474,7 +2597,10 @@ const HUNTS_DATA = [
       "command_and_control",
       "clickfix",
       "social_engineering",
-      "rat"
+      "rat",
+      "T1566.002",
+      "T1204.002",
+      "T1219"
     ],
     "techniques": [
       "T1566.002",
@@ -2505,7 +2631,10 @@ const HUNTS_DATA = [
       "npm",
       "supply_chain",
       "mcp",
-      "ai_coding_assistant"
+      "ai_coding_assistant",
+      "T1195.002",
+      "T1555",
+      "T1119"
     ],
     "techniques": [
       "T1195.002",
@@ -2535,7 +2664,9 @@ const HUNTS_DATA = [
       "supply_chain",
       "mcp",
       "ai_coding_tools",
-      "claude_code"
+      "claude_code",
+      "T1195.001",
+      "T1059.004"
     ],
     "techniques": [
       "T1195.001",
@@ -2564,7 +2695,9 @@ const HUNTS_DATA = [
       "mshtml",
       "motw_bypass",
       "lnk",
-      "apt28"
+      "apt28",
+      "T1566.001",
+      "T1553.005"
     ],
     "techniques": [
       "T1566.001",
@@ -2594,7 +2727,10 @@ const HUNTS_DATA = [
       "usb",
       "air_gap",
       "apt37",
-      "rubyjumper"
+      "rubyjumper",
+      "T1091",
+      "T1092",
+      "T1036.005"
     ],
     "techniques": [
       "T1091",
@@ -2623,7 +2759,8 @@ const HUNTS_DATA = [
       "google_drive",
       "cloud_c2",
       "apt41",
-      "silver_dragon"
+      "silver_dragon",
+      "T1102.002"
     ],
     "techniques": [
       "T1102.002"
@@ -2651,7 +2788,9 @@ const HUNTS_DATA = [
       "dll_sideloading",
       "supply_chain",
       "notepadpp",
-      "chrysalis"
+      "chrysalis",
+      "T1574.002",
+      "T1195.002"
     ],
     "techniques": [
       "T1574.002",
@@ -2680,7 +2819,9 @@ const HUNTS_DATA = [
       "npm",
       "supply_chain",
       "worm",
-      "shai_hulud"
+      "shai_hulud",
+      "T1195.001",
+      "T1552.001"
     ],
     "techniques": [
       "T1195.001",
@@ -2710,7 +2851,10 @@ const HUNTS_DATA = [
       "clickfix",
       "windows_terminal",
       "ransomware",
-      "velvet_tempest"
+      "velvet_tempest",
+      "T1204.002",
+      "T1059.001",
+      "T1027.004"
     ],
     "techniques": [
       "T1204.002",
@@ -2740,7 +2884,10 @@ const HUNTS_DATA = [
       "clickfix",
       "windows_terminal",
       "lumma_stealer",
-      "infostealer"
+      "infostealer",
+      "T1204.002",
+      "T1059.001",
+      "T1555"
     ],
     "techniques": [
       "T1204.002",
@@ -2771,7 +2918,9 @@ const HUNTS_DATA = [
       "lolbin",
       "finger_exe",
       "ransomware",
-      "velvet_tempest"
+      "velvet_tempest",
+      "T1204.002",
+      "T1218"
     ],
     "techniques": [
       "T1204.002",
@@ -2801,7 +2950,10 @@ const HUNTS_DATA = [
       "vscode",
       "supply_chain",
       "glassworm",
-      "developer_tooling"
+      "developer_tooling",
+      "T1195.001",
+      "T1554",
+      "T1555"
     ],
     "techniques": [
       "T1195.001",
@@ -2831,7 +2983,8 @@ const HUNTS_DATA = [
       "ai_agent_security",
       "api_key_exfil",
       "openclaw",
-      "clawdbot"
+      "clawdbot",
+      "T1552"
     ],
     "techniques": [
       "T1552"
@@ -2860,7 +3013,8 @@ const HUNTS_DATA = [
       "crystal",
       "obscure_language_malware",
       "apt36",
-      "ai_generated_malware"
+      "ai_generated_malware",
+      "T1027"
     ],
     "techniques": [
       "T1027"
@@ -2889,7 +3043,8 @@ const HUNTS_DATA = [
       "infostealer",
       "amos",
       "agentic_ai",
-      "openclaw"
+      "openclaw",
+      "T1195.001"
     ],
     "techniques": [
       "T1195.001"
@@ -2919,7 +3074,8 @@ const HUNTS_DATA = [
       "cve_2025_68613",
       "workflow_automation",
       "lateral_movement",
-      "credential_access"
+      "credential_access",
+      "T1059"
     ],
     "techniques": [
       "T1059"
@@ -2951,7 +3107,8 @@ const HUNTS_DATA = [
       "healthcare",
       "government",
       "cve_2024_47575",
-      "cve_2024_55591"
+      "cve_2024_55591",
+      "T1552.001"
     ],
     "techniques": [
       "T1552.001"
@@ -2981,7 +3138,8 @@ const HUNTS_DATA = [
       "odyssey_stealer",
       "social_engineering",
       "credential_theft",
-      "session_hijacking"
+      "session_hijacking",
+      "T1204.002"
     ],
     "techniques": [
       "T1204.002"
@@ -3011,7 +3169,8 @@ const HUNTS_DATA = [
       "hive0163",
       "slopoly",
       "backdoor",
-      "financial_crime"
+      "financial_crime",
+      "T1059.001"
     ],
     "techniques": [
       "T1059.001"
@@ -3041,7 +3200,8 @@ const HUNTS_DATA = [
       "ai_agent",
       "zero_click",
       "document_delivery",
-      "patch_tuesday"
+      "patch_tuesday",
+      "T1048"
     ],
     "techniques": [
       "T1048"
@@ -3071,7 +3231,8 @@ const HUNTS_DATA = [
       "auth_bypass",
       "cve_2026_27896",
       "ai_agent",
-      "tool_execution"
+      "tool_execution",
+      "T1078"
     ],
     "techniques": [
       "T1078"
@@ -3097,7 +3258,8 @@ const HUNTS_DATA = [
       "impact",
       "intune",
       "mdm",
-      "wiper"
+      "wiper",
+      "T1485"
     ],
     "techniques": [
       "T1485"
@@ -3123,7 +3285,8 @@ const HUNTS_DATA = [
       "defense_evasion",
       "iocontrol",
       "ot_iot",
-      "upx"
+      "upx",
+      "T1027.002"
     ],
     "techniques": [
       "T1027.002"
@@ -3149,7 +3312,8 @@ const HUNTS_DATA = [
       "execution",
       "supply_chain",
       "npm",
-      "cicd"
+      "cicd",
+      "T1059.007"
     ],
     "techniques": [
       "T1059.007"
@@ -3174,7 +3338,8 @@ const HUNTS_DATA = [
     "tags": [
       "defense_evasion",
       "forticlient",
-      "authentication_bypass"
+      "authentication_bypass",
+      "T1550.004"
     ],
     "techniques": [
       "T1550.004"
@@ -3201,7 +3366,8 @@ const HUNTS_DATA = [
       "cve_2023_46604",
       "activemq",
       "exploit",
-      "rce"
+      "rce",
+      "T1190"
     ],
     "techniques": [
       "T1190"
@@ -3227,7 +3393,9 @@ const HUNTS_DATA = [
       "privilege_escalation",
       "named_pipe",
       "getsystem",
-      "token_impersonation"
+      "token_impersonation",
+      "T1134.005",
+      "T1134"
     ],
     "techniques": [
       "T1134.005",
@@ -3253,7 +3421,8 @@ const HUNTS_DATA = [
     "tags": [
       "defense_evasion",
       "event_log_clearing",
-      "anti_forensics"
+      "anti_forensics",
+      "T1070.001"
     ],
     "techniques": [
       "T1070.001"
@@ -3279,7 +3448,8 @@ const HUNTS_DATA = [
       "credential_access",
       "lsass",
       "credential_dumping",
-      "mimikatz"
+      "mimikatz",
+      "T1003.001"
     ],
     "techniques": [
       "T1003.001"
@@ -3305,7 +3475,8 @@ const HUNTS_DATA = [
       "discovery",
       "smb_scanning",
       "network_enumeration",
-      "reconnaissance"
+      "reconnaissance",
+      "T1018"
     ],
     "techniques": [
       "T1018"
@@ -3331,7 +3502,9 @@ const HUNTS_DATA = [
       "discovery",
       "account_enumeration",
       "active_directory",
-      "net_commands"
+      "net_commands",
+      "T1087.002",
+      "T1087"
     ],
     "techniques": [
       "T1087.002",
@@ -3358,7 +3531,8 @@ const HUNTS_DATA = [
       "discovery",
       "port_scanning",
       "network_scanning",
-      "advanced_ip_scanner"
+      "advanced_ip_scanner",
+      "T1046"
     ],
     "techniques": [
       "T1046"
@@ -3385,7 +3559,8 @@ const HUNTS_DATA = [
       "ransomware",
       "encryption",
       "lockbit",
-      "data_encrypted_for_impact"
+      "data_encrypted_for_impact",
+      "T1486"
     ],
     "techniques": [
       "T1486"
@@ -3412,7 +3587,8 @@ const HUNTS_DATA = [
       "defacement",
       "ransom_note",
       "wallpaper",
-      "extortion"
+      "extortion",
+      "T1491.001"
     ],
     "techniques": [
       "T1491.001"
@@ -3439,7 +3615,8 @@ const HUNTS_DATA = [
       "seo_poisoning",
       "malvertising",
       "trojanized_installer",
-      "drive_by"
+      "drive_by",
+      "T1189"
     ],
     "techniques": [
       "T1189"
@@ -3466,7 +3643,8 @@ const HUNTS_DATA = [
       "execution",
       "msiexec",
       "signed_binary_proxy",
-      "lolbin"
+      "lolbin",
+      "T1218.007"
     ],
     "techniques": [
       "T1218.007"
@@ -3495,7 +3673,8 @@ const HUNTS_DATA = [
       "ntdsutil",
       "wbadmin",
       "vssadmin",
-      "credential_dumping"
+      "credential_dumping",
+      "T1003.003"
     ],
     "techniques": [
       "T1003.003"
@@ -3521,7 +3700,8 @@ const HUNTS_DATA = [
       "collection",
       "data_staging",
       "exfiltration_prep",
-      "archive"
+      "archive",
+      "T1074.001"
     ],
     "techniques": [
       "T1074.001"
@@ -3547,7 +3727,8 @@ const HUNTS_DATA = [
       "initial_access",
       "phishing_via_service",
       "teams",
-      "social_engineering"
+      "social_engineering",
+      "T1566.003"
     ],
     "techniques": [
       "T1566.003"
@@ -3573,7 +3754,8 @@ const HUNTS_DATA = [
       "lateral_movement",
       "smb",
       "admin_shares",
-      "psexec"
+      "psexec",
+      "T1021.002"
     ],
     "techniques": [
       "T1021.002"
@@ -3599,7 +3781,8 @@ const HUNTS_DATA = [
       "lateral_movement",
       "dcom",
       "wmi",
-      "wmiexec"
+      "wmiexec",
+      "T1021.003"
     ],
     "techniques": [
       "T1021.003"
@@ -3626,7 +3809,9 @@ const HUNTS_DATA = [
       "persistence",
       "scheduled_task",
       "domain_controller",
-      "ntds"
+      "ntds",
+      "T1003.003",
+      "T1053.005"
     ],
     "techniques": [
       "T1003.003",
@@ -3654,7 +3839,8 @@ const HUNTS_DATA = [
       "email_collection",
       "exchange",
       "mailbox_delegation",
-      "oauth"
+      "oauth",
+      "T1114.002"
     ],
     "techniques": [
       "T1114.002"
@@ -3680,7 +3866,8 @@ const HUNTS_DATA = [
       "persistence",
       "web_shell",
       "godzilla",
-      "exchange"
+      "exchange",
+      "T1505.003"
     ],
     "techniques": [
       "T1505.003"
@@ -3706,7 +3893,8 @@ const HUNTS_DATA = [
       "defense_evasion",
       "dll_search_order_hijacking",
       "sideloading",
-      "cryptbase"
+      "cryptbase",
+      "T1574.001"
     ],
     "techniques": [
       "T1574.001"
@@ -3732,7 +3920,8 @@ const HUNTS_DATA = [
       "defense_evasion",
       "installutil",
       "lolbin",
-      "proxy_execution"
+      "proxy_execution",
+      "T1218.004"
     ],
     "techniques": [
       "T1218.004"
@@ -3758,7 +3947,8 @@ const HUNTS_DATA = [
       "credential_access",
       "browser_credentials",
       "infostealer",
-      "chrome"
+      "chrome",
+      "T1555.003"
     ],
     "techniques": [
       "T1555.003"
@@ -3785,7 +3975,8 @@ const HUNTS_DATA = [
       "rclone",
       "qemu",
       "data_exfiltration",
-      "vm_tunnel"
+      "vm_tunnel",
+      "T1048.001"
     ],
     "techniques": [
       "T1048.001"
@@ -3811,7 +4002,8 @@ const HUNTS_DATA = [
       "credential_access",
       "api_hooking",
       "credential_interception",
-      "process_injection"
+      "process_injection",
+      "T1056.004"
     ],
     "techniques": [
       "T1056.004"
@@ -3838,7 +4030,8 @@ const HUNTS_DATA = [
       "reflective_loading",
       "memory_only",
       "fileless",
-      "windows"
+      "windows",
+      "T1620"
     ],
     "techniques": [
       "T1620"
@@ -3864,7 +4057,8 @@ const HUNTS_DATA = [
       "defense_evasion",
       "tcc_bypass",
       "macos",
-      "privacy_controls"
+      "privacy_controls",
+      "T1562.001"
     ],
     "techniques": [
       "T1562.001"
@@ -3890,7 +4084,8 @@ const HUNTS_DATA = [
       "persistence",
       "launch_daemon",
       "macos",
-      "masquerading"
+      "masquerading",
+      "T1543.004"
     ],
     "techniques": [
       "T1543.004"
@@ -3917,7 +4112,8 @@ const HUNTS_DATA = [
       "applescript",
       "curl_pipe",
       "macos",
-      "fileless"
+      "fileless",
+      "T1059.002"
     ],
     "techniques": [
       "T1059.002"
@@ -3943,7 +4139,8 @@ const HUNTS_DATA = [
       "persistence",
       "launch_agent",
       "plist",
-      "macos"
+      "macos",
+      "T1543.001"
     ],
     "techniques": [
       "T1543.001"
@@ -3969,7 +4166,8 @@ const HUNTS_DATA = [
       "defense_evasion",
       "sandbox_evasion",
       "environmental_keying",
-      "vm_detection"
+      "vm_detection",
+      "T1497.001"
     ],
     "techniques": [
       "T1497.001"
@@ -3996,7 +4194,8 @@ const HUNTS_DATA = [
       "encrypted_channel",
       "aes",
       "custom_crypto",
-      "c2"
+      "c2",
+      "T1573.001"
     ],
     "techniques": [
       "T1573.001"
@@ -4023,7 +4222,8 @@ const HUNTS_DATA = [
       "reflective_loading",
       "macos",
       "fileless",
-      "gatekeeper_bypass"
+      "gatekeeper_bypass",
+      "T1620"
     ],
     "techniques": [
       "T1620"
@@ -4051,7 +4251,8 @@ const HUNTS_DATA = [
       "imds",
       "cloud",
       "ssrf",
-      "service_account"
+      "service_account",
+      "T1552.005"
     ],
     "techniques": [
       "T1552.005"
@@ -4078,7 +4279,10 @@ const HUNTS_DATA = [
       "gcp",
       "cloud",
       "iam_enumeration",
-      "service_account"
+      "service_account",
+      "T1580",
+      "T1526",
+      "T1069.003"
     ],
     "techniques": [
       "T1580",
@@ -4107,7 +4311,8 @@ const HUNTS_DATA = [
       "defense_evasion",
       "gcp",
       "cloud",
-      "service_account_impersonation"
+      "service_account_impersonation",
+      "T1548.005"
     ],
     "techniques": [
       "T1548.005"
@@ -4135,7 +4340,9 @@ const HUNTS_DATA = [
       "gcp",
       "cloud",
       "bigquery",
-      "cloud_storage"
+      "cloud_storage",
+      "T1537",
+      "T1619"
     ],
     "techniques": [
       "T1537",
@@ -4164,7 +4371,9 @@ const HUNTS_DATA = [
       "supply_chain",
       "npm",
       "developer_endpoint",
-      "ci_cd"
+      "ci_cd",
+      "T1195.002",
+      "T1555"
     ],
     "techniques": [
       "T1195.002",
@@ -4191,7 +4400,8 @@ const HUNTS_DATA = [
       "exfiltration",
       "snowflake",
       "saas",
-      "unc5537"
+      "unc5537",
+      "T1567.002"
     ],
     "techniques": [
       "T1567.002"
@@ -4330,7 +4540,8 @@ const HUNTS_DATA = [
     "tags": [
       "commandandcontrol",
       "t1568_002",
-      "dga"
+      "dga",
+      "T1568.002"
     ],
     "techniques": [
       "T1568.002"
@@ -4354,7 +4565,9 @@ const HUNTS_DATA = [
     "notes": "<ul><li>Data Collection and Preparation: Gather and encode data into numerical formats to support analysis (e.g., text vectorization or image hashing).</br><li>Similarity Analysis: Use similarity metrics (e.g., Levenshtein, cosine, or hash-based) to find related patterns or anomalies.</br><li>Clustering: Apply clustering (e.g., K-means) to group similar items, visualizing patterns and outliers.</br><li>Prioritization and Investigation: Flag clusters or anomalies for deeper analysis, focusing on items of interest or risk.",
     "tags": [
       "command_and_control",
-      "execution"
+      "execution",
+      "T1071.001",
+      "T1203"
     ],
     "techniques": [
       "T1071.001",
@@ -4383,7 +4596,9 @@ const HUNTS_DATA = [
       "model_assisted",
       "process_lineage",
       "clustering",
-      "anomaly_detection"
+      "anomaly_detection",
+      "T1059",
+      "T1218"
     ],
     "techniques": [
       "T1059",
@@ -4413,7 +4628,10 @@ const HUNTS_DATA = [
       "npm",
       "mcp",
       "supply_chain",
-      "ai_coding_assistant"
+      "ai_coding_assistant",
+      "T1195.002",
+      "T1119",
+      "T1555"
     ],
     "techniques": [
       "T1195.002",
@@ -4443,7 +4661,8 @@ const HUNTS_DATA = [
       "seo_poisoning",
       "malvertising",
       "domain_scoring",
-      "anomaly_detection"
+      "anomaly_detection",
+      "T1189"
     ],
     "techniques": [
       "T1189"
