@@ -50,7 +50,12 @@ def parse_hunt_file(path, category):
         "title": parsed.get("title") or parsed["hypothesis"],
         "tactic": ", ".join(parsed.get("tactics", [])),
         "notes": parsed.get("notes", ""),
-        "tags": parsed.get("tags", []),
+        # Merge techniques into tags so HuntFinder's /^T\d{4}/ filter finds them.
+        # Techniques live in a separate frontmatter field but the frontend only
+        # checks hunt.tags, so we combine both here without duplicates.
+        "tags": list(dict.fromkeys(
+            parsed.get("tags", []) + parsed.get("techniques", [])
+        )),
         "techniques": parsed.get("techniques", []),
         "severity": parsed.get("severity"),
         "status": parsed.get("status", "current"),
