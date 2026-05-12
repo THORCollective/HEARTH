@@ -4417,6 +4417,268 @@
     "file_path": "Flames/H142.md"
   },
   {
+    "id": "H143",
+    "category": "Flames",
+    "title": "Threat actors are abusing the signed Logitech \"Logi AI Prompt Builder\" binary to sideload a malicious screen_retriever_plugin.dll from %LocalAppData%\\LogiAI\\, executing TCLBANKER under the trust of a legitimate Flutter plugin loader path.",
+    "tactic": "Defense Evasion",
+    "notes": "TCLBANKER campaign (Elastic, May 2026). Detection: Sysmon Event ID 7 (ImageLoad) — flag `LogiAiPromptBuilder.exe` loading any DLL from `%LocalAppData%\\LogiAI\\` (legit installs live under `%ProgramFiles%`); Sysmon 1 / Defender XDR `DeviceProcessEvents` for `LogiAiPromptBuilder.exe` parent of `tclloader.exe`, `cmd.exe`, `msiexec.exe`, or `powershell.exe`; Sysmon 11 for file creates of `screen_retriever_plugin.dll` outside Program Files; Sysmon 17/18 for unusual named-pipe activity from the host process. KQL: `DeviceImageLoadEvents | where InitiatingProcessFileName =~ \"LogiAiPromptBuilder.exe\" | where FolderPath has \"AppData\\\\Local\\\\LogiAI\"`. Cross-reference T1036.005 (Match Legitimate Name or Location) — the dropped install masquerades under a Logitech-style directory tree.",
+    "tags": [
+      "defense_evasion",
+      "dll_sideloading",
+      "tclbanker",
+      "masquerading",
+      "T1036.005",
+      "T1574.002"
+    ],
+    "techniques": [
+      "T1036.005",
+      "T1574.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- TCLBANKER (Elastic Security Labs, May 2026) is the first publicly reported abuse of the Logi AI Prompt Builder Flutter plugin search path — defenders without a hunt for it will miss every infection where the loader runs from %LocalAppData%\n- DLL sideloading from %LocalAppData% is rare for legitimately signed Logitech software (which installs under %ProgramFiles%), so the path itself is a high-signal anchor that does not require knowing the malicious DLL's hash\n- The host process (LogiAiPromptBuilder.exe) is signed and trusted, so EDR allowlists and code-signing-only detections will not catch the malicious child process tree without an explicit ImageLoad or parent-child hunt\n- Multiple Brazilian banking trojans (TCLBANKER, prior Mispadu/Casbaneiro variants) have converged on Flutter/Electron host-process sideloading — establishing this hunt now generalizes to the next campaign that picks a different signed Flutter app",
+    "references": "- [MITRE ATT&CK T1574.002 - Hijack Execution Flow: DLL Side-Loading](https://attack.mitre.org/techniques/T1574/002/)\n- [Elastic Security Labs - TCLBANKER: Brazilian Banking Trojan Spreading via WhatsApp and Outlook](https://www.elastic.co/security-labs/tclbanker-brazilian-banking-trojan)\n- [MITRE ATT&CK T1036.005 - Masquerading: Match Legitimate Name or Location](https://attack.mitre.org/techniques/T1036/005/)\n- [Red Canary Atomic Red Team - T1574.002 DLL Side-Loading](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1574.002/T1574.002.md)\n- [Elastic Detection Rules - Unusual DLL Loaded by a Trusted Process](https://www.elastic.co/guide/en/security/current/unusual-dll-loaded-by-a-trusted-process.html)\n- [SigmaHQ - Suspicious DLL Side Loading from Programdata](https://github.com/SigmaHQ/sigma/blob/master/rules/windows/file/file_event/file_event_win_lolbin_susp_dll_lateral_movement.yml)\n- [Splunk - Hunting for DLL Side-Loading Activity](https://www.splunk.com/en_us/blog/security/dll-side-loading-detection-with-splunk.html)",
+    "file_path": "Flames/H143.md"
+  },
+  {
+    "id": "H144",
+    "category": "Flames",
+    "title": "Threat actors are abusing the Windows UI Automation framework to read the foreground browser's address bar from a non-AT host process and trigger banking-session hijacking when targeted domains appear.",
+    "tactic": "Collection",
+    "notes": "TCLBANKER (Elastic, May 2026) is the second public abuse of UIA after Coyote (Akamai, July 2025). Detection: Sysmon Event ID 7 — flag `UIAutomationCore.dll` loaded by processes that are NOT screen readers, accessibility tools, or UI test runners (carve a baseline list and alert on outliers); Sysmon Event ID 17/18 for named-pipe activity matching `UIA_PIPE_*` from non-allowlisted processes; Defender XDR `DeviceImageLoadEvents` join with `DeviceProcessEvents` to surface foreign-signed processes loading UIAutomationCore.dll; correlate with outbound WebSocket (wss://) connections (Sysmon 3) within a short window. KQL: `DeviceImageLoadEvents | where FileName =~ \"UIAutomationCore.dll\" | join kind=inner (DeviceProcessEvents) on DeviceId, InitiatingProcessId | where InitiatingProcessSignatureStatus != \"Signed\" or InitiatingProcessFolderPath has_any (\"AppData\\\\Local\",\"AppData\\\\Roaming\",\"ProgramData\")`. Cross-reference T1056.003 (Web Portal Capture) — the UIA polling is reconnaissance for browser-resident credential capture.",
+    "tags": [
+      "collection",
+      "ui_automation",
+      "tclbanker",
+      "coyote",
+      "browser_session_hijacking",
+      "T1056.003",
+      "T1185"
+    ],
+    "techniques": [
+      "T1056.003",
+      "T1185"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- TCLBANKER is the second documented case (after Coyote in 2025) of a banking trojan using UIA to read the browser address bar — detections built off the Coyote IOCs alone will miss it; the abuse pattern is what generalizes\n- UIA is a Microsoft-supported accessibility framework loaded by very few legitimate processes on a typical endpoint (screen readers, UI test harnesses, RPA tools), so the loader-set is small enough to allowlist and alert on outliers\n- This is a stealth alternative to API hooking and process injection — the malware never injects into the browser, never touches a hooked function, and reads cleartext URL/banking-page text via documented Windows APIs, defeating most behavior-based browser-protection detections\n- UIA polling is paired with a fast pivot to outbound WebSocket C2 — the combined Image-Load + outbound wss:// pattern from a non-AT process is a high-fidelity, low-volume hunt that will catch this family and the inevitable copycats",
+    "references": "- [MITRE ATT&CK T1185 - Browser Session Hijacking](https://attack.mitre.org/techniques/T1185/)\n- [Elastic Security Labs - TCLBANKER: Brazilian Banking Trojan Spreading via WhatsApp and Outlook](https://www.elastic.co/security-labs/tclbanker-brazilian-banking-trojan)\n- [Akamai - Coyote in the Wild: First-Ever Malware That Abuses UI Automation](https://www.akamai.com/blog/security-research/active-exploitation-coyote-malware-first-ui-automation-abuse-in-the-wild)\n- [The Hacker News - New Coyote Malware Variant Exploits Windows UI Automation to Steal Banking Credentials](https://thehackernews.com/2025/07/new-coyote-malware-variant-exploits.html)\n- [MITRE ATT&CK T1056.003 - Input Capture: Web Portal Capture](https://attack.mitre.org/techniques/T1056/003/)\n- [Microsoft Docs - UI Automation Overview](https://learn.microsoft.com/en-us/dotnet/framework/ui-automation/ui-automation-overview)\n- [Elastic Detection Rules - Suspicious DLL Loaded for Persistence or Privilege Escalation](https://www.elastic.co/guide/en/security/current/suspicious-dll-loaded-for-persistence-or-privilege-escalation.html)",
+    "file_path": "Flames/H144.md"
+  },
+  {
+    "id": "H145",
+    "category": "Flames",
+    "title": "Threat actors are using Outlook COM automation from a non-Office host process to enumerate contacts and send phishing emails from the victim's mailbox.",
+    "tactic": "Lateral Movement",
+    "notes": "TCLBANKER (Elastic, May 2026) used `Marshal.GetActiveObject(\"Outlook.Application\")` from a sideloaded process to harvest contacts and send malicious links from the victim's authenticated session. Detection: Sysmon Event ID 7 — flag any non-Office process loading `OUTLOOK.EXE` COM-related DLLs (`mso*.dll`, `OUTLLIB.DLL`, `EMSMDB32.DLL`); Sysmon 1 / Defender XDR `DeviceProcessEvents` for `powershell.exe`, `pythonw.exe`, `tclloader.exe`, or any non-Office binary that has `OUTLOOK.EXE` running and accesses the messaging APIs; Defender XDR `EmailEvents` joined with `DeviceProcessEvents` to find outbound emails sent at moments when a non-Office process spawned/loaded Outlook automation. KQL: `DeviceImageLoadEvents | where FileName in~ (\"OUTLLIB.DLL\",\"EMSMDB32.DLL\",\"MSO.DLL\") | where InitiatingProcessFileName !endswith \"OUTLOOK.EXE\" and InitiatingProcessFileName !endswith \"EXCEL.EXE\" and InitiatingProcessFileName !endswith \"WINWORD.EXE\"`. Cross-reference T1114.001 (Local Email Collection) — the same automation is used to read contacts before sending.",
+    "tags": [
+      "lateral_movement",
+      "outlook_com",
+      "tclbanker",
+      "internal_spearphishing",
+      "T1114.001",
+      "T1534"
+    ],
+    "techniques": [
+      "T1114.001",
+      "T1534"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Internal spearphishing from a compromised user's authenticated Outlook session bypasses SEG/anti-spoof controls because the email is genuinely sent from the trusted user — recipients see normal sender reputation, DMARC/DKIM pass, and no banner warnings\n- COM-based Outlook automation does not require a malicious VBA macro, OAuth grant, or mailbox-rule change, so it sidesteps the most common Office 365 abuse detections (mailbox rule monitoring, OAuth app review, macro telemetry)\n- TCLBANKER's use of this technique demonstrates that crimeware (not just APTs) is now operationalizing internal spearphishing via COM — the technique will spread to other commodity loaders quickly\n- The image-load fingerprint of a non-Office process loading EMSMDB32.DLL/OUTLLIB.DLL is rare in normal environments — even RPA/automation tooling typically hosts within mso.dll or uses Microsoft Graph instead of legacy COM, so this hunt is high signal",
+    "references": "- [MITRE ATT&CK T1534 - Internal Spearphishing](https://attack.mitre.org/techniques/T1534/)\n- [Elastic Security Labs - TCLBANKER: Brazilian Banking Trojan Spreading via WhatsApp and Outlook](https://www.elastic.co/security-labs/tclbanker-brazilian-banking-trojan)\n- [MITRE ATT&CK T1114.001 - Email Collection: Local Email Collection](https://attack.mitre.org/techniques/T1114/001/)\n- [Microsoft Learn - Marshal.GetActiveObject Method](https://learn.microsoft.com/en-us/dotnet/fundamentals/runtime-libraries/system-runtime-interopservices-marshal-getactiveobject)\n- [Elastic Detection Rules - Suspicious MS Outlook Child Process](https://www.elastic.co/guide/en/security/current/suspicious-ms-outlook-child-process.html)\n- [Microsoft - Detect and Remediate Outlook Rules and Custom Forms Injections](https://learn.microsoft.com/en-us/defender-office-365/detect-and-remediate-outlook-rules-forms-attack)\n- [SigmaHQ - Outlook EnableUnsafeClientMailRules](https://github.com/SigmaHQ/sigma/blob/master/rules/windows/registry/registry_set/registry_set_enable_unsafe_client_mail_rules.yml)",
+    "file_path": "Flames/H145.md"
+  },
+  {
+    "id": "H146",
+    "category": "Flames",
+    "title": "Non-root processes invoke /usr/bin/su from anomalous parent processes shortly after issuing AF_ALG socket / splice() syscalls, indicating Copy Fail (CVE-2026-31431) exploitation against page-cached setuid binaries.",
+    "tactic": "Privilege Escalation",
+    "notes": "Linux only — the algif_aead vulnerability lives in the kernel crypto subsystem (kernels 4.14–6.19.12). Detection: auditd rules for `socket(AF_ALG)` (audit `arch=b64 -S socket -F a0=38`), `splice()`, and `sendmsg()` from non-root EUID combined with subsequent `execve` of `/usr/bin/su`; eBPF/Falco rule on `crypto_alg_lookup` or AF_ALG bind followed by setuid binary execution; XDR/EDR — Cortex XQL example from Unit 42: `actor_effective_user_sid != \"0\" and action_process_image_name = \"su\" and actor_process_image_name not in (\"bash\",\"sh\",\"zsh\",\"ksh\",\"sudo\",\"su\")`. Equivalent KQL for Defender for Endpoint Linux: `DeviceProcessEvents | where DeviceOSPlatform == \"Linux\" | where FileName == \"su\" and AccountName != \"root\" | where InitiatingProcessFileName !in (\"bash\",\"sh\",\"zsh\",\"ksh\",\"dash\",\"sudo\",\"su\",\"login\",\"sshd\")`. Also hunt for short-window correlation of `curl` to \"copy.fail\" or any kernel-exploit gist followed by `su` execution. Page modifications leave NO disk artifact — file integrity monitoring will MISS this; behavioral detection is the only layer.",
+    "tags": [
+      "privilege_escalation",
+      "linux",
+      "copy_fail",
+      "cve_2026_31431",
+      "af_alg",
+      "T1068"
+    ],
+    "techniques": [
+      "T1068"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Copy Fail is the most severe Linux privilege-escalation flaw in years per Unit 42 / Microsoft (May 2026) — the exploit is deterministic, requires no race, and ships as a 732-byte standalone Python script using only stdlib, so weaponization across cloud and container fleets is trivial\n- The exploit modifies setuid binaries IN MEMORY (page cache only); the on-disk binary is unchanged, so AIDE / Tripwire / Tetragon-FIM will not detect successful exploitation — behavioral detection on the resulting setuid execution is the only viable layer\n- Container escape impact is severe: any unprivileged user inside a Linux container with AF_ALG access can break out to the host, putting Kubernetes multi-tenant workloads and CI/CD pipelines at high risk\n- The \"non-root → su via anomalous parent\" signal is high signal even outside this CVE — it generalizes to other privilege-escalation primitives (DirtyCow, DirtyPipe, kernel use-after-frees) where the final step is hijacking a setuid binary",
+    "references": "- [MITRE ATT&CK T1068 - Exploitation for Privilege Escalation](https://attack.mitre.org/techniques/T1068/)\n- [Unit 42 - Copy Fail: What You Need to Know About the Most Severe Linux Threat in Years](https://unit42.paloaltonetworks.com/cve-2026-31431-copy-fail/)\n- [Microsoft Security Blog - CVE-2026-31431 Copy Fail Vulnerability Enables Linux Root Privilege Escalation](https://www.microsoft.com/en-us/security/blog/2026/05/01/cve-2026-31431-copy-fail-vulnerability-enables-linux-root-privilege-escalation/)\n- [Falco - Detect Privilege Escalation via Suspicious su Activity](https://falco.org/docs/rules/default-macros/)\n- [Linux auditd - Auditing System Calls](https://linux-audit.com/linux-audit-framework/auditing-system-calls/)\n- [Red Canary Atomic Red Team - T1068 Linux Privilege Escalation](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1068/T1068.md)\n- [Elastic Detection Rules - Privilege Escalation via Linux su Anomalous Parent](https://www.elastic.co/guide/en/security/current/linux-restricted-shell-breakout-via-linux-binary-s.html)",
+    "file_path": "Flames/H146.md"
+  },
+  {
+    "id": "H147",
+    "category": "Flames",
+    "title": "Threat actors deliver macOS infostealers via ClickFix lures that trick users into pasting a base64-encoded shell pipeline into Terminal, decoding into a curl-piped osascript or sh payload.",
+    "tactic": "Execution",
+    "notes": "macOS only — Microsoft Threat Intelligence (May 2026) reports SHub Stealer / AMOS / Macsync delivered via fake macOS-utility Squarespace, Medium, and Craft pages. Detection: ESF subscribers (ES_EVENT_TYPE_NOTIFY_EXEC) for process trees where `Terminal.app` → `zsh`/`bash` → (`base64 -D` or `base64 --decode`) piped into `sh`/`zsh`/`osascript`; Unified Log predicate `process == \"osascript\" AND parentProcess CONTAINS \"curl\"`; KQL on Defender for Endpoint macOS — verbatim from Microsoft: `DeviceNetworkEvents | where InitiatingProcessCommandLine has_any (\"loader.sh?build=\",\"payload.applescript?build=\")` and `DeviceProcessEvents | where ProcessCommandLine has_all(\"curl\",\"POST\",\"txid\",\"osascript\",\"bmodule\",\"max-time\")`. Hunt for `/tmp/shub_*` and `/tmp/<random_id>/` directory creation. Cross-reference T1204.004 (User Execution: Malicious Copy and Paste) — the user is the delivery mechanism.",
+    "tags": [
+      "execution",
+      "macos",
+      "clickfix",
+      "shub_stealer",
+      "amos",
+      "osascript",
+      "T1204.004",
+      "T1059.002"
+    ],
+    "techniques": [
+      "T1204.004",
+      "T1059.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- ClickFix is the dominant macOS initial-access vector in 2026 — Jamf, Datadog, Microsoft, and Hunt.io have all published on it within the past quarter, and the technique works because it converts the user into an unsigned-binary execution path that bypasses Gatekeeper and codesign verification entirely\n- The curl|base64|osascript pipeline is fileless on the disk (no .scpt, no .sh dropped), so file-based AV/EDR signatures will not catch it — process telemetry on the pipeline shape and the unusual parent-child chain is the only durable detection\n- Microsoft's KQL queries are public and ready to deploy, but the underlying behavior generalizes: any future macOS lure that pivots to `curl ... | osascript` will trigger this hunt regardless of campaign branding\n- Each of the three identified payloads (SHub, AMOS, Macsync) targets keychain databases, browser credential stores, and crypto wallets — early detection at the execution stage prevents irreversible credential and wallet seed-phrase loss",
+    "references": "- [MITRE ATT&CK T1059.002 - Command and Scripting Interpreter: AppleScript](https://attack.mitre.org/techniques/T1059/002/)\n- [Microsoft Threat Intelligence - ClickFix Campaign Uses Fake macOS Utilities Lures to Deliver Infostealers](https://www.microsoft.com/en-us/security/blog/2026/05/06/clickfix-campaign-uses-fake-macos-utilities-lures-deliver-infostealers/)\n- [MITRE ATT&CK T1204.004 - User Execution: Malicious Copy and Paste](https://attack.mitre.org/techniques/T1204/004/)\n- [Jamf Threat Labs - ClickFix Malware Uses macOS Script Editor to Deliver Atomic Stealer](https://www.jamf.com/blog/clickfix-macos-script-editor-atomic-stealer/)\n- [Hunt.io - ClickFix on macOS: AppleScript Stealer, Terminal Phishing, and C2 Infrastructure](https://hunt.io/blog/macos-clickfix-applescript-terminal-phishing)\n- [Datadog Security Labs - Tech Impersonators: ClickFix and macOS Infostealers](https://securitylabs.datadoghq.com/articles/tech-impersonators-clickfix-and-macos-infostealers/)\n- [Microsoft Community Hub - Hunting Infostealers - macOS Threats](https://techcommunity.microsoft.com/blog/microsoftsecurityexperts/hunting-infostealers---macos-threats/4494435)",
+    "file_path": "Flames/H147.md"
+  },
+  {
+    "id": "H148",
+    "category": "Flames",
+    "title": "Threat actors persist macOS infostealers via LaunchAgent plists in ~/Library/LaunchAgents/ that masquerade as Apple/Google update services and reference unsigned binaries under user-writable paths.",
+    "tactic": "Persistence",
+    "notes": "macOS only — TCLBANKER's macOS cousin and Microsoft's ClickFix (May 2026) both used `~/Library/LaunchAgents/com.google.keystone.agent.plist` referencing `~/Library/Application Support/Google/GoogleUpdate.app/Contents/MacOS/GoogleUpdate`, plus `~/LaunchAgents/com.<random>.plist` variants. Detection: ESF (ES_EVENT_TYPE_NOTIFY_CREATE / _RENAME) on file paths matching `~/Library/LaunchAgents/*.plist` and `/Library/LaunchAgents/*.plist`; Unified Log subsystem predicate `subsystem == \"com.apple.xpc.launchd\" AND eventMessage CONTAINS \"load\"`; runtime check via `launchctl list",
+    "tags": [],
+    "techniques": [],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "com\\.google)'` followed by `codesign -dvvv <referenced binary>` — flag plists pointing to unsigned, ad-hoc-signed, or non-notarized binaries. KQL on Defender for Endpoint macOS: `DeviceFileEvents | where FileName endswith \".plist\" and FolderPath has_any (\"/Library/LaunchAgents\",\"/Library/LaunchDaemons\") | where InitiatingProcessFileName !in (\"Installer\",\"installd\",\"softwareupdated\",\"System Events\")`. Cross-reference T1036.005 (Match Legitimate Name or Location) — `com.google.keystone.agent` and `com.apple.*` plists from non-Apple/non-Google processes are the masquerade signal. Cross-reference T1543.004 (Launch Daemon) when persistence lands in `/Library/LaunchDaemons/com.finder.helper.plist` instead.",
+      "link": ""
+    },
+    "why": "- LaunchAgent plists are the dominant macOS user-mode persistence mechanism in 2026 — adversaries from APTs to commodity infostealers (AMOS, SHub, Atomic) all converge here, so a strong detection on this single path covers the majority of macOS post-compromise persistence\n- Masquerading as `com.apple.*` or `com.google.keystone.agent` defeats name-based allowlists that trust Apple/Google service names — verifying that the referenced binary is signed and notarized is the required additional check\n- Plist creation in LaunchAgents/Daemons folders by `Terminal`, `osascript`, `curl`, `Python`, or any non-installer process is rare and high-signal in practice — Elastic's prebuilt rule set has flagged this since 2022 with low false-positive rates\n- Persistence detection lets defenders catch the campaign even if the initial-access ClickFix or trojanized-installer step is missed, providing a second-chance opportunity before C2 beaconing or credential theft completes",
+    "references": "- [MITRE ATT&CK T1543.001 - Create or Modify System Process: Launch Agent](https://attack.mitre.org/techniques/T1543/001/)\n- [Microsoft Threat Intelligence - ClickFix Campaign Uses Fake macOS Utilities Lures to Deliver Infostealers](https://www.microsoft.com/en-us/security/blog/2026/05/06/clickfix-campaign-uses-fake-macos-utilities-lures-deliver-infostealers/)\n- [Elastic Detection Rules - Persistence via Suspicious Launch Agent or Launch Daemon](https://www.elastic.co/guide/en/security/8.19/persistence-via-suspicious-launch-agent-or-launch-daemon.html)\n- [Elastic Detection Rules - Creation of Hidden Launch Agent or Daemon](https://elastic.co/guide/en/security/current/creation-of-hidden-launch-agent-or-daemon.html)\n- [Elastic Security Labs - Sinking macOS Pirate Ships with Elastic Behavior Detections](https://www.elastic.co/security-labs/sinking-macos-pirate-ships)\n- [Detection.FYI - Persistence via Suspicious Launch Agent or Launch Daemon](https://detection.fyi/elastic/detection-rules/macos/persistence_suspicious_launch_agent_or_launch_daemon/)\n- [Red Canary Atomic Red Team - T1543.001 Launch Agent](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1543.001/T1543.001.md)",
+    "file_path": "Flames/H148.md"
+  },
+  {
+    "id": "H149",
+    "category": "Flames",
+    "title": "Microsoft 365 users are clicking a \"code of conduct\" / \"internal regulatory\" phishing lure that routes through a Cloudflare-CAPTCHA-gated staging page before a Microsoft sign-in proxy, yielding session-token theft visible as anomalous-token / unfamiliar-properties / impossible-travel risk events in Entra ID.",
+    "tactic": "Credential Access",
+    "notes": "M365 / Entra ID. Microsoft Threat Intelligence (May 2026) reports ~35,000 users across 13,000 orgs in 26 countries hit by this campaign. Detection: Microsoft 365 Defender — verbatim sender list query: `EmailEvents | where SenderMailFromAddress in (\"cocpostmaster@cocinternal.com\",\"nationaladmin@gadellinet.com\",\"nationalintegrity@harteprn.com\",\"m365premiumcommunications@cocinternal.com\",\"documentviewer@na.businesshellosign.de\")`. Pivot from `EmailEvents` to `UrlClickEvents` for clicks on `compliance-protectionoutlook[.]de`, `acceptable-use-policy-calendly[.]de`, then to `AADSignInEventsBeta` for risk events `RiskEventType in (\"anomalousToken\",\"unfamiliarFeatures\",\"unfamiliarFeaturesSession\")` from the same UPN within a 1-hour window. Hunt `IdentityLogonEvents` for new sign-in IP/ASN combinations within minutes of the URL click. Hunt `CloudAppEvents` for `ImpossibleTravelActivity` and `MailItemsAccessedAnomalously`. Cross-reference T1078.004 (Valid Accounts: Cloud Accounts) — the stolen token is replayed against M365 services. Cross-reference T1564.008 (Email Hiding Rules) when the attacker creates inbox rules post-token-theft.",
+    "tags": [
+      "credential_access",
+      "m365",
+      "entra_id",
+      "aitm",
+      "phishing",
+      "code_of_conduct",
+      "T1078.004",
+      "T1564.008",
+      "T1539"
+    ],
+    "techniques": [
+      "T1078.004",
+      "T1564.008",
+      "T1539"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- This campaign hit ~35,000 users across 13,000 organizations in 26 countries (92% US-based) per Microsoft's May 2026 disclosure — Healthcare, Financial Services, and Professional Services are the top targets, all sectors with regulatory-themed lure susceptibility\n- AiTM token theft renders MFA ineffective — once the session cookie is stolen, the attacker bypasses MFA entirely on every subsequent service hit; detecting at the click-through-to-anomalous-sign-in window is the last reliable layer before mailbox compromise\n- The Cloudflare CAPTCHA + image-selection CAPTCHA double-gate is specifically designed to defeat sandbox detonation and URL-rewrite scanning — defenders cannot rely on inline URL inspection, only on post-click identity telemetry\n- The \"code of conduct\" / regulatory-compliance lure theme is novel and effective against compliance-aware industries (healthcare, financial services) — it is likely to recur across multiple operator clusters in 2026, and a generalized hunt on the click→risk-event sequence will catch follow-on variants regardless of sender domain rotation",
+    "references": "- [MITRE ATT&CK T1539 - Steal Web Session Cookie](https://attack.mitre.org/techniques/T1539/)\n- [Microsoft Threat Intelligence - Breaking the Code: Multi-Stage 'Code of Conduct' Phishing Campaign Leads to AiTM Token Compromise](https://www.microsoft.com/en-us/security/blog/2026/05/04/breaking-the-code-multi-stage-code-of-conduct-phishing-campaign-leads-to-aitm-token-compromise/)\n- [MITRE ATT&CK T1078.004 - Valid Accounts: Cloud Accounts](https://attack.mitre.org/techniques/T1078/004/)\n- [Microsoft - Anomalous Token Detection in Entra ID Protection](https://learn.microsoft.com/en-us/entra/id-protection/concept-identity-protection-risks)\n- [Microsoft - Impossible Travel Detection in Defender for Cloud Apps](https://learn.microsoft.com/en-us/defender-cloud-apps/anomaly-detection-policy)\n- [Mandiant - Tycoon 2FA / AiTM Phishing-as-a-Service Analysis](https://cloud.google.com/blog/topics/threat-intelligence/tycoon2fa)\n- [Microsoft Sentinel - Hunting Queries for AiTM Phishing](https://github.com/Azure/Azure-Sentinel/tree/master/Hunting%20Queries/MicrosoftThreatProtection)",
+    "file_path": "Flames/H149.md"
+  },
+  {
+    "id": "H150",
+    "category": "Flames",
+    "title": "Threat actors deliver Python supply-chain malware via PyPI packages (colorinal/termncolor/uuid32-utils) that load an attacker-controlled native DLL on import, drop a payload to %LOCALAPPDATA%\\vcpacket\\, and persist via an HKCU Run key.",
+    "tactic": "Initial Access",
+    "notes": "Windows. OceanLotus / APT32 (Securelist, May 2026) — three malicious wheels on PyPI starting July 2025. Detection: Sysmon Event ID 7 — flag `python.exe`/`pythonw.exe` loading DLLs from `site-packages\\colorinal\\`, `site-packages\\termncolor\\`, `site-packages\\uuid32-utils\\`, or any non-stdlib site-packages path that is not on the org's pip-install allowlist; Sysmon Event ID 1 for `python.exe` parent of `vcpktsvr.exe`; Sysmon Event ID 11 for file creates under `%LOCALAPPDATA%\\vcpacket\\`; Sysmon Event ID 13 for `HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\pkt-update` Set; Sysmon Event ID 3 / `DeviceNetworkEvents` for outbound HTTPS to `helper.zulipchat.com` from `vcpktsvr.exe`. KQL: `DeviceImageLoadEvents | where InitiatingProcessFileName in~ (\"python.exe\",\"pythonw.exe\") and FileName endswith \".dll\" | where FolderPath has \"site-packages\" and FolderPath !has_any (\"\\\\numpy\\\\\",\"\\\\pandas\\\\\",\"\\\\cryptography\\\\\",\"\\\\lxml\\\\\",\"\\\\pillow\\\\\",\"\\\\torch\\\\\")`. KQL persistence: `DeviceRegistryEvents | where RegistryKey has \"CurrentVersion\\\\Run\" and RegistryValueName == \"pkt-update\"`. Cross-reference T1059.006 (Python) — the entire dropper chain runs inside the Python interpreter.",
+    "tags": [
+      "initial_access",
+      "pypi",
+      "supply_chain",
+      "oceanlotus",
+      "apt32",
+      "zichatbot",
+      "T1059.006",
+      "T1195.002"
+    ],
+    "techniques": [
+      "T1059.006",
+      "T1195.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Python interpreters loading native DLLs from inside site-packages directories is rare for the typical engineering workstation outside a small set of known-native libraries (numpy, pandas, cryptography, lxml, pillow, torch) — this hunt reliably surfaces unfamiliar wheels with C extensions\n- OceanLotus (APT32) using PyPI as a malware delivery channel — confirmed by Kaspersky in May 2026 — represents a meaningful upgrade in supply-chain targeting from a state-aligned actor; expect more APT entrants to mirror this technique through 2026\n- Zulip team-chat APIs are a novel C2 channel that bypasses domain-reputation and threat-intel feeds entirely (helper.zulipchat.com is a legitimate cloud service) — defenders cannot rely on URL/domain blocklists; the host-side Run-key + native DLL combo is the durable signal\n- Developer workstations and CI/CD runners are typically less monitored than user endpoints and have credentials, source code, and cloud-provider tokens — supply-chain compromise via PyPI yields outsized impact, justifying tighter Sysmon coverage there",
+    "references": "- [MITRE ATT&CK T1195.002 - Supply Chain Compromise: Compromise Software Supply Chain](https://attack.mitre.org/techniques/T1195/002/)\n- [Securelist (Kaspersky) - OceanLotus Suspected of Using PyPI to Deliver ZiChatBot Malware](https://securelist.com/oceanlotus-suspected-pypi-zichatbot-campaign/119603/)\n- [MITRE ATT&CK T1059.006 - Command and Scripting Interpreter: Python](https://attack.mitre.org/techniques/T1059/006/)\n- [Snyk - Malicious Packages Found to Be Typosquatting in PyPI](https://snyk.io/blog/malicious-packages-found-to-be-typo-squatting-in-pypi/)\n- [Check Point - PyPI Inundated by Malicious Typosquatting Campaign](https://blog.checkpoint.com/securing-the-cloud/pypi-inundated-by-malicious-typosquatting-campaign/)\n- [Socket - Typosquatting on PyPI: Malicious Package Mimics Popular Browser-Cookie Library](https://socket.dev/blog/typosquatting-on-pypi-malicious-package-mimics-popular-browser-cookie-library)\n- [SigmaHQ - Suspicious Python DLL Load](https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_python_susp_module.yml)",
+    "file_path": "Flames/H150.md"
+  },
+  {
+    "id": "H151",
+    "category": "Flames",
+    "title": "Silver Fox persists ABCDoor on Windows via an HKCU Run key value \"AppClient\" and a Scheduled Task \"AppClient\" both invoking `pythonw.exe -m appclient`, with installation artifacts under HKCU\\Software\\CarEmu and %LOCALAPPDATA%\\applogs.",
+    "tactic": "Persistence",
+    "notes": "Windows. Silver Fox APT tax-notification campaign targeting Russia and India (Securelist, April–May 2026). Detection: Sysmon Event ID 13 / `DeviceRegistryEvents` for Set on `HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\AppClient`; Sysmon Event ID 1 / Windows Event ID 4698 (Scheduled Task created) for task name `AppClient` with action `pythonw.exe -m appclient`; Sysmon Event ID 11 for file creates in `%LOCALAPPDATA%\\applogs\\device.log` and `exception_logs.zip`; Sysmon Event ID 13 for Set on `HKCU\\Software\\CarEmu\\FirstInstallTime` or `InstallChannel`; Sysmon Event ID 3 / `DeviceNetworkEvents` for outbound HTTPS to `abc.*` C2 domains and `45.118.133[.]205:5000`. KQL: `DeviceProcessEvents | where FileName =~ \"pythonw.exe\" and ProcessCommandLine has \"-m appclient\"`. KQL Run key: `DeviceRegistryEvents | where RegistryKey has \"CurrentVersion\\\\Run\" and RegistryValueName == \"AppClient\" and RegistryValueData has \"pythonw.exe\"`. KQL Scheduled Task: `DeviceProcessEvents | where FileName =~ \"schtasks.exe\" and ProcessCommandLine has_all (\"/Create\",\"AppClient\",\"pythonw\")`. Cross-reference T1053.005 (Scheduled Task) — both persistence anchors should be hunted together. Cross-reference T1574.002 (DLL Side-Loading) — Silver Fox's loader chain uses RustSL with sideloaded `登录模块.dll_bin` ValleyRAT components.",
+    "tags": [
+      "persistence",
+      "windows",
+      "silver_fox",
+      "abcdoor",
+      "valleyrat",
+      "T1053.005",
+      "T1574.002",
+      "T1547.001"
+    ],
+    "techniques": [
+      "T1053.005",
+      "T1574.002",
+      "T1547.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- pythonw.exe running with `-m appclient` is virtually never benign on a corporate Windows endpoint — most environments have no legitimate Python application named `appclient`, making the command line a single-string anchor that catches the technique with near-zero false positives\n- Silver Fox is targeting industrial, consulting, retail, and transportation organizations across two strategic countries (Russia, India) with >1,600 phishing emails in a single window — defenders in those verticals should treat this as an active, high-volume threat\n- Dual persistence (Run key + Scheduled Task with a 1-minute trigger) is unusually aggressive — the Scheduled Task respawns the implant if the user kills it, and the every-minute trigger generates Event ID 4688 noise that defenders can pivot from once they know the binary\n- The ABCDoor implant inherits its \"remote control\" primitives from ValleyRAT (broad screen capture and HID emulation) but lacks a remote shell — defenders can rely on persistence and beacon detection rather than command-execution telemetry, which is unusual and instructive for tooling decisions",
+    "references": "- [MITRE ATT&CK T1547.001 - Boot or Logon Autostart Execution: Registry Run Keys / Startup Folder](https://attack.mitre.org/techniques/T1547/001/)\n- [Securelist (Kaspersky) - Silver Fox Uses the New ABCDoor Backdoor to Target Organizations in Russia and India](https://securelist.com/silver-fox-tax-notification-campaign/119575/)\n- [MITRE ATT&CK T1053.005 - Scheduled Task/Job: Scheduled Task](https://attack.mitre.org/techniques/T1053/005/)\n- [Red Canary Atomic Red Team - T1547.001 Registry Run Keys](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1547.001/T1547.001.md)\n- [Elastic Detection Rules - Persistence via Scheduled Task](https://www.elastic.co/guide/en/security/current/persistence-via-scheduled-job-creation.html)\n- [SigmaHQ - Suspicious Run Key from Download](https://github.com/SigmaHQ/sigma/blob/master/rules/windows/registry/registry_set/registry_set_run_key_susp_download.yml)\n- [Splunk - Hunting for Scheduled Task Persistence](https://www.splunk.com/en_us/blog/security/hunting-for-malicious-scheduled-tasks.html)",
+    "file_path": "Flames/H151.md"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
