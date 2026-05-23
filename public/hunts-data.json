@@ -4679,6 +4679,290 @@
     "file_path": "Flames/H151.md"
   },
   {
+    "id": "H152",
+    "category": "Flames",
+    "title": "Threat actors register attacker-controlled key credentials in `msDS-KeyCredentialLink` on privileged AD user/computer objects (Whisker, pyWhisker, Certipy `shadow auto`) to obtain a persistent passwordless PKINIT authentication primitive that survives password resets.",
+    "tactic": "Credential Access",
+    "notes": "Windows / Active Directory. Unit 42 AD CS exploitation report (May 2026) called shadow credentials out as a primary persistence/escalation primitive paired with AD CS abuse. Detection: Windows Security Event ID 5136 (directory object modified) with `AttributeLDAPDisplayName == \"msDS-KeyCredentialLink\"` — by default this is not audited for user objects, so a custom AuditRule for the attribute GUID must be deployed first; exclude legitimate writers (Azure AD Connect `MSOL_*`, ADFS service account, Windows Hello for Business enrollment service). Sysmon Event ID 1 / `DeviceProcessEvents` for `Whisker.exe`, `Rubeus.exe asktgt`, or `certipy shadow auto`/`certipy auth -pfx`. Cross-reference T1556 (Modify Authentication Process) — the msDS-KeyCredentialLink write is the auth-process modification. Cross-reference T1550 (Use Alternate Authentication Material) — the follow-on PKINIT TGT request uses the shadow credential. KQL: `IdentityDirectoryEvents | where ActionType == \"Directory object modified\" and AdditionalFields has \"msDS-KeyCredentialLink\" and AccountName !startswith \"MSOL_\"`. Sigma: SigmaHQ `win_security_susp_possible_shadow_credentials_added.yml`.",
+    "tags": [
+      "credential_access",
+      "shadow_credentials",
+      "ad_cs",
+      "windows",
+      "T1556",
+      "T1550",
+      "T1649"
+    ],
+    "techniques": [
+      "T1556",
+      "T1550",
+      "T1649"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Shadow credentials are an EDR-resistant persistence primitive: the attacker never touches LSASS, never extracts a hash, and never needs the user's password — they simply append a key to the target's `msDS-KeyCredentialLink` and authenticate via PKINIT, so credential-theft and password-rotation controls do nothing\n- The technique is now a default option in Certipy (`shadow auto`, baked into the AD CS toolchain) and Unit 42's May 2026 report flags it as paired with ESC1-ESC16 abuse — meaning operators with AD CS access will almost always set a shadow credential as their persistence anchor\n- Detection requires explicit configuration of a custom Directory Service AuditRule for the `msDS-KeyCredentialLink` attribute (GUID `5b47d60f-6090-40b2-9f37-2a4de88f3063`) because the default audit policy doesn't cover this attribute on user objects — so most environments have ZERO visibility today, and even adding the audit rule is a high-value defensive win\n- Legitimate writers are a small allowlist (Azure AD Connect `MSOL_*`, ADFS svc, Windows Hello for Business enrollment) — once excluded, residual 5136 events on this attribute become extremely high signal",
+    "references": "- [MITRE ATT&CK T1649 - Steal or Forge Authentication Certificates](https://attack.mitre.org/techniques/T1649/)\n- [Unit 42 - Inside AD CS Escalation: Unpacking Advanced Misuse Techniques and Tools](https://unit42.paloaltonetworks.com/active-directory-certificate-services-exploitation/)\n- [MITRE ATT&CK T1556 - Modify Authentication Process](https://attack.mitre.org/techniques/T1556/)\n- [SigmaHQ - Possible Shadow Credentials Added (5136 + msDS-KeyCredentialLink)](https://github.com/SigmaHQ/sigma/blob/master/rules/windows/builtin/security/win_security_susp_possible_shadow_credentials_added.yml)\n- [Elastic Prebuilt Detection - Potential Shadow Credentials added to AD Object](https://www.elastic.co/docs/reference/security/prebuilt-rules/rules/windows/credential_access_shadow_credentials)\n- [Black Hills InfoSec - Enable Auditing of Changes to msDS-KeyCredentialLink](https://www.blackhillsinfosec.com/enable-auditing-of-changes-to-msds-keycredentiallink/)\n- [DefensiveOrigins - Detect-msDS-KeyCredentialLink (audit rule deployment)](https://github.com/DefensiveOrigins/Detect-msDS-KeyCredentialLink)",
+    "file_path": "Flames/H152.md"
+  },
+  {
+    "id": "H153",
+    "category": "Flames",
+    "title": "Threat actors are exploiting ESC1-vulnerable certificate templates (`ENROLLEE_SUPPLIES_SUBJECT` + Client Authentication EKU + low/empty approval requirements) via Certify or Certipy to request a certificate with an arbitrary Subject Alternative Name impersonating a privileged account, then authenticating to a DC via PKINIT.",
+    "tactic": "Privilege Escalation",
+    "notes": "Windows / Active Directory. Unit 42 AD CS exploitation report (May 2026). Detection requires CA-level audit logging enabled (`certutil -setreg CA\\AuditFilter 127` + OS-level \"Audit Certification Services\" success/failure). Hunt: Windows Security Event ID 4886 (cert request received) and 4887 (cert issued) on the CA — flag any certificate where the SAN UPN/DNS name does NOT match the requester account; correlate within minutes to Windows Event ID 4768 on a DC with `PreAuthType == 16` (PKINIT) and `TicketOptions` starting `0x4080` for the impersonated account from a host that does not normally authenticate as that account. Sysmon Event ID 1 for `Certify.exe request /ca:.. /template:.. /altname:..`, `certipy req`, or `Rubeus asktgt /certificate:`. KQL (Defender XDR): join `DeviceProcessEvents` on certify/certipy invocations with `IdentityLogonEvents` PKINIT TGT requests for the SAN'd identity. Cross-reference T1649 (Steal or Forge Authentication Certificates) parent technique. Cross-reference T1550 (Use Alternate Authentication Material) for the TGT request follow-on. Splunk Security Content: `Windows Steal Authentication Certificates - ESC1 Abuse` and `ESC1 Authentication`.",
+    "tags": [
+      "privilege_escalation",
+      "esc1",
+      "ad_cs",
+      "certify",
+      "certipy",
+      "windows",
+      "T1649",
+      "T1550"
+    ],
+    "techniques": [
+      "T1649",
+      "T1550"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- ESC1 is the highest-impact AD CS misconfiguration that still ships in many environments — a single template with `ENROLLEE_SUPPLIES_SUBJECT` + a broad enrollment ACL is a direct path from low-privileged domain user to Domain Admin, and Unit 42 reported active exploitation in May 2026\n- The mismatch between requester identity and SAN is a near-zero-FP anchor — a legitimate cert request issued for `alice@corp.local` should be requested by `alice`, not by `bob`; a deviation is virtually always abuse or misconfiguration that warrants investigation either way\n- Most environments do NOT enable AD CS audit logging by default — establishing the hunt forces the prerequisite work of turning on `4886`/`4887` and the OS-level CertSvc audit subcategory, which is a defensive win independent of catching this specific attacker\n- The Certify and Certipy toolchain leaves distinctive command-line patterns (`/altname:`, `/upn:`, `req --upn`) that survive renames; combined with the SAN-vs-requester mismatch this becomes a robust, multi-signal hunt",
+    "references": "- [MITRE ATT&CK T1649 - Steal or Forge Authentication Certificates](https://attack.mitre.org/techniques/T1649/)\n- [Unit 42 - Inside AD CS Escalation: Unpacking Advanced Misuse Techniques and Tools](https://unit42.paloaltonetworks.com/active-directory-certificate-services-exploitation/)\n- [Splunk Security Content - Windows Steal Authentication Certificates - ESC1 Abuse](https://research.splunk.com/endpoint/cbe761fc-d945-4c8c-a71d-e26d12255d32/)\n- [Splunk Security Content - ESC1 Authentication](https://research.splunk.com/endpoint/f0306acf-a6ab-437a-bbc6-8628f8d5c97e/)\n- [Splunk Security Content - Windows Steal Authentication Certificates Certificate Issued (SAN)](https://research.splunk.com/endpoint/9b1a5385-0c31-4c39-9753-dc26b8ce64c2/)\n- [Lares Labs - Common ADCS Vulnerabilities: Logging, Exploitation, and Investigation (Part 2)](https://labs.lares.com/adcs-exploits-investigations-pt2/)\n- [Semperis - ESC1 Attack Explained](https://www.semperis.com/blog/esc1-attack-explained/)",
+    "file_path": "Flames/H153.md"
+  },
+  {
+    "id": "H154",
+    "category": "Flames",
+    "title": "Threat actors with local-admin access to an Enterprise CA host are modifying `HKLM\\SYSTEM\\CurrentControlSet\\Services\\CertSvc\\Configuration\\<CAName>\\AuditFilter` (via `certutil -setreg CA\\AuditFilter 0` or direct reg write) to silence Certificate Services events 4886/4887/4898 before performing ESC1-ESC16 abuse.",
+    "tactic": "Defense Evasion",
+    "notes": "Windows / Active Directory CA hosts. Unit 42 AD CS exploitation report (May 2026) calls out CA audit policy tampering as a precursor to certificate forgery. Detection: Windows Security Event ID 4885 (\"The audit filter for Certificate Services changed\") fires whenever the CA Audit tab is modified — this is a tier-zero alert. Sysmon Event ID 13 (RegistryEvent SetValue) on `HKLM\\SYSTEM\\CurrentControlSet\\Services\\CertSvc\\Configuration\\*\\AuditFilter` with new value != 127 (127 = all categories audited). Sysmon Event ID 1 / `DeviceProcessEvents` for `certutil.exe -setreg CA\\AuditFilter`. Windows Security Event ID 4719 (system audit policy changed) and 4906/4907 (SACL changed). Cross-reference T1070 (Indicator Removal) — the goal is destroying evidence of subsequent cert abuse. Cross-reference T1649 (Steal or Forge Authentication Certificates) — this hunt is the precursor; pair with H153 (ESC1) for end-to-end coverage. KQL: `DeviceRegistryEvents | where RegistryKey has \"CertSvc\\\\Configuration\" and RegistryValueName =~ \"AuditFilter\" and RegistryValueData != \"127\"`.",
+    "tags": [
+      "defense_evasion",
+      "ad_cs",
+      "certutil",
+      "windows",
+      "T1070",
+      "T1649",
+      "T1562.002"
+    ],
+    "techniques": [
+      "T1070",
+      "T1649",
+      "T1562.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- CA audit logging is the single source of truth for AD CS abuse — without `4886`/`4887`/`4898` defenders cannot see who requested what certificate with which SAN — so tampering with `AuditFilter` is the prerequisite step a sophisticated AD CS attacker takes before forging certificates\n- Legitimate changes to the AuditFilter are rare and almost always come from a known CA administrator during planned configuration — any modification outside a change window is suspect and warrants pager-grade response\n- Event ID **4885** is a built-in, single-event detection for this exact behavior that ships with Windows but is rarely alerted on — building this hunt is a low-cost, high-value defensive win that catches every variation of the technique (certutil, direct registry, GPO push) without needing to enumerate the toolchain\n- Many environments never enable CA audit logging in the first place — running this hunt surfaces hosts where `AuditFilter` is permanently set below `127`, which is a configuration finding worth fixing even if no adversary touched it",
+    "references": "- [MITRE ATT&CK T1562.002 - Impair Defenses: Disable Windows Event Logging](https://attack.mitre.org/techniques/T1562/002/)\n- [Unit 42 - Inside AD CS Escalation: Unpacking Advanced Misuse Techniques and Tools](https://unit42.paloaltonetworks.com/active-directory-certificate-services-exploitation/)\n- [Ultimate Windows Security - Event ID 4885: The audit filter for Certificate Services changed](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventid=4885)\n- [PKI Solutions - Enabling Active Directory Certificate Services (ADCS) Advanced Audit](https://www.pkisolutions.com/enabling-active-directory-certificate-services-adcs-advanced-audit/)\n- [Encryption Consulting - How to Enable Certification Authority Advanced Filter](https://www.encryptionconsulting.com/how-to-enable-certification-authority-advanced-audit-filter/)\n- [Heirhabarov - Hunting for Active Directory Certificate Services Abuse (Speaker Deck)](https://speakerdeck.com/heirhabarov/hunting-for-active-directory-certificate-services-abuse)\n- [JUMPSEC Labs - Active Directory Certificate Service Defensive Guidance](https://labs.jumpsec.com/active-directory-certificate-service-defensive-guidance/)",
+    "file_path": "Flames/H154.md"
+  },
+  {
+    "id": "H155",
+    "category": "Flames",
+    "title": "Threat actors are submitting stolen or forged user certificates (from ESC1 abuse, shadow credentials, or extracted PFX) to a Domain Controller via PKINIT — appearing as Kerberos TGT requests with `PreAuthType=16` and `TicketOptions=0x40810010` from hosts that do not normally authenticate as that user.",
+    "tactic": "Lateral Movement",
+    "notes": "Windows / Active Directory. Unit 42 AD CS exploitation report (May 2026) maps cert-based TGT requests to T1550. Detection: Windows Security Event ID 4768 on every DC with `Certificate Information` fields populated (`CertIssuerName`, `CertSerialNumber`, `CertThumbprint`) AND `PreAuthType == 16` (PKINIT) AND `TicketOptions` starting `0x4080` — baseline expected sources (Windows Hello for Business endpoints, smartcard-enabled admins, ADFS) and alert on outliers, especially TGT requests for privileged accounts (Domain Admins, Enterprise Admins, service accounts with high-value SPNs) from non-typical hosts. Sysmon Event ID 1 / `DeviceProcessEvents` for `Rubeus.exe asktgt /certificate:` or `certipy auth -pfx`. KQL (Defender XDR): `IdentityLogonEvents | where Protocol == \"Kerberos\" and LogonType == \"PKINIT\"` joined to `DeviceLogonEvents` on `AccountUpn` and time-window. Cross-reference T1649 (the cert was stolen or forged) and T1556 (shadow credentials enabled the PKINIT) — pair with H152 and H153. Note: Windows Hello for Business produces high-volume legitimate PKINIT TGTs — baseline by `IpAddress` and device first.",
+    "tags": [
+      "lateral_movement",
+      "pkinit",
+      "kerberos",
+      "ad_cs",
+      "windows",
+      "T1550",
+      "T1649",
+      "T1556"
+    ],
+    "techniques": [
+      "T1550",
+      "T1649",
+      "T1556"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- PKINIT abuse is the \"use\" half of AD CS attack chains — the forge/steal step (T1649) gets defensive attention but the TGT-request step is where the attacker actually pivots, and most SOCs don't watch `4768 PreAuthType=16` because PreAuthType 16 is also produced by every Windows Hello for Business logon\n- Unlike kerberoasting or AS-REP roasting, PKINIT abuse leaves a clean audit trail in the certificate fields on `4768` — `CertIssuerName`, `CertSerialNumber`, `CertThumbprint` — that maps directly back to the issued cert and can be correlated to the `4887` issuance event from H153 to build a full attack timeline\n- After baseline PKINIT noise is excluded, a PKINIT TGT for `Administrator` or `krbtgt` or a Tier 0 service account is virtually always an attack — the baseline work pays for itself the first time the hunt fires\n- This hunt is the canonical example of a cross-event-source hunt: cert issuance (CA host), key registration (DC `5136` for shadow creds), and TGT request (DC `4768`) live on different hosts and must be correlated — building it forces SOC pipelines to ingest all three sources",
+    "references": "- [MITRE ATT&CK T1550 - Use Alternate Authentication Material](https://attack.mitre.org/techniques/T1550/)\n- [Unit 42 - Inside AD CS Escalation: Unpacking Advanced Misuse Techniques and Tools](https://unit42.paloaltonetworks.com/active-directory-certificate-services-exploitation/)\n- [Securelist - Anomaly Detection in Certificate-Based TGT Requests](https://securelist.com/anomaly-detection-in-certificate-based-tgt-requests/110242/)\n- [SOC Stories - Detecting ADCS Attacks](https://www.socstories.blog/detecting-adcs-attacks/)\n- [Microsoft Learn - Event 4768: A Kerberos authentication ticket (TGT) was requested](https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4768)\n- [Lares Labs - Kerberos II: Credential Access (PKINIT & Rubeus asktgt)](https://labs.lares.com/fear-kerberos-pt2/)\n- [Noah H - Offensive Kerberos Techniques for Detection Engineering](https://medium.com/@noah_h/offensive-kerberos-techniques-for-detection-engineering-16a81483f676)",
+    "file_path": "Flames/H155.md"
+  },
+  {
+    "id": "H156",
+    "category": "Flames",
+    "title": "Threat actors are registering a malicious Network Provider DLL (e.g., `mslogon.dll`) at `HKLM\\SYSTEM\\CurrentControlSet\\Services\\<svc>\\NetworkProvider\\ProviderPath` on a Domain Controller — letting Windows invoke `NPLogonNotify` / `NPPasswordChangeNotify` on every interactive logon and password change to harvest cleartext credentials.",
+    "tactic": "Credential Access",
+    "notes": "Windows / Domain Controllers. Microsoft Threat Intelligence trust-boundary intrusion report (May 2026, third-party HPOM compromise). Detection (KQL verbatim from Microsoft): `DeviceRegistryEvents | where RegistryKey has_all (@'\\Services\\', @'\\NetworkProvider')`. Windows Security Event ID 7045 (a service was installed) for unfamiliar service names with an associated `NetworkProvider` subkey; Event ID 4657 on `\\Services\\<name>\\NetworkProvider\\ProviderPath`; Sysmon Event ID 13 (registry SetValue) on the same path; Sysmon Event ID 7 (ImageLoad) for `mpnotify.exe` loading non-Microsoft DLLs from non-`%SystemRoot%\\System32` paths. Baseline: legitimate providers are short (`LanmanWorkstation`, `RDPNP`, `webclient`); any new entry is high signal — and a new entry on a Domain Controller is almost never legitimate. Cross-reference T1556.002 (Password Filter DLL) — adversaries often install both for redundancy (pair with H157). Cross-reference T1199 (Trusted Relationship) — Microsoft's intrusion entered via a trusted third-party IT provider.",
+    "tags": [
+      "credential_access",
+      "network_provider",
+      "lsa",
+      "domain_controller",
+      "windows",
+      "T1556.002",
+      "T1199",
+      "T1556.008"
+    ],
+    "techniques": [
+      "T1556.002",
+      "T1199",
+      "T1556.008"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- The May 2026 Microsoft Threat Intelligence report is the first major public writeup of network provider DLL credential capture used in a real intrusion — most SOC playbooks do not have a hunt for it, and the actor deliberately chose this technique BECAUSE it survives credential rotation and LSASS protections\n- `NPLogonNotify` receives cleartext credentials by API design — Windows hands them to every registered provider; there is no protection or detection at the credential-flow level, so the only defensive control is alerting on the provider registration itself\n- The legitimate set of network providers is tiny and well-known per environment (LanmanWorkstation, RDPNP, webclient, sometimes a VPN client) — a single new entry, especially on a DC, is a tier-zero alert with effectively zero false positives once a one-time baseline is captured\n- The Microsoft KQL detection is short, copy-pasteable, and covers every variant of the technique (any service name, any DLL path) because the `NetworkProvider` subkey itself is the universal signal — this is the easiest CTI-to-detection conversion in this batch",
+    "references": "- [MITRE ATT&CK T1556.008 - Modify Authentication Process: Network Provider DLL](https://attack.mitre.org/techniques/T1556/008/)\n- [Microsoft Security Blog - Undermining the Trust Boundary: Investigating a Stealthy Intrusion Through Third-Party Compromise](https://www.microsoft.com/en-us/security/blog/2026/05/12/undermining-the-trust-boundary-investigating-a-stealthy-intrusion-through-third-party-compromise/)\n- [MITRE ATT&CK Detection Strategy DET0580 - Detect Network Provider DLL Registration and Credential Capture](https://attack.mitre.org/detectionstrategies/DET0580/)\n- [MITRE ATT&CK T1199 - Trusted Relationship](https://attack.mitre.org/techniques/T1199/)\n- [Praetorian - How to Detect and Dump Credentials from the Windows Registry](https://www.praetorian.com/blog/how-to-detect-and-dump-credentials-from-the-windows-registry/)\n- [SigmaHQ - Security Support Provider (SSP) Added to LSA Configuration](https://detection.fyi/sigmahq/sigma/windows/registry/registry_event/registry_event_ssp_added_lsa_config/)\n- [Red Canary Atomic Red Team - T1556.008 Network Provider DLL](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1556.008/T1556.008.md)",
+    "file_path": "Flames/H156.md"
+  },
+  {
+    "id": "H157",
+    "category": "Flames",
+    "title": "Threat actors are appending a malicious Password Filter DLL (e.g., `passms.dll`) to `HKLM\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\Notification Packages` (REG_MULTI_SZ) on a Domain Controller — receiving cleartext credentials from LSA via `PasswordFilter` callbacks on every password set/change after the next reboot.",
+    "tactic": "Credential Access",
+    "notes": "Windows / Domain Controllers. Microsoft Threat Intelligence trust-boundary intrusion report (May 2026, third-party HPOM compromise). Detection (KQL verbatim from Microsoft): `DeviceRegistryEvents | where RegistryKey has @\"control\\LSA\" and RegistryValueName has \"Notification Packages\"`. Windows Security Event ID 4657 (registry value modified) on `HKLM\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\Notification Packages` — requires a SACL on the key. Sysmon Event ID 13 on the same path. Sysmon Event ID 11 for file creates of unsigned DLLs in `%SystemRoot%\\System32\\` (filter must live in System32 to load). Sysmon Event ID 7 (ImageLoad) for `lsass.exe` loading any DLL not on the known-good filter list (`scecli.dll`, `rassfm.dll`, vendor password-quality DLLs). Baseline: in most environments `Notification Packages` is `scecli\\0rassfm` — any addition is high signal. Cross-reference T1556.008 (Network Provider DLL) — same actor commonly installs both for redundancy (pair with H156). Cross-reference T1547.005 (Security Support Provider) — adjacent LSA-loaded-DLL persistence with similar detection pattern.",
+    "tags": [
+      "credential_access",
+      "lsa",
+      "password_filter",
+      "domain_controller",
+      "windows",
+      "T1556.008",
+      "T1547.005",
+      "T1556.002"
+    ],
+    "techniques": [
+      "T1556.008",
+      "T1547.005",
+      "T1556.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Password Filter DLLs are part of the official Windows authentication architecture — Microsoft documents how to install them — so the malicious DLL runs inside LSASS with full credential access, gets cleartext passwords by API contract, and inherits LSASS's defenses against most EDR\n- The detection set is small and stable: `Notification Packages` is rarely changed by any legitimate process post-build; on a DC it's almost never changed at all, so a single 4657 / DeviceRegistryEvents hit on this value is a tier-zero alert\n- Unlike LSASS memory scraping, password filter abuse leaves NO Mimikatz-style artifact — the only telemetry is the registration event and the `lsass.exe` ImageLoad of the foreign DLL after reboot, which makes this hunt one of the very few ways to catch a post-reboot credential-capture implant\n- Microsoft's May 2026 report shows a sophisticated actor installing BOTH a password filter (`passms.dll`) AND a network provider DLL (`mslogon.dll`) on the same DC — pair this hunt with H156 to catch the full pattern, and tune both for the same allowlist of legitimate filters",
+    "references": "- [MITRE ATT&CK T1556.002 - Modify Authentication Process: Password Filter DLL](https://attack.mitre.org/techniques/T1556/002/)\n- [Microsoft Security Blog - Undermining the Trust Boundary: Investigating a Stealthy Intrusion Through Third-Party Compromise](https://www.microsoft.com/en-us/security/blog/2026/05/12/undermining-the-trust-boundary-investigating-a-stealthy-intrusion-through-third-party-compromise/)\n- [SigmaHQ - Dropping Of Password Filter DLL (Notification Packages registry add)](https://detection.fyi/sigmahq/sigma/windows/process_creation/proc_creation_win_reg_credential_access_via_password_filter/)\n- [Microsoft Learn - Installing and Registering a Password Filter DLL](https://learn.microsoft.com/en-us/windows/win32/secmgmt/installing-and-registering-a-password-filter-dll)\n- [PentestLab - Credential Access: Password Filter DLL](https://pentestlab.blog/2020/02/10/credential-access-password-filter-dll/)\n- [Red Canary Atomic Red Team - T1556.002 Password Filter DLL](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1556.002/T1556.002.md)\n- [nFront Security - Monitoring for Malicious Password Filters](https://nfrontsecurity.com/blog/monitoring-for-malicious-password-filters/)",
+    "file_path": "Flames/H157.md"
+  },
+  {
+    "id": "H158",
+    "category": "Flames",
+    "title": "Information stealers (Gremlin Stealer, Laplas Clipper, and variants) are running a persistent thread that polls the Windows clipboard for cryptocurrency wallet patterns and replaces matched strings with an attacker-controlled wallet address before the victim pastes — `SetClipboardData` is called by a foreign process with the same handle the user just copied to.",
+    "tactic": "Collection",
+    "notes": "Windows. Unit 42 Gremlin Stealer evolution report (May 2026) — \"Crypto clipper functionality continuously monitors the system clipboard for strings matching cryptocurrency wallet patterns…replaces the victim's address with the attacker's wallet.\" Detection: Sysmon Event ID 24 (ClipboardChange) — baseline the small set of legitimate clipboard writers (`explorer.exe`, browsers, password managers, Office apps, RDP/Teams clients) and alert on writes from any other process, especially from `%AppData%`, `%LocalAppData%`, `%Temp%`, or ProgramData paths. Sysmon Event ID 1 for short-lived processes that immediately spawn clipboard activity. Specific anchor: two `Event ID 24` events within the same second from different processes for what appears to be the same content position (user copy → stealer write) — the second write is the replacement. ETW `Microsoft-Windows-Win32k` clipboard events as a fallback when Sysmon is not deployed. KQL (Defender XDR): `DeviceEvents | where ActionType has \"Clipboard\"` (where available). Cross-reference T1027 (Obfuscated Files/Info) — Gremlin Stealer also hides its payload in XOR-encoded .NET resource sections. Note: Sysmon clipboard capture has performance overhead and must be enabled with `<ClipboardChange onmatch=\"include\">` rules — define narrowly.",
+    "tags": [
+      "collection",
+      "crypto_clipper",
+      "gremlin_stealer",
+      "laplas",
+      "windows",
+      "T1027",
+      "T1115"
+    ],
+    "techniques": [
+      "T1027",
+      "T1115"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Crypto clippers are a high-volume, low-sophistication threat that bypasses every traditional credential and data-loss control — the user willingly pastes the wrong wallet address; no exfil channel is needed and no credential is touched, so they evade DLP, EDR memory scans, and network monitoring entirely\n- The only reliable detection point is the clipboard write itself — Sysmon Event ID 24 (added in v12) is purpose-built for this and most organizations either have not deployed it or have not configured the include rules to capture clipboard changes at all\n- Gremlin Stealer (Unit 42, May 2026) is the second major stealer family in 12 months to add a dedicated clipper module — the technique is becoming standard in the commodity stealer market, so hunts built for one family generalize cleanly to the rest (Laplas, RedLine variants, ClipboardWalletHijacker)\n- After a one-time baseline of legitimate clipboard writers, alerting on writes from any process in user-writable paths (AppData, Temp, ProgramData) catches every clipper without needing a wallet-pattern signature — pattern signatures are brittle (every coin has a different regex) but writer-process anomalies are not",
+    "references": "- [MITRE ATT&CK T1115 - Clipboard Data](https://attack.mitre.org/techniques/T1115/)\n- [Unit 42 - Gremlin Stealer's Evolved Tactics: Hiding in Plain Sight With Resource Files](https://unit42.paloaltonetworks.com/gremlin-stealer-evolution/)\n- [TrustedSec - Sysmon Community Guide: Clipboard Capture (EventID 24)](https://github.com/trustedsec/SysmonCommunityGuide/blob/master/chapters/clipboard-capture.md)\n- [Olaf Hartong / FalconForce - Sysmon 12.0 EventID 24 Deep Dive](https://medium.com/falconforce/sysmon-12-0-eventid-24-31e0109c78e3)\n- [Hunt.io - Laplas Clipper: Cryptocurrency Clipboard Hijacker Threat](https://hunt.io/malware-families/laplas-clipper)\n- [Red Canary Atomic Red Team - T1115 Clipboard Data](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1115/T1115.md)\n- [BleepingComputer - Microsoft Sysmon Now Logs Data Copied to the Windows Clipboard](https://www.bleepingcomputer.com/news/microsoft/microsoft-sysmon-now-logs-data-copied-to-the-windows-clipboard/)",
+    "file_path": "Flames/H158.md"
+  },
+  {
+    "id": "H159",
+    "category": "Flames",
+    "title": "Kazuar operators are using Exchange Web Services (EWS) as a covert command-and-control channel — `CreateItem`, `FindItem`, `GetItem`, `UpdateItem`, and `DeleteItem` SOAP operations against `/EWS/Exchange.asmx` from a compromised mailbox carry tasking and exfiltration data, blending in with legitimate Outlook traffic.",
+    "tactic": "Command and Control",
+    "notes": "Windows / M365 / Exchange Online. Microsoft Threat Intelligence Kazuar nation-state botnet report (May 2026) — \"Exchange Web Services (EWS), HTTP, WebSockets (WSS)\" used for redundant C2. Detection: `CloudAppEvents` for EWS operations with unusual `UserAgent` strings (Kazuar does not present as Outlook/MAPI client UAs); baseline expected EWS clients per tenant (Outlook desktop, mobile Outlook, third-party mail clients) and alert on outliers. Specific EWS operations to focus on: `CreateItem` + `UpdateItem` on the SAME item within seconds (read-write tasking pattern); `FindItem` against `Drafts` or custom folders with low-volume but periodic cadence; high item-count drafts that never get sent. `DeviceNetworkEvents` for outbound HTTPS to `/EWS/Exchange.asmx` from processes that are NOT `outlook.exe`, `msteams.exe`, `lync.exe`, or known mail-sync agents — Kazuar runs inside an injected process tree so the initiator will look anomalous. Microsoft Unified Audit Log: `MailItemsAccessed`, `Update`, `New-InboxRule` with unusual frequency from low-activity accounts. KQL: `CloudAppEvents | where Application has \"Exchange\" and ActionType in~ (\"FindItem\",\"CreateItem\",\"UpdateItem\") and UserAgent !has \"Outlook\" and UserAgent !has \"Microsoft Office\"`. Cross-reference T1114.002 (Email Collection: Remote Email Collection) — the same EWS API is used for mail theft and for tasking. Cross-reference T1102 (Web Service) — Kazuar's WSS fallback channel.",
+    "tags": [
+      "command_and_control",
+      "kazuar",
+      "ews",
+      "exchange",
+      "m365",
+      "T1114.002",
+      "T1102",
+      "T1071.003"
+    ],
+    "techniques": [
+      "T1114.002",
+      "T1102",
+      "T1071.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Mail-protocol C2 is one of the hardest channels to detect because EWS traffic to Exchange Online is universally present and is allowed through every egress filter — Kazuar deliberately chose it as a redundancy channel for exactly this reason\n- Microsoft's May 2026 Kazuar writeup names EWS as a first-class C2 mechanism alongside HTTP and WebSockets — combined with the actor's nation-state attribution, this is a high-confidence forward-looking technique that other APTs will adopt\n- The detection logic does not depend on signatures of Kazuar — it depends on EWS access patterns (initiator process, user agent, operation cadence, item lifecycle) that any mail-protocol C2 implant will exhibit, so the hunt generalizes to APT29's MAPI C2, Hafnium's EWS abuse, and future variants\n- M365 Unified Audit Log + CloudAppEvents are already collected by most tenants — the hunt is largely a query-tuning exercise, not a telemetry-deployment exercise, which makes it cheap to implement",
+    "references": "- [MITRE ATT&CK T1071.003 - Application Layer Protocol: Mail Protocols](https://attack.mitre.org/techniques/T1071/003/)\n- [Microsoft Security Blog - Kazuar: Anatomy of a Nation-State Botnet](https://www.microsoft.com/en-us/security/blog/2026/05/14/kazuar-anatomy-of-a-nation-state-botnet/)\n- [Microsoft Security Blog - Stopping Attacks Against On-Premises Exchange Server with AMSI (EWS abuse patterns)](https://www.microsoft.com/en-us/security/blog/2025/04/09/stopping-attacks-against-on-premises-exchange-server-and-sharepoint-server-with-amsi/)\n- [MITRE ATT&CK T1114.002 - Email Collection: Remote Email Collection](https://attack.mitre.org/techniques/T1114/002/)\n- [Microsoft Learn - Control Access to EWS in Exchange Online](https://learn.microsoft.com/en-us/exchange/client-developer/exchange-web-services/how-to-control-access-to-ews-in-exchange)\n- [PT SWARM - Attacking MS Exchange Web Interfaces (EWS surface)](https://swarm.ptsecurity.com/attacking-ms-exchange-web-interfaces/)\n- [OWASP Frankfurt - Abusing Cloud Apps 101: Command and Control](https://owasp.org/www-chapter-frankfurt/assets/slides/56_OWASP_Frankfurt_Stammtisch_2.pdf)",
+    "file_path": "Flames/H159.md"
+  },
+  {
+    "id": "H160",
+    "category": "Flames",
+    "title": "Kimsuky (DPRK) is persisting PebbleDash / AppleSeed implants on Windows hosts by creating scheduled tasks named `ChromeCheck` (elevated) or `EdgeCheck` (non-elevated) that invoke `regsvr32 /s <path>` every minute — disguising the persistence under browser-update branding.",
+    "tactic": "Persistence",
+    "notes": "Windows. Securelist Kimsuky PebbleDash campaign report (May 2026). Detection: Windows Security Event ID 4698 (scheduled task created) where TaskName is `ChromeCheck`, `EdgeCheck`, `GoogleCache`, `GoogleUpdate`, or other browser-update-masquerading names AND the task action invokes `regsvr32` with `/s` (silent). Sysmon Event ID 1 / `DeviceProcessEvents` for `schtasks.exe /create /tn ChromeCheck` or `/tn EdgeCheck` with `/tr` containing `regsvr32` or `wscript`. Sysmon Event ID 1 for `regsvr32.exe /s` with parent `svchost.exe -k netsvcs` (Task Scheduler) and a child loading a DLL or .cfg from `%ProgramData%\\Chrome\\`, `%LocalAppData%\\FoxitReader\\`, or other user-writable paths. KQL (Defender XDR): `DeviceProcessEvents | where FileName =~ \"schtasks.exe\" and ProcessCommandLine has_any (\"ChromeCheck\",\"EdgeCheck\",\"GoogleCache\",\"GoogleUpdate\") and ProcessCommandLine has \"regsvr32\"`. KQL (regsvr32 via Task Scheduler): `DeviceProcessEvents | where InitiatingProcessFileName =~ \"svchost.exe\" and FileName =~ \"regsvr32.exe\" and ProcessCommandLine has \"/s\" and ProcessCommandLine matches regex @\"\\.(cfg|db|dat|xml)\"`. Network indicator: outbound HTTPS to `*.trycloudflare.com`, `*.p-e.kr`, `*.o-r.kr`, or `*.n-e.kr` from the regsvr32 host within 5 minutes. Cross-reference T1218.010 (Regsvr32) — the execution side of this persistence anchor. Cross-reference T1071.001 (Application Layer Protocol: Web Protocols) — Kimsuky's HTTP POST C2 with `m=`, `u=`, `d=` parameters.",
+    "tags": [
+      "persistence",
+      "kimsuky",
+      "appleseed",
+      "pebbledash",
+      "regsvr32",
+      "windows",
+      "T1218.010",
+      "T1071.001",
+      "T1053.005"
+    ],
+    "techniques": [
+      "T1218.010",
+      "T1071.001",
+      "T1053.005"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- The task names `ChromeCheck` and `EdgeCheck` are exact, campaign-specific strings that Kimsuky has reused across multiple PebbleDash and AppleSeed waves (Securelist May 2026; ASEC historical reporting on `GoogleCache` / `GoogleUpdate`) — name-based detection is a near-zero-FP first pass because legitimate Chrome/Edge updaters use service names, not user-created tasks\n- Pairing the task name with the `regsvr32 /s <unusual extension>` action catches the technique even when Kimsuky renames the task — `regsvr32` loading a `.cfg`, `.db`, `.dat`, or `.xml` from `%ProgramData%` or `%LocalAppData%` is rare in benign software and almost universal in this campaign family\n- A 1-minute trigger interval on a task that calls `regsvr32` generates very loud telemetry once detection is wired up — defenders who instrument this hunt will see the persistence within minutes of infection, not days\n- Kimsuky has been operating PebbleDash since 2018 and pivots through new lures and droppers every campaign — but the scheduled-task + regsvr32 + browser-named-task triad has remained stable, making this one of the most cost-effective hunts in the Kimsuky kill chain",
+    "references": "- [MITRE ATT&CK T1053.005 - Scheduled Task/Job: Scheduled Task](https://attack.mitre.org/techniques/T1053/005/)\n- [Securelist - Disclosing New PebbleDash-Based Tools by Kimsuky](https://securelist.com/kimsuky-appleseed-pebbledash-campaigns/119785/)\n- [ASEC - APT Attack Cases of Kimsuky Group (PebbleDash)](https://asec.ahnlab.com/en/30022/)\n- [ASEC - Analysis Report on Kimsuky Group's APT Attacks (AppleSeed, PebbleDash)](https://asec.ahnlab.com/en/30532/)\n- [MITRE ATT&CK T1218.010 - System Binary Proxy Execution: Regsvr32](https://attack.mitre.org/techniques/T1218/010/)\n- [SigmaHQ - Suspicious Scheduled Task Creation Involving Temp Folder](https://github.com/SigmaHQ/sigma/blob/master/rules/windows/builtin/security/win_security_susp_schtask_creation_temp_folder.yml)\n- [Red Canary Atomic Red Team - T1053.005 Scheduled Task](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1053.005/T1053.005.md)",
+    "file_path": "Flames/H160.md"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
