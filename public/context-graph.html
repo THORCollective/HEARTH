@@ -7,1212 +7,1069 @@
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-B4FE1Q174V"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-B4FE1Q174V');</script>
-<!-- D3.js -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <style>
-:root {
-  --color-primary: #8a47ff;
-  --color-accent: #e457da;
-  --color-background: #0f0f11;
-  --color-surface: rgba(28, 27, 31, 0.85);
-  --color-surface-hover: rgba(32, 33, 42, 0.9);
-  --color-text: #f7f5ff;
-  --color-text-secondary: #a6a9c8;
-  --color-border: rgba(120, 122, 230, 0.25);
-  --color-error: #ef4444;
-  --color-success: #4bdca2;
-  --color-threat-actor: #ef4444;
-  --color-campaign: #f59e0b;
-  --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--color-background);color:var(--color-text);font-family:var(--font-family-base);overflow:hidden;height:100vh}
-a{color:var(--color-primary);text-decoration:none}a:hover{text-decoration:underline}
+  :root{
+    --bg:        oklch(0.16 0.020 300);
+    --bg-2:      oklch(0.20 0.022 300);
+    --surface:   oklch(0.23 0.024 300);
+    --surface-2: oklch(0.27 0.028 300);
+    --line:      oklch(0.34 0.030 300);
+    --line-soft: oklch(0.29 0.026 300);
+    --fg:        oklch(0.965 0.012 300);
+    --fg-mute:   oklch(0.78 0.022 300);
+    --fg-dim:    oklch(0.60 0.030 300);
+    --ember:     oklch(0.66 0.220 300);
+    --ember-2:   oklch(0.80 0.150 310);
+    --coal:      oklch(0.32 0.060 295);
 
-/* --- Header (exact HEARTH site structure) --- */
-header{background:var(--color-surface);border-bottom:1px solid var(--color-border)}
-.header-content{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;flex-wrap:wrap;gap:1rem}
-.logo-link{display:flex;align-items:center;gap:0.75rem;text-decoration:none;color:var(--color-text)}
-.logo-link:hover{text-decoration:none}
-.logo{height:48px;width:auto}
-.title-section .eyebrow{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;color:var(--color-text-secondary);margin-bottom:0.1rem}
-.title-section h1{font-size:1.5rem;font-weight:800;letter-spacing:0.08em;color:var(--color-text);line-height:1.1}
-.title-section p:last-child{font-size:0.75rem;color:var(--color-text-secondary)}
-.header-links{display:flex;gap:0.5rem;flex-wrap:wrap}
-.btn{display:inline-flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem;border-radius:var(--radius-md);font-size:0.85rem;font-weight:600;text-decoration:none;transition:all 0.2s ease;cursor:pointer;border:none}
-.btn:hover{text-decoration:none}
-.btn-accent{background:var(--color-accent);color:#fff}
-.btn-accent:hover{filter:brightness(1.15)}
-.btn-ghost{background:transparent;border:1px solid var(--color-border);color:var(--color-text-secondary)}
-.btn-ghost:hover{background:var(--color-surface-hover);color:var(--color-text)}
-.btn-icon{font-size:1rem}
-.header-nav{display:flex;gap:0;padding:0 2rem;border-top:1px solid var(--color-border)}
-.nav-tab{padding:0.65rem 1.1rem;font-size:0.85rem;color:var(--color-text-secondary);transition:color 0.2s,border-color 0.2s;border-bottom:2px solid transparent;text-decoration:none}
-.nav-tab:hover{color:var(--color-text);text-decoration:none}
-.nav-tab--active{color:var(--color-text);border-bottom-color:var(--color-primary)}
+    --c-tech:    oklch(0.86 0.130 78);
+    --c-flame:   oklch(0.78 0.170 330);
+    --c-em:      oklch(0.78 0.130 260);
+    --c-alch:    oklch(0.82 0.150 60);
+    --c-ds:      oklch(0.80 0.090 170);
+    --c-actor:   oklch(0.72 0.200 25);
+    --c-camp:    oklch(0.80 0.150 50);
+    --c-tactic:  oklch(0.74 0.110 290);
+    --c-contrib: oklch(0.78 0.150 340);
 
-/* --- Stats bar --- */
-.stats-bar{background:var(--color-surface);border-bottom:1px solid var(--color-border);padding:8px 20px;display:flex;align-items:center;gap:16px;font-size:13px;color:var(--color-text-secondary);flex-wrap:wrap;z-index:90;position:relative}
-.stats-bar .stat{display:flex;align-items:center;gap:4px}
-.stats-bar .stat .num{color:var(--color-text);font-weight:600}
-.stats-bar .sep{color:var(--color-border)}
-.stats-bar .stat .num.hot{color:var(--color-error);font-weight:700}
+    --serif: "Instrument Serif", "Times New Roman", serif;
+    --sans:  "Geist", ui-sans-serif, system-ui, sans-serif;
+    --mono:  "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{min-height:100%}
+  body{
+    background:
+      radial-gradient(900px 600px at 82% -10%, oklch(0.32 0.10 300 / 0.45), transparent 60%),
+      radial-gradient(800px 520px at -8% 28%, oklch(0.24 0.045 290 / 0.55), transparent 55%),
+      var(--bg);
+    color:var(--fg);
+    font-family:var(--sans);
+    font-feature-settings:"ss01","cv11";
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    display:flex;flex-direction:column;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--ember);color:var(--bg)}
 
-/* --- Filter bar --- */
-.filter-bar{background:var(--color-background);border-bottom:1px solid var(--color-border);padding:8px 20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;z-index:80;position:relative}
-.filter-btn{background:rgba(28,27,31,0.85);border:1px solid var(--color-border);color:var(--color-text-secondary);padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;transition:all .15s;white-space:nowrap}
-.filter-btn:hover{background:var(--color-surface-hover);border-color:var(--color-primary);color:var(--color-text)}
-.filter-btn.active{background:var(--color-primary);border-color:var(--color-primary);color:#fff}
-.filter-btn.toggle{background:rgba(228,87,218,0.1);border-color:var(--color-accent);color:var(--color-accent)}
-.filter-btn.toggle.active{background:var(--color-accent);border-color:var(--color-accent);color:#fff}
-.filter-btn.toggle-actor{background:rgba(239,68,68,0.1);border-color:var(--color-threat-actor);color:var(--color-threat-actor)}
-.filter-btn.toggle-actor.active{background:var(--color-threat-actor);border-color:var(--color-threat-actor);color:#fff}
-.filter-btn.toggle-campaign{background:rgba(245,158,11,0.1);border-color:var(--color-campaign);color:var(--color-campaign)}
-.filter-btn.toggle-campaign.active{background:var(--color-campaign);border-color:var(--color-campaign);color:#fff}
-.filter-btn.toggle-heat{background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.4);color:#ef4444}
-.filter-btn.toggle-heat.active{background:linear-gradient(135deg,#ef4444,#f97316);border-color:#ef4444;color:#fff}
-.filter-label{color:var(--color-text-secondary);font-size:12px;margin-right:4px}
-.filter-sep{width:1px;height:20px;background:var(--color-border);margin:0 4px}
+  .wrap{max-width:1440px;margin:0 auto;padding:0 32px;width:100%}
+  .mono{font-family:var(--mono);letter-spacing:.02em}
+  .serif{font-family:var(--serif);font-weight:400}
 
-/* --- Main layout --- */
-.main{display:flex;height:calc(100vh - 130px - 37px - 42px);position:relative}
-.graph-wrap{flex:1;position:relative;overflow:hidden}
-svg{display:block;width:100%;height:100%}
+  /* ───────── Topbar ───────── */
+  .topbar{position:sticky;top:0;z-index:50;backdrop-filter:saturate(140%) blur(10px);background:oklch(0.16 0.020 300 / 0.78);border-bottom:1px solid var(--line-soft);flex-shrink:0}
+  .topbar-inner{display:flex;align-items:center;gap:28px;padding:14px 32px;max-width:1440px;margin:0 auto}
+  .mark{display:flex;align-items:baseline;gap:10px}
+  .mark .glyph{
+    width:22px;height:22px;border-radius:50%;
+    background:radial-gradient(circle at 50% 65%, var(--ember-2), var(--ember) 45%, oklch(0.38 0.16 295) 75%, transparent 78%);
+    box-shadow:0 0 14px oklch(0.66 0.22 300 / 0.55), inset 0 -3px 6px oklch(0.30 0.10 295 / .7);
+    position:relative;top:3px;
+  }
+  .mark .name{font-family:var(--serif);font-size:24px;letter-spacing:.01em}
+  .mark .sub{font-family:var(--mono);font-size:10px;color:var(--fg-dim);text-transform:uppercase;letter-spacing:.18em}
+  .nav{display:flex;gap:6px;margin-left:24px}
+  .nav a{font-size:13px;color:var(--fg-mute);padding:6px 10px;border-radius:999px;border:1px solid transparent;transition:.15s}
+  .nav a:hover{color:var(--fg);background:var(--surface);border-color:var(--line-soft)}
+  .nav a.on{color:var(--fg);background:var(--surface);border-color:var(--line-soft)}
+  .top-cta{display:flex;gap:8px;margin-left:auto;align-items:center}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--sans);font-size:13px;font-weight:500;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--fg);cursor:pointer;transition:.15s;text-decoration:none}
+  .btn:hover{border-color:var(--fg-mute);background:var(--surface)}
+  .btn.primary{background:var(--ember);color:oklch(0.985 0.005 300);border-color:transparent;font-weight:600}
+  .btn.primary:hover{background:var(--ember-2);color:oklch(0.20 0.05 300)}
+  .pill-mono{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-dim);padding:5px 10px;border:1px solid var(--line-soft);border-radius:999px}
 
-/* --- Controls overlay --- */
-.controls{position:absolute;bottom:16px;right:16px;display:flex;gap:6px;z-index:50}
-.ctrl-btn{background:var(--color-surface);border:1px solid var(--color-border);color:var(--color-text-secondary);width:36px;height:36px;border-radius:var(--radius-md);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s}
-.ctrl-btn:hover{background:var(--color-surface-hover);border-color:var(--color-primary);color:var(--color-text)}
+  /* ───────── Page header band ───────── */
+  .header-band{padding:20px 0 0;border-bottom:1px solid var(--line-soft);flex-shrink:0;position:relative;z-index:2}
+  .band-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:start}
+  .eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ember-2)}
+  .eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ember);box-shadow:0 0 12px var(--ember)}
+  h1.page-title{
+    font-family:var(--serif);font-weight:400;
+    font-size:clamp(28px,3.2vw,48px);
+    line-height:.96;letter-spacing:-0.022em;margin:8px 0 0;
+  }
+  h1.page-title em{font-style:italic;color:var(--ember-2)}
+  .lede{font-size:13.5px;line-height:1.55;color:var(--fg-mute);max-width:56ch;margin-top:6px}
+  .lede b{color:var(--fg);font-weight:500}
 
-/* --- Stats overlay --- */
-.stats-overlay{position:absolute;top:12px;right:12px;background:var(--color-surface);border:1px solid var(--color-border);border-radius:8px;padding:14px 18px;font-size:12px;z-index:50;min-width:220px;backdrop-filter:blur(8px)}
-.stats-overlay h3{font-size:13px;color:var(--color-text);margin-bottom:8px;font-weight:600}
-.stats-overlay .row{display:flex;justify-content:space-between;padding:2px 0;color:var(--color-text-secondary)}
-.stats-overlay .row .val{color:var(--color-text);font-weight:500}
-.stats-overlay .row .val.threat{color:var(--color-threat-actor)}
-.stats-overlay .row .val.campaign{color:var(--color-campaign)}
-.stats-overlay .divider{border-top:1px solid var(--color-border);margin:6px 0}
+  /* stat strip */
+  .stats{display:grid;grid-template-columns:repeat(6,1fr);gap:0;margin-top:16px;border-top:1px solid var(--line-soft)}
+  .stat{padding:10px 14px;border-right:1px solid var(--line-soft);display:flex;flex-direction:column;gap:3px}
+  .stat:last-child{border-right:0}
+  .stat .n{font-family:var(--serif);font-size:28px;line-height:1;letter-spacing:-.02em;color:var(--fg)}
+  .stat .n em{font-style:italic;color:var(--ember-2)}
+  .stat .n.warn{color:var(--c-actor)}
+  .stat .n.hot{color:var(--c-camp)}
+  .stat .l{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-dim)}
 
-/* --- Sidebar --- */
-.sidebar{width:0;background:rgba(28, 27, 31, 0.95);border-left:1px solid var(--color-border);overflow-y:auto;overflow-x:hidden;transition:width .25s ease;flex-shrink:0}
-.sidebar.open{width:340px}
-.sidebar-inner{padding:20px;width:340px}
-.sidebar-close{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--color-text-secondary);cursor:pointer;font-size:18px;padding:4px 8px}
-.sidebar-close:hover{color:var(--color-text)}
-.sidebar h2{font-size:16px;color:var(--color-text);margin-bottom:12px;padding-right:30px}
-.sidebar h3{font-size:13px;color:var(--color-text-secondary);margin:12px 0 6px;text-transform:uppercase;letter-spacing:.5px}
-.sidebar .tag{display:inline-block;background:rgba(28,27,31,0.85);color:var(--color-text-secondary);padding:2px 8px;border-radius:10px;font-size:11px;margin:2px}
-.sidebar .tag.tech{border:1px solid #f97316;color:#f97316}
-.sidebar .tag.flame{border:1px solid #a855f7;color:#a855f7}
-.sidebar .tag.ember{border:1px solid #60a5fa;color:#60a5fa}
-.sidebar .tag.alchemy{border:1px solid #f59e0b;color:#f59e0b}
-.sidebar .tag.ds{border:1px solid var(--color-success);color:var(--color-success)}
-.sidebar .tag.tactic-tag{border:1px solid var(--color-primary);color:var(--color-primary)}
-.sidebar .tag.contrib-tag{border:1px solid var(--color-accent);color:var(--color-accent)}
-.sidebar .tag.actor-tag{border:1px solid var(--color-threat-actor);color:var(--color-threat-actor)}
-.sidebar .tag.campaign-tag{border:1px solid var(--color-campaign);color:var(--color-campaign)}
-.sidebar .detail-row{padding:6px 0;font-size:13px;color:var(--color-text);border-bottom:1px solid var(--color-border)}
-.sidebar .detail-label{color:var(--color-text-secondary);font-size:11px}
-.sidebar .hyp-link{display:block;padding:6px 8px;margin:2px 0;background:rgba(28,27,31,0.85);border-radius:var(--radius-sm);color:var(--color-text);font-size:12px;cursor:pointer;transition:background .15s}
-.sidebar .hyp-link:hover{background:var(--color-surface-hover);text-decoration:none}
-.sidebar .cta{display:inline-block;margin-top:16px;background:var(--color-accent);color:#fff;padding:10px 20px;border-radius:var(--radius-md);font-weight:600;font-size:14px;text-decoration:none;transition:all .15s}
-.sidebar .cta:hover{filter:brightness(1.15);text-decoration:none}
-.sidebar .prevalence-bar{height:6px;background:rgba(255,255,255,0.08);border-radius:3px;margin-top:4px;overflow:hidden}
-.sidebar .prevalence-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#f97316,#ef4444)}
+  /* ───────── Filter chips ───────── */
+  .filter-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:18px 32px 14px;max-width:1440px;margin:0 auto;width:100%;flex-shrink:0;position:relative;z-index:2}
+  .filter-label{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-dim);margin-right:6px}
+  .filter-btn{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--fg-mute);padding:6px 11px;border-radius:999px;border:1px dashed var(--line);background:transparent;cursor:pointer;transition:.15s;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+  .filter-btn:hover{color:var(--fg);border-style:solid;background:var(--surface)}
+  .filter-btn.active{color:var(--fg);border-style:solid;background:var(--surface);border-color:var(--ember-2)}
+  .filter-btn .dot{width:6px;height:6px;border-radius:50%;background:var(--fg-dim)}
+  .filter-btn.layer-actor .dot{background:var(--c-actor);box-shadow:0 0 6px var(--c-actor)}
+  .filter-btn.layer-camp .dot{background:var(--c-camp);box-shadow:0 0 6px var(--c-camp)}
+  .filter-btn.layer-ds .dot{background:var(--c-ds);box-shadow:0 0 6px var(--c-ds)}
+  .filter-btn.layer-contrib .dot{background:var(--c-contrib);box-shadow:0 0 6px var(--c-contrib)}
+  .filter-btn.active.layer-actor{border-color:var(--c-actor)}
+  .filter-btn.active.layer-camp{border-color:var(--c-camp)}
+  .filter-btn.active.layer-ds{border-color:var(--c-ds)}
+  .filter-btn.active.layer-contrib{border-color:var(--c-contrib)}
+  .filter-btn.heat{border-color:oklch(0.50 0.20 25 / .55);color:var(--c-actor)}
+  .filter-btn.heat .dot{background:linear-gradient(135deg, var(--c-actor), var(--c-camp));box-shadow:0 0 8px var(--c-actor)}
+  .filter-btn.heat.active{
+    background:linear-gradient(90deg, oklch(0.30 0.15 25 / .35), oklch(0.30 0.12 60 / .25));
+    border-color:var(--c-actor);color:var(--fg);
+  }
+  .filter-sep{width:1px;height:20px;background:var(--line-soft);margin:0 6px}
+  .filter-count{font-family:var(--mono);font-size:9.5px;color:var(--fg-dim);letter-spacing:.04em;margin-left:4px;opacity:.75}
+  .filter-btn.active .filter-count{color:var(--ember-2);opacity:1}
 
-/* --- Tooltip --- */
-.tooltip{position:absolute;background:rgba(15,15,17,0.96);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:8px 12px;font-size:12px;color:var(--color-text);pointer-events:none;z-index:200;max-width:320px;display:none;box-shadow:0 4px 12px rgba(0,0,0,.4);backdrop-filter:blur(8px)}
-.tooltip .tt-title{color:var(--color-text);font-weight:600;margin-bottom:4px}
-.tooltip .tt-sub{color:var(--color-text-secondary);font-size:11px}
-.tooltip .tt-date{color:var(--color-accent);font-size:10px;margin-top:3px}
+  /* ───────── Main canvas area ───────── */
+  .main{flex:1;display:flex;position:relative;min-height:min(720px, calc(100vh - 80px))}
+  .graph-wrap{flex:1;position:relative;overflow:hidden;min-height:560px}
+  svg.graph{display:block;width:100%;height:100%;cursor:grab}
+  svg.graph:active{cursor:grabbing}
 
-/* --- Legend --- */
-.legend{position:absolute;bottom:16px;left:16px;background:var(--color-surface);border:1px solid var(--color-border);border-radius:8px;padding:10px 14px;display:flex;gap:14px;z-index:50;font-size:11px;backdrop-filter:blur(8px);flex-wrap:wrap}
-.legend-item{display:flex;align-items:center;gap:5px;color:var(--color-text-secondary)}
-.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.legend-dot.square{border-radius:2px}
-.legend-dot.diamond{width:10px;height:10px;border-radius:0;transform:rotate(45deg)}
-.legend-dot.hexagon{clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);border-radius:0}
+  /* Floating controls */
+  .controls{position:absolute;bottom:18px;right:18px;display:flex;gap:6px;z-index:50}
+  .ctrl-btn{
+    background:oklch(0.20 0.022 300 / .85);border:1px solid var(--line-soft);color:var(--fg-mute);
+    width:36px;height:36px;border-radius:999px;cursor:pointer;font-family:var(--mono);font-size:14px;
+    display:grid;place-items:center;transition:.15s;backdrop-filter:blur(6px)
+  }
+  .ctrl-btn:hover{background:var(--surface);color:var(--fg);border-color:var(--fg-mute)}
 
-/* --- Heat map pulse animation --- */
-@keyframes heatPulse {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
-}
+  /* Floating legend (bottom-left) */
+  .legend{
+    position:absolute;bottom:18px;left:18px;z-index:50;
+    background:oklch(0.20 0.022 300 / .8);border:1px solid var(--line-soft);border-radius:14px;
+    padding:12px 14px;backdrop-filter:blur(8px);
+    display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;
+    max-width:340px;
+  }
+  .legend-item{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;letter-spacing:.04em;color:var(--fg-mute);text-transform:uppercase}
+  .legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;box-shadow:0 0 8px currentColor}
+  .legend-dot.sq{border-radius:2px}
+  .legend-dot.hx{
+    border-radius:0;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+    box-shadow:none;filter:drop-shadow(0 0 4px currentColor);
+  }
+  .legend-dot.dm{transform:rotate(45deg);border-radius:1px}
+  .legend-dot.tech  {background:var(--c-tech);  color:var(--c-tech)}
+  .legend-dot.tactic{background:var(--c-tactic);color:var(--c-tactic)}
+  .legend-dot.flame {background:var(--c-flame); color:var(--c-flame)}
+  .legend-dot.em    {background:var(--c-em);    color:var(--c-em)}
+  .legend-dot.alch  {background:var(--c-alch);  color:var(--c-alch)}
+  .legend-dot.ds    {background:var(--c-ds);    color:var(--c-ds)}
+  .legend-dot.actor {background:var(--c-actor); color:var(--c-actor)}
+  .legend-dot.camp  {background:var(--c-camp);  color:var(--c-camp)}
 
-@media(max-width:768px){
-  .header-content{padding:0.75rem 1rem}
-  .header-nav{padding:0 1rem}
-  .header-links{display:none}
-  .sidebar.open{width:280px}
-  .sidebar-inner{width:280px}
-  .stats-overlay{display:none}
-  .legend{flex-wrap:wrap;gap:8px}
-  .filter-bar{overflow-x:auto}
-}
+  /* Hottest technique pill (top-right inside canvas) */
+  .hot-pill{
+    position:absolute;top:18px;right:18px;z-index:40;pointer-events:none;
+    background:linear-gradient(135deg, oklch(0.28 0.15 25 / .45), oklch(0.28 0.12 60 / .25));
+    border:1px solid oklch(0.55 0.18 25 / .55);border-radius:14px;
+    padding:10px 14px;backdrop-filter:blur(8px);
+    display:flex;align-items:center;gap:12px;
+    box-shadow:0 0 24px oklch(0.55 0.20 25 / .15);
+  }
+  .hot-pill .ic{
+    width:24px;height:24px;border-radius:50%;flex-shrink:0;
+    background:radial-gradient(circle at 50% 65%, var(--c-camp), var(--c-actor) 55%, oklch(0.30 0.14 25) 78%, transparent 80%);
+    box-shadow:0 0 12px oklch(0.55 0.18 25 / .55);
+    animation:hotpulse 1.8s ease-in-out infinite;
+  }
+  @keyframes hotpulse{50%{opacity:.55;transform:scale(.92)}}
+  .hot-pill .meta{display:flex;flex-direction:column;line-height:1.15}
+  .hot-pill .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--c-camp)}
+  .hot-pill .id{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--fg);letter-spacing:.02em;margin-top:1px}
+  .hot-pill .nm{font-family:var(--sans);font-size:11.5px;color:var(--fg-mute);margin-top:1px;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  /* ───────── Tooltip ───────── */
+  .tooltip{
+    position:absolute;display:none;pointer-events:none;z-index:200;max-width:320px;
+    background:oklch(0.18 0.022 300 / .94);border:1px solid var(--line-soft);border-radius:12px;
+    padding:10px 14px;box-shadow:0 8px 24px oklch(0 0 0 / .5);backdrop-filter:blur(10px);
+  }
+  .tooltip .tt-kicker{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ember-2);margin-bottom:4px}
+  .tooltip .tt-title{font-family:var(--serif);font-size:18px;line-height:1.15;letter-spacing:-.01em;color:var(--fg);margin-bottom:4px}
+  .tooltip .tt-title.mono{font-family:var(--mono);font-size:14px;font-weight:600;letter-spacing:.02em}
+  .tooltip .tt-sub{font-size:12.5px;line-height:1.45;color:var(--fg-mute)}
+  .tooltip .tt-meta{font-family:var(--mono);font-size:10.5px;color:var(--ember-2);margin-top:5px;letter-spacing:.04em}
+
+  /* ───────── Sidebar (detail panel) ───────── */
+  .sidebar{
+    width:0;background:oklch(0.18 0.022 300 / .94);border-left:1px solid var(--line-soft);
+    overflow-y:auto;overflow-x:hidden;transition:width .25s ease;flex-shrink:0;backdrop-filter:blur(8px);
+  }
+  .sidebar.open{width:400px}
+  .sidebar-inner{padding:24px 24px 32px;width:400px;position:relative}
+  .sidebar-close{position:absolute;top:14px;right:14px;background:transparent;border:1px solid var(--line-soft);color:var(--fg-mute);cursor:pointer;font-size:12px;width:28px;height:28px;border-radius:999px;display:grid;place-items:center;transition:.15s}
+  .sidebar-close:hover{color:var(--fg);border-color:var(--fg-mute);background:var(--surface)}
+
+  .sb-kicker{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ember-2);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .sb-kicker .dot{width:6px;height:6px;border-radius:50%;background:var(--ember);box-shadow:0 0 8px var(--ember)}
+  .sb-kicker .dot.tech{background:var(--c-tech);box-shadow:0 0 8px var(--c-tech)}
+  .sb-kicker .dot.tactic{background:var(--c-tactic);box-shadow:0 0 8px var(--c-tactic)}
+  .sb-kicker .dot.ds{background:var(--c-ds);box-shadow:0 0 8px var(--c-ds)}
+  .sb-kicker .dot.actor{background:var(--c-actor);box-shadow:0 0 8px var(--c-actor)}
+  .sb-kicker .dot.camp{background:var(--c-camp);box-shadow:0 0 8px var(--c-camp)}
+  .sb-kicker .dot.flame{background:var(--c-flame);box-shadow:0 0 8px var(--c-flame)}
+  .sb-kicker .dot.em{background:var(--c-em);box-shadow:0 0 8px var(--c-em)}
+  .sb-kicker .dot.alch{background:var(--c-alch);box-shadow:0 0 8px var(--c-alch)}
+  .sb-kicker .dot.contrib{background:var(--c-contrib);box-shadow:0 0 8px var(--c-contrib)}
+
+  .sb-title{font-family:var(--serif);font-size:30px;line-height:1.05;letter-spacing:-.015em;color:var(--fg);margin-bottom:8px;padding-right:36px}
+  .sb-title em{font-style:italic;color:var(--ember-2)}
+  .sb-title.mono{font-family:var(--mono);font-weight:600;font-size:24px;letter-spacing:.02em}
+  .sb-sub{font-size:13.5px;line-height:1.5;color:var(--fg-mute);margin-bottom:18px}
+
+  .sb-h{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-dim);margin:18px 0 8px;display:flex;justify-content:space-between;align-items:baseline}
+  .sb-h .c{color:var(--fg-mute)}
+
+  .detail-row{display:grid;grid-template-columns:96px 1fr;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line-soft);font-size:13px;color:var(--fg);align-items:start}
+  .detail-row .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-dim);padding-top:2px}
+  .detail-row .val{line-height:1.45}
+  .detail-row .val.mono{font-family:var(--mono);font-size:12px;color:var(--fg-mute)}
+  .detail-row a{color:var(--ember-2);border-bottom:1px solid var(--line)}
+  .detail-row a:hover{color:var(--fg)}
+
+  .heat-meter{display:flex;flex-direction:column;gap:5px;width:100%}
+  .heat-bar{height:6px;background:oklch(0.14 0.020 300 / .8);border-radius:3px;overflow:hidden;border:1px solid var(--line-soft)}
+  .heat-fill{height:100%;background:linear-gradient(90deg, var(--ember), var(--ember-2), var(--c-camp), var(--c-actor));border-radius:3px}
+  .heat-meta{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--fg-dim);letter-spacing:.04em}
+
+  .tag{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.06em;padding:3px 8px;border-radius:4px;border:1px solid var(--line);color:var(--fg-mute);margin:2px 3px 2px 0;background:transparent}
+  .tag.tech  {color:var(--c-tech);  border-color:oklch(0.50 0.13 78 / .6)}
+  .tag.flame {color:var(--c-flame); border-color:oklch(0.50 0.17 330 / .6)}
+  .tag.ember {color:var(--c-em);    border-color:oklch(0.50 0.13 260 / .6)}
+  .tag.alchemy{color:var(--c-alch); border-color:oklch(0.50 0.15 60 / .6)}
+  .tag.ds    {color:var(--c-ds);    border-color:oklch(0.50 0.09 170 / .6)}
+  .tag.tactic{color:var(--c-tactic);border-color:oklch(0.50 0.11 290 / .6)}
+  .tag.actor {color:var(--c-actor); border-color:oklch(0.50 0.20 25 / .6)}
+  .tag.camp  {color:var(--c-camp);  border-color:oklch(0.50 0.15 50 / .6)}
+  .tag.plain {color:var(--fg-mute); border-color:var(--line)}
+
+  .hyp-link{
+    display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;
+    padding:9px 10px;margin:3px 0;border-radius:8px;border:1px solid transparent;
+    color:var(--fg);font-size:12.5px;line-height:1.4;cursor:pointer;transition:.12s;
+  }
+  .hyp-link:hover{border-color:var(--line-soft);background:oklch(0.22 0.024 300 / .6)}
+  .hyp-link .id{font-family:var(--mono);font-size:10.5px;padding:2px 7px;border:1px solid var(--line);border-radius:4px;flex-shrink:0;letter-spacing:.04em}
+  .hyp-link .id.f{color:var(--c-flame);border-color:oklch(0.50 0.17 330 / .6)}
+  .hyp-link .id.e{color:var(--c-em);border-color:oklch(0.50 0.13 260 / .6)}
+  .hyp-link .id.a{color:var(--c-alch);border-color:oklch(0.50 0.15 60 / .6)}
+  .hyp-link .id.tech{color:var(--c-tech);border-color:oklch(0.50 0.13 78 / .6)}
+  .hyp-link .ttl{color:var(--fg-mute);font-size:12px;text-wrap:pretty}
+  .hyp-link-more{font-family:var(--mono);font-size:11px;color:var(--fg-dim);padding:5px 10px;letter-spacing:.04em}
+
+  .sb-cta{
+    display:inline-flex;align-items:center;gap:8px;margin-top:14px;background:var(--ember);color:oklch(0.985 0.005 300);
+    padding:10px 16px;border-radius:999px;font-weight:600;font-size:13px;transition:.15s;
+  }
+  .sb-cta:hover{background:var(--ember-2);color:oklch(0.20 0.05 300)}
+
+  /* Responsive */
+  @media (max-width:1080px){
+    .band-grid{grid-template-columns:1fr;gap:14px}
+    .stats{grid-template-columns:repeat(3,1fr)}
+    .stat:nth-child(n+4){border-top:1px solid var(--line-soft)}
+    .stat .n{font-size:24px}
+    .nav{display:none}
+    .sidebar.open{width:320px}
+    .sidebar-inner{width:320px}
+    .legend{grid-template-columns:1fr 1fr;font-size:10px}
+    .hot-pill .nm{display:none}
+  }
+  @media (max-width:680px){
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .pill-mono,.top-cta .btn:not(.primary){display:none}
+    .header-band{padding:18px 0 12px}
+    h1.page-title{font-size:32px}
+    .lede{font-size:14px}
+    .hot-pill{display:none}
+  }
 </style>
 </head>
 <body>
 
-<!-- Header (exact HEARTH site structure) -->
-<header>
-  <div class="header-content">
-    <a href="index.html" class="logo-link">
-      <img src="/Assets/HEARTH-logo.png" alt="HEARTH Logo" class="logo"/>
-      <div class="title-section">
-        <p class="eyebrow">THOR Collective</p>
-        <h1>HEARTH</h1>
-        <p>Hunting Exchange and Research Threat Hub</p>
-      </div>
+<!-- ───────── TOPBAR ───────── -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="mark" href="../Home.html">
+      <span class="glyph"></span>
+      <span class="name">HEARTH</span>
+      <span class="sub">THOR Collective</span>
     </a>
-    <div class="header-links">
-      <a href="submit.html" class="btn btn-accent"><span class="btn-icon">📝</span>Submit a Hunt</a>
-      <a href="https://github.com/THORCollective/HEARTH" target="_blank" class="btn btn-ghost"><span class="btn-icon">🌐</span>View on GitHub</a>
+    <nav class="nav">
+      <a href="Home.html">Home</a>
+      <a href="index.html">Library</a>
+      <a href="graph.html">Coverage</a>
+      <a class="on" href="context-graph.html">Context</a>
+      <a href="submit.html">Submit</a>
+    </nav>
+    <div class="top-cta">
+      <span class="pill-mono" id="hdrPill">— nodes · — edges</span>
+      <a class="btn" href="https://github.com/THORCollective/HEARTH" target="_blank" rel="noopener">GitHub &#x2197;</a>
+      <a class="btn primary" href="submit.html">Submit a hunt &#x2192;</a>
     </div>
   </div>
-  <nav class="header-nav">
-    <a href="index.html" class="nav-tab">📚 Hunt Library</a>
-    <a href="index.html" class="nav-tab">🎯 What Can I Hunt?</a>
-    <a href="graph.html" class="nav-tab">🗺️ Coverage Map</a>
-    <a href="context-graph.html" class="nav-tab nav-tab--active" style="text-decoration:none">🔗 Context Graph</a>
-  </nav>
 </header>
 
-<!-- Stats bar -->
-<div class="stats-bar" id="statsBar">
-  <div class="stat"><span class="num" id="statNodes">0</span> nodes</div>
-  <span class="sep">·</span>
-  <div class="stat"><span class="num" id="statEdges">0</span> edges</div>
-  <span class="sep">·</span>
-  <div class="stat"><span class="num" id="statActors">0</span> threat actors</div>
-  <span class="sep">·</span>
-  <div class="stat"><span class="num" id="statCampaigns">0</span> campaigns</div>
-  <span class="sep">·</span>
-  <div class="stat"><span class="num" id="statContrib">0</span> contributors</div>
-  <span class="sep">·</span>
-  <div class="stat">hottest: <span class="num hot" id="statHottest">—</span></div>
+<!-- ───────── HEADER BAND ───────── -->
+<div class="header-band">
+  <div class="wrap">
+    <div class="band-grid">
+      <div>
+        <span class="eyebrow">Context Graph</span>
+        <h1 class="page-title">Every <em>hunt</em>, every<br/>technique, every<br/><em>adversary</em>.</h1>
+      </div>
+      <div>
+        <p class="lede">The fabric beneath the library: hunting hypotheses crosswalked against MITRE ATT&amp;CK techniques, the data sources they depend on, and the <b>threat actors</b> and <b>campaigns</b> known to employ them. Drag a node; the simulation settles around it. Click for the dossier.</p>
+        <div class="stats" id="statStrip">
+          <div class="stat"><span class="n" id="statNodes">&#x2014;</span><span class="l">Nodes</span></div>
+          <div class="stat"><span class="n" id="statEdges">&#x2014;</span><span class="l">Relationships</span></div>
+          <div class="stat"><span class="n" id="statHunts">&#x2014;</span><span class="l">Hypotheses</span></div>
+          <div class="stat"><span class="n" id="statTech">&#x2014;</span><span class="l">Techniques</span></div>
+          <div class="stat"><span class="n warn" id="statActors">&#x2014;</span><span class="l">Threat actors</span></div>
+          <div class="stat"><span class="n hot" id="statCamps">&#x2014;</span><span class="l">Campaigns</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- Filter bar -->
+<!-- ───────── FILTER CHIPS ───────── -->
 <div class="filter-bar" id="filterBar">
-  <span class="filter-label">Tactic:</span>
-  <button class="filter-btn active" data-tactic="all">All</button>
-  <div class="filter-sep"></div>
-  <span class="filter-label">Show:</span>
-  <button class="filter-btn toggle-actor active" id="btnActors">Threat Actors</button>
-  <button class="filter-btn toggle-campaign active" id="btnCampaigns">Campaigns</button>
-  <button class="filter-btn toggle" id="btnContributors">Contributors</button>
-  <div class="filter-sep"></div>
-  <button class="filter-btn toggle-heat" id="btnHeatMap">Heat Map</button>
+  <span class="filter-label">Tactic</span>
+  <button class="filter-btn active" data-tactic="all">All <span class="filter-count" id="cAll">&#x2014;</span></button>
+  <span class="filter-sep"></span>
+  <span class="filter-label">Show</span>
+  <button class="filter-btn layer-ds active" data-layer="ds"><span class="dot"></span>Data sources <span class="filter-count" id="cDs">&#x2014;</span></button>
+  <button class="filter-btn layer-actor active" data-layer="actor"><span class="dot"></span>Threat actors <span class="filter-count" id="cActors">&#x2014;</span></button>
+  <button class="filter-btn layer-camp active" data-layer="camp"><span class="dot"></span>Campaigns <span class="filter-count" id="cCamps">&#x2014;</span></button>
+  <button class="filter-btn layer-contrib" data-layer="contrib"><span class="dot"></span>Contributors <span class="filter-count" id="cContrib">&#x2014;</span></button>
+  <span class="filter-sep"></span>
+  <button class="filter-btn heat" data-layer="heat"><span class="dot"></span>Heat overlay</button>
 </div>
 
-<!-- Main area -->
+<!-- ───────── MAIN AREA ───────── -->
 <div class="main">
   <div class="graph-wrap" id="graphWrap">
-    <svg id="graph"></svg>
+    <svg class="graph" id="graph"></svg>
 
-    <!-- SVG defs for heat glow filter -->
+    <!-- Hottest technique pill -->
+    <div class="hot-pill" id="hotPill" style="display:none">
+      <div class="ic"></div>
+      <div class="meta">
+        <span class="k">Hottest technique</span>
+        <span class="id" id="hotId">&#x2014;</span>
+        <span class="nm" id="hotName">&#x2014;</span>
+      </div>
+    </div>
 
     <!-- Tooltip -->
     <div class="tooltip" id="tooltip">
+      <div class="tt-kicker" id="ttKicker"></div>
       <div class="tt-title" id="ttTitle"></div>
       <div class="tt-sub" id="ttSub"></div>
-      <div class="tt-date" id="ttDate"></div>
+      <div class="tt-meta" id="ttMeta"></div>
     </div>
 
     <!-- Legend -->
-    <div class="legend" id="legend">
-      <div class="legend-item"><div class="legend-dot" style="background:#f97316"></div>Technique</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#a855f7"></div>Flame</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div>Ember</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Alchemy</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div>Data Source</div>
-      <div class="legend-item"><div class="legend-dot square" style="background:var(--color-primary)"></div>Tactic</div>
-      <div class="legend-item"><div class="legend-dot hexagon" style="background:#ef4444"></div>Threat Actor</div>
-      <div class="legend-item"><div class="legend-dot diamond" style="background:#f59e0b"></div>Campaign</div>
-    </div>
-
-    <!-- Stats overlay -->
-    <div class="stats-overlay" id="statsOverlay">
-      <h3>Context Graph</h3>
-      <div class="row"><span>Flames</span><span class="val" id="soFlames">0</span></div>
-      <div class="row"><span>Embers</span><span class="val" id="soEmbers">0</span></div>
-      <div class="row"><span>Alchemy</span><span class="val" id="soAlchemy">0</span></div>
-      <div class="divider"></div>
-      <div class="row"><span>Techniques</span><span class="val" id="soTech">0</span></div>
-      <div class="row"><span>Tactics</span><span class="val" id="soTactics">0</span></div>
-      <div class="row"><span>Data Sources</span><span class="val" id="soDS">0</span></div>
-      <div class="divider"></div>
-      <div class="row"><span>Threat Actors</span><span class="val threat" id="soActors">0</span></div>
-      <div class="row"><span>Campaigns</span><span class="val campaign" id="soCampaigns">0</span></div>
-      <div class="divider"></div>
-      <div class="row"><span>Relationships</span><span class="val" id="soEdges">0</span></div>
+    <div class="legend">
+      <div class="legend-item"><span class="legend-dot sq tactic"></span>Tactic</div>
+      <div class="legend-item"><span class="legend-dot tech"></span>Technique</div>
+      <div class="legend-item"><span class="legend-dot flame"></span>Flame</div>
+      <div class="legend-item"><span class="legend-dot em"></span>Ember</div>
+      <div class="legend-item"><span class="legend-dot alch"></span>Alchemy</div>
+      <div class="legend-item"><span class="legend-dot ds"></span>Data source</div>
+      <div class="legend-item"><span class="legend-dot hx actor"></span>Threat actor</div>
+      <div class="legend-item"><span class="legend-dot dm camp"></span>Campaign</div>
     </div>
 
     <!-- Controls -->
     <div class="controls">
-      <button class="ctrl-btn" id="btnFit" title="Zoom to fit">⊞</button>
-      <button class="ctrl-btn" id="btnZoomIn" title="Zoom in">+</button>
-      <button class="ctrl-btn" id="btnZoomOut" title="Zoom out">−</button>
+      <button class="ctrl-btn" id="btnFit" title="Zoom to fit">&#x229E;</button>
+      <button class="ctrl-btn" id="btnZoomIn" title="Zoom in">&#xFF0B;</button>
+      <button class="ctrl-btn" id="btnZoomOut" title="Zoom out">&#x2212;</button>
     </div>
   </div>
 
   <!-- Sidebar -->
-  <div class="sidebar" id="sidebar">
-    <div class="sidebar-inner" id="sidebarInner">
-      <button class="sidebar-close" id="sidebarClose">✕</button>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-inner">
+      <button class="sidebar-close" id="sidebarClose" aria-label="Close">&#x2715;</button>
       <div id="sidebarContent"></div>
     </div>
-  </div>
+  </aside>
 </div>
 
 <script>
-// =====================================================
-// HEARTH Context Graph — D3.js Force-Directed Layout
-// Phase 2a: Threat Actors, Campaigns, Heat Map
-// =====================================================
-
-let DATA = null;
-let showContributors = false;
-let showActors = true;
-let showCampaigns = true;
-let heatMapActive = false;
-let activeTactic = 'all';
-let simulation = null;
-let selectedNode = null;
-let currentZoom = null;
-let currentSvg = null;
-let currentG = null;
-let currentSimNodes = null;
-let currentLink = null;
-let currentNode = null;
-
-// ATT&CK technique name lookup (subset)
+// ═══════════════════════════════════════════════════════
+// ATT&CK technique names (subset)
+// ═══════════════════════════════════════════════════════
 const TECH_NAMES={T0847:"Replication Through Removable Media",T1003:"OS Credential Dumping",T1003006:"DCSync",T1005:"Data from Local System",T1020:"Automated Exfiltration",T1021:"Remote Services",T1027:"Obfuscated Files or Information",T1027010:"Command Obfuscation",T1030:"Data Transfer Size Limits",T1036:"Masquerading",T1036003:"Rename System Utilities",T1036005:"Match Legitimate Name or Location",T1039:"Data from Network Shared Drive",T1041:"Exfiltration Over C2 Channel",T1046:"Network Service Scanning",T1047:"Windows Management Instrumentation",T1048:"Exfiltration Over Alternative Protocol",T1049:"System Network Connections Discovery",T1053003:"Cron",T1053005:"Scheduled Task",T1055:"Process Injection",T1056002:"GUI Input Capture",T1059:"Command and Scripting Interpreter",T1059001:"PowerShell",T1059002:"AppleScript",T1059004:"Unix Shell",T1059005:"Visual Basic",T1059006:"Python",T1068:"Exploitation for Privilege Escalation",T1070004:"File Deletion",T1071:"Application Layer Protocol",T1071001:"Web Protocols",T1071004:"DNS",T1078:"Valid Accounts",T1078001:"Default Accounts",T1078002:"Domain Accounts",T1078004:"Cloud Accounts",T1082:"System Information Discovery",T1090:"Proxy",T1090001:"Internal Proxy",T1091:"Replication Through Removable Media",T1092:"Communication Through Removable Media",T1098:"Account Manipulation",T1102:"Web Service",T1102002:"Bidirectional Communication",T1105:"Ingress Tool Transfer",T1106:"Native API",T1110:"Brute Force",T1110003:"Password Spraying",T1112:"Modify Registry",T1114:"Email Collection",T1114003:"Email Forwarding Rule",T1119:"Automated Collection",T1127:"Trusted Developer Utilities",T1135:"Network Share Discovery",T1136002:"Domain Account",T1140:"Deobfuscate/Decode Files",T1176:"Browser Extensions",T1185:"Browser Session Hijacking",T1195001:"Compromise Software Dependencies",T1195002:"Compromise Software Supply Chain",T1197:"BITS Jobs",T1200:"Hardware Additions",T1203:"Exploitation for Client Execution",T1204:"User Execution",T1204002:"Malicious File",T1205001:"Port Knocking",T1211:"Exploitation for Defense Evasion",T1218:"System Binary Proxy Execution",T1218005:"Mshta",T1218011:"Rundll32",T1219:"Remote Access Software",T1484001:"Group Policy Modification",T1497:"Virtualization/Sandbox Evasion",T1497003:"Time Based Evasion",T1528:"Steal Application Access Token",T1534:"Internal Spearphishing",T1543004:"Launch Daemon",T1546004:".bash_profile and .bashrc",T1546015:"COM Hijacking",T1546016:"Installer Packages",T1547001:"Registry Run Keys / Startup Folder",T1550001:"Application Access Token",T1553001:"Gatekeeper Bypass",T1553004:"Install Root Certificate",T1553005:"Mark-of-the-Web Bypass",T1555:"Credentials from Password Stores",T1559:"Inter-Process Communication",T1560:"Archive Collected Data",T1562001:"Disable or Modify Tools",T1562004:"Disable or Modify System Firewall",T1563:"Remote Service Session Hijacking",T1564:"Hide Artifacts",T1564002:"Hidden Users",T1564006:"Run Virtual Instance",T1564008:"Email Hiding Rules",T1565001:"Stored Data Manipulation",T1566:"Phishing",T1566001:"Spearphishing Attachment",T1566002:"Spearphishing Link",T1567:"Exfiltration Over Web Service",T1568002:"Domain Generation Algorithms",T1572:"Protocol Tunneling",T1574002:"DLL Side-Loading",T1583001:"Domains",T1584001:"Domains",T1587003:"Digital Certificates",T1595001:"Scanning IP Blocks",T1599:"Network Boundary Bridging"};
-function techName(id){return TECH_NAMES[id.replace(/\./g,'')]||id}
+function techName(id){return TECH_NAMES[id.replace(/\./g,'')]||id;}
 
-// =====================================================
-// LOAD DATA
-// =====================================================
-fetch('context-graph-data.json')
-  .then(r => r.json())
-  .then(data => { DATA = data; init(); })
-  .catch(err => {
-    document.getElementById('graphWrap').innerHTML =
-      '<div style="padding:40px;color:var(--color-error)">Failed to load context-graph-data.json: ' + err.message + '</div>';
-  });
-
-function init() {
-  populateStats();
-  populateFilters();
-  buildGraph();
+// resolve oklch CSS vars to concrete colors for D3
+function cssVar(name){
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
-
-// =====================================================
-// STATS
-// =====================================================
-function populateStats() {
-  const s = DATA.stats;
-  document.getElementById('statNodes').textContent = s.totalNodes;
-  document.getElementById('statEdges').textContent = s.totalEdges;
-  document.getElementById('statContrib').textContent = s.contributors;
-  document.getElementById('statActors').textContent = s.threat_actors || 0;
-  document.getElementById('statCampaigns').textContent = s.campaigns || 0;
-
-  if (s.hottest_technique) {
-    document.getElementById('statHottest').textContent = s.hottest_technique + ' (' + techName(s.hottest_technique) + ')';
-  }
-
-  const hyps = DATA.nodes.filter(n => n.type === 'hypothesis');
-  document.getElementById('soFlames').textContent = hyps.filter(n => n.subtype === 'f').length;
-  document.getElementById('soEmbers').textContent = hyps.filter(n => n.subtype === 'e').length;
-  document.getElementById('soAlchemy').textContent = hyps.filter(n => n.subtype === 'a').length;
-  document.getElementById('soTech').textContent = DATA.nodes.filter(n => n.type === 'technique').length;
-  document.getElementById('soTactics').textContent = DATA.nodes.filter(n => n.type === 'tactic').length;
-  document.getElementById('soDS').textContent = DATA.nodes.filter(n => n.type === 'datasource').length;
-  document.getElementById('soActors').textContent = DATA.nodes.filter(n => n.type === 'threat_actor').length;
-  document.getElementById('soCampaigns').textContent = DATA.nodes.filter(n => n.type === 'campaign').length;
-  document.getElementById('soEdges').textContent = DATA.edges.length;
-}
-
-// =====================================================
-// FILTERS
-// =====================================================
-function populateFilters() {
-  const filterBar = document.getElementById('filterBar');
-  const tactics = DATA.nodes.filter(n => n.type === 'tactic').map(n => n.label).sort();
-  const refBtn = filterBar.querySelector('.filter-sep');
-
-  tactics.forEach(tac => {
-    const btn = document.createElement('button');
-    btn.className = 'filter-btn';
-    btn.dataset.tactic = tac;
-    btn.textContent = tac;
-    filterBar.insertBefore(btn, refBtn);
-  });
-}
-
-document.getElementById('filterBar').addEventListener('click', e => {
-  const btn = e.target.closest('.filter-btn');
-  if (!btn) return;
-
-  // Handle contributor toggle
-  if (btn.id === 'btnContributors') {
-    showContributors = !showContributors;
-    btn.classList.toggle('active', showContributors);
-    buildGraph();
-    return;
-  }
-
-  // Handle threat actor toggle
-  if (btn.id === 'btnActors') {
-    showActors = !showActors;
-    btn.classList.toggle('active', showActors);
-    buildGraph();
-    return;
-  }
-
-  // Handle campaign toggle
-  if (btn.id === 'btnCampaigns') {
-    showCampaigns = !showCampaigns;
-    btn.classList.toggle('active', showCampaigns);
-    buildGraph();
-    return;
-  }
-
-  // Handle heat map toggle
-  if (btn.id === 'btnHeatMap') {
-    heatMapActive = !heatMapActive;
-    btn.classList.toggle('active', heatMapActive);
-    applyHeatMap();
-    return;
-  }
-
-  // Handle tactic filter
-  if (btn.dataset.tactic !== undefined) {
-    document.querySelectorAll('#filterBar .filter-btn[data-tactic]').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    activeTactic = btn.dataset.tactic;
-    selectedNode = null;
-    document.getElementById('sidebar').classList.remove('open');
-    buildGraph();
-  }
-});
-
-// =====================================================
-// TEMPORAL COLOR CODING
-// =====================================================
-function getTemporalColor(node) {
-  if (node.type !== 'hypothesis' || !node.created_at) {
-    const colors = { f: '#a855f7', e: '#60a5fa', a: '#f59e0b' };
-    return colors[node.subtype] || '#a855f7';
-  }
-
-  const created = new Date(node.created_at).getTime();
-  const now = Date.now();
-  const oldest = DATA.stats.dateRange ? new Date(DATA.stats.dateRange.oldest).getTime() : created;
-  const range = now - oldest || 1;
-  const age = now - created;
-  const t = Math.max(0, Math.min(1, age / range));
-
-  const baseColors = { f: [168, 85, 247], e: [96, 165, 250], a: [245, 158, 11] };
-  const base = baseColors[node.subtype] || [168, 85, 247];
-  const accent = [228, 87, 218];
-
-  const r = Math.round(accent[0] * (1 - t) + base[0] * 0.5 * t);
-  const g = Math.round(accent[1] * (1 - t) + base[1] * 0.5 * t);
-  const b = Math.round(accent[2] * (1 - t) + base[2] * 0.5 * t);
-
-  return `rgb(${r},${g},${b})`;
-}
-
-function formatDate(iso) {
-  if (!iso) return 'Unknown';
-  return iso.split('T')[0];
-}
-
-// =====================================================
-// HEAT MAP — prevalence glow on techniques
-// =====================================================
-function getHeatColor(score) {
-  // 0.0 = cool (dim blue/gray), 1.0 = hot (bright red/orange)
-  if (score <= 0) return { stroke: '#555', fill: 'rgba(85,85,85,0.08)', glow: 0 };
-  const r = Math.round(255 * Math.min(1, score * 1.5));
-  const g = Math.round(180 * Math.max(0, 1 - score * 1.2));
-  const b = Math.round(50 * (1 - score));
-  return {
-    stroke: `rgb(${r},${g},${b})`,
-    fill: `rgba(${r},${g},${b},${0.08 + score * 0.2})`,
-    glow: score
+let C={};
+function loadColors(){
+  C={
+    tech:    cssVar('--c-tech'),
+    flame:   cssVar('--c-flame'),
+    em:      cssVar('--c-em'),
+    alch:    cssVar('--c-alch'),
+    ds:      cssVar('--c-ds'),
+    actor:   cssVar('--c-actor'),
+    camp:    cssVar('--c-camp'),
+    tactic:  cssVar('--c-tactic'),
+    contrib: cssVar('--c-contrib'),
+    ember:   cssVar('--ember'),
+    ember2:  cssVar('--ember-2'),
+    fg:      cssVar('--fg'),
+    fgMute:  cssVar('--fg-mute'),
+    fgDim:   cssVar('--fg-dim'),
+    line:    cssVar('--line-soft'),
   };
 }
 
-function applyHeatMap() {
-  if (!currentNode) return;
+// ═══════════════════════════════════════════════════════
+// State
+// ═══════════════════════════════════════════════════════
+let DATA=null;
+let layers={ds:true,actor:true,camp:true,contrib:false,heat:false};
+let activeTactic='all';
+let simulation=null, svgSel=null, gSel=null, zoomBehavior=null;
+let simNodes=[], linkSel=null, nodeSel=null;
+let GW=0, GH=0;
 
-  currentNode.each(function(d) {
-    if (d.type !== 'technique') return;
-    const el = d3.select(this);
-    const circle = el.select('circle');
-    const glowCircle = el.select('.heat-glow');
+// ═══════════════════════════════════════════════════════
+// Load
+// ═══════════════════════════════════════════════════════
+loadColors();
+fetch('context-graph-data.json')
+  .then(r=>r.json())
+  .then(d=>{DATA=d;init();})
+  .catch(err=>{
+    document.getElementById('graphWrap').insertAdjacentHTML('beforeend',
+      `<div style="position:absolute;inset:0;display:grid;place-items:center;color:var(--c-actor);font-family:var(--mono);font-size:13px">Could not load context-graph-data.json — ${err.message}</div>`);
+  });
 
-    if (heatMapActive) {
-      const score = d.prevalence_score || 0;
-      const heat = getHeatColor(score);
-      circle.attr('fill', heat.fill).attr('stroke', heat.stroke).attr('stroke-width', 1.5 + score * 2);
-      if (score > 0.3) {
-        if (glowCircle.empty()) {
-          el.insert('circle', ':first-child')
-            .attr('class', 'heat-glow')
-            .attr('r', 16 + score * 12)
-            .attr('fill', 'none')
-            .attr('stroke', heat.stroke)
-            .attr('stroke-width', score * 3)
-            .attr('opacity', 0.3 + score * 0.4)
-            .style('animation', score > 0.6 ? 'heatPulse 2s ease-in-out infinite' : 'none');
-        } else {
-          glowCircle
-            .attr('r', 16 + score * 12)
-            .attr('stroke', heat.stroke)
-            .attr('stroke-width', score * 3)
-            .attr('opacity', 0.3 + score * 0.4)
-            .style('animation', score > 0.6 ? 'heatPulse 2s ease-in-out infinite' : 'none');
-        }
-      } else {
-        glowCircle.remove();
+function init(){
+  populateStats();
+  populateTactics();
+  wireFilters();
+  buildGraph();
+  window.addEventListener('resize', debounce(buildGraph, 220));
+}
+function debounce(fn,ms){let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms);};}
+
+// ═══════════════════════════════════════════════════════
+// Stats
+// ═══════════════════════════════════════════════════════
+function populateStats(){
+  const s=DATA.stats;
+  document.getElementById('statNodes').textContent=fmt(s.totalNodes);
+  document.getElementById('statEdges').textContent=fmt(s.totalEdges);
+  document.getElementById('statHunts').textContent=fmt(s.hypotheses||0);
+  document.getElementById('statTech').textContent=fmt(s.techniques||0);
+  document.getElementById('statActors').textContent=fmt(s.threat_actors||0);
+  document.getElementById('statCamps').textContent=fmt(s.campaigns||0);
+  document.getElementById('hdrPill').textContent=fmt(s.totalNodes)+' nodes · '+fmt(s.totalEdges)+' edges';
+
+  if(s.hottest_technique){
+    const pill=document.getElementById('hotPill');
+    pill.style.display='flex';
+    document.getElementById('hotId').textContent=s.hottest_technique;
+    document.getElementById('hotName').textContent=techName(s.hottest_technique);
+  }
+
+  const ct=t=>DATA.nodes.filter(n=>n.type===t).length;
+  document.getElementById('cAll').textContent=fmt(s.totalNodes);
+  document.getElementById('cDs').textContent=ct('datasource');
+  document.getElementById('cActors').textContent=ct('threat_actor');
+  document.getElementById('cCamps').textContent=ct('campaign');
+  document.getElementById('cContrib').textContent=ct('contributor');
+}
+function fmt(n){return n.toLocaleString('en-US');}
+
+// ═══════════════════════════════════════════════════════
+// Tactics
+// ═══════════════════════════════════════════════════════
+function populateTactics(){
+  const bar=document.getElementById('filterBar');
+  const ref=bar.querySelector('.filter-sep');
+  const tactics=DATA.nodes.filter(n=>n.type==='tactic')
+    .map(n=>({label:n.label,count:n.techniqueCount||0}))
+    .sort((a,b)=>b.count-a.count);
+  tactics.forEach(t=>{
+    const btn=document.createElement('button');
+    btn.className='filter-btn';
+    btn.dataset.tactic=t.label;
+    btn.innerHTML=`${t.label} <span class="filter-count">${t.count}</span>`;
+    bar.insertBefore(btn,ref);
+  });
+}
+
+function wireFilters(){
+  document.getElementById('filterBar').addEventListener('click',e=>{
+    const btn=e.target.closest('.filter-btn');
+    if(!btn) return;
+    if(btn.dataset.layer){
+      const k=btn.dataset.layer;
+      if(k==='heat'){
+        layers.heat=!layers.heat;
+        btn.classList.toggle('active',layers.heat);
+        applyHeat();
+      }else{
+        layers[k]=!layers[k];
+        btn.classList.toggle('active',layers[k]);
+        buildGraph();
       }
-    } else {
-      // Reset to default technique style
-      circle.attr('fill', 'rgba(249,115,22,0.12)').attr('stroke', '#f97316').attr('stroke-width', 1.5);
-      glowCircle.remove();
+      return;
+    }
+    if(btn.dataset.tactic!==undefined){
+      document.querySelectorAll('#filterBar .filter-btn[data-tactic]').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      activeTactic=btn.dataset.tactic;
+      closeSidebar();
+      buildGraph();
     }
   });
 }
 
-// =====================================================
-// HEXAGON PATH (for threat actors)
-// =====================================================
-function hexagonPath(r) {
-  const a = Math.PI / 3;
-  let path = '';
-  for (let i = 0; i < 6; i++) {
-    const angle = a * i - Math.PI / 2;
-    const x = r * Math.cos(angle);
-    const y = r * Math.sin(angle);
-    path += (i === 0 ? 'M' : 'L') + x.toFixed(2) + ',' + y.toFixed(2);
-  }
-  return path + 'Z';
+// ═══════════════════════════════════════════════════════
+// Heat
+// ═══════════════════════════════════════════════════════
+function applyHeat(){
+  if(!nodeSel) return;
+  nodeSel.each(function(d){
+    if(d.type!=='technique') return;
+    const el=d3.select(this);
+    const circle=el.select('circle.body');
+    let glow=el.select('.heat-glow');
+    if(layers.heat){
+      const s=d.prevalence_score||0;
+      const stroke=`oklch(${(0.78-s*0.18).toFixed(2)} ${(0.13+s*0.10).toFixed(2)} ${(78-s*55).toFixed(0)})`;
+      circle.attr('fill',`oklch(${(0.30-s*0.08).toFixed(2)} ${(0.10+s*0.08).toFixed(2)} ${(78-s*55).toFixed(0)} / ${(0.20+s*0.30).toFixed(2)})`).attr('stroke',stroke).attr('stroke-width',1.2+s*1.8);
+      if(s>0.3){
+        if(glow.empty()){
+          glow=el.insert('circle',':first-child').attr('class','heat-glow').attr('fill','none');
+        }
+        glow.attr('r',18+s*14).attr('stroke',stroke)
+          .attr('stroke-width',s*3).attr('opacity',0.25+s*0.4)
+          .style('animation',s>0.6?'heatPulse 2s ease-in-out infinite':'none');
+      }else{
+        glow.remove();
+      }
+    }else{
+      circle.attr('fill',techFill()).attr('stroke',C.tech).attr('stroke-width',1.2);
+      glow.remove();
+    }
+  });
 }
 
-// =====================================================
-// DIAMOND PATH (for campaigns)
-// =====================================================
-function diamondPath(r) {
-  return `M0,${-r} L${r},0 L0,${r} L${-r},0 Z`;
+function techFill(){return 'oklch(0.28 0.08 78 / 0.35)';}
+
+// ═══════════════════════════════════════════════════════
+// Shape helpers
+// ═══════════════════════════════════════════════════════
+function hex(r){let p='';for(let i=0;i<6;i++){const a=Math.PI/3*i-Math.PI/2;p+=(i?'L':'M')+(r*Math.cos(a)).toFixed(2)+','+(r*Math.sin(a)).toFixed(2);}return p+'Z';}
+function diamond(r){return `M0,${-r} L${r},0 L0,${r} L${-r},0 Z`;}
+
+// ═══════════════════════════════════════════════════════
+// Edge colors
+// ═══════════════════════════════════════════════════════
+function edgeColor(t,hl){
+  const map={TARGETS:330,REQUIRES:170,BELONGS_TO:78,AUTHORED_BY:340,EMPLOYS:25,ATTRIBUTED_TO:50,MOTIVATED_BY:50};
+  const hue=map[t]||300;
+  const sat=t==='MOTIVATED_BY'?0.08:0.13;
+  const a=hl?0.55:(t==='MOTIVATED_BY'?0.06:0.12);
+  return `oklch(0.65 ${sat} ${hue} / ${a})`;
 }
 
-// =====================================================
-// EDGE COLORS
-// =====================================================
-function defaultEdgeColor(type) {
-  if (type === 'TARGETS') return 'rgba(168,85,247,0.12)';
-  if (type === 'REQUIRES') return 'rgba(34,197,94,0.1)';
-  if (type === 'BELONGS_TO') return 'rgba(138,71,255,0.15)';
-  if (type === 'OBSERVES') return 'rgba(34,197,94,0.06)';
-  if (type === 'AUTHORED_BY') return 'rgba(228,87,218,0.12)';
-  if (type === 'EMPLOYS') return 'rgba(239,68,68,0.10)';
-  if (type === 'ATTRIBUTED_TO') return 'rgba(245,158,11,0.12)';
-  if (type === 'MOTIVATED_BY') return 'rgba(245,158,11,0.06)';
-  return 'rgba(255,255,255,0.05)';
-}
-
-function highlightEdgeColor(type) {
-  if (type === 'TARGETS') return 'rgba(168,85,247,0.6)';
-  if (type === 'REQUIRES') return 'rgba(34,197,94,0.5)';
-  if (type === 'BELONGS_TO') return 'rgba(138,71,255,0.5)';
-  if (type === 'AUTHORED_BY') return 'rgba(228,87,218,0.5)';
-  if (type === 'EMPLOYS') return 'rgba(239,68,68,0.7)';
-  if (type === 'ATTRIBUTED_TO') return 'rgba(245,158,11,0.6)';
-  if (type === 'MOTIVATED_BY') return 'rgba(245,158,11,0.5)';
-  return 'rgba(255,255,255,0.2)';
-}
-
-// =====================================================
-// BUILD GRAPH
-// =====================================================
-function buildGraph() {
-  const svg = d3.select('#graph');
+// ═══════════════════════════════════════════════════════
+// Build graph
+// ═══════════════════════════════════════════════════════
+function buildGraph(){
+  const wrap=document.getElementById('graphWrap');
+  GW=wrap.clientWidth; GH=wrap.clientHeight;
+  const svg=d3.select('#graph');
   svg.selectAll('*').remove();
+  svg.attr('width',GW).attr('height',GH);
+  svgSel=svg;
 
-  const wrap = document.getElementById('graphWrap');
-  const W = wrap.clientWidth;
-  const H = wrap.clientHeight;
+  const g=svg.append('g'); gSel=g;
 
-  svg.attr('width', W).attr('height', H);
-
-  // Add SVG defs for glow filter
-  const defs = svg.append('defs');
-  const glowFilter = defs.append('filter').attr('id', 'heatGlow').attr('x', '-50%').attr('y', '-50%').attr('width', '200%').attr('height', '200%');
-  glowFilter.append('feGaussianBlur').attr('in', 'SourceGraphic').attr('stdDeviation', '4').attr('result', 'blur');
-  const feMerge = glowFilter.append('feMerge');
-  feMerge.append('feMergeNode').attr('in', 'blur');
-  feMerge.append('feMergeNode').attr('in', 'SourceGraphic');
-
-  // Filter nodes and edges
-  let visibleNodes = [];
-  let visibleEdges = [];
-  const nodeMap = {};
-  DATA.nodes.forEach(n => nodeMap[n.id] = n);
-
-  if (activeTactic === 'all') {
-    visibleNodes = DATA.nodes.filter(n => {
-      if (n.type === 'contributor') return showContributors;
-      if (n.type === 'threat_actor') return showActors;
-      if (n.type === 'campaign') return showCampaigns;
+  const nodeMap={}; DATA.nodes.forEach(n=>nodeMap[n.id]=n);
+  let visible=[];
+  if(activeTactic==='all'){
+    visible=DATA.nodes.filter(n=>{
+      if(n.type==='contributor') return layers.contrib;
+      if(n.type==='threat_actor') return layers.actor;
+      if(n.type==='campaign') return layers.camp;
+      if(n.type==='datasource') return layers.ds;
       return true;
     });
-  } else {
-    // Show tactic node, its techniques, linked hypotheses, data sources, and optionally actors/campaigns
-    const tacticId = 'tactic:' + activeTactic;
-    const tacticNode = nodeMap[tacticId];
-    if (tacticNode) visibleNodes.push({ ...tacticNode });
-
-    const techIds = new Set();
-    DATA.edges.filter(e => e.type === 'BELONGS_TO' && e.target === tacticId)
-      .forEach(e => techIds.add(e.source));
-    techIds.forEach(tid => { if (nodeMap[tid]) visibleNodes.push({ ...nodeMap[tid] }); });
-
-    const hypIds = new Set();
-    DATA.edges.filter(e => e.type === 'TARGETS' && techIds.has(e.target))
-      .forEach(e => hypIds.add(e.source));
-    hypIds.forEach(hid => { if (nodeMap[hid]) visibleNodes.push({ ...nodeMap[hid] }); });
-
-    const dsIds = new Set();
-    DATA.edges.filter(e => e.type === 'REQUIRES' && hypIds.has(e.source))
-      .forEach(e => dsIds.add(e.target));
-    dsIds.forEach(did => { if (nodeMap[did]) visibleNodes.push({ ...nodeMap[did] }); });
-
-    if (showContributors) {
-      const contribIds = new Set();
-      DATA.edges.filter(e => e.type === 'AUTHORED_BY' && hypIds.has(e.source))
-        .forEach(e => contribIds.add(e.target));
-      contribIds.forEach(cid => { if (nodeMap[cid]) visibleNodes.push({ ...nodeMap[cid] }); });
+  }else{
+    const tacticId='tactic:'+activeTactic;
+    if(nodeMap[tacticId]) visible.push(nodeMap[tacticId]);
+    const techIds=new Set();
+    DATA.edges.filter(e=>e.type==='BELONGS_TO'&&e.target===tacticId).forEach(e=>techIds.add(e.source));
+    techIds.forEach(id=>{if(nodeMap[id]) visible.push(nodeMap[id]);});
+    const hypIds=new Set();
+    DATA.edges.filter(e=>e.type==='TARGETS'&&techIds.has(e.target)).forEach(e=>hypIds.add(e.source));
+    hypIds.forEach(id=>{if(nodeMap[id]) visible.push(nodeMap[id]);});
+    if(layers.ds){
+      const ids=new Set();
+      DATA.edges.filter(e=>e.type==='REQUIRES'&&hypIds.has(e.source)).forEach(e=>ids.add(e.target));
+      ids.forEach(id=>{if(nodeMap[id]) visible.push(nodeMap[id]);});
     }
-
-    if (showActors) {
-      const actorIds = new Set();
-      DATA.edges.filter(e => e.type === 'EMPLOYS' && techIds.has(e.target) && e.source.startsWith('actor:'))
-        .forEach(e => actorIds.add(e.source));
-      actorIds.forEach(aid => { if (nodeMap[aid]) visibleNodes.push({ ...nodeMap[aid] }); });
+    if(layers.contrib){
+      const ids=new Set();
+      DATA.edges.filter(e=>e.type==='AUTHORED_BY'&&hypIds.has(e.source)).forEach(e=>ids.add(e.target));
+      ids.forEach(id=>{if(nodeMap[id]) visible.push(nodeMap[id]);});
     }
-
-    if (showCampaigns) {
-      const campIds = new Set();
-      DATA.edges.filter(e => e.type === 'EMPLOYS' && techIds.has(e.target) && e.source.startsWith('campaign:'))
-        .forEach(e => campIds.add(e.source));
-      // Also include campaigns linked to visible hypotheses
-      DATA.edges.filter(e => e.type === 'MOTIVATED_BY' && hypIds.has(e.source))
-        .forEach(e => campIds.add(e.target));
-      campIds.forEach(cid => { if (nodeMap[cid]) visibleNodes.push({ ...nodeMap[cid] }); });
+    if(layers.actor){
+      const ids=new Set();
+      DATA.edges.filter(e=>e.type==='EMPLOYS'&&techIds.has(e.target)&&e.source.startsWith('actor:')).forEach(e=>ids.add(e.source));
+      ids.forEach(id=>{if(nodeMap[id]) visible.push(nodeMap[id]);});
+    }
+    if(layers.camp){
+      const ids=new Set();
+      DATA.edges.filter(e=>e.type==='EMPLOYS'&&techIds.has(e.target)&&e.source.startsWith('campaign:')).forEach(e=>ids.add(e.source));
+      DATA.edges.filter(e=>e.type==='MOTIVATED_BY'&&hypIds.has(e.source)).forEach(e=>ids.add(e.target));
+      ids.forEach(id=>{if(nodeMap[id]) visible.push(nodeMap[id]);});
     }
   }
 
-  const visibleIds = new Set(visibleNodes.map(n => n.id));
+  const visibleIds=new Set(visible.map(n=>n.id));
+  const visibleEdges=DATA.edges.filter(e=>visibleIds.has(e.source)&&visibleIds.has(e.target));
 
-  DATA.edges.forEach(e => {
-    if (visibleIds.has(e.source) && visibleIds.has(e.target)) {
-      visibleEdges.push({ ...e });
-    }
-  });
+  const nodesById={};
+  simNodes=visible.map((n,i)=>{const nn={...n,index:i};nodesById[n.id]=nn;return nn;});
+  const simLinks=visibleEdges.map(e=>({source:nodesById[e.source],target:nodesById[e.target],type:e.type})).filter(l=>l.source&&l.target);
 
-  const nodeById = {};
-  const simNodes = visibleNodes.map((n, i) => {
-    const sn = { ...n, index: i };
-    nodeById[n.id] = sn;
-    return sn;
-  });
+  zoomBehavior=d3.zoom().scaleExtent([0.06,5]).on('zoom',ev=>{g.attr('transform',ev.transform);});
+  svg.call(zoomBehavior);
 
-  const simLinks = visibleEdges.map(e => ({
-    source: nodeById[e.source],
-    target: nodeById[e.target],
-    type: e.type
-  })).filter(l => l.source && l.target);
-
-  const g = svg.append('g');
-
-  const zoom = d3.zoom()
-    .scaleExtent([0.08, 5])
-    .on('zoom', (event) => g.attr('transform', event.transform));
-  svg.call(zoom);
-  currentZoom = zoom;
-  currentSvg = svg;
-  currentG = g;
-
-  // Force simulation
-  simulation = d3.forceSimulation(simNodes)
-    .force('link', d3.forceLink(simLinks).id(d => d.id).distance(d => {
-      if (d.type === 'BELONGS_TO') return 80;
-      if (d.type === 'TARGETS') return 100;
-      if (d.type === 'REQUIRES') return 120;
-      if (d.type === 'AUTHORED_BY') return 140;
-      if (d.type === 'EMPLOYS') return 130;
-      if (d.type === 'ATTRIBUTED_TO') return 90;
-      if (d.type === 'MOTIVATED_BY') return 150;
-      return 100;
-    }).strength(d => {
-      if (d.type === 'BELONGS_TO') return 0.6;
-      if (d.type === 'TARGETS') return 0.3;
-      if (d.type === 'EMPLOYS') return 0.15;
-      if (d.type === 'ATTRIBUTED_TO') return 0.25;
-      if (d.type === 'MOTIVATED_BY') return 0.05;
+  simulation=d3.forceSimulation(simNodes)
+    .force('link',d3.forceLink(simLinks).id(d=>d.id).distance(d=>{
+      if(d.type==='BELONGS_TO') return 90;
+      if(d.type==='TARGETS') return 110;
+      if(d.type==='REQUIRES') return 130;
+      if(d.type==='AUTHORED_BY') return 150;
+      if(d.type==='EMPLOYS') return 140;
+      if(d.type==='ATTRIBUTED_TO') return 100;
+      if(d.type==='MOTIVATED_BY') return 160;
+      return 110;
+    }).strength(d=>{
+      if(d.type==='BELONGS_TO') return 0.6;
+      if(d.type==='TARGETS') return 0.3;
+      if(d.type==='EMPLOYS') return 0.12;
+      if(d.type==='ATTRIBUTED_TO') return 0.22;
+      if(d.type==='MOTIVATED_BY') return 0.05;
       return 0.15;
     }))
-    .force('charge', d3.forceManyBody().strength(d => {
-      if (d.type === 'tactic') return -500;
-      if (d.type === 'technique') return -150;
-      if (d.type === 'contributor') return -200;
-      if (d.type === 'threat_actor') return -120;
-      if (d.type === 'campaign') return -100;
+    .force('charge',d3.forceManyBody().strength(d=>{
+      if(d.type==='tactic') return -560;
+      if(d.type==='technique') return -180;
+      if(d.type==='contributor') return -200;
+      if(d.type==='threat_actor') return -130;
+      if(d.type==='campaign') return -110;
       return -80;
     }))
-    .force('center', d3.forceCenter(W / 2, H / 2))
-    .force('collision', d3.forceCollide().radius(d => nodeRadius(d) + 4))
-    .force('x', d3.forceX(W / 2).strength(0.03))
-    .force('y', d3.forceY(H / 2).strength(0.03));
+    .force('center',d3.forceCenter(GW/2,GH/2))
+    .force('collision',d3.forceCollide().radius(d=>nodeRadius(d)+5))
+    .force('x',d3.forceX(GW/2).strength(0.03))
+    .force('y',d3.forceY(GH/2).strength(0.03));
 
-  // Draw edges
-  const link = g.append('g')
-    .selectAll('line')
-    .data(simLinks)
-    .join('line')
-    .attr('stroke', d => defaultEdgeColor(d.type))
-    .attr('stroke-width', d => {
-      if (d.type === 'BELONGS_TO') return 1.5;
-      if (d.type === 'EMPLOYS') return 0.6;
-      if (d.type === 'MOTIVATED_BY') return 0.4;
-      return 0.8;
+  linkSel=g.append('g').selectAll('line').data(simLinks).join('line')
+    .attr('stroke',d=>edgeColor(d.type,false))
+    .attr('stroke-width',d=>{
+      if(d.type==='BELONGS_TO') return 1.4;
+      if(d.type==='EMPLOYS') return 0.6;
+      if(d.type==='MOTIVATED_BY') return 0.4;
+      return 0.75;
     });
 
-  currentLink = link;
+  nodeSel=g.append('g').selectAll('g').data(simNodes).join('g')
+    .attr('cursor','pointer')
+    .call(d3.drag().on('start',dragStart).on('drag',drag).on('end',dragEnd));
 
-  // Draw nodes
-  const node = g.append('g')
-    .selectAll('g')
-    .data(simNodes)
-    .join('g')
-    .attr('cursor', 'pointer')
-    .call(d3.drag()
-      .on('start', dragStarted)
-      .on('drag', dragged)
-      .on('end', dragEnded));
-
-  currentNode = node;
-
-  // Render each node type
-  node.each(function(d) {
-    const el = d3.select(this);
-
-    if (d.type === 'tactic') {
-      el.append('rect')
-        .attr('rx', 8).attr('ry', 8)
-        .attr('width', 120).attr('height', 36)
-        .attr('x', -60).attr('y', -18)
-        .attr('fill', 'rgba(138,71,255,0.12)')
-        .attr('stroke', '#8a47ff')
-        .attr('stroke-width', 2);
-      el.append('text')
-        .attr('text-anchor', 'middle')
-        .attr('dy', '0.35em')
-        .attr('fill', '#f7f5ff')
-        .attr('font-size', '10px')
-        .attr('font-weight', '700')
-        .text(d.label.length > 18 ? d.label.substring(0, 16) + '...' : d.label);
+  nodeSel.each(function(d){
+    const el=d3.select(this);
+    if(d.type==='tactic'){
+      const w=Math.max(110,d.label.length*7.2+22);
+      el.append('rect').attr('class','body')
+        .attr('rx',6).attr('ry',6)
+        .attr('width',w).attr('height',32).attr('x',-w/2).attr('y',-16)
+        .attr('fill','oklch(0.26 0.06 290 / 0.55)')
+        .attr('stroke',C.tactic).attr('stroke-width',1.3);
+      el.append('text').attr('text-anchor','middle').attr('dy','0.35em')
+        .attr('fill',C.fg).attr('font-size','10px')
+        .attr('font-family','JetBrains Mono, monospace')
+        .attr('font-weight','600').attr('letter-spacing','0.10em')
+        .text(d.label.toUpperCase());
     }
-    else if (d.type === 'technique') {
-      el.append('circle')
-        .attr('r', 16)
-        .attr('fill', 'rgba(249,115,22,0.12)')
-        .attr('stroke', '#f97316')
-        .attr('stroke-width', 1.5);
-      el.append('text')
-        .attr('text-anchor', 'middle')
-        .attr('dy', '0.35em')
-        .attr('fill', '#f7f5ff')
-        .attr('font-size', '8px')
-        .attr('font-weight', '700')
-        .text(d.label);
+    else if(d.type==='technique'){
+      el.append('circle').attr('class','body').attr('r',18)
+        .attr('fill',techFill()).attr('stroke',C.tech).attr('stroke-width',1.2);
+      el.append('text').attr('text-anchor','middle').attr('dy','0.35em')
+        .attr('fill',C.fg).attr('font-size','8.5px')
+        .attr('font-family','JetBrains Mono, monospace')
+        .attr('font-weight','600').text(d.label);
     }
-    else if (d.type === 'hypothesis') {
-      const color = getTemporalColor(d);
-      el.append('circle')
-        .attr('r', 12)
-        .attr('fill', color + '22')
-        .attr('stroke', color)
-        .attr('stroke-width', 1.2);
-      el.append('text')
-        .attr('text-anchor', 'middle')
-        .attr('dy', '0.35em')
-        .attr('fill', color)
-        .attr('font-size', '8px')
-        .attr('font-weight', '700')
-        .text(d.label);
+    else if(d.type==='hypothesis'){
+      const color=d.subtype==='f'?C.flame:d.subtype==='e'?C.em:C.alch;
+      el.append('circle').attr('class','body').attr('r',11)
+        .attr('fill','oklch(0.30 0.06 300 / 0.55)').attr('stroke',color).attr('stroke-width',1.1);
+      el.append('text').attr('text-anchor','middle').attr('dy','0.35em')
+        .attr('fill',color).attr('font-size','7.5px')
+        .attr('font-family','JetBrains Mono, monospace')
+        .attr('font-weight','600').text(d.label);
     }
-    else if (d.type === 'datasource') {
-      const label = d.label;
-      const w = Math.max(50, label.length * 5.5 + 14);
-      el.append('rect')
-        .attr('rx', 10).attr('ry', 10)
-        .attr('width', w).attr('height', 20)
-        .attr('x', -w/2).attr('y', -10)
-        .attr('fill', 'rgba(34,197,94,0.08)')
-        .attr('stroke', '#22c55e')
-        .attr('stroke-width', 1);
-      el.append('text')
-        .attr('text-anchor', 'middle')
-        .attr('dy', '0.35em')
-        .attr('fill', '#22c55e')
-        .attr('font-size', '8px')
-        .attr('font-weight', '600')
-        .text(label);
+    else if(d.type==='datasource'){
+      const w=Math.max(60,d.label.length*5.8+14);
+      el.append('rect').attr('class','body').attr('rx',9).attr('ry',9)
+        .attr('width',w).attr('height',18).attr('x',-w/2).attr('y',-9)
+        .attr('fill','oklch(0.28 0.05 170 / 0.45)').attr('stroke',C.ds).attr('stroke-width',0.9);
+      el.append('text').attr('text-anchor','middle').attr('dy','0.35em')
+        .attr('fill',C.ds).attr('font-size','8px')
+        .attr('font-weight','500').text(d.label);
     }
-    else if (d.type === 'contributor') {
-      const r = Math.max(14, Math.min(30, 8 + (d.hypothesisCount || 1) * 0.8));
-      d._r = r;
-      el.append('circle')
-        .attr('r', r)
-        .attr('fill', 'rgba(228,87,218,0.1)')
-        .attr('stroke', '#e457da')
-        .attr('stroke-width', 1.5)
-        .attr('stroke-dasharray', '4,2');
-      el.append('text')
-        .attr('text-anchor', 'middle')
-        .attr('dy', '0.35em')
-        .attr('fill', '#e457da')
-        .attr('font-size', Math.max(7, Math.min(10, r * 0.5)) + 'px')
-        .attr('font-weight', '600')
-        .text(d.label.length > 12 ? d.label.substring(0, 10) + '..' : d.label);
+    else if(d.type==='contributor'){
+      const r=Math.max(14,Math.min(28,8+(d.hypothesisCount||1)*0.8));d._r=r;
+      el.append('circle').attr('class','body').attr('r',r)
+        .attr('fill','oklch(0.28 0.06 340 / 0.40)').attr('stroke',C.contrib)
+        .attr('stroke-width',1.3).attr('stroke-dasharray','3,2');
+      el.append('text').attr('text-anchor','middle').attr('dy','0.35em')
+        .attr('fill',C.contrib).attr('font-size',Math.max(7,Math.min(10,r*0.45))+'px')
+        .attr('font-weight','500').text(d.label.length>12?d.label.substring(0,10)+'…':d.label);
     }
-    else if (d.type === 'threat_actor') {
-      // Hexagon shape for threat actors
-      const r = Math.max(14, Math.min(22, 12 + (d.technique_count || 0) * 0.3));
-      d._r = r;
-      el.append('path')
-        .attr('d', hexagonPath(r))
-        .attr('fill', 'rgba(239,68,68,0.12)')
-        .attr('stroke', '#ef4444')
-        .attr('stroke-width', 1.5);
-      el.append('text')
-        .attr('text-anchor', 'middle')
-        .attr('dy', '0.35em')
-        .attr('fill', '#ef4444')
-        .attr('font-size', '7px')
-        .attr('font-weight', '700')
-        .text(d.label.length > 10 ? d.label.substring(0, 8) + '..' : d.label);
+    else if(d.type==='threat_actor'){
+      const r=Math.max(14,Math.min(22,11+(d.technique_count||0)*0.3));d._r=r;
+      el.append('path').attr('class','body').attr('d',hex(r))
+        .attr('fill','oklch(0.30 0.10 25 / 0.45)').attr('stroke',C.actor).attr('stroke-width',1.3);
+      el.append('text').attr('text-anchor','middle').attr('dy','0.35em')
+        .attr('fill',C.actor).attr('font-size','7px')
+        .attr('font-family','JetBrains Mono, monospace')
+        .attr('font-weight','600').text(d.label.length>10?d.label.substring(0,8)+'…':d.label);
     }
-    else if (d.type === 'campaign') {
-      // Diamond shape for campaigns
-      const r = 14;
-      d._r = r;
-      el.append('path')
-        .attr('d', diamondPath(r))
-        .attr('fill', 'rgba(245,158,11,0.12)')
-        .attr('stroke', '#f59e0b')
-        .attr('stroke-width', 1.5);
-      el.append('text')
-        .attr('text-anchor', 'middle')
-        .attr('dy', '0.35em')
-        .attr('fill', '#f59e0b')
-        .attr('font-size', '6px')
-        .attr('font-weight', '700')
-        .text(d.label.length > 8 ? d.label.substring(0, 6) + '..' : d.label);
+    else if(d.type==='campaign'){
+      const r=14;d._r=r;
+      el.append('path').attr('class','body').attr('d',diamond(r))
+        .attr('fill','oklch(0.30 0.10 50 / 0.45)').attr('stroke',C.camp).attr('stroke-width',1.3);
+      el.append('text').attr('text-anchor','middle').attr('dy','0.35em')
+        .attr('fill',C.camp).attr('font-size','6.5px')
+        .attr('font-family','JetBrains Mono, monospace')
+        .attr('font-weight','600').text(d.label.length>8?d.label.substring(0,6)+'…':d.label);
     }
   });
 
-  // Apply heat map if active
-  if (heatMapActive) applyHeatMap();
+  if(layers.heat) applyHeat();
 
-  // Hover and click
-  node.on('mouseover', function(event, d) {
-    link.attr('stroke-opacity', l =>
-      (l.source.id === d.id || l.target.id === d.id) ? 1 : 0.3
-    ).attr('stroke-width', l =>
-      (l.source.id === d.id || l.target.id === d.id) ? 2.5 : 0.5
-    ).attr('stroke', l => {
-      if (l.source.id !== d.id && l.target.id !== d.id) {
-        return 'rgba(255,255,255,0.03)';
-      }
-      return highlightEdgeColor(l.type);
+  nodeSel.on('mouseover',(ev,d)=>{
+    linkSel.attr('stroke',l=>{
+      if(l.source.id===d.id||l.target.id===d.id) return edgeColor(l.type,true);
+      return 'oklch(0.30 0.02 300 / 0.05)';
+    }).attr('stroke-width',l=>{
+      if(l.source.id===d.id||l.target.id===d.id) return 2;
+      return 0.5;
     });
-
-    showTooltip(event, d);
-  })
-  .on('mouseout', function() {
-    link.attr('stroke-opacity', 1)
-      .attr('stroke-width', d => {
-        if (d.type === 'BELONGS_TO') return 1.5;
-        if (d.type === 'EMPLOYS') return 0.6;
-        if (d.type === 'MOTIVATED_BY') return 0.4;
-        return 0.8;
-      })
-      .attr('stroke', d => defaultEdgeColor(d.type));
+    showTooltip(ev,d);
+  }).on('mouseout',()=>{
+    linkSel.attr('stroke',d=>edgeColor(d.type,false))
+      .attr('stroke-width',d=>{
+        if(d.type==='BELONGS_TO') return 1.4;
+        if(d.type==='EMPLOYS') return 0.6;
+        if(d.type==='MOTIVATED_BY') return 0.4;
+        return 0.75;
+      });
     hideTooltip();
-  })
-  .on('click', function(event, d) {
-    event.stopPropagation();
-    selectedNode = d;
+  }).on('click',(ev,d)=>{
+    ev.stopPropagation();
     showSidebar(d);
   });
 
-  // Click background to deselect
-  svg.on('click', () => {
-    selectedNode = null;
-    document.getElementById('sidebar').classList.remove('open');
+  svg.on('click',closeSidebar);
+
+  simulation.on('tick',()=>{
+    linkSel.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y)
+           .attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
+    nodeSel.attr('transform',d=>`translate(${d.x},${d.y})`);
   });
 
-  // Tick
-  simulation.on('tick', () => {
-    link
-      .attr('x1', d => d.source.x)
-      .attr('y1', d => d.source.y)
-      .attr('x2', d => d.target.x)
-      .attr('y2', d => d.target.y);
-
-    node.attr('transform', d => `translate(${d.x},${d.y})`);
-  });
-
-  simulation.on('end', () => {
-    fitToView(svg, g, simNodes, W, H, zoom);
-  });
-
-  currentSimNodes = simNodes;
-
-  setTimeout(() => fitToView(svg, g, simNodes, W, H, zoom), 2000);
+  simulation.on('end',fitToView);
+  setTimeout(fitToView,2000);
 }
 
-function nodeRadius(d) {
-  if (d.type === 'tactic') return 30;
-  if (d.type === 'technique') return 16;
-  if (d.type === 'hypothesis') return 12;
-  if (d.type === 'contributor') return d._r || 16;
-  if (d.type === 'threat_actor') return d._r || 16;
-  if (d.type === 'campaign') return 14;
+function nodeRadius(d){
+  if(d.type==='tactic') return 32;
+  if(d.type==='technique') return 18;
+  if(d.type==='hypothesis') return 11;
+  if(d.type==='contributor') return d._r||16;
+  if(d.type==='threat_actor') return d._r||16;
+  if(d.type==='campaign') return 14;
+  if(d.type==='datasource') return 12;
   return 12;
 }
 
-// =====================================================
-// FIT TO VIEW
-// =====================================================
-function fitToView(svg, g, nodes, W, H, zoom) {
-  if (!nodes.length) return;
-  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
-  nodes.forEach(n => {
-    const r = nodeRadius(n) + 20;
-    if (n.x - r < x0) x0 = n.x - r;
-    if (n.y - r < y0) y0 = n.y - r;
-    if (n.x + r > x1) x1 = n.x + r;
-    if (n.y + r > y1) y1 = n.y + r;
+function dragStart(ev,d){if(!ev.active) simulation.alphaTarget(0.3).restart();d.fx=d.x;d.fy=d.y;}
+function drag(ev,d){d.fx=ev.x;d.fy=ev.y;}
+function dragEnd(ev,d){if(!ev.active) simulation.alphaTarget(0);d.fx=null;d.fy=null;}
+
+function fitToView(){
+  if(!simNodes.length||!svgSel) return;
+  let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;
+  simNodes.forEach(n=>{
+    const r=nodeRadius(n)+20;
+    x0=Math.min(x0,n.x-r);y0=Math.min(y0,n.y-r);
+    x1=Math.max(x1,n.x+r);y1=Math.max(y1,n.y+r);
   });
-  const bw = x1 - x0, bh = y1 - y0;
-  const scale = Math.min(0.9 * W / bw, 0.9 * H / bh, 2);
-  const tx = W / 2 - (x0 + bw / 2) * scale;
-  const ty = H / 2 - (y0 + bh / 2) * scale;
-  svg.transition().duration(500).call(zoom.transform,
-    d3.zoomIdentity.translate(tx, ty).scale(scale));
+  const bw=x1-x0,bh=y1-y0;
+  const scale=Math.min(0.88*GW/bw,0.88*GH/bh,1.8);
+  const tx=GW/2-(x0+bw/2)*scale, ty=GH/2-(y0+bh/2)*scale;
+  svgSel.transition().duration(550).call(zoomBehavior.transform,d3.zoomIdentity.translate(tx,ty).scale(scale));
 }
 
-// =====================================================
-// DRAG
-// =====================================================
-function dragStarted(event, d) {
-  if (!event.active) simulation.alphaTarget(0.3).restart();
-  d.fx = d.x; d.fy = d.y;
-}
-function dragged(event, d) {
-  d.fx = event.x; d.fy = event.y;
-}
-function dragEnded(event, d) {
-  if (!event.active) simulation.alphaTarget(0);
-  d.fx = null; d.fy = null;
-}
+// ═══════════════════════════════════════════════════════
+// Tooltip
+// ═══════════════════════════════════════════════════════
+function showTooltip(ev,d){
+  const tt=document.getElementById('tooltip');
+  const k=document.getElementById('ttKicker');
+  const t=document.getElementById('ttTitle');
+  const s=document.getElementById('ttSub');
+  const m=document.getElementById('ttMeta');
+  m.textContent='';
+  t.classList.remove('mono');
 
-// =====================================================
-// TOOLTIP
-// =====================================================
-function showTooltip(event, d) {
-  const tt = document.getElementById('tooltip');
-  const ttTitle = document.getElementById('ttTitle');
-  const ttSub = document.getElementById('ttSub');
-  const ttDate = document.getElementById('ttDate');
-
-  if (d.type === 'hypothesis') {
-    ttTitle.textContent = d.label + ' (' + d.category + ')';
-    ttSub.textContent = (d.title || '').substring(0, 120);
-    ttDate.textContent = d.created_at ? 'Created: ' + formatDate(d.created_at) : '';
-  } else if (d.type === 'technique') {
-    ttTitle.textContent = d.label + ' — ' + techName(d.label);
-    const hypCount = DATA.edges.filter(e => e.type === 'TARGETS' && e.target === d.id).length;
-    let sub = hypCount + ' hypotheses target this technique';
-    if (heatMapActive && d.prevalence_score !== undefined) {
-      sub += ' | Prevalence: ' + (d.prevalence_score * 100).toFixed(0) + '%';
-      sub += ' | ' + (d.actor_count || 0) + ' actors, ' + (d.campaign_count || 0) + ' campaigns';
+  if(d.type==='hypothesis'){
+    k.textContent=d.subtype==='f'?'Flame · hypothesis-driven':d.subtype==='e'?'Ember · baseline':'Alchemy · model-assisted';
+    t.textContent=d.label;t.classList.add('mono');
+    s.textContent=(d.title||'').slice(0,140);
+    m.textContent=d.created_at?'created '+d.created_at.split('T')[0]:'';
+  }else if(d.type==='technique'){
+    k.textContent='ATT&CK Technique';
+    t.textContent=d.label+' — '+techName(d.label);
+    const hypCt=DATA.edges.filter(e=>e.type==='TARGETS'&&e.target===d.id).length;
+    let sub=hypCt+' hypotheses target this';
+    if(layers.heat&&d.prevalence_score!==undefined){
+      sub+=' · '+(d.prevalence_score*100).toFixed(0)+'% prevalence';
     }
-    ttSub.textContent = sub;
-    ttDate.textContent = (d.tactics || []).join(', ');
-  } else if (d.type === 'tactic') {
-    ttTitle.textContent = d.label;
-    ttSub.textContent = (d.techniqueCount || 0) + ' techniques in this tactic';
-    ttDate.textContent = '';
-  } else if (d.type === 'datasource') {
-    ttTitle.textContent = d.label;
-    const count = DATA.edges.filter(e => e.type === 'REQUIRES' && e.target === d.id).length;
-    ttSub.textContent = count + ' hypotheses use this data source';
-    ttDate.textContent = '';
-  } else if (d.type === 'contributor') {
-    ttTitle.textContent = d.label;
-    ttSub.textContent = (d.hypothesisCount || 0) + ' hypotheses, ' + (d.contributionCount || 0) + ' commits';
-    ttDate.textContent = '';
-  } else if (d.type === 'threat_actor') {
-    ttTitle.textContent = d.label;
-    const aliases = (d.aliases || []).slice(0, 5);
-    let sub = (d.technique_count || 0) + ' techniques employed';
-    if (aliases.length > 0) sub += ' | AKA: ' + aliases.join(', ');
-    ttSub.textContent = sub;
-    ttDate.textContent = '';
-  } else if (d.type === 'campaign') {
-    ttTitle.textContent = d.label;
-    const techCount = d.technique_count || 0;
-    ttSub.textContent = techCount + ' techniques used';
-    const dates = [];
-    if (d.first_seen) dates.push('First: ' + formatDate(d.first_seen));
-    if (d.last_seen) dates.push('Last: ' + formatDate(d.last_seen));
-    ttDate.textContent = dates.join(' | ');
+    s.textContent=sub;
+    m.textContent=(d.tactics||[]).join(' · ');
+  }else if(d.type==='tactic'){
+    k.textContent='ATT&CK Tactic';
+    t.textContent=d.label;
+    s.textContent=(d.techniqueCount||0)+' techniques';
+  }else if(d.type==='datasource'){
+    k.textContent='Data Source';
+    t.textContent=d.label;
+    s.textContent=DATA.edges.filter(e=>e.type==='REQUIRES'&&e.target===d.id).length+' hypotheses use this';
+  }else if(d.type==='contributor'){
+    k.textContent='Contributor';
+    t.textContent=d.label;
+    s.textContent=(d.hypothesisCount||0)+' hypotheses · '+(d.contributionCount||0)+' commits';
+  }else if(d.type==='threat_actor'){
+    k.textContent='Threat Actor';
+    t.textContent=d.label;
+    s.textContent=(d.technique_count||0)+' techniques employed';
+    const a=(d.aliases||[]).slice(0,3);
+    if(a.length) m.textContent='aka '+a.join(', ');
+  }else if(d.type==='campaign'){
+    k.textContent='Campaign';
+    t.textContent=d.label;
+    s.textContent=(d.technique_count||0)+' techniques';
+    const dates=[];
+    if(d.first_seen) dates.push(d.first_seen.split('T')[0]);
+    if(d.last_seen) dates.push('→ '+d.last_seen.split('T')[0]);
+    m.textContent=dates.join(' ');
   }
 
-  const wrap = document.getElementById('graphWrap');
-  const rect = wrap.getBoundingClientRect();
-  const x = event.clientX - rect.left;
-  const y = event.clientY - rect.top;
-
-  tt.style.display = 'block';
-  tt.style.left = Math.min(x + 14, wrap.clientWidth - 280) + 'px';
-  tt.style.top = (y - 50) + 'px';
+  const wrap=document.getElementById('graphWrap').getBoundingClientRect();
+  const x=ev.clientX-wrap.left, y=ev.clientY-wrap.top;
+  tt.style.display='block';
+  tt.style.left=Math.min(x+14,wrap.width-340)+'px';
+  tt.style.top=Math.max(10,y-50)+'px';
 }
+function hideTooltip(){document.getElementById('tooltip').style.display='none';}
 
-function hideTooltip() {
-  document.getElementById('tooltip').style.display = 'none';
-}
-
-// =====================================================
-// SIDEBAR
-// =====================================================
-function showSidebar(node) {
-  const sb = document.getElementById('sidebar');
-  const content = document.getElementById('sidebarContent');
+// ═══════════════════════════════════════════════════════
+// Sidebar
+// ═══════════════════════════════════════════════════════
+function showSidebar(d){
+  const sb=document.getElementById('sidebar');
+  const cnt=document.getElementById('sidebarContent');
   sb.classList.add('open');
 
-  let html = '';
-
-  if (node.type === 'hypothesis') {
-    const typeNames = { f: 'Flame (hypothesis-driven)', e: 'Ember (baseline)', a: 'Alchemy (model-assisted)' };
-    // Find linked campaigns via MOTIVATED_BY
-    const campEdges = DATA.edges.filter(e => e.type === 'MOTIVATED_BY' && e.source === node.id);
-    const camps = campEdges.map(e => DATA.nodes.find(n => n.id === e.target)).filter(Boolean);
-
-    html = `<h2>${node.label}</h2>
-      <div class="detail-row"><div class="detail-label">Type</div>${typeNames[node.subtype] || node.subtype}</div>
-      <div class="detail-row"><div class="detail-label">Hypothesis</div>${node.title || ''}</div>
-      <div class="detail-row"><div class="detail-label">Tactic</div>${(node.tactics || []).join(', ')}</div>
-      <div class="detail-row"><div class="detail-label">Submitter</div>${node.submitter || '—'}</div>
-      <div class="detail-row"><div class="detail-label">Created</div>${formatDate(node.created_at)}</div>
-      <div class="detail-row"><div class="detail-label">Updated</div>${formatDate(node.updated_at)}</div>
-      <h3>Techniques (${(node.techniques || []).length})</h3>
-      ${(node.techniques || []).map(t => `<span class="tag tech">${t}</span>`).join(' ')}
-      <h3>Data Sources (${(node.dataSources || []).length})</h3>
-      ${(node.dataSources || []).map(d => `<span class="tag ds">${d}</span>`).join(' ') || '<span style="color:var(--color-text-secondary)">None specified</span>'}
-      <h3>Tags</h3>
-      ${(node.tags || []).map(t => `<span class="tag">${t}</span>`).join(' ')}`;
-
-    if (camps.length > 0) {
-      html += `<h3>Related Campaigns (${camps.length})</h3>
-        ${camps.slice(0, 15).map(c => `<div class="hyp-link"><span class="tag campaign-tag">${c.label}</span> ${(c.description || '').substring(0, 50)}</div>`).join('')}
-        ${camps.length > 15 ? '<div style="color:var(--color-text-secondary);font-size:11px;padding:4px">+ ' + (camps.length - 15) + ' more</div>' : ''}`;
-    }
+  if(d.type==='hypothesis'){
+    const typeName=d.subtype==='f'?'Flame · hypothesis-driven':d.subtype==='e'?'Ember · baseline':'Alchemy · model-assisted';
+    const dotCls=d.subtype==='f'?'flame':d.subtype==='e'?'em':'alch';
+    const camps=DATA.edges.filter(e=>e.type==='MOTIVATED_BY'&&e.source===d.id)
+      .map(e=>DATA.nodes.find(n=>n.id===e.target)).filter(Boolean);
+    cnt.innerHTML=`
+      <div class="sb-kicker"><span class="dot ${dotCls}"></span>Hypothesis · ${typeName}</div>
+      <h2 class="sb-title mono">${d.label}</h2>
+      <p class="sb-sub">${d.title||''}</p>
+      <div class="detail-row"><div class="lbl">Tactic</div><div class="val">${(d.tactics||[]).join(', ')||'—'}</div></div>
+      <div class="detail-row"><div class="lbl">Submitter</div><div class="val">${d.submitter||'—'}</div></div>
+      <div class="detail-row"><div class="lbl">Created</div><div class="val mono">${fmtDate(d.created_at)}</div></div>
+      <div class="detail-row"><div class="lbl">Updated</div><div class="val mono">${fmtDate(d.updated_at)}</div></div>
+      <div class="sb-h">Techniques <span class="c">${(d.techniques||[]).length}</span></div>
+      <div>${(d.techniques||[]).map(t=>`<span class="tag tech">${t}</span>`).join('')||'<span class="tag plain">none</span>'}</div>
+      <div class="sb-h">Data sources <span class="c">${(d.dataSources||[]).length}</span></div>
+      <div>${(d.dataSources||[]).map(ds=>`<span class="tag ds">${ds}</span>`).join('')||'<span class="tag plain">none specified</span>'}</div>
+      ${(d.tags||[]).length?`<div class="sb-h">Tags</div><div>${d.tags.map(t=>`<span class="tag plain">${t}</span>`).join('')}</div>`:''}
+      ${camps.length?`<div class="sb-h">Related campaigns <span class="c">${camps.length}</span></div>
+        <div>${camps.slice(0,12).map(c=>`<span class="tag camp">${c.label}</span>`).join('')}${camps.length>12?`<span class="tag plain">+${camps.length-12}</span>`:''}</div>`:''}
+      ${d.filePath?`<a class="sb-cta" href="https://github.com/THORCollective/HEARTH/blob/main/${d.filePath}" target="_blank" rel="noopener">View source ↗</a>`:''}
+    `;
   }
-  else if (node.type === 'technique') {
-    const hypEdges = DATA.edges.filter(e => e.type === 'TARGETS' && e.target === node.id);
-    const hyps = hypEdges.map(e => DATA.nodes.find(n => n.id === e.source)).filter(Boolean);
-    const tacticEdges = DATA.edges.filter(e => e.type === 'BELONGS_TO' && e.source === node.id);
-    const tactics = tacticEdges.map(e => e.target.replace('tactic:', ''));
-
-    // Find actors that EMPLOY this technique
-    const actorEdges = DATA.edges.filter(e => e.type === 'EMPLOYS' && e.target === node.id && e.source.startsWith('actor:'));
-    const actors = actorEdges.map(e => DATA.nodes.find(n => n.id === e.source)).filter(Boolean);
-    // Find campaigns that use this technique
-    const campEdges = DATA.edges.filter(e => e.type === 'EMPLOYS' && e.target === node.id && e.source.startsWith('campaign:'));
-    const camps = campEdges.map(e => DATA.nodes.find(n => n.id === e.source)).filter(Boolean);
-
-    html = `<h2>${node.label}</h2>
-      <div class="detail-row"><div class="detail-label">Name</div>${techName(node.label)}</div>
-      <div class="detail-row"><div class="detail-label">ATT&CK Link</div><a href="https://attack.mitre.org/techniques/${node.label.replace('.', '/')}/" target="_blank">View on MITRE ATT&CK</a></div>`;
-
-    if (node.prevalence_score !== undefined) {
-      html += `<div class="detail-row"><div class="detail-label">Prevalence Score</div>${(node.prevalence_score * 100).toFixed(0)}%
-        <div class="prevalence-bar"><div class="prevalence-fill" style="width:${node.prevalence_score * 100}%"></div></div></div>`;
-    }
-    if (node.actor_count) {
-      html += `<div class="detail-row"><div class="detail-label">Threat Actors</div>${node.actor_count} actors employ this technique</div>`;
-    }
-
-    html += `<h3>Tactics</h3>
-      ${tactics.map(t => `<span class="tag tactic-tag">${t}</span>`).join(' ')}
-      <h3>Hypotheses (${hyps.length})</h3>
-      ${hyps.map(h => `<div class="hyp-link"><span class="tag ${h.subtype === 'f' ? 'flame' : h.subtype === 'e' ? 'ember' : 'alchemy'}">${h.id}</span> ${(h.title || '').substring(0, 55)}${(h.title || '').length > 55 ? '...' : ''}</div>`).join('')}`;
-
-    if (actors.length > 0) {
-      html += `<h3>Threat Actors (${actors.length})</h3>
-        ${actors.slice(0, 20).map(a => `<div class="hyp-link"><span class="tag actor-tag">${a.label}</span></div>`).join('')}
-        ${actors.length > 20 ? '<div style="color:var(--color-text-secondary);font-size:11px;padding:4px">+ ' + (actors.length - 20) + ' more</div>' : ''}`;
-    }
-
-    if (camps.length > 0) {
-      html += `<h3>Campaigns (${camps.length})</h3>
-        ${camps.slice(0, 10).map(c => `<div class="hyp-link"><span class="tag campaign-tag">${c.label}</span>${c.first_seen ? ' (' + formatDate(c.first_seen) + ')' : ''}</div>`).join('')}`;
-    }
+  else if(d.type==='technique'){
+    const hyps=DATA.edges.filter(e=>e.type==='TARGETS'&&e.target===d.id).map(e=>DATA.nodes.find(n=>n.id===e.source)).filter(Boolean);
+    const actors=DATA.edges.filter(e=>e.type==='EMPLOYS'&&e.target===d.id&&e.source.startsWith('actor:')).map(e=>DATA.nodes.find(n=>n.id===e.source)).filter(Boolean);
+    const camps=DATA.edges.filter(e=>e.type==='EMPLOYS'&&e.target===d.id&&e.source.startsWith('campaign:')).map(e=>DATA.nodes.find(n=>n.id===e.source)).filter(Boolean);
+    const heatHtml=d.prevalence_score!==undefined?`
+      <div class="detail-row"><div class="lbl">Prevalence</div>
+        <div class="heat-meter">
+          <div class="heat-bar"><div class="heat-fill" style="width:${(d.prevalence_score*100).toFixed(0)}%"></div></div>
+          <div class="heat-meta"><span>${(d.prevalence_score*100).toFixed(0)}%</span><span>${d.actor_count||0} actors · ${d.campaign_count||0} campaigns</span></div>
+        </div>
+      </div>`:'';
+    cnt.innerHTML=`
+      <div class="sb-kicker"><span class="dot tech"></span>ATT&amp;CK Technique</div>
+      <h2 class="sb-title mono">${d.label}</h2>
+      <p class="sb-sub">${techName(d.label)}</p>
+      <div class="detail-row"><div class="lbl">Tactics</div><div class="val">${(d.tactics||[]).join(', ')||'—'}</div></div>
+      <div class="detail-row"><div class="lbl">MITRE</div><div class="val"><a href="https://attack.mitre.org/techniques/${d.label.replace('.','/')}/" target="_blank" rel="noopener">attack.mitre.org ↗</a></div></div>
+      ${heatHtml}
+      <div class="sb-h">Hunting hypotheses <span class="c">${hyps.length}</span></div>
+      <div>
+        ${hyps.slice(0,15).map(h=>{
+          const cls=h.subtype==='f'?'f':h.subtype==='e'?'e':'a';
+          return `<div class="hyp-link" data-nid="${h.id}"><span class="id ${cls}">${h.label}</span><span class="ttl">${(h.title||'').slice(0,80)}${(h.title||'').length>80?'…':''}</span></div>`;
+        }).join('')}
+        ${hyps.length>15?`<div class="hyp-link-more">+ ${hyps.length-15} more</div>`:''}
+      </div>
+      ${actors.length?`<div class="sb-h">Threat actors <span class="c">${actors.length}</span></div>
+        <div>${actors.slice(0,20).map(a=>`<span class="tag actor">${a.label}</span>`).join('')}${actors.length>20?`<span class="tag plain">+${actors.length-20}</span>`:''}</div>`:''}
+      ${camps.length?`<div class="sb-h">Campaigns <span class="c">${camps.length}</span></div>
+        <div>${camps.slice(0,15).map(c=>`<span class="tag camp">${c.label}</span>`).join('')}${camps.length>15?`<span class="tag plain">+${camps.length-15}</span>`:''}</div>`:''}
+    `;
   }
-  else if (node.type === 'tactic') {
-    const techEdges = DATA.edges.filter(e => e.type === 'BELONGS_TO' && e.target === node.id);
-    const techs = techEdges.map(e => DATA.nodes.find(n => n.id === e.source)).filter(Boolean);
-    html = `<h2>${node.label}</h2>
-      <div class="detail-row"><div class="detail-label">Type</div>MITRE ATT&CK Tactic</div>
-      <div class="detail-row"><div class="detail-label">Techniques</div>${techs.length} techniques mapped</div>
-      <h3>Techniques</h3>
-      ${techs.map(t => `<div class="hyp-link"><span class="tag tech">${t.label}</span> ${techName(t.label)}</div>`).join('')}`;
+  else if(d.type==='tactic'){
+    const techs=DATA.edges.filter(e=>e.type==='BELONGS_TO'&&e.target===d.id).map(e=>DATA.nodes.find(n=>n.id===e.source)).filter(Boolean);
+    cnt.innerHTML=`
+      <div class="sb-kicker"><span class="dot tactic"></span>ATT&amp;CK Tactic</div>
+      <h2 class="sb-title"><em>${d.label}</em></h2>
+      <p class="sb-sub">${techs.length} techniques mapped in this tactic.</p>
+      <div class="sb-h">Techniques <span class="c">${techs.length}</span></div>
+      <div>
+        ${techs.map(t=>`<div class="hyp-link"><span class="id tech">${t.label}</span><span class="ttl">${techName(t.label)}</span></div>`).join('')}
+      </div>`;
   }
-  else if (node.type === 'datasource') {
-    const reqEdges = DATA.edges.filter(e => e.type === 'REQUIRES' && e.target === node.id);
-    const hyps = reqEdges.map(e => DATA.nodes.find(n => n.id === e.source)).filter(Boolean);
-    html = `<h2>${node.label}</h2>
-      <div class="detail-row"><div class="detail-label">Type</div>Data Source</div>
-      <h3>Used by Hypotheses (${hyps.length})</h3>
-      ${hyps.map(h => `<div class="hyp-link"><span class="tag ${h.subtype === 'f' ? 'flame' : h.subtype === 'e' ? 'ember' : 'alchemy'}">${h.id}</span> ${(h.title || '').substring(0, 55)}</div>`).join('')}`;
+  else if(d.type==='datasource'){
+    const hyps=DATA.edges.filter(e=>e.type==='REQUIRES'&&e.target===d.id).map(e=>DATA.nodes.find(n=>n.id===e.source)).filter(Boolean);
+    cnt.innerHTML=`
+      <div class="sb-kicker"><span class="dot ds"></span>Data Source</div>
+      <h2 class="sb-title">${d.label}</h2>
+      <p class="sb-sub">${hyps.length} hunting hypotheses depend on this source.</p>
+      <div class="sb-h">Hypotheses <span class="c">${hyps.length}</span></div>
+      <div>
+        ${hyps.slice(0,25).map(h=>{
+          const cls=h.subtype==='f'?'f':h.subtype==='e'?'e':'a';
+          return `<div class="hyp-link" data-nid="${h.id}"><span class="id ${cls}">${h.label}</span><span class="ttl">${(h.title||'').slice(0,80)}${(h.title||'').length>80?'…':''}</span></div>`;
+        }).join('')}
+        ${hyps.length>25?`<div class="hyp-link-more">+ ${hyps.length-25} more</div>`:''}
+      </div>`;
   }
-  else if (node.type === 'contributor') {
-    const authEdges = DATA.edges.filter(e => e.type === 'AUTHORED_BY' && e.target === node.id);
-    const hyps = authEdges.map(e => DATA.nodes.find(n => n.id === e.source)).filter(Boolean);
-    html = `<h2>${node.label}</h2>
-      <div class="detail-row"><div class="detail-label">Type</div>Contributor</div>
-      <div class="detail-row"><div class="detail-label">Commits</div>${node.contributionCount || 0}</div>
-      <div class="detail-row"><div class="detail-label">Hypotheses</div>${node.hypothesisCount || 0}</div>
-      <h3>Hypotheses</h3>
-      ${hyps.map(h => `<div class="hyp-link"><span class="tag ${h.subtype === 'f' ? 'flame' : h.subtype === 'e' ? 'ember' : 'alchemy'}">${h.id}</span> ${(h.title || '').substring(0, 55)}</div>`).join('')}`;
+  else if(d.type==='contributor'){
+    const hyps=DATA.edges.filter(e=>e.type==='AUTHORED_BY'&&e.target===d.id).map(e=>DATA.nodes.find(n=>n.id===e.source)).filter(Boolean);
+    cnt.innerHTML=`
+      <div class="sb-kicker"><span class="dot contrib"></span>Contributor</div>
+      <h2 class="sb-title">${d.label}</h2>
+      <p class="sb-sub">${hyps.length} hypotheses authored · ${d.contributionCount||0} commits.</p>
+      <div class="sb-h">Hypotheses <span class="c">${hyps.length}</span></div>
+      <div>
+        ${hyps.map(h=>{
+          const cls=h.subtype==='f'?'f':h.subtype==='e'?'e':'a';
+          return `<div class="hyp-link" data-nid="${h.id}"><span class="id ${cls}">${h.label}</span><span class="ttl">${(h.title||'').slice(0,80)}${(h.title||'').length>80?'…':''}</span></div>`;
+        }).join('')}
+      </div>`;
   }
-  else if (node.type === 'threat_actor') {
-    const aliases = (node.aliases || []);
-    // Find techniques this actor employs
-    const techEdges = DATA.edges.filter(e => e.type === 'EMPLOYS' && e.source === node.id);
-    const techs = techEdges.map(e => DATA.nodes.find(n => n.id === e.target)).filter(Boolean);
-    // Find campaigns attributed to this actor
-    const campEdges = DATA.edges.filter(e => e.type === 'ATTRIBUTED_TO' && e.target === node.id);
-    const camps = campEdges.map(e => DATA.nodes.find(n => n.id === e.source)).filter(Boolean);
-
-    html = `<h2 style="color:#ef4444">${node.label}</h2>
-      <div class="detail-row"><div class="detail-label">Type</div>Threat Actor (MITRE ATT&CK)</div>`;
-
-    if (node.description) {
-      html += `<div class="detail-row"><div class="detail-label">Description</div>${node.description}</div>`;
-    }
-
-    if (aliases.length > 0) {
-      html += `<h3>Aliases (${aliases.length})</h3>
-        ${aliases.map(a => `<span class="tag actor-tag">${a}</span>`).join(' ')}`;
-    }
-
-    if (node.external_references && node.external_references.length > 0) {
-      html += `<h3>References</h3>`;
-      node.external_references.forEach(ref => {
-        html += `<div class="hyp-link"><a href="${ref.url}" target="_blank" style="color:#ef4444">${ref.source || 'Link'}</a></div>`;
-      });
-    }
-
-    html += `<h3>Techniques Employed (${techs.length})</h3>
-      ${techs.map(t => `<div class="hyp-link"><span class="tag tech">${t.label}</span> ${techName(t.label)}</div>`).join('')}`;
-
-    if (camps.length > 0) {
-      html += `<h3>Campaigns (${camps.length})</h3>
-        ${camps.map(c => `<div class="hyp-link"><span class="tag campaign-tag">${c.label}</span>${c.first_seen ? ' (' + formatDate(c.first_seen) + ')' : ''}</div>`).join('')}`;
-    }
+  else if(d.type==='threat_actor'){
+    const techs=DATA.edges.filter(e=>e.type==='EMPLOYS'&&e.source===d.id).map(e=>DATA.nodes.find(n=>n.id===e.target)).filter(Boolean);
+    const camps=DATA.edges.filter(e=>e.type==='ATTRIBUTED_TO'&&e.target===d.id).map(e=>DATA.nodes.find(n=>n.id===e.source)).filter(Boolean);
+    const aliases=(d.aliases||[]);
+    cnt.innerHTML=`
+      <div class="sb-kicker"><span class="dot actor"></span>Threat Actor · MITRE ATT&amp;CK</div>
+      <h2 class="sb-title">${d.label}</h2>
+      ${d.description?`<p class="sb-sub">${d.description.slice(0,260)}${d.description.length>260?'…':''}</p>`:''}
+      ${aliases.length?`<div class="sb-h">Aliases <span class="c">${aliases.length}</span></div>
+        <div>${aliases.map(a=>`<span class="tag actor">${a}</span>`).join('')}</div>`:''}
+      <div class="sb-h">Techniques employed <span class="c">${techs.length}</span></div>
+      <div>${techs.slice(0,40).map(t=>`<span class="tag tech">${t.label}</span>`).join('')}${techs.length>40?`<span class="tag plain">+${techs.length-40}</span>`:''}</div>
+      ${camps.length?`<div class="sb-h">Campaigns <span class="c">${camps.length}</span></div>
+        <div>${camps.map(c=>`<span class="tag camp">${c.label}</span>`).join('')}</div>`:''}
+      ${(d.external_references||[]).length?`<div class="sb-h">References</div>
+        <div>${d.external_references.slice(0,5).map(r=>`<div class="hyp-link"><a href="${r.url}" target="_blank" rel="noopener" style="color:var(--c-actor)">${r.source||'Reference'} ↗</a></div>`).join('')}</div>`:''}
+    `;
   }
-  else if (node.type === 'campaign') {
-    // Find techniques this campaign uses
-    const techEdges = DATA.edges.filter(e => e.type === 'EMPLOYS' && e.source === node.id);
-    const techs = techEdges.map(e => DATA.nodes.find(n => n.id === e.target)).filter(Boolean);
-    // Find actors this campaign is attributed to
-    const actorEdges = DATA.edges.filter(e => e.type === 'ATTRIBUTED_TO' && e.source === node.id);
-    const actors = actorEdges.map(e => DATA.nodes.find(n => n.id === e.target)).filter(Boolean);
-    // Find hypotheses linked via MOTIVATED_BY
-    const hypEdges = DATA.edges.filter(e => e.type === 'MOTIVATED_BY' && e.target === node.id);
-    const hyps = hypEdges.map(e => DATA.nodes.find(n => n.id === e.source)).filter(Boolean);
-
-    html = `<h2 style="color:#f59e0b">${node.label}</h2>
-      <div class="detail-row"><div class="detail-label">Type</div>Campaign (MITRE ATT&CK)</div>`;
-
-    if (node.description) {
-      html += `<div class="detail-row"><div class="detail-label">Description</div>${node.description}</div>`;
-    }
-
-    html += `<div class="detail-row"><div class="detail-label">First Seen</div>${formatDate(node.first_seen)}</div>
-      <div class="detail-row"><div class="detail-label">Last Seen</div>${formatDate(node.last_seen)}</div>`;
-
-    if (actors.length > 0) {
-      html += `<h3>Attributed To</h3>
-        ${actors.map(a => `<div class="hyp-link"><span class="tag actor-tag">${a.label}</span></div>`).join('')}`;
-    }
-
-    html += `<h3>Techniques (${techs.length})</h3>
-      ${techs.map(t => `<div class="hyp-link"><span class="tag tech">${t.label}</span> ${techName(t.label)}</div>`).join('')}`;
-
-    if (hyps.length > 0) {
-      html += `<h3>Related Hypotheses (${hyps.length})</h3>
-        ${hyps.slice(0, 15).map(h => `<div class="hyp-link"><span class="tag ${h.subtype === 'f' ? 'flame' : h.subtype === 'e' ? 'ember' : 'alchemy'}">${h.id}</span> ${(h.title || '').substring(0, 55)}</div>`).join('')}
-        ${hyps.length > 15 ? '<div style="color:var(--color-text-secondary);font-size:11px;padding:4px">+ ' + (hyps.length - 15) + ' more</div>' : ''}`;
-    }
+  else if(d.type==='campaign'){
+    const techs=DATA.edges.filter(e=>e.type==='EMPLOYS'&&e.source===d.id).map(e=>DATA.nodes.find(n=>n.id===e.target)).filter(Boolean);
+    const actors=DATA.edges.filter(e=>e.type==='ATTRIBUTED_TO'&&e.source===d.id).map(e=>DATA.nodes.find(n=>n.id===e.target)).filter(Boolean);
+    const hyps=DATA.edges.filter(e=>e.type==='MOTIVATED_BY'&&e.target===d.id).map(e=>DATA.nodes.find(n=>n.id===e.source)).filter(Boolean);
+    cnt.innerHTML=`
+      <div class="sb-kicker"><span class="dot camp"></span>Campaign · MITRE ATT&amp;CK</div>
+      <h2 class="sb-title">${d.label}</h2>
+      ${d.description?`<p class="sb-sub">${d.description.slice(0,260)}${d.description.length>260?'…':''}</p>`:''}
+      <div class="detail-row"><div class="lbl">First seen</div><div class="val mono">${fmtDate(d.first_seen)}</div></div>
+      <div class="detail-row"><div class="lbl">Last seen</div><div class="val mono">${fmtDate(d.last_seen)}</div></div>
+      ${actors.length?`<div class="sb-h">Attributed to</div><div>${actors.map(a=>`<span class="tag actor">${a.label}</span>`).join('')}</div>`:''}
+      <div class="sb-h">Techniques <span class="c">${techs.length}</span></div>
+      <div>${techs.slice(0,40).map(t=>`<span class="tag tech">${t.label}</span>`).join('')}${techs.length>40?`<span class="tag plain">+${techs.length-40}</span>`:''}</div>
+      ${hyps.length?`<div class="sb-h">Related hypotheses <span class="c">${hyps.length}</span></div>
+        <div>${hyps.slice(0,15).map(h=>{const cls=h.subtype==='f'?'f':h.subtype==='e'?'e':'a';return `<div class="hyp-link" data-nid="${h.id}"><span class="id ${cls}">${h.label}</span><span class="ttl">${(h.title||'').slice(0,80)}</span></div>`;}).join('')}
+        ${hyps.length>15?`<div class="hyp-link-more">+ ${hyps.length-15} more</div>`:''}</div>`:''}
+    `;
   }
-
-  content.innerHTML = html;
 }
 
-document.getElementById('sidebarClose').addEventListener('click', () => {
-  document.getElementById('sidebar').classList.remove('open');
-  selectedNode = null;
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');}
+function fmtDate(iso){if(!iso) return '—';return iso.split('T')[0];}
+
+document.getElementById('sidebarClose').addEventListener('click',closeSidebar);
+document.getElementById('sidebarContent').addEventListener('click',e=>{
+  const row=e.target.closest('.hyp-link[data-nid]');
+  if(!row) return;
+  const n=DATA.nodes.find(x=>x.id===row.dataset.nid);
+  if(n) showSidebar(n);
 });
 
-// =====================================================
-// CONTROLS
-// =====================================================
-document.getElementById('btnFit').addEventListener('click', () => {
-  if (!currentSvg || !currentG || !currentSimNodes || !currentZoom) return;
-  const wrap = document.getElementById('graphWrap');
-  fitToView(currentSvg, currentG, currentSimNodes, wrap.clientWidth, wrap.clientHeight, currentZoom);
-});
+document.getElementById('btnZoomIn').addEventListener('click',()=>{if(svgSel&&zoomBehavior) svgSel.transition().duration(280).call(zoomBehavior.scaleBy,1.4);});
+document.getElementById('btnZoomOut').addEventListener('click',()=>{if(svgSel&&zoomBehavior) svgSel.transition().duration(280).call(zoomBehavior.scaleBy,0.7);});
+document.getElementById('btnFit').addEventListener('click',fitToView);
 
-document.getElementById('btnZoomIn').addEventListener('click', () => {
-  if (!currentSvg || !currentZoom) return;
-  currentSvg.transition().duration(300).call(currentZoom.scaleBy, 1.4);
-});
-
-document.getElementById('btnZoomOut').addEventListener('click', () => {
-  if (!currentSvg || !currentZoom) return;
-  currentSvg.transition().duration(300).call(currentZoom.scaleBy, 0.7);
-});
-
-// =====================================================
-// RESIZE
-// =====================================================
-window.addEventListener('resize', () => {
-  if (DATA) buildGraph();
-});
+const style=document.createElement('style');
+style.textContent=`@keyframes heatPulse{0%,100%{opacity:0.55}50%{opacity:1}}`;
+document.head.appendChild(style);
 </script>
 </body>
 </html>

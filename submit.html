@@ -1,77 +1,360 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submit a Hunt - HEARTH</title>
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-B4FE1Q174V"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-B4FE1Q174V');
-    </script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HEARTH — Submit a Hunt</title>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-B4FE1Q174V"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-B4FE1Q174V');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:        oklch(0.16 0.020 300);
+    --bg-2:      oklch(0.20 0.022 300);
+    --surface:   oklch(0.23 0.024 300);
+    --surface-2: oklch(0.27 0.028 300);
+    --line:      oklch(0.34 0.030 300);
+    --line-soft: oklch(0.29 0.026 300);
+    --fg:        oklch(0.965 0.012 300);
+    --fg-mute:   oklch(0.78 0.022 300);
+    --fg-dim:    oklch(0.60 0.030 300);
+    --ember:     oklch(0.66 0.220 300);
+    --ember-2:   oklch(0.80 0.150 310);
+    --coal:      oklch(0.32 0.060 295);
+
+    --serif: "Instrument Serif", "Times New Roman", serif;
+    --sans:  "Geist", ui-sans-serif, system-ui, sans-serif;
+    --mono:  "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{min-height:100%}
+  body{
+    background:
+      radial-gradient(900px 600px at 82% -10%, oklch(0.32 0.10 300 / 0.45), transparent 60%),
+      radial-gradient(800px 520px at -8% 28%, oklch(0.24 0.045 290 / 0.55), transparent 55%),
+      var(--bg);
+    color:var(--fg);
+    font-family:var(--sans);
+    font-feature-settings:"ss01","cv11";
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    display:flex;flex-direction:column;
+  }
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--ember);color:var(--bg)}
+
+  .wrap{max-width:1440px;margin:0 auto;padding:0 32px;width:100%}
+  .mono{font-family:var(--mono);letter-spacing:.02em}
+  .serif{font-family:var(--serif);font-weight:400}
+
+  /* ───────── Topbar ───────── */
+  .topbar{position:sticky;top:0;z-index:50;backdrop-filter:saturate(140%) blur(10px);background:oklch(0.16 0.020 300 / 0.78);border-bottom:1px solid var(--line-soft);flex-shrink:0}
+  .topbar-inner{display:flex;align-items:center;gap:28px;padding:14px 32px;max-width:1440px;margin:0 auto}
+  .mark{display:flex;align-items:baseline;gap:10px}
+  .mark .glyph{
+    width:22px;height:22px;border-radius:50%;
+    background:radial-gradient(circle at 50% 65%, var(--ember-2), var(--ember) 45%, oklch(0.38 0.16 295) 75%, transparent 78%);
+    box-shadow:0 0 14px oklch(0.66 0.22 300 / 0.55), inset 0 -3px 6px oklch(0.30 0.10 295 / .7);
+    position:relative;top:3px;
+  }
+  .mark .name{font-family:var(--serif);font-size:24px;letter-spacing:.01em}
+  .mark .sub{font-family:var(--mono);font-size:10px;color:var(--fg-dim);text-transform:uppercase;letter-spacing:.18em}
+  .nav{display:flex;gap:6px;margin-left:24px}
+  .nav a{font-size:13px;color:var(--fg-mute);padding:6px 10px;border-radius:999px;border:1px solid transparent;transition:.15s}
+  .nav a:hover{color:var(--fg);background:var(--surface);border-color:var(--line-soft)}
+  .nav a.on{color:var(--fg);background:var(--surface);border-color:var(--line-soft)}
+  .top-cta{display:flex;gap:8px;margin-left:auto;align-items:center}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--sans);font-size:13px;font-weight:500;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--fg);cursor:pointer;transition:.15s;text-decoration:none}
+  .btn:hover{border-color:var(--fg-mute);background:var(--surface)}
+  .btn.primary{background:var(--ember);color:oklch(0.985 0.005 300);border-color:transparent;font-weight:600}
+  .btn.primary:hover{background:var(--ember-2);color:oklch(0.20 0.05 300)}
+  .pill-mono{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-dim);padding:5px 10px;border:1px solid var(--line-soft);border-radius:999px}
+
+  /* ───────── Page header band ───────── */
+  .header-band{padding:20px 0 0;border-bottom:1px solid var(--line-soft);flex-shrink:0}
+  .band-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:start}
+  .eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ember-2)}
+  .eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ember);box-shadow:0 0 12px var(--ember)}
+  h1.page-title{
+    font-family:var(--serif);font-weight:400;
+    font-size:clamp(28px,3.2vw,48px);
+    line-height:.96;letter-spacing:-0.022em;margin:8px 0 0;
+  }
+  h1.page-title em{font-style:italic;color:var(--ember-2)}
+  .lede{font-size:13.5px;line-height:1.55;color:var(--fg-mute);max-width:56ch;margin-top:6px}
+  .lede b{color:var(--fg);font-weight:500}
+
+  /* ───────── Main content ───────── */
+  .main{flex:1;padding:40px 0 64px}
+
+  .submit-grid{
+    display:grid;
+    grid-template-columns:1.4fr 1fr;
+    gap:24px;
+    align-items:start;
+  }
+
+  /* ───────── Cards ───────── */
+  .card{
+    background:oklch(0.20 0.022 300 / .7);
+    border:1px solid var(--line-soft);
+    border-radius:16px;
+    padding:28px 28px 32px;
+    backdrop-filter:blur(6px);
+  }
+  .card-kicker{
+    font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--ember-2);margin-bottom:10px;display:flex;align-items:center;gap:8px;
+  }
+  .card-kicker::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ember);box-shadow:0 0 8px var(--ember)}
+  .card-title{
+    font-family:var(--serif);font-size:26px;line-height:1.1;letter-spacing:-.01em;
+    color:var(--fg);margin-bottom:8px;
+  }
+  .card-title em{font-style:italic;color:var(--ember-2)}
+  .card-blurb{font-size:13.5px;line-height:1.55;color:var(--fg-mute);margin-bottom:24px}
+
+  /* ───────── Form ───────── */
+  .field{margin-bottom:18px}
+  .field label{
+    display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--fg-dim);margin-bottom:7px;
+  }
+  .field label .req{color:var(--ember);margin-left:3px}
+  .field input{
+    width:100%;background:oklch(0.14 0.018 300 / .8);
+    border:1px solid var(--line);border-radius:8px;
+    padding:11px 14px;color:var(--fg);
+    font-family:var(--sans);font-size:14px;
+    transition:.15s;
+  }
+  .field input:focus{outline:none;border-color:var(--ember);box-shadow:0 0 0 3px oklch(0.66 0.22 300 / .12)}
+  .field input::placeholder{color:var(--fg-dim)}
+  .field-hint{font-size:12px;color:var(--fg-dim);margin-top:5px;line-height:1.4}
+
+  .form-actions{margin-top:24px;display:flex;flex-direction:column;gap:10px}
+  .form-actions .btn{justify-content:center;padding:12px 20px;font-size:14px}
+
+  .divider{
+    display:flex;align-items:center;gap:10px;
+    margin:20px 0;font-family:var(--mono);font-size:10px;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--fg-dim);
+  }
+  .divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+
+  /* ───────── Manual card ───────── */
+  .manual-option{
+    display:flex;align-items:start;gap:12px;
+    padding:14px;border-radius:10px;border:1px solid var(--line-soft);
+    background:transparent;cursor:pointer;transition:.12s;
+    color:var(--fg);text-decoration:none;margin-bottom:10px;
+  }
+  .manual-option:hover{border-color:var(--line);background:oklch(0.22 0.024 300 / .6)}
+  .manual-option:last-child{margin-bottom:0}
+  .opt-icon{
+    width:36px;height:36px;border-radius:8px;border:1px solid var(--line);
+    background:var(--surface);flex-shrink:0;display:grid;place-items:center;
+    font-family:var(--mono);font-size:14px;color:var(--fg-mute);
+  }
+  .opt-body{flex:1}
+  .opt-title{font-size:13.5px;font-weight:500;color:var(--fg);margin-bottom:2px}
+  .opt-desc{font-size:12px;color:var(--fg-dim);line-height:1.4}
+  .opt-arrow{color:var(--fg-dim);font-size:14px;margin-top:8px;flex-shrink:0}
+
+  /* ───────── How it works strip ───────── */
+  .how-strip{
+    margin-top:40px;padding:28px;
+    background:oklch(0.20 0.022 300 / .5);
+    border:1px solid var(--line-soft);border-radius:14px;
+  }
+  .how-h{
+    font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--fg-dim);margin-bottom:20px;
+  }
+  .how-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+  .how-step{padding:0 20px;border-right:1px solid var(--line-soft);position:relative}
+  .how-step:first-child{padding-left:0}
+  .how-step:last-child{border-right:0}
+  .step-n{
+    font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--ember-2);margin-bottom:8px;
+  }
+  .step-title{font-family:var(--serif);font-size:16px;color:var(--fg);margin-bottom:6px}
+  .step-title em{font-style:italic;color:var(--ember-2)}
+  .step-desc{font-size:12.5px;line-height:1.5;color:var(--fg-mute)}
+
+  /* ───────── Responsive ───────── */
+  @media (max-width:1020px){
+    .band-grid{grid-template-columns:1fr;gap:14px}
+    .submit-grid{grid-template-columns:1fr}
+    .nav{display:none}
+    .how-steps{grid-template-columns:repeat(2,1fr);gap:16px}
+    .how-step{border-right:0;border-bottom:1px solid var(--line-soft);padding:0 0 16px}
+    .how-step:nth-child(2n){border-bottom:1px solid var(--line-soft)}
+    .how-step:last-child,.how-step:nth-last-child(2):nth-child(odd){border-bottom:0}
+  }
+  @media (max-width:680px){
+    .pill-mono,.top-cta .btn:not(.primary){display:none}
+    .how-steps{grid-template-columns:1fr}
+    .card{padding:20px}
+  }
+</style>
 </head>
 <body>
-    <header>
-        <div class="header-content">
-            <a href="index.html" class="logo-link">
-                <img src="/Assets/HEARTH-logo.png" alt="HEARTH Logo" class="logo"/>
-                <div class="title-section">
-                    <p class="eyebrow">THOR Collective</p>
-                    <h1>HEARTH</h1>
-                    <p>Hunting Exchange and Research Threat Hub</p>
-                </div>
-            </a>
-            <div class="header-links">
-                <a href="index.html" class="btn btn-primary"><span class="btn-icon">🔍</span>View Hunts</a>
-                <a href="https://github.com/THORCollective/HEARTH" target="_blank" class="btn btn-ghost"><span class="btn-icon">🌐</span>GitHub</a>
-            </div>
+
+<!-- ───────── TOPBAR ───────── -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="mark" href="Home.html">
+      <span class="glyph"></span>
+      <span class="name">HEARTH</span>
+      <span class="sub">THOR Collective</span>
+    </a>
+    <nav class="nav">
+      <a href="Home.html">Home</a>
+      <a href="index.html">Library</a>
+      <a href="graph.html">Coverage</a>
+      <a href="context-graph.html">Context</a>
+      <a class="on" href="submit.html">Submit</a>
+    </nav>
+    <div class="top-cta">
+      <span class="pill-mono">130 hunts · 691 techniques</span>
+      <a class="btn" href="index.html">← Browse library</a>
+      <a class="btn primary" href="#ctiForm">Submit a hunt →</a>
+    </div>
+  </div>
+</header>
+
+<!-- ───────── HEADER BAND ───────── -->
+<div class="header-band">
+  <div class="wrap">
+    <div class="band-grid">
+      <div>
+        <span class="eyebrow">Contribute</span>
+        <h1 class="page-title">Got a hunt?<br/><em>Light it up.</em></h1>
+      </div>
+      <div>
+        <p class="lede">HEARTH is built by working hunters. Paste a CTI link and our pipeline drafts a hunt hypothesis automatically — or write one from scratch and open a PR. <b>Every submission sharpens the collective edge.</b></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ───────── MAIN ───────── -->
+<main class="main">
+  <div class="wrap">
+
+    <div class="submit-grid">
+
+      <!-- CTI Submission card -->
+      <div class="card" id="ctiForm">
+        <div class="card-kicker">Recommended</div>
+        <h2 class="card-title">Submit a <em>CTI link</em></h2>
+        <p class="card-blurb">Drop a threat intelligence report URL below. We'll open a GitHub issue pre-filled with the source so a Keeper can run the CTI pipeline and draft the hunt hypothesis for you.</p>
+
+        <form id="ctiSubmissionForm">
+          <div class="field">
+            <label for="ctiUrl">CTI Report URL <span class="req">*</span></label>
+            <input type="url" id="ctiUrl" name="ctiUrl" placeholder="https://example.com/threat-report" required />
+            <div class="field-hint">Blog post, PDF, advisory, or any public threat intelligence source.</div>
+          </div>
+          <div class="field">
+            <label for="submitterName">Your name or handle <span class="req">*</span></label>
+            <input type="text" id="submitterName" name="submitterName" placeholder="How you'd like to be credited" required />
+          </div>
+          <div class="field">
+            <label for="submitterLink">Profile link <span style="color:var(--fg-dim);font-size:.9em">(optional)</span></label>
+            <input type="text" id="submitterLink" name="submitterLink" placeholder="GitHub, X, LinkedIn, blog — your choice" />
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn primary">Submit CTI link → open GitHub issue</button>
+          </div>
+        </form>
+
+        <div class="divider">or submit directly</div>
+
+        <a class="manual-option" href="https://github.com/THORCollective/HEARTH/issues/new?template=cti_submission.yml" target="_blank" rel="noopener">
+          <div class="opt-icon">↗</div>
+          <div class="opt-body">
+            <div class="opt-title">Create CTI issue on GitHub</div>
+            <div class="opt-desc">Opens the issue template directly — fill in the fields yourself.</div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Manual / other options card -->
+      <div class="card">
+        <div class="card-kicker">Other paths</div>
+        <h2 class="card-title">Write it <em>yourself</em></h2>
+        <p class="card-blurb">Have a fully-formed hypothesis? Submit it manually using our hunt template, or open a PR directly if you're comfortable with the format.</p>
+
+        <a class="manual-option" href="https://github.com/THORCollective/HEARTH/issues/new?template=hunt_template.yaml" target="_blank" rel="noopener">
+          <div class="opt-icon">📋</div>
+          <div class="opt-body">
+            <div class="opt-title">Manual submission template</div>
+            <div class="opt-desc">Fill out hypothesis, technique, data sources, and PEAK stage in the GitHub issue form.</div>
+          </div>
+          <div class="opt-arrow">→</div>
+        </a>
+
+        <a class="manual-option" href="https://github.com/THORCollective/HEARTH" target="_blank" rel="noopener">
+          <div class="opt-icon">⑂</div>
+          <div class="opt-body">
+            <div class="opt-title">Open a pull request</div>
+            <div class="opt-desc">Fork the repo, add your hunt file, and submit a PR for Keeper review.</div>
+          </div>
+          <div class="opt-arrow">→</div>
+        </a>
+
+        <a class="manual-option" href="https://github.com/THORCollective/HEARTH/blob/main/Keepers/CONTRIBUTING.md" target="_blank" rel="noopener">
+          <div class="opt-icon">📖</div>
+          <div class="opt-body">
+            <div class="opt-title">Contributor guide</div>
+            <div class="opt-desc">Hunt format spec, PEAK stage guide, data source tagging, and review process explained.</div>
+          </div>
+          <div class="opt-arrow">→</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- How it works -->
+    <div class="how-strip">
+      <div class="how-h">How the CTI pipeline works</div>
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="step-n">01</div>
+          <div class="step-title">You paste a <em>link</em></div>
+          <div class="step-desc">Any public CTI source — blog, PDF, advisory, or research paper.</div>
         </div>
-    </header>
+        <div class="how-step">
+          <div class="step-n">02</div>
+          <div class="step-title">We open an <em>issue</em></div>
+          <div class="step-desc">A GitHub issue is created with the source pre-filled, routed to the Keepers.</div>
+        </div>
+        <div class="how-step">
+          <div class="step-n">03</div>
+          <div class="step-title">Pipeline <em>drafts</em> the hunt</div>
+          <div class="step-desc">Our CTI pipeline extracts TTPs and drafts a hypothesis in HEARTH format.</div>
+        </div>
+        <div class="how-step">
+          <div class="step-n">04</div>
+          <div class="step-title">Keepers <em>review &amp; merge</em></div>
+          <div class="step-desc">A Keeper validates the draft, credits you, and merges it to the library.</div>
+        </div>
+      </div>
+    </div>
 
-    <main>
-        <section class="intro">
-            <div class="intro-content">
-                <h2>Submit a Threat Hunt</h2>
-                <p>Choose your preferred method to contribute a threat hunt to the community.</p>
-            </div>
-        </section>
+  </div>
+</main>
 
-        <section class="submission-options">
-            <div class="submission-option">
-                <h3>Option 1: Automated CTI Submission (Recommended)</h3>
-                <p>Submit a link to a CTI report, and our system will automatically generate a threat hunt hypothesis.</p>
-
-                <form id="ctiSubmissionForm">
-                    <div class="form-group">
-                        <label for="ctiUrl" style="font-weight: bold;">CTI Report URL</label>
-                        <input type="url" id="ctiUrl" name="ctiUrl" placeholder="https://example.com/threat-report.pdf" class="search-input" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="submitterName">Your Name / Handle</label>
-                        <input type="text" id="submitterName" name="submitterName" placeholder="How you would like to be credited" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="submitterLink">Link to Profile (Optional)</label>
-                        <input type="text" id="submitterLink" name="submitterLink" placeholder="e.g., Twitter, LinkedIn, or GitHub profile">
-                    </div>
-                    <button type="submit" class="btn btn-accent">Submit CTI Link</button>
-                </form>
-
-                <p style="margin-top: 30px;">Alternatively, you can manually create an issue using our template:</p>
-                <a href="https://github.com/THORCollective/HEARTH/issues/new?template=cti_submission.yml" target="_blank" class="btn btn-primary">Create CTI Issue on GitHub</a>
-            </div>
-            <div class="submission-option">
-                <h3>Option 2: Manual Submission</h3>
-                <p>If you have a fully-formed hunt idea and want to fill out the details manually, you can use our traditional submission form.</p>
-                <a href="https://github.com/THORCollective/HEARTH/issues/new?template=hunt_template.yaml" target="_blank" class="btn btn-accent" style="margin-top: 20px; display: inline-block;">Submit Manually</a>
-            </div>
-        </section>
-    </main>
-
-    <!-- Vite injects module script here during dev, bundle during build -->
-    <script type="module" src="/src/submit.ts"></script>
+<script type="module" src="/src/submit.ts"></script>
 </body>
-</html> 
+</html>

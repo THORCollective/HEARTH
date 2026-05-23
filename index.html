@@ -1,131 +1,1038 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HEARTH - Threat Hunting Exchange</title>
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-B4FE1Q174V"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-B4FE1Q174V');
-    </script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HEARTH — Threat Hunting Library</title>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-B4FE1Q174V"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-B4FE1Q174V');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+/* ── Design tokens ─────────────────────────────────────────────────────── */
+:root{
+  --bg:        oklch(0.16 0.020 300);
+  --bg-2:      oklch(0.20 0.022 300);
+  --surface:   oklch(0.23 0.024 300);
+  --surface-2: oklch(0.27 0.028 300);
+  --line:      oklch(0.34 0.030 300);
+  --line-soft: oklch(0.29 0.026 300);
+  --fg:        oklch(0.965 0.012 300);
+  --fg-mute:   oklch(0.78 0.022 300);
+  --fg-dim:    oklch(0.60 0.030 300);
+  --ember:     oklch(0.66 0.220 300);
+  --ember-2:   oklch(0.80 0.150 310);
+  --ember-glow: oklch(0.66 0.22 300 / 0.55);
+  --serif: "Instrument Serif", "Times New Roman", serif;
+  --sans:  "Geist", ui-sans-serif, system-ui, sans-serif;
+  --mono:  "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+/* ── Reset / globals ────────────────────────────────────────────────────── */
+html,body{margin:0;padding:0;background:var(--bg);min-height:100%}
+#root{min-height:100vh}
+.hl-page *{box-sizing:border-box}
+.hl-page{
+  background:var(--bg);
+  color:var(--fg);
+  font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;
+  font-feature-settings:"ss01","cv11";
+  min-height:100%;
+  position:relative;
+  background:
+    radial-gradient(1100px 700px at 78% -10%, oklch(0.32 0.10 300 / 0.45), transparent 60%),
+    radial-gradient(900px 600px at -10% 30%, oklch(0.24 0.045 290 / 0.5), transparent 55%),
+    var(--bg);
+  overflow-x:clip;
+}
+.hl-page a{color:inherit;text-decoration:none}
+.hl-page ::selection{background:var(--ember);color:var(--bg)}
+.hl-page .wrap{max-width:1320px;margin:0 auto;padding:0 32px}
+.hl-page .mono{font-family:var(--mono);font-feature-settings:"zero","ss01";letter-spacing:.02em}
+.hl-page .serif{font-family:var(--serif);font-weight:400}
+.hl-page .caps{text-transform:uppercase;letter-spacing:.16em;font-size:10.5px;color:var(--fg-dim)}
+.hl-page .dim{color:var(--fg-dim)}
+.hl-page .mute{color:var(--fg-mute)}
+.hl-page .grow{flex:1}
+
+/* ── Topbar ─────────────────────────────────────────────────────────────── */
+.hl-topbar{
+  position:sticky;top:0;z-index:50;
+  backdrop-filter:saturate(140%) blur(10px);
+  -webkit-backdrop-filter:saturate(140%) blur(10px);
+  background:oklch(0.16 0.020 300 / 0.82);
+  border-bottom:1px solid var(--line-soft);
+}
+.hl-topbar-inner{
+  display:flex;align-items:center;gap:24px;
+  padding:14px 32px;max-width:1320px;margin:0 auto;
+}
+.hl-mark{display:flex;align-items:baseline;gap:10px}
+.hl-glyph{
+  width:22px;height:22px;border-radius:50%;
+  background:radial-gradient(circle at 50% 65%, var(--ember-2), var(--ember) 45%, oklch(0.38 0.16 295) 75%, transparent 78%);
+  box-shadow:0 0 14px var(--ember-glow), inset 0 -3px 6px oklch(0.30 0.10 295 / .7);
+  position:relative;top:3px;flex-shrink:0;
+}
+.hl-name{font-family:var(--serif);font-size:24px;letter-spacing:.01em}
+.hl-sub{font-family:var(--mono);font-size:10px;color:var(--fg-dim);text-transform:uppercase;letter-spacing:.18em}
+.hl-nav{display:flex;gap:4px;margin-left:18px}
+.hl-nav a{
+  font-size:13px;color:var(--fg-mute);
+  padding:6px 11px;border-radius:999px;border:1px solid transparent;transition:.15s;
+}
+.hl-nav a:hover{color:var(--fg);background:var(--surface);border-color:var(--line-soft)}
+.hl-nav a.on{color:var(--fg);background:var(--surface);border-color:var(--line-soft)}
+.hl-top-cta{display:flex;gap:8px;margin-left:auto;align-items:center}
+.hl-pill{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--fg-dim);
+  padding:5px 10px;border:1px solid var(--line-soft);border-radius:999px;
+}
+
+/* ── Buttons ────────────────────────────────────────────────────────────── */
+.hl-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--sans);font-size:13px;font-weight:500;
+  padding:9px 14px;border-radius:999px;border:1px solid var(--line);
+  background:transparent;color:var(--fg);cursor:pointer;transition:.15s;
+  text-decoration:none;white-space:nowrap;
+}
+.hl-btn:hover{border-color:var(--fg-mute);background:var(--surface)}
+.hl-btn.primary{
+  background:var(--ember);color:oklch(0.985 0.005 300);
+  border-color:transparent;font-weight:600;
+}
+.hl-btn.primary:hover{background:var(--ember-2);color:oklch(0.20 0.05 300)}
+.kbd{
+  font-family:var(--mono);font-size:10.5px;
+  padding:1px 5px;border:1px solid currentColor;border-radius:4px;opacity:.55;
+}
+
+/* ── Stat strip ─────────────────────────────────────────────────────────── */
+.hl-statstrip{border-bottom:1px solid var(--line-soft)}
+.hl-statrow{
+  display:grid;grid-template-columns:repeat(4, 1fr) 1.2fr;
+  border-left:1px solid var(--line-soft);
+}
+.hl-statcell{
+  padding:18px 22px;border-right:1px solid var(--line-soft);
+  display:flex;flex-direction:column;gap:4px;
+}
+.hl-statcell .n{font-family:var(--serif);font-size:36px;line-height:1;letter-spacing:-.02em}
+.hl-statcell .l{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-dim)}
+.hl-statcell.narrow{justify-content:center;gap:6px}
+.hl-statcell .live{color:var(--ember-2);font-size:11px;letter-spacing:.12em}
+
+/* ── Workbar (sticky) ────────────────────────────────────────────────────── */
+.hl-workbar{
+  position:sticky;top:53px;z-index:40;
+  background:oklch(0.17 0.020 300 / .9);
+  backdrop-filter:saturate(140%) blur(10px);
+  -webkit-backdrop-filter:saturate(140%) blur(10px);
+  border-bottom:1px solid var(--line-soft);
+  padding:18px 0 14px;
+}
+.hl-workrow{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.hl-search{
+  flex:1;min-width:280px;
+  display:flex;align-items:center;gap:12px;
+  border:1px solid var(--line);border-radius:12px;
+  padding:10px 14px;background:oklch(0.20 0.022 300 / .8);
+  transition:.15s;
+}
+.hl-search:focus-within{border-color:var(--ember-2);box-shadow:0 0 0 4px oklch(0.66 0.22 300 / .12)}
+.hl-search .kbd{flex:none;opacity:.45}
+.hl-search input{
+  flex:1;background:transparent;border:0;outline:0;color:var(--fg);
+  font-family:var(--sans);font-size:14.5px;
+}
+.hl-search input::placeholder{color:var(--fg-dim)}
+.hl-clear{
+  font-family:var(--mono);font-size:11px;letter-spacing:.05em;
+  color:var(--fg-dim);background:transparent;border:0;cursor:pointer;padding:0;
+}
+.hl-clear:hover{color:var(--fg)}
+.hl-segments{display:flex;gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:oklch(0.20 0.022 300 / .8)}
+.hl-segments .seg{
+  background:transparent;border:0;cursor:pointer;
+  padding:9px 12px;color:var(--fg-mute);
+  font-family:var(--sans);font-size:13px;font-weight:500;
+  border-right:1px solid var(--line-soft);
+  display:inline-flex;align-items:center;gap:8px;
+  transition:.12s;
+}
+.hl-segments .seg:last-child{border-right:0}
+.hl-segments .seg:hover{color:var(--fg)}
+.hl-segments .seg.on{color:var(--fg);background:var(--surface)}
+.hl-segments .seg .seg-n{
+  font-family:var(--mono);font-size:10.5px;color:var(--fg-dim);
+  padding:1px 6px;border-radius:999px;border:1px solid var(--line-soft);
+}
+.hl-segments .seg.on .seg-n{color:var(--ember-2);border-color:oklch(0.55 0.18 300 / .55)}
+.hl-selects{display:flex;gap:8px}
+.hl-sel{
+  display:inline-flex;flex-direction:column;gap:3px;
+  padding:6px 12px;border:1px solid var(--line);border-radius:12px;
+  background:oklch(0.20 0.022 300 / .8);
+}
+.hl-sel select{
+  background:transparent;border:0;outline:0;color:var(--fg);
+  font-family:var(--sans);font-size:13px;cursor:pointer;
+  padding-right:4px;
+}
+.hl-sel select option{background:var(--bg-2);color:var(--fg)}
+.hl-meta{
+  display:flex;align-items:center;gap:8px;
+  margin-top:12px;font-size:11.5px;color:var(--fg-mute);
+}
+.hl-meta b{color:var(--fg);font-weight:500}
+
+/* ── Workspace ───────────────────────────────────────────────────────────── */
+.hl-workspace{padding:24px 0 64px}
+.hl-workspace .two-col{
+  display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start;
+}
+.hl-tablecol{min-width:0}
+
+/* ── Hunt table ─────────────────────────────────────────────────────────── */
+.hl-lib{
+  border:1px solid var(--line-soft);border-radius:14px;overflow:clip;
+  background:oklch(0.18 0.022 300 / .6);
+}
+.hl-lib-head,.hl-lib-row{
+  display:grid;
+  grid-template-columns:88px 1fr 90px 120px 110px 1.2fr 130px 36px;
+  column-gap:12px;align-items:center;
+}
+.hl-lib-head{
+  padding:11px 22px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--fg-dim);
+  border-bottom:1px solid var(--line-soft);
+  background:oklch(0.21 0.024 300 / .65);
+  position:sticky;top:0;z-index:10;
+  backdrop-filter:blur(8px);
+  white-space:nowrap;
+}
+.hl-lib-row{
+  padding:14px 22px;border-bottom:1px solid var(--line-soft);transition:.12s;cursor:pointer;
+}
+.hl-lib-row:last-child{border-bottom:0}
+.hl-lib-row:hover{background:oklch(0.22 0.024 300 / .8)}
+.hl-lib-row.is-picked{background:oklch(0.24 0.030 300 / .85);box-shadow:inset 3px 0 0 var(--ember)}
+.hl-lib-row .name{
+  font-family:var(--serif);font-size:17px;letter-spacing:-.005em;line-height:1.25;
+  padding-right:18px;color:var(--fg);
+}
+.hl-lib-row .cell{font-size:12.5px;color:var(--fg-mute);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.hl-lib-row .cell.mono{font-family:var(--mono)}
+.hl-lib-row .arrow{color:var(--fg-dim);text-align:right;font-family:var(--mono)}
+.hl-lib-row:hover .arrow{color:var(--ember-2)}
+.hl-lib.density-compact .hl-lib-row{padding:10px 22px}
+.hl-lib.density-compact .hl-lib-row .name{font-size:15px}
+.hl-empty{
+  padding:48px 22px;text-align:center;
+  display:flex;flex-direction:column;gap:8px;align-items:center;
+}
+.hl-empty em{font-family:var(--serif);font-size:28px;font-style:italic;color:var(--ember-2)}
+.hl-empty span{font-family:var(--mono);font-size:12px;color:var(--fg-dim)}
+
+/* ── Category tags ──────────────────────────────────────────────────────── */
+.cat-tag{
+  display:inline-block;
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  padding:3px 8px;border-radius:4px;border:1px solid var(--line);
+  white-space:nowrap;
+}
+.cat-flames{ color:oklch(0.82 0.16 330); border-color:oklch(0.55 0.18 330 / .55) }
+.cat-embers{ color:oklch(0.86 0.08 250); border-color:oklch(0.55 0.10 250 / .55) }
+.cat-alchemy{color:oklch(0.82 0.16 300); border-color:oklch(0.55 0.18 300 / .55) }
+.hl-flag{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;
+  padding:1.5px 5px;margin-left:8px;border-radius:3px;
+  color:var(--ember-2);border:1px solid oklch(0.55 0.18 300 / .55);
+  vertical-align:1px;
+}
+
+/* ── Preview rail ────────────────────────────────────────────────────────── */
+.hl-rail{position:sticky;top:175px;align-self:start;max-height:calc(100vh - 185px);overflow-y:auto;overflow-x:hidden;border-radius:14px;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.hl-rail::-webkit-scrollbar{width:6px}
+.hl-rail::-webkit-scrollbar-track{background:transparent}
+.hl-rail::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+.hl-pv{
+  border:1px solid var(--line-soft);border-radius:14px;
+  background:linear-gradient(180deg, oklch(0.22 0.024 300 / .8), oklch(0.18 0.022 300 / .6));
+  padding:22px;display:flex;flex-direction:column;gap:14px;
+}
+.hl-pv-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.hl-pv-id{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--fg-dim);text-transform:uppercase}
+.hl-pv-title{
+  font-family:var(--serif);font-size:22px;letter-spacing:-.01em;line-height:1.2;
+  margin:0;color:var(--fg);
+}
+.hl-pv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hl-pv-grid > div{
+  padding:9px 12px;border:1px solid var(--line-soft);border-radius:8px;
+  display:flex;flex-direction:column;gap:3px;
+}
+.hl-pv-grid b{font-size:12px;color:var(--fg);font-weight:500;word-break:break-word}
+.hl-pv-grid b.mono{font-family:var(--mono);font-size:11.5px}
+.hl-pv-q{display:flex;flex-direction:column;gap:8px}
+.hl-pv-q p{font-size:13px;line-height:1.5;color:var(--fg-mute);margin:0}
+.hl-pv-q p b{color:var(--fg);font-weight:500}
+.hl-pv-actions{display:flex;gap:8px;flex-wrap:wrap}
+.hl-pv-actions .hl-btn{font-size:12px;padding:7px 12px}
+.hl-pv-empty p{font-size:13px;color:var(--fg-mute);margin:0}
+
+/* ── Loading state ───────────────────────────────────────────────────────── */
+.hl-loading{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--fg-dim);
+  background:
+    radial-gradient(1100px 700px at 78% -10%, oklch(0.32 0.10 300 / 0.45), transparent 60%),
+    radial-gradient(900px 600px at -10% 30%, oklch(0.24 0.045 290 / 0.5), transparent 55%),
+    var(--bg);
+}
+.hl-loading-dot{
+  display:inline-block;width:8px;height:8px;border-radius:50%;
+  background:var(--ember);box-shadow:0 0 12px var(--ember);
+  margin-right:12px;animation:hl-pulse 1.4s ease-in-out infinite;
+}
+@keyframes hl-pulse{0%,100%{opacity:.3}50%{opacity:1}}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width:1100px){
+  .hl-workspace .two-col{grid-template-columns:1fr}
+  .hl-rail{position:static;order:-1}
+  .hl-lib-head,.hl-lib-row{
+    grid-template-columns:1.5fr .9fr 60px;
+  }
+  .hl-lib-head > *:nth-child(n+4):not(:last-child),
+  .hl-lib-row  > *:nth-child(n+4):not(:last-child){display:none}
+  .hl-nav{display:none}
+  .hl-statrow{grid-template-columns:1fr 1fr}
+  .hl-statcell:last-child{display:none}
+}
+@media (max-width:640px){
+  .hl-topbar-inner{padding:12px 16px;gap:12px}
+  .hl-top-cta .hl-pill,.hl-top-cta .hl-btn:not(.primary){display:none}
+  .hl-workbar .wrap,.hl-workspace .wrap{padding:0 16px}
+  .hl-workbar{top:49px}
+  .hl-statrow{grid-template-columns:1fr 1fr;border-left:0}
+  .hl-selects{display:none}
+}
+</style>
 </head>
 <body>
-    <header>
-        <div class="header-content">
-            <a href="index.html" class="logo-link">
-                <img src="/Assets/HEARTH-logo.png" alt="HEARTH Logo" class="logo"/>
-                <div class="title-section">
-                    <p class="eyebrow">THOR Collective</p>
-                    <h1>HEARTH</h1>
-                    <p>Hunting Exchange and Research Threat Hub</p>
-                </div>
-            </a>
-            <div class="header-links">
-                <a href="submit.html" class="btn btn-accent"><span class="btn-icon">📝</span>Submit a Hunt</a>
-                <a href="https://github.com/THORCollective/HEARTH" target="_blank" class="btn btn-ghost"><span class="btn-icon">🌐</span>View on GitHub</a>
-            </div>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<!-- ── TweaksPanel ───────────────────────────────────────────────────────── -->
+<script type="text/babel">
+const __TWEAKS_STYLE = `
+  .twk-panel{position:fixed;right:16px;bottom:16px;z-index:2147483646;width:280px;
+    max-height:calc(100vh - 32px);display:flex;flex-direction:column;
+    transform:scale(var(--dc-inv-zoom,1));transform-origin:bottom right;
+    background:rgba(250,249,247,.78);color:#29261b;
+    -webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%);
+    border:.5px solid rgba(255,255,255,.6);border-radius:14px;
+    box-shadow:0 1px 0 rgba(255,255,255,.5) inset,0 12px 40px rgba(0,0,0,.18);
+    font:11.5px/1.4 ui-sans-serif,system-ui,-apple-system,sans-serif;overflow:hidden}
+  .twk-hd{display:flex;align-items:center;justify-content:space-between;
+    padding:10px 8px 10px 14px;cursor:move;user-select:none}
+  .twk-hd b{font-size:12px;font-weight:600;letter-spacing:.01em}
+  .twk-x{appearance:none;border:0;background:transparent;color:rgba(41,38,27,.55);
+    width:22px;height:22px;border-radius:6px;cursor:default;font-size:13px;line-height:1}
+  .twk-x:hover{background:rgba(0,0,0,.06);color:#29261b}
+  .twk-body{padding:2px 14px 14px;display:flex;flex-direction:column;gap:10px;
+    overflow-y:auto;overflow-x:hidden;min-height:0;
+    scrollbar-width:thin;scrollbar-color:rgba(0,0,0,.15) transparent}
+  .twk-row{display:flex;flex-direction:column;gap:5px}
+  .twk-lbl{display:flex;justify-content:space-between;align-items:baseline;
+    color:rgba(41,38,27,.72)}
+  .twk-lbl>span:first-child{font-weight:500}
+  .twk-sect{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+    color:rgba(41,38,27,.45);padding:10px 0 0}
+  .twk-sect:first-child{padding-top:0}
+  .twk-chips{display:flex;gap:6px}
+  .twk-chip{position:relative;appearance:none;flex:1;min-width:0;height:46px;
+    padding:0;border:0;border-radius:6px;overflow:hidden;cursor:default;
+    box-shadow:0 0 0 .5px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.06);
+    transition:transform .12s cubic-bezier(.3,.7,.4,1),box-shadow .12s}
+  .twk-chip:hover{transform:translateY(-1px);
+    box-shadow:0 0 0 .5px rgba(0,0,0,.18),0 4px 10px rgba(0,0,0,.12)}
+  .twk-chip[data-on="1"]{box-shadow:0 0 0 1.5px rgba(0,0,0,.85),0 2px 6px rgba(0,0,0,.15)}
+  .twk-chip>span{position:absolute;top:0;bottom:0;right:0;width:34%;
+    display:flex;flex-direction:column;box-shadow:-1px 0 0 rgba(0,0,0,.1)}
+  .twk-chip>span>i{flex:1;box-shadow:0 -1px 0 rgba(0,0,0,.1)}
+  .twk-chip>span>i:first-child{box-shadow:none}
+  .twk-chip svg{position:absolute;top:6px;left:6px;width:13px;height:13px;
+    filter:drop-shadow(0 1px 1px rgba(0,0,0,.3))}
+`;
+
+function useTweaks(defaults) {
+  const [values, setValues] = React.useState(defaults);
+  const setTweak = React.useCallback((keyOrEdits, val) => {
+    const edits = typeof keyOrEdits === 'object' && keyOrEdits !== null
+      ? keyOrEdits : { [keyOrEdits]: val };
+    setValues((prev) => ({ ...prev, ...edits }));
+    window.parent.postMessage({ type: '__edit_mode_set_keys', edits }, '*');
+    window.dispatchEvent(new CustomEvent('tweakchange', { detail: edits }));
+  }, []);
+  return [values, setTweak];
+}
+
+function TweaksPanel({ title = 'Tweaks', children }) {
+  const [open, setOpen] = React.useState(false);
+  const dragRef = React.useRef(null);
+  const offsetRef = React.useRef({ x: 16, y: 16 });
+  const PAD = 16;
+
+  const clampToViewport = React.useCallback(() => {
+    const panel = dragRef.current;
+    if (!panel) return;
+    const w = panel.offsetWidth, h = panel.offsetHeight;
+    const maxRight = Math.max(PAD, window.innerWidth - w - PAD);
+    const maxBottom = Math.max(PAD, window.innerHeight - h - PAD);
+    offsetRef.current = {
+      x: Math.min(maxRight, Math.max(PAD, offsetRef.current.x)),
+      y: Math.min(maxBottom, Math.max(PAD, offsetRef.current.y)),
+    };
+    panel.style.right = offsetRef.current.x + 'px';
+    panel.style.bottom = offsetRef.current.y + 'px';
+  }, []);
+
+  React.useEffect(() => {
+    if (!open) return;
+    clampToViewport();
+    const ro = typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(clampToViewport) : null;
+    if (ro) { ro.observe(document.documentElement); return () => ro.disconnect(); }
+    window.addEventListener('resize', clampToViewport);
+    return () => window.removeEventListener('resize', clampToViewport);
+  }, [open, clampToViewport]);
+
+  React.useEffect(() => {
+    const onMsg = (e) => {
+      const t = e?.data?.type;
+      if (t === '__activate_edit_mode') setOpen(true);
+      else if (t === '__deactivate_edit_mode') setOpen(false);
+    };
+    window.addEventListener('message', onMsg);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
+
+  const dismiss = () => {
+    setOpen(false);
+    window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*');
+  };
+
+  const onDragStart = (e) => {
+    const panel = dragRef.current;
+    if (!panel) return;
+    const r = panel.getBoundingClientRect();
+    const sx = e.clientX, sy = e.clientY;
+    const startRight = window.innerWidth - r.right;
+    const startBottom = window.innerHeight - r.bottom;
+    const move = (ev) => {
+      offsetRef.current = {
+        x: startRight - (ev.clientX - sx),
+        y: startBottom - (ev.clientY - sy),
+      };
+      clampToViewport();
+    };
+    const up = () => {
+      window.removeEventListener('mousemove', move);
+      window.removeEventListener('mouseup', up);
+    };
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', up);
+  };
+
+  if (!open) return null;
+  return (
+    <>
+      <style>{__TWEAKS_STYLE}</style>
+      <div ref={dragRef} className="twk-panel"
+           style={{ right: offsetRef.current.x, bottom: offsetRef.current.y }}>
+        <div className="twk-hd" onMouseDown={onDragStart}>
+          <b>{title}</b>
+          <button className="twk-x" aria-label="Close tweaks"
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={dismiss}>&#x2715;</button>
         </div>
-        <nav class="header-nav">
-            <button class="nav-tab nav-tab--active" data-view="library" id="navLibrary">📚 Hunt Library</button>
-            <button class="nav-tab" data-view="finder" id="navFinder">🎯 What Can I Hunt?</button>
-            <a href="graph.html" class="nav-tab" style="text-decoration:none">🗺️ Coverage Map</a>
-            <a href="context-graph.html" class="nav-tab" style="text-decoration:none">🔗 Context Graph</a>
+        <div className="twk-body">{children}</div>
+      </div>
+    </>
+  );
+}
+
+function TweakSection({ title, children }) {
+  return (
+    <>
+      <div className="twk-sect">{title}</div>
+      {children}
+    </>
+  );
+}
+
+function __twkIsLight(hex) {
+  const h = String(hex).replace('#', '');
+  const x = h.length === 3 ? h.replace(/./g, (c) => c + c) : h.padEnd(6, '0');
+  const n = parseInt(x.slice(0, 6), 16);
+  if (Number.isNaN(n)) return true;
+  const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  return r * 299 + g * 587 + b * 114 > 148000;
+}
+
+const __TwkCheck = ({ light }) => (
+  <svg viewBox="0 0 14 14" aria-hidden="true" style={{position:'absolute',top:6,left:6,width:13,height:13,filter:'drop-shadow(0 1px 1px rgba(0,0,0,.3))'}}>
+    <path d="M3 7.2 5.8 10 11 4.2" fill="none" strokeWidth="2.2"
+          strokeLinecap="round" strokeLinejoin="round"
+          stroke={light ? 'rgba(0,0,0,.78)' : '#fff'} />
+  </svg>
+);
+
+function TweakColor({ label, value, options, onChange }) {
+  const key = (o) => String(JSON.stringify(o)).toLowerCase();
+  const cur = key(value);
+  return (
+    <div className="twk-row">
+      <div className="twk-lbl"><span>{label}</span></div>
+      <div className="twk-chips" role="radiogroup">
+        {(options || []).map((o, i) => {
+          const colors = Array.isArray(o) ? o : [o];
+          const [hero, ...rest] = colors;
+          const on = key(o) === cur;
+          return (
+            <button key={i} type="button" className="twk-chip" role="radio"
+                    aria-checked={on} data-on={on ? '1' : '0'}
+                    style={{ background: hero }}
+                    onClick={() => onChange(o)}>
+              {rest.slice(0, 4).length > 0 && (
+                <span>
+                  {rest.slice(0, 4).map((c, j) => <i key={j} style={{ background: c }} />)}
+                </span>
+              )}
+              {on && <__TwkCheck light={__twkIsLight(hero)} />}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+Object.assign(window, { useTweaks, TweaksPanel, TweakSection, TweakColor });
+</script>
+
+<!-- ── Library app ────────────────────────────────────────────────────────── -->
+<script type="text/babel">
+const { useMemo, useState, useEffect, useCallback, useRef } = React;
+
+const CAT_COUNTS = { Flames: 0, Embers: 0, Alchemy: 0 };
+
+function CatTag({ cat }) {
+  return <span className={`cat-tag cat-${cat.toLowerCase()}`}>{cat}</span>;
+}
+
+function Glyph() {
+  return <span className="hl-glyph" aria-hidden="true" />;
+}
+
+function useFilteredHunts({ q, cat, tactic, sort }) {
+  return useMemo(() => {
+    const needle = q.trim().toLowerCase();
+    const hunts = window.HUNTS || [];
+    let rows = hunts.filter((h) => {
+      if (cat !== 'All' && h.cat !== cat) return false;
+      if (tactic !== 'All' && !h.tactic.includes(tactic)) return false;
+      if (!needle) return true;
+      return (
+        h.title.toLowerCase().includes(needle) ||
+        h.tactic.toLowerCase().includes(needle) ||
+        h.technique.toLowerCase().includes(needle) ||
+        h.who.toLowerCase().includes(needle) ||
+        h.id.toLowerCase().includes(needle) ||
+        h.source.toLowerCase().includes(needle)
+      );
+    });
+    return rows.slice().sort((a, b) => {
+      if (sort === 'az') return a.title.localeCompare(b.title);
+      if (sort === 'za') return b.title.localeCompare(a.title);
+      const ai = parseInt(a.id.replace(/\D/g, ''), 10) || 0;
+      const bi = parseInt(b.id.replace(/\D/g, ''), 10) || 0;
+      return sort === 'oldest' ? ai - bi : bi - ai;
+    });
+  }, [q, cat, tactic, sort]);
+}
+
+function TopBar() {
+  const stats = window.HUNT_STATS || {};
+  return (
+    <header className="hl-topbar">
+      <div className="hl-topbar-inner">
+        <a className="hl-mark" href="/">
+          <Glyph />
+          <span className="hl-name">HEARTH</span>
+          <span className="hl-sub">THOR Collective</span>
+        </a>
+        <nav className="hl-nav">
+          <a href="Home.html">Home</a>
+          <a className="on" href="index.html">Library</a>
+          <a href="graph.html">Coverage</a>
+          <a href="context-graph.html">Context</a>
+          <a href="submit.html">Submit</a>
         </nav>
+        <div className="hl-top-cta">
+          <span className="hl-pill">{stats.hypotheses || 0} hunts indexed</span>
+          <a className="hl-btn" href="https://github.com/THORCollective/HEARTH" target="_blank" rel="noopener">View on GitHub ↗</a>
+          <a className="hl-btn primary" href="/submit.html">Submit a hunt &rarr;</a>
         </div>
+      </div>
     </header>
+  );
+}
 
-    <main>
-        <section class="intro">
-            <div class="intro-stats-bar" aria-live="polite">
-                <span class="intro-stat"><strong id="introTotalHunts">0</strong> hypotheses</span>
-                <span class="intro-stat-sep">·</span>
-                <span class="intro-stat"><strong id="introTotalTactics">0</strong> techniques</span>
-                <span class="intro-stat-sep">·</span>
-                <span class="intro-stat"><strong id="introTotalContributors">0</strong> contributors</span>
-                <span class="intro-stat-sep">·</span>
-                <span class="intro-stat">PEAK aligned</span>
-                <span class="intro-stat-sep">·</span>
-                <span class="intro-stat">Community powered</span>
-            </div>
-        </section>
-
-        <section class="controls">
-            <div class="controls-top">
-                <div class="search-container">
-                    <label for="searchInput" class="visually-hidden">Search hunts</label>
-                    <div class="search-wrapper">
-                        <span class="search-icon">🔍</span>
-                        <input type="text" id="searchInput" placeholder="Search hunts by title, tactic, tags, or submitter..." class="search-input" autocomplete="off">
-                        <button id="clearSearch" class="clear-btn" type="button" style="display: none;">Clear</button>
-                    </div>
-                    <p class="search-hint">Tip: try "persistence baseline" or "LOLBIN"</p>
-                </div>
-                <div class="stats">
-                    <span id="huntCount" class="hunt-count">Loading hunts...</span>
-                    <span id="resultMeta" class="result-meta"></span>
-                    <span id="searchFeedback" class="search-feedback" role="status" aria-live="polite"></span>
-                </div>
-            </div>
-
-            <!-- Filter Panel -->
-            <div class="controls-middle">
-                <div class="quick-filter">
-                    <label for="categoryFilter">Category</label>
-                    <select id="categoryFilter" class="filter-select">
-                        <option value="">All categories</option>
-                        <option value="Flames">Flames</option>
-                        <option value="Embers">Embers</option>
-                        <option value="Alchemy">Alchemy</option>
-                    </select>
-                </div>
-                <div class="quick-filter">
-                    <label for="sortHunts">Sort</label>
-                    <select id="sortHunts" class="filter-select">
-                        <option value="id-desc">Newest hunts</option>
-                        <option value="id-asc">Oldest hunts</option>
-                        <option value="title-asc">Title A-Z</option>
-                        <option value="title-desc">Title Z-A</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Advanced Filters -->
-            <div class="advanced-filters">
-                <div class="filter-section">
-                    <div class="filter-section__header">
-                        <h3 class="filter-section__title">Tactics</h3>
-                        <button id="clearTactics" class="clear-filters-btn" style="display: none;">Clear</button>
-                    </div>
-                    <div id="tacticChips" class="filter-chips"></div>
-                </div>
-
-                <div class="filter-section">
-                    <div class="filter-section__header">
-                        <h3 class="filter-section__title">Popular Tags</h3>
-                        <button id="clearTags" class="clear-filters-btn" style="display: none;">Clear</button>
-                    </div>
-                    <div id="tagChips" class="filter-chips"></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Loading indicator -->
-        <div id="loading" class="loading">
-            <p>Loading hunt database...</p>
+function HuntTable({ rows, onPick, picked }) {
+  return (
+    <div className="hl-lib density-compact">
+      <div className="hl-lib-head">
+        <div>ID</div>
+        <div>Hypothesis</div>
+        <div>PEAK</div>
+        <div>Tactic</div>
+        <div>Technique</div>
+        <div>Data source</div>
+        <div>Contributor</div>
+        <div></div>
+      </div>
+      {rows.length === 0 && (
+        <div className="hl-empty">
+          <em>No hunts match.</em>
+          <span>Try clearing filters or searching for a tactic name.</span>
         </div>
+      )}
+      {rows.map((h) => (
+        <div
+          key={h.id}
+          className={`hl-lib-row${picked?.id === h.id ? ' is-picked' : ''}`}
+          onClick={() => onPick(h)}
+        >
+          <div className="cell mono dim">{h.id}</div>
+          <div className="name">{h.title}</div>
+          <div className="cell"><CatTag cat={h.cat} /></div>
+          <div className="cell mono">{h.tactic}</div>
+          <div className="cell mono">{h.technique}</div>
+          <div className="cell mono">{h.source}</div>
+          <div className="cell">{h.who}</div>
+          <div className="arrow mono">&rarr;</div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
-        <!-- Hunt grid (populated by TypeScript) -->
-        <div id="huntsGrid" class="hunts-grid"></div>
+function PreviewRail({ hunt }) {
+  const githubUrl = hunt.github ||
+    `https://github.com/THORCollective/HEARTH/tree/main/${hunt.cat}`;
+  const copyId = useCallback(() => {
+    if (navigator.clipboard) navigator.clipboard.writeText(hunt.id);
+  }, [hunt.id]);
 
-        <!-- Hunt Finder view (hidden by default) -->
-        <div id="huntFinderView" class="hunt-finder-view" style="display: none;"></div>
-    </main>
+  const hypothesis = hunt.why || hunt.notes || '';
 
-    <!-- Vite injects module script here during dev, bundle during build -->
-    <script type="module" src="/src/main.ts"></script>
+  return (
+    <div className="hl-pv">
+      <div className="hl-pv-head">
+        <div className="hl-pv-id mono caps">{hunt.id} &middot; {hunt.cat}</div>
+        <CatTag cat={hunt.cat} />
+      </div>
+      <h3 className="hl-pv-title">{hunt.title}</h3>
+      <div className="hl-pv-grid">
+        <div><span className="mono caps">Tactic</span><b>{hunt.tactic}</b></div>
+        <div><span className="mono caps">Technique</span><b className="mono">{hunt.technique}</b></div>
+        <div><span className="mono caps">Source</span><b className="mono">{hunt.source}</b></div>
+        <div><span className="mono caps">Contributor</span><b>{hunt.who}</b></div>
+      </div>
+      {hypothesis && (
+        <div className="hl-pv-q">
+          <span className="mono caps">Why this hunt</span>
+          <p>{hypothesis}</p>
+        </div>
+      )}
+      <div className="hl-pv-actions">
+        <a className="hl-btn primary" href={githubUrl} target="_blank" rel="noopener">Open full hunt &rarr;</a>
+        <a className="hl-btn" href="https://github.com/THORCollective/HEARTH/fork" target="_blank" rel="noopener">Fork</a>
+        <button className="hl-btn" onClick={copyId}>Copy ID</button>
+      </div>
+    </div>
+  );
+}
+
+function EmptyRail() {
+  return (
+    <div className="hl-pv hl-pv-empty">
+      <span className="mono caps dim">Preview</span>
+      <p>Select a row to preview its hypothesis, technique mapping, and detection metadata here.</p>
+    </div>
+  );
+}
+
+function LibraryToolFirst() {
+  const [q, setQ] = useState('');
+  const [cat, setCat] = useState('All');
+  const [tactic, setTactic] = useState('All');
+  const [sort, setSort] = useState('newest');
+  const [picked, setPicked] = useState(null);
+  const searchRef = useRef(null);
+
+  const rows = useFilteredHunts({ q, cat, tactic, sort });
+  const sel = picked || rows[0] || null;
+  const hunts = window.HUNTS || [];
+  const stats = window.HUNT_STATS || {};
+  const tactics = window.HUNT_TACTICS || [];
+
+  // ⌘K / Ctrl+K and / focus search; Esc clears
+  useEffect(() => {
+    const onKey = (e) => {
+      const tag = document.activeElement?.tagName;
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        searchRef.current?.focus();
+        return;
+      }
+      if (e.key === '/' && tag !== 'INPUT' && tag !== 'TEXTAREA' && tag !== 'SELECT') {
+        e.preventDefault();
+        searchRef.current?.focus();
+        return;
+      }
+      if (e.key === 'Escape') {
+        setQ('');
+        searchRef.current?.blur();
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, []);
+
+  const catCounts = useMemo(() => {
+    const counts = { Flames: 0, Embers: 0, Alchemy: 0 };
+    hunts.forEach(h => { if (counts[h.cat] != null) counts[h.cat]++; });
+    return counts;
+  }, [hunts]);
+
+  return (
+    <div className="hl-page variant-tool">
+      <TopBar />
+
+      {/* Stats strip */}
+      <div className="hl-statstrip">
+        <div className="wrap">
+          <div className="hl-statrow">
+            <div className="hl-statcell">
+              <span className="n">{stats.hypotheses}</span>
+              <span className="l">hypotheses</span>
+            </div>
+            <div className="hl-statcell">
+              <span className="n">{stats.techniques}</span>
+              <span className="l">ATT&amp;CK techniques mapped</span>
+            </div>
+            <div className="hl-statcell">
+              <span className="n">{stats.contributors}</span>
+              <span className="l">contributors</span>
+            </div>
+            <div className="hl-statcell">
+              <span className="n">{stats.tactics}</span>
+              <span className="l">tactics covered</span>
+            </div>
+            <div className="hl-statcell narrow">
+              <span className="l">PEAK aligned &middot; community powered</span>
+              <span className="live mono">&#9679; live &middot; updated today</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Workbar */}
+      <div className="hl-workbar">
+        <div className="wrap">
+          <div className="hl-workrow">
+            <label className="hl-search">
+              <span className="mono kbd">&#x2318;K</span>
+              <input
+                ref={searchRef}
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder='Search title, tactic, technique, contributor… try "persistence" or "T1547"'
+              />
+              {q && <button className="hl-clear" onClick={() => setQ('')}>clear</button>}
+            </label>
+
+            <div className="hl-segments">
+              {['All', 'Flames', 'Embers', 'Alchemy'].map((c) => (
+                <button
+                  key={c}
+                  className={`seg${cat === c ? ' on' : ''}`}
+                  onClick={() => setCat(c)}
+                >
+                  {c}
+                  <span className="seg-n mono">
+                    {c === 'All' ? hunts.length : (catCounts[c] ?? 0)}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            <div className="hl-selects">
+              <label className="hl-sel">
+                <span className="mono caps">Tactic</span>
+                <select value={tactic} onChange={(e) => setTactic(e.target.value)}>
+                  <option value="All">All</option>
+                  {tactics.map((t) => <option key={t}>{t}</option>)}
+                </select>
+              </label>
+              <label className="hl-sel">
+                <span className="mono caps">Sort</span>
+                <select value={sort} onChange={(e) => setSort(e.target.value)}>
+                  <option value="newest">Newest</option>
+                  <option value="oldest">Oldest</option>
+                  <option value="az">Title A&ndash;Z</option>
+                  <option value="za">Title Z&ndash;A</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div className="hl-meta mono">
+            <span><b>{rows.length}</b> of {hunts.length} hunts</span>
+            <span className="dim">&middot;</span>
+            <span className="dim">{cat === 'All' ? 'All categories' : cat}</span>
+            {tactic !== 'All' && <><span className="dim">&middot;</span><span className="dim">{tactic}</span></>}
+            {q && <><span className="dim">&middot;</span><span className="dim">&ldquo;{q}&rdquo;</span></>}
+            <span className="grow" />
+            <span className="dim">Press <span className="kbd">/</span> to focus &middot; <span className="kbd">esc</span> to clear</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Workspace */}
+      <div className="hl-workspace">
+        <div className="wrap two-col">
+          <div className="hl-tablecol">
+            <HuntTable rows={rows} onPick={setPicked} picked={sel} />
+          </div>
+          <aside className="hl-rail">
+            {sel ? <PreviewRail hunt={sel} /> : <EmptyRail />}
+          </aside>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+Object.assign(window, { LibraryToolFirst });
+</script>
+
+<!-- ── Data mapping + bootstrap ──────────────────────────────────────────── -->
+<script type="text/babel">
+const { useState: _useState, useEffect: _useEffect } = React;
+
+/* ── Mapping helpers ─── */
+
+function extractTechnique(tags) {
+  const tag = (tags || []).find(t => /^T\d{4}/.test(t));
+  return tag ? tag.replace(/_/g, '.') : '—';
+}
+
+function inferSource(tags) {
+  const lower = (tags || []).map(s => s.toLowerCase());
+  if (lower.some(s => s.includes('entra') || s.includes('aad') || s.includes('signin'))) return 'Entra · SigninLogs';
+  if (lower.some(s => s.includes('sysmon') || s.includes('eid_1') || s.includes('eid1'))) return 'Sysmon · EID 1';
+  if (lower.some(s => s.includes('imageload'))) return 'EDR · ImageLoad';
+  if (lower.some(s => s.includes('processexec') || s.includes('process_exec'))) return 'EDR · ProcessExec';
+  if (lower.some(s => s.includes('edr'))) return 'EDR';
+  if (lower.some(s => s.includes('zeek') || s.includes('conn.log'))) return 'Zeek · conn.log';
+  if (lower.some(s => s.includes('dns'))) return 'DNS';
+  if (lower.some(s => s.includes('network') || s.includes('netflow'))) return 'Network';
+  if (lower.some(s => s.includes('proxy') || s.includes('web.log'))) return 'Proxy';
+  if (lower.some(s => s.includes('windows') || s.includes('evtx') || s.includes('eventlog'))) return 'Win · EventLog';
+  if (lower.some(s => s.includes('filesystem'))) return 'Filesystem';
+  if (lower.some(s => s.includes('dc') || s.includes('kerberos') || s.includes('4769'))) return 'DC · Event 4769';
+  if (lower.some(s => s.includes('4624') || s.includes('logon'))) return 'Win · Event 4624';
+  return '—';
+}
+
+function extractHandle(submitter) {
+  if (!submitter) return 'Unknown';
+  const { name, link } = submitter;
+  if (link) {
+    const m = link.match(/(?:x\.com|twitter\.com)\/([^/?#\s]+)/i);
+    if (m && m[1] && m[1].toLowerCase() !== 'intent') return '@' + m[1];
+  }
+  return name || 'Unknown';
+}
+
+function mapHunt(h) {
+  const tactic = (h.tactic || '').split(',')[0].trim() || '—';
+  return {
+    id: h.id,
+    cat: h.category,
+    title: h.title,
+    tactic,
+    technique: extractTechnique(h.tags),
+    source: inferSource(h.tags),
+    who: extractHandle(h.submitter),
+    added: '—',
+    status: 'merged',
+    github: h.file_path
+      ? 'https://github.com/THORCollective/HEARTH/blob/main/' + h.file_path
+      : null,
+    why: (h.why || '').split('\n').filter(Boolean).slice(0, 3).join(' ').replace(/^-\s*/gm, ''),
+    notes: h.notes || '',
+  };
+}
+
+/* ── Palettes ─── */
+
+const TWEAK_DEFAULTS = { palette: 'magenta' };
+
+const PALETTES = {
+  magenta: { ember: 'oklch(0.66 0.220 300)', ember2: 'oklch(0.80 0.150 310)', glow: 'oklch(0.66 0.22 300 / 0.55)', label: 'Magenta (default)' },
+  amber:   { ember: 'oklch(0.74 0.180 60)',  ember2: 'oklch(0.86 0.130 75)',  glow: 'oklch(0.74 0.18 60 / 0.55)',  label: 'Amber' },
+  crimson: { ember: 'oklch(0.62 0.220 25)',  ember2: 'oklch(0.78 0.160 35)',  glow: 'oklch(0.62 0.22 25 / 0.55)',  label: 'Crimson' },
+  cyan:    { ember: 'oklch(0.72 0.150 215)', ember2: 'oklch(0.84 0.110 210)', glow: 'oklch(0.72 0.15 215 / 0.55)', label: 'Cyan' },
+  moss:    { ember: 'oklch(0.66 0.140 150)', ember2: 'oklch(0.80 0.110 150)', glow: 'oklch(0.66 0.14 150 / 0.55)', label: 'Moss' },
+};
+
+/* ── App ─── */
+
+function App() {
+  const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const [ready, setReady] = _useState(false);
+  const [loadError, setLoadError] = _useState(null);
+
+  const pal = PALETTES[tweaks.palette] || PALETTES.magenta;
+
+  _useEffect(() => {
+    const r = document.documentElement;
+    r.style.setProperty('--ember',      pal.ember);
+    r.style.setProperty('--ember-2',    pal.ember2);
+    r.style.setProperty('--ember-glow', pal.glow);
+  }, [pal]);
+
+  _useEffect(() => {
+    fetch('/hunts-data.json')
+      .then(r => {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(raw => {
+        window.HUNTS = raw.map(mapHunt);
+
+        /* unique techniques */
+        const techs = new Set(window.HUNTS.map(h => h.technique).filter(t => t !== '—'));
+
+        /* unique contributors */
+        const contribs = new Set(window.HUNTS.map(h => h.who));
+
+        /* unique tactics (split comma-separated) */
+        const allTactics = new Set();
+        raw.forEach(h => {
+          (h.tactic || '').split(',').forEach(t => {
+            const tr = t.trim();
+            if (tr) allTactics.add(tr);
+          });
+        });
+
+        window.HUNT_STATS = {
+          hypotheses: window.HUNTS.length,
+          techniques: techs.size,
+          contributors: contribs.size,
+          tactics: allTactics.size,
+        };
+
+        window.HUNT_TACTICS = [...allTactics].sort();
+
+        /* ticker: top techniques by frequency */
+        const freq = {};
+        raw.forEach(h => {
+          (h.tags || []).forEach(tag => {
+            if (/^T\d{4}/.test(tag)) {
+              const t = tag.replace(/_/g, '.');
+              freq[t] = (freq[t] || 0) + 1;
+            }
+          });
+        });
+        window.HUNT_TICKER = Object.entries(freq)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 14)
+          .map(([id]) => [id, id]);
+
+        setReady(true);
+      })
+      .catch(err => {
+        console.error('Failed to load hunt data:', err);
+        setLoadError(err.message || 'Unknown error');
+      });
+  }, []);
+
+  if (loadError) {
+    return (
+      <div className="hl-loading">
+        <span className="hl-loading-dot" />
+        Failed to load hunt database &mdash; {loadError}
+      </div>
+    );
+  }
+
+  if (!ready) {
+    return (
+      <div className="hl-loading">
+        <span className="hl-loading-dot" />
+        Loading hunt database&hellip;
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <LibraryToolFirst />
+      <TweaksPanel title="Tweaks">
+        <TweakSection title="Accent">
+          <TweakColor
+            label="Ember palette"
+            value={[pal.ember, pal.ember2]}
+            options={Object.values(PALETTES).map(p => [p.ember, p.ember2])}
+            onChange={(swatch) => {
+              const key = Object.keys(PALETTES).find(k => PALETTES[k].ember === swatch[0]);
+              if (key) setTweak('palette', key);
+            }}
+          />
+          <div style={{fontFamily:"'JetBrains Mono',ui-monospace,monospace",fontSize:"11px",lineHeight:"1.4",letterSpacing:".12em",textTransform:"uppercase",color:"#888",marginTop:10}}>
+            Current &middot; {pal.label}
+          </div>
+        </TweakSection>
+      </TweaksPanel>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
 </body>
 </html>
