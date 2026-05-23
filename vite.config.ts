@@ -12,6 +12,7 @@ export default defineConfig({
     // Multi-page app
     rollupOptions: {
       input: {
+        home: resolve(__dirname, 'home.html'),
         main: resolve(__dirname, 'index.html'),
         submit: resolve(__dirname, 'submit.html'),
       },
