@@ -6,6 +6,32 @@ Everyone listed below has submitted ideas that have been added to HEARTH. This l
 
 | Rank | Contributor | Hunts Submitted |
 |------|-------------|-----------------|
-| 1 | Lauren Proehl | 8 |
-| 2 | Omer M | 1 |
-| 3 | com\.google)'` followed by `codesign -dvvv <referenced binary>` — flag plists pointing to unsigned, ad-hoc-signed, or non-notarized binaries. KQL on Defender for Endpoint macOS: `DeviceFileEvents | where FileName endswith ".plist" and FolderPath has_any ("/Library/LaunchAgents","/Library/LaunchDaemons") | where InitiatingProcessFileName !in ("Installer","installd","softwareupdated","System Events")`. Cross-reference T1036.005 (Match Legitimate Name or Location) — `com.google.keystone.agent` and `com.apple.*` plists from non-Apple/non-Google processes are the masquerade signal. Cross-reference T1543.004 (Launch Daemon) when persistence lands in `/Library/LaunchDaemons/com.finder.helper.plist` instead. | 1 |
+| 1 | Lauren Proehl | 69 |
+| 2 | Jinx (THOR Collective) | 39 |
+| 3 | Sydney Marrone | 29 |
+| 4 | John Grageda | 6 |
+| 5 | Jamie Williams | 3 |
+| 6 | Azrara | 3 |
+| 7 | Jocko | 3 |
+| 8 | Bruce Breuer | 3 |
+| 9 | Audra Streetman | 2 |
+| 10 | Siddhant Mishra | 2 |
+| 11 | DarkWizardCatcher | 2 |
+| 12 | Joshua Hines | 2 |
+| 13 | p-o-s-t | 2 |
+| 14 | Alan G | 2 |
+| 15 | Ryan Fetterman | 2 |
+| 16 | hu983r | 1 |
+| 17 | Cody Lunday | 1 |
+| 18 | wikijm | 1 |
+| 19 | Apramey "Apps" S | 1 |
+| 20 | Shaimon Weslley | 1 |
+| 21 | Duc Viet Hoang | 1 |
+| 22 | samuel-lucas6 | 1 |
+| 23 | tsof-smoky | 1 |
+| 24 | odanh | 1 |
+| 25 | smossmos | 1 |
+| 26 | Omer M | 1 |
+| 27 | Claire Stromboe | 1 |
+| 28 | Jon Perez | 1 |
+| 29 | Collin McClaine | 1 |
