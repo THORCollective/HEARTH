@@ -4963,6 +4963,182 @@
     "file_path": "Flames/H160.md"
   },
   {
+    "id": "H161",
+    "category": "Flames",
+    "title": "An attacker on a compromised Linux host (Confluence or F5 BIG-IP) is performing NTLM relay coercion against an internal Windows domain controller — running `responder`, `ntlmrelayx`, `kerbrute`, or a CVE-2025-33073 PoC to coerce and relay authentication for credential theft and lateral movement.",
+    "tactic": "Credential Access",
+    "notes": "Linux source, Windows AD impact. Microsoft Security Blog \"From edge appliance to enterprise compromise\" (May 2026) — F5/Confluence intrusion using CVE-2025-33073. Detection sources: Linux: `auditd` `execve` rules for `responder`, `ntlmrelayx`, `kerbrute`, `nxc` (NetExec), `impacket-*`, `dnstool.py`; Defender for Endpoint DeviceProcessEvents where `FileName in (\"python\",\"python3\",\"responder\",\"kerbrute\",\"nxc\",\"ntlmrelayx.py\")` and `ProcessCommandLine has_any (\"-r\",\"--target\",\"relay\",\"CVE-2025-33073\",\"SMBSERVER\",\"HTTPSERVER\")`. Network: Linux→DC connections on TCP 445 (SMB), 88 (Kerberos), 389/636 (LDAP), 5985/5986 (WinRM), or 80/443 with SPN/HTTP coercion — these are unusual from a Confluence/F5 host. Pair with Windows Security Event ID 4624 logon type 3 to a DC with source IP = Linux appliance/Confluence host. Windows Event ID 4625 failures with `Failure Reason: Unknown user name or bad password` and `Source Workstation` = Linux hostname (Responder NTLMv2 challenge collection). KQL: `DeviceNetworkEvents | where DeviceName has_any (\"confluence\",\"bigip\",\"f5\") and RemotePort in (445,88,389,636) | join (DeviceInfo | where MachineGroup has \"Domain Controllers\") on $left.RemoteIP == $right.IPAddresses`. Cross-reference T1557 (AiTM relay infrastructure on the same host), T1110.003 (Password Spraying via kerbrute), and T1190 (Exploit Public-Facing Application — Confluence/F5 RCE that enabled the position).",
+    "tags": [
+      "credential_access",
+      "ntlm_relay",
+      "cve_2025_33073",
+      "linux",
+      "confluence",
+      "f5",
+      "T1557",
+      "T1110.003",
+      "T1190",
+      "T1187"
+    ],
+    "techniques": [
+      "T1557",
+      "T1110.003",
+      "T1190",
+      "T1187"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Linux edge appliances (F5 BIG-IP, Confluence, BIG-IQ) and DMZ Linux jump hosts are an emerging staging pattern for NTLM relay — the attacker bypasses Windows-side EDR and uses Linux as a \"blind spot\" to run `responder`, `ntlmrelayx`, and PetitPotam-style coercion tools (Microsoft, May 2026); historically this tradecraft lived on attacker-controlled VMs, but now lives on the victim's own appliances\n- CVE-2025-33073 (June 2025) removed the prior requirement that relay attacks needed admin access on the relayer — making coerced NTLM authentication a near-universal post-RCE pivot from any internet-facing Linux host with a path to the internal network (Synacktiv, Praetorian, Zero Networks deep dives)\n- The detection signal is extremely high-fidelity: **Confluence and F5 management hosts should never connect to a DC on SMB/Kerberos/LDAP** — these are management or web-tier devices, not domain-joined endpoints. Any 445/88/389 connection from an internet-facing Linux host to a DC IP is anomaly-by-baseline and worth chasing every time\n- Pairing the network signal with `auditd` process telemetry catches both the tool execution (responder/kerbrute binaries) AND the in-memory Python relay (`impacket` libraries via `python3`) — closing the gap where attackers rename or strip tool binaries",
+    "references": "- [MITRE ATT&CK T1187 - Forced Authentication](https://attack.mitre.org/techniques/T1187/)\n- [Microsoft Security Blog - From edge appliance to enterprise compromise: Multi-stage Linux intrusion via F5 and Confluence](https://www.microsoft.com/en-us/security/blog/2026/05/22/from-edge-appliance-to-enterprise-compromise-multi-stage-linux-intrusion-via-f5-and-confluence/)\n- [Synacktiv - NTLM reflection is dead, long live NTLM reflection (CVE-2025-33073 in-depth)](https://www.synacktiv.com/en/publications/ntlm-reflection-is-dead-long-live-ntlm-reflection-an-in-depth-analysis-of-cve-2025)\n- [Praetorian - CVE-2025-33073 NTLM Reflection One-Hop](https://www.praetorian.com/blog/cve-2025-33073-ntlm-reflection-one-hop/)\n- [Zero Networks - Examining Relay Attacks Through the Lens of CVE-2025-33073](https://zeronetworks.com/blog/examining-relay-attacks-through-the-lens-of-cve-2025-33073)\n- [SOC Prime - PetitPotam NTLM Relay Attack Detection](https://socprime.com/blog/petitpotam-ntlm-relay-attack-detection/)\n- [MITRE ATT&CK T1557 - Adversary-in-the-Middle](https://attack.mitre.org/techniques/T1557/)",
+    "file_path": "Flames/H161.md"
+  },
+  {
+    "id": "H162",
+    "category": "Flames",
+    "title": "A compromised Linux web service (Confluence/Java, F5 management) is staging a payload in `/dev/shm` or `/tmp` by performing `chmod 777` on the directory or file — enabling execution of a downloaded second-stage binary from a world-writable, RAM-backed location that survives no reboots but defeats common executable-path allowlists.",
+    "tactic": "Defense Evasion",
+    "notes": "Linux. Microsoft Security Blog \"From edge appliance to enterprise compromise\" (May 2026). Detection sources: auditd rule `-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -k perm_mod` filtering on path `/dev/shm` or `/tmp` and mode `0777`/`0755`. Defender for Endpoint KQL (from source article): `DeviceProcessEvents | where InitiatingProcessFileName == \"java\" | where ProcessCommandLine has_any(\"chmod 777 /dev/shm\",\"chmod 777 /tmp\",\"base64 -d > /dev/shm\",\"curl -o /dev/shm/\",\"wget -O /dev/shm/\",\"wget -O /tmp/\")`. Falco rule `Write below /dev/shm` and `Mkdir binary dirs`. eBPF/Sysdig capture of `execve(\"/usr/bin/chmod\",\"777\",\"/dev/shm/...\")` with parent `java`, `httpd`, `nginx`, or `tomcat`. Pair with the immediate next child process — a binary executed FROM `/dev/shm/` or `/tmp/` within 60 seconds (Sysmon-for-Linux Event ID 1 with `Image` starting with `/dev/shm/` or `/tmp/`). Cross-reference T1059.004 (Unix Shell) and T1105 (Ingress Tool Transfer) — the chmod is the connective tissue between the download and the execute. Cross-reference T1036.005 (Match Legitimate Name) — staged binaries often named to mimic system tools (e.g., `/dev/shm/systemd-update`, `/tmp/dbus-daemon`).",
+    "tags": [
+      "defense_evasion",
+      "linux",
+      "chmod",
+      "dev_shm",
+      "tmp",
+      "confluence",
+      "f5",
+      "T1059.004",
+      "T1105",
+      "T1036.005",
+      "T1222.002"
+    ],
+    "techniques": [
+      "T1059.004",
+      "T1105",
+      "T1036.005",
+      "T1222.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- The Microsoft May 2026 F5/Confluence intrusion writeup lists `chmod 777 /dev/shm` and `chmod 777 /tmp` as direct attacker commands — these are not commands a Java application server runs in normal operation, so the `parent_process=java + chmod 777 /dev/shm` pairing is a near-zero-FP signal\n- `/dev/shm` is RAM-backed (`tmpfs`), so files placed there leave no on-disk forensic trail after reboot — making it the preferred staging directory for in-memory loaders, fileless payloads, and credentials staging. Defenders who do not monitor `tmpfs` writes are blind to this\n- Legitimate users rarely need `0777` on `/dev/shm` or `/tmp` — those directories already have the sticky bit and world-writable permissions at the directory level. A `chmod 777` operation on a specific file inside them is a strong adversary signal because attackers do it to defeat per-user umask defaults on dropped payloads\n- Coupling the `chmod 777` event with the very next `execve` from the same directory yields full attack-chain visibility: download → permission-change → execute, all from a Linux service that should never originate any of these calls",
+    "references": "- [MITRE ATT&CK T1222.002 - File and Directory Permissions Modification: Linux and Mac](https://attack.mitre.org/techniques/T1222/002/)\n- [Microsoft Security Blog - From edge appliance to enterprise compromise: Multi-stage Linux intrusion via F5 and Confluence](https://www.microsoft.com/en-us/security/blog/2026/05/22/from-edge-appliance-to-enterprise-compromise-multi-stage-linux-intrusion-via-f5-and-confluence/)\n- [Red Canary Atomic Red Team - T1222.002 Linux File and Directory Permissions Modification](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1222.002/T1222.002.md)\n- [Falco - Falco Rules for /dev/shm and /tmp Writes](https://github.com/falcosecurity/rules/blob/main/rules/falco_rules.yaml)\n- [Elastic Security - Suspicious chmod in Temporary Folder](https://github.com/elastic/detection-rules/blob/main/rules/linux/defense_evasion_chmod_executable_in_world_writeable_dir.toml)\n- [MITRE ATT&CK T1105 - Ingress Tool Transfer](https://attack.mitre.org/techniques/T1105/)\n- [Sigma - Linux File Permission Modification Detection](https://github.com/SigmaHQ/sigma/blob/master/rules/linux/auditd/lnx_auditd_susp_file_chmod.yml)",
+    "file_path": "Flames/H162.md"
+  },
+  {
+    "id": "H163",
+    "category": "Flames",
+    "title": "After a successful Self-Service Password Reset (SSPR) on an Entra ID account, an adversary is removing the user's legitimate MFA methods (Authenticator app, phone, FIDO key) and registering a new attacker-controlled MFA method in the same session — completing a full identity takeover that survives password rotation and bypasses conditional access that trusts \"MFA-registered\" devices.",
+    "tactic": "Persistence",
+    "notes": "M365 / Entra ID. Microsoft Security Blog \"How Storm-2949 turned a compromised identity into a cloud-wide breach\" (May 2026). Detection sources: Entra ID Audit Logs (Defender XDR `AuditLogs` / Sentinel `AuditLogs`) operations: `Reset password (self-service)`, `User registered security info`, `User deleted security info`, `User changed default security info`. Sign-in Logs (`SigninLogs`) joined by `UserPrincipalName` and `CorrelationId`. KQL: `AuditLogs | where TimeGenerated > ago(7d) | where OperationName in (\"User registered security info\",\"User deleted security info\",\"Reset password (self-service)\") | extend Target = tostring(TargetResources[0].userPrincipalName) | summarize Ops=make_set(OperationName), Times=make_list(TimeGenerated), IPs=make_set(InitiatedBy.user.ipAddress) by Target, CorrelationId | where Ops has \"User deleted security info\" and Ops has \"User registered security info\" and Ops has \"Reset password (self-service)\"`. Pair with SigninLogs anomaly: post-reset sign-in from a different `IPAddress`, `Country`, or `UserAgent` than the 30-day baseline. Pair with risky users: `IdentityProtection.RiskyUsers` and `UserRiskEvents` flagged within ±6h. Cross-reference T1621 (MFA Request Generation — the upstream MFA fatigue that often precedes the swap), T1098.005 (Device Registration — attackers typically register their device after MFA swap), and T1078.004 (Cloud Accounts — the valid-account abuse that follows).",
+    "tags": [
+      "persistence",
+      "entra_id",
+      "m365",
+      "mfa",
+      "sspr",
+      "storm_2949",
+      "T1621",
+      "T1098.005",
+      "T1078.004",
+      "T1556.006"
+    ],
+    "techniques": [
+      "T1621",
+      "T1098.005",
+      "T1078.004",
+      "T1556.006"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Storm-2949 (Microsoft, May 2026) and prior actors (Midnight Blizzard, Storm-0501) all converge on the same MFA-swap-after-SSPR pattern because it produces a fully-authenticated identity that survives password rotation, defeats user-notification of \"new device sign-in,\" and looks identical to a legitimate forgotten-password flow in Entra\n- The three audit operations — `Reset password (self-service)` + `User deleted security info` + `User registered security info` — happening on the **same UPN** within a **single session/correlation ID** is a high-fidelity composite signal. Legitimate users almost never delete *and* re-add MFA factors in the same session as a self-service reset; they typically add a new factor without deleting the old\n- Hunters using only the password-reset event miss the persistence step; hunters using only the MFA-registration event miss the takeover step. The composite query is the only way to surface the full chain in a single pivot\n- Conditional access policies that trust \"MFA-registered devices\" or \"compliant devices\" become a persistence enabler once the attacker owns the MFA factor — so this hunt is also a feed-in to a periodic review of CA assignments for accounts with recent MFA swaps",
+    "references": "- [MITRE ATT&CK T1556.006 - Modify Authentication Process: Multi-Factor Authentication](https://attack.mitre.org/techniques/T1556/006/)\n- [MITRE ATT&CK T1621 - Multi-Factor Authentication Request Generation](https://attack.mitre.org/techniques/T1621/)\n- [Microsoft Security Blog - How Storm-2949 turned a compromised identity into a cloud-wide breach](https://www.microsoft.com/en-us/security/blog/2026/05/18/storm-2949-turned-compromised-identity-into-cloud-wide-breach/)\n- [Microsoft Community Hub - Hunting for MFA manipulations in Entra ID tenants using KQL](https://techcommunity.microsoft.com/blog/microsoftsecurityexperts/hunting-for-mfa-manipulations-in-entra-id-tenants-using-kql/4154039)\n- [Red Canary Threat Detection Report - MFA Request Generation](https://redcanary.com/threat-detection-report/techniques/mfa-request-generation/)\n- [Elastic Detection Rules - Successful Azure AD MFA Fatigue Attack](https://github.com/elastic/detection-rules/issues/2440)\n- [Jeffrey Appel - How to Mitigate MFA Fatigue and Learn from the Uber Breach](https://jeffreyappel.nl/how-to-prevent-mfa-fatigue-and-learn-from-the-uber-breach-for-additional-protection/)",
+    "file_path": "Flames/H163.md"
+  },
+  {
+    "id": "H164",
+    "category": "Flames",
+    "title": "An adversary with stolen Entra ID credentials is registering an attacker-controlled device in the tenant using ROADtools `roadtx` — visible in audit logs as a `Register device` operation from `Device Registration Service`, with a `Microsoft.OData.Client` user agent, a default OS string of `Windows 10.0.19041.928`, and a hostname matching `DESKTOP-<8 digits>` — enabling Primary Refresh Token (PRT) acquisition and conditional-access bypass for \"trusted device\" policies.",
+    "tactic": "Persistence",
+    "notes": "M365 / Entra ID. Unit 42 \"Paved With Intent: ROADtools and Nation-State Tactics in the Cloud\" (May 2026, attributed to Curious Serpens / Iranian APT). Detection sources: Entra ID Audit Logs `AuditLogs` table — operations `Add device`, `Register device`, `Add registered owner to device`, `Add registered user to device` where `LoggedByService == \"Device Registration Service\"`. Sign-in Logs (`SigninLogs`) joined by `CorrelationId` — look for `UserAgent has_any (\"Microsoft.OData.Client\",\"python-requests\",\"aiohttp\",\"urllib\")` against `AppDisplayName in (\"Device Registration Service\",\"Microsoft Authentication Broker\")`. KQL (composite): `AuditLogs | where OperationName in (\"Add device\",\"Register device\") and LoggedByService == \"Device Registration Service\" | extend DeviceName = tostring(TargetResources[0].displayName), DeviceOS = tostring(parse_json(tostring(TargetResources[0].modifiedProperties))[0].newValue) | where DeviceName matches regex @\"^DESKTOP-[0-9]{8}$\" or DeviceOS has \"10.0.19041.928\" | join kind=leftouter SigninLogs on CorrelationId | where UserAgent has_any (\"Microsoft.OData.Client\",\"python-requests\",\"aiohttp\")`. AADGraphActivityLogs: hunt for `UserAgent has \"Microsoft.OData.Client\"` or `UserAgent has \"aiohttp\"` — these are ROADtools' default. Pair with subsequent token issuance (`SigninLogs` where `AuthenticationProtocol == \"deviceCode\"` or `ResourceDisplayName == \"Microsoft Graph\"`) and Graph API enumeration bursts against `/users`, `/groups`, `/devices`, `/servicePrincipals` from the new device. Cross-reference T1078.004 (Cloud Accounts — the stolen identity that enables registration), T1098.001 (Additional Cloud Credentials — service principal cred adds that often follow), and T1550.001 (Application Access Token — the PRT-based reuse).",
+    "tags": [
+      "persistence",
+      "entra_id",
+      "m365",
+      "roadtools",
+      "prt",
+      "curious_serpens",
+      "T1078.004",
+      "T1098.001",
+      "T1550.001",
+      "T1098.005"
+    ],
+    "techniques": [
+      "T1078.004",
+      "T1098.001",
+      "T1550.001",
+      "T1098.005"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- ROADtools' default registration values — OS `10.0.19041.928`, hostname `DESKTOP-<8 random digits>`, user agent `Microsoft.OData.Client` — are **trivially modifiable** by the attacker, but in the wild a striking percentage of operators leave them as defaults because their goal is fast PRT acquisition, not OPSEC. Hunters who key on the default fingerprint catch a meaningful slice of real attacks at near-zero cost\n- A successful device registration grants the attacker a **Primary Refresh Token (PRT)** — which can be used to silently acquire access tokens for Microsoft Graph, Outlook, SharePoint, and any app trusted by Entra. PRT abuse is invisible in user sign-in logs after the initial registration, so catching the **registration event** is the only reliable choke point\n- The audit-log → sign-in-log → Graph-API-burst sequence (Unit 42, May 2026 Curious Serpens; Elastic detection-rules `entra_id_device_registration_detected_roadtools`) is a tight temporal pattern — within ~5 minutes of the device add, the attacker queries Graph for users/groups/apps. Joining the three telemetry sources by `CorrelationId` or by user+time-window produces a high-fidelity composite signal\n- Many tenants have Conditional Access policies that grant elevated trust to devices in a \"compliant\" or \"Hybrid Azure AD Joined\" state. Once an attacker registers a device, follow-on policies that look at \"device-registered\" alone (without compliance/MDM enrollment) become persistence enablers — making this hunt also a forcing function to audit CA grants around device state",
+    "references": "- [MITRE ATT&CK T1098.005 - Account Manipulation: Device Registration](https://attack.mitre.org/techniques/T1098/005/)\n- [Unit 42 - Paved With Intent: ROADtools and Nation-State Tactics in the Cloud](https://unit42.paloaltonetworks.com/roadtools-cloud-attacks/)\n- [Elastic Security - Entra ID Device Registration Detected (ROADtools)](https://www.elastic.co/guide/en/security/current/entra-id-device-registration-detected-roadtools.html)\n- [Elastic Security - Entra ID Unusual Cloud Device Registration](https://www.elastic.co/guide/en/security/8.19/entra-id-unusual-cloud-device-registration.html)\n- [Detection.FYI - Entra ID Unusual Cloud Device Registration](https://detection.fyi/elastic/detection-rules/integrations/azure/persistence_entra_id_suspicious_cloud_device_registration/)\n- [Cloudbrothers - AADGraphActivityLogs: ROADtools and Legacy Graph Detection](https://cloudbrothers.info/en/aadgraphactivitylogs/)\n- [Invictus IR - AADGraphActivityLogs: How to Detect Legacy Azure AD Graph Attacks](https://www.invictus-ir.com/news/the-missing-link-aadgraphactivitylogs-finally-arrives)",
+    "file_path": "Flames/H164.md"
+  },
+  {
+    "id": "H165",
+    "category": "Flames",
+    "title": "A legitimate .NET application (e.g., `setup.exe`, `update.exe`) is being hijacked via an attacker-planted `<appname>.exe.config` file that sets `<appDomainManagerAssembly>` and `<appDomainManagerType>` to a malicious DLL — with `<etwEnable enabled=\"false\"/>` and `<bypassTrustedAppStrongNames enabled=\"true\"/>` directives that suppress ETW telemetry and disable strong-name validation before the CLR's `Main()` even runs.",
+    "tactic": "Persistence",
+    "notes": "Windows. Unit 42 \"Tracking Iranian APT Screening Serpens' 2026 Espionage Campaigns\" (May 2026) — MiniUpdate and MiniJunk V2 loaders against aerospace/defense/telecom. Detection sources: Sysmon Event ID 11 (`FileCreate`) for any `*.exe.config` written under `%APPDATA%`, `%LOCALAPPDATA%`, `%PROGRAMDATA%`, or a user-writable subdirectory of `%PROGRAMFILES%` — config files in user-writable paths are abnormal. Sysmon Event ID 7 (`ImageLoad`) for a non-Microsoft-signed DLL loading into a Microsoft-signed .NET host process within 1 second of process start (AppDomainManager runs before `Main()`). Defender XDR KQL: `DeviceFileEvents | where FileName endswith \".exe.config\" and FolderPath has_any (@\"AppData\\Local\",@\"AppData\\Roaming\",@\"ProgramData\") | join kind=inner (DeviceProcessEvents | where InitiatingProcessFileName has \".exe\" | extend ConfigPath = strcat(FolderPath,InitiatingProcessFileName,\".config\")) on $left.FolderPath == $right.FolderPath`. Content-based hunt: file content search for `<etwEnable enabled=\"false\"` or `<appDomainManagerAssembly` in any `*.exe.config` under user-writable paths — use Defender ASR file inventory or Velociraptor `Windows.Search.FileFinder` artifact. Persistence task pairing: this campaign creates Scheduled Tasks named `WindowsSecurityUpdate` or `Synchronize OS` that run the hijacked binary daily at 09:30 local — pair AppDomainManager .config write events with Event ID 4698 for tasks of those names. Cross-reference T1574.001 (DLL Sideloading — the planted DLL is loaded alongside this technique), T1053.005 (Scheduled Task persistence on the same campaign), and T1562.006 (Indicator Blocking — `etwEnable=false` is a textbook ETW evasion).",
+    "tags": [
+      "persistence",
+      "defense_evasion",
+      "appdomainmanager",
+      "screening_serpens",
+      "iran",
+      "windows",
+      "T1574.001",
+      "T1053.005",
+      "T1562.006",
+      "T1574.014"
+    ],
+    "techniques": [
+      "T1574.001",
+      "T1053.005",
+      "T1562.006",
+      "T1574.014"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- The `<etwEnable enabled=\"false\"/>` directive is unique to attacker-crafted .NET config files — Microsoft's own .NET applications **never** ship with ETW disabled in their config. A simple content search for that string across all `*.exe.config` files on a host returns near-zero false positives and is one of the highest-fidelity Windows persistence-hunt signals available (ipslav.github.io, Trellix OneClik analysis)\n- AppDomainManager hijacking executes the malicious assembly **before** `Main()` runs — earlier than DLL sideloading, earlier than process injection, earlier than any user-mode hook. Combined with `etwEnable=false`, this means EDR products that rely on ETW for .NET visibility (most of them) are blinded by the time their first callback fires. The only reliable detection is at the **file-write step**, not the execution step\n- Iranian APT (Curious Serpens / Screening Serpens) and the OneClik APT campaign (Trellix, 2024–2026) have repeatedly used this technique against aerospace, energy, and oil-and-gas targets — pairing AppDomainManager with DLL sideloading and Scheduled Task persistence at fixed daily times (09:30 local in the Unit 42 May 2026 writeup). The triad `.exe.config write + ScheduledTask write + 09:30 trigger` is the campaign fingerprint\n- The hunt scales cheaply across an entire fleet because `*.exe.config` files in user-writable paths are uncommon in benign software — most apps either ship their config alongside `Program Files` (admin-write only) or skip a config entirely. The full-fleet search returns a tractable result set even on tenants with 100k+ endpoints",
+    "references": "- [MITRE ATT&CK T1574.014 - Hijack Execution Flow: AppDomainManager](https://attack.mitre.org/techniques/T1574/014/)\n- [Unit 42 - Tracking Iranian APT Screening Serpens' 2026 Espionage Campaigns](https://unit42.paloaltonetworks.com/tracking-iran-apt-screening-serpens/)\n- [Trellix Research - OneClik: A ClickOnce-Based APT Campaign Targeting Energy, Oil and Gas Infrastructure](https://www.trellix.com/blogs/research/oneclik-a-clickonce-based-red-team-campaign-simulating-apt-tactics-in-energy-infrastructure/)\n- [ipslav - Let Me Manage Your AppDomain (AppDomainManager Injection Deep-Dive)](https://ipslav.github.io/2023-12-12-let-me-manage-your-appdomain/)\n- [MITRE ATT&CK Detection Strategy DET0517 - AppDomainManager Hijack Execution Flow](https://attack.mitre.org/detectionstrategies/DET0517/)\n- [CISA - Eviction Strategies Tool: T1574.014](https://www.cisa.gov/eviction-strategies-tool/info-attack/T1574.014)\n- [MITRE ATT&CK T1574.001 - Hijack Execution Flow: DLL](https://attack.mitre.org/techniques/T1574/001/)",
+    "file_path": "Flames/H165.md"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
