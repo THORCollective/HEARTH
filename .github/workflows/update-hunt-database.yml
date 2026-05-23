@@ -31,6 +31,9 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
       - name: Update hunt database
         run: |
           python scripts/build_hunt_database.py

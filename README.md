@@ -101,6 +101,7 @@ Already have a hypothesis? Submit it directly.
 ### Hunt Storage
 - **Markdown files** in `Flames/`, `Embers/`, and `Alchemy/` are the **source of truth**
 - Human-readable, version-controlled, and easy to contribute via standard Git workflows
+- **Hunt schema:** Every hunt file uses YAML frontmatter — see [docs/HUNT-SCHEMA.md](docs/HUNT-SCHEMA.md).
 
 ### Database Index
 - **SQLite database** (`database/hunts.db`) provides fast querying for duplicate detection

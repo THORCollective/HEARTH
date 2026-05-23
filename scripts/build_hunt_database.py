@@ -19,6 +19,12 @@ from datetime import datetime
 import sys
 import hashlib
 
+_REPO_ROOT = str(Path(__file__).resolve().parent.parent)
+if _REPO_ROOT not in sys.path:
+    sys.path.insert(0, _REPO_ROOT)
+
+from scripts.migrate_to_frontmatter import SKIP_FILENAMES
+
 
 def get_file_hash(filepath):
     """Calculate MD5 hash of file content to detect changes."""
@@ -26,99 +32,20 @@ def get_file_hash(filepath):
         return hashlib.md5(f.read()).hexdigest()
 
 
-def extract_hunt_info(content, filepath):
-    """
-    Extracts key information from a hunt markdown file.
+def extract_hunt_info(filepath):
+    """Adapter that delegates to scripts.hunt_parser for unified parsing."""
+    from scripts.hunt_parser import parse_hunt_file
 
-    Returns dict with:
-        - hunt_id: e.g., "H-2025-001"
-        - hypothesis: First non-header, non-table line
-        - tactic: Extracted from the hunt table
-        - tags: List of hashtags
-        - technique: MITRE technique ID if present
-    """
-    lines = content.splitlines()
-
-    # Extract hunt ID from title (first line starting with #)
-    hunt_id = ""
-    for line in lines:
-        if line.startswith('# '):
-            hunt_id = line.replace('# ', '').strip()
-            break
-
-    # Extract hypothesis (first substantial line that's not a header or table)
-    hypothesis = ""
-    for line in lines:
-        stripped = line.strip()
-        if stripped and not stripped.startswith('#') and not stripped.startswith('|') and len(stripped) > 20:
-            hypothesis = stripped
-            break
-
-    # Extract tactic from the hunt table
-    tactic = ""
-    technique = ""
-    in_table = False
-
-    for i, line in enumerate(lines):
-        if '|' in line and ('Hunt #' in line or 'Idea' in line):
-            in_table = True
-            continue
-
-        if in_table and '|' in line:
-            # Skip the separator line (|---|---|)
-            if '---' in line:
-                continue
-
-            # Parse the data row
-            cells = [c.strip() for c in line.split('|') if c.strip()]
-            if len(cells) >= 3:
-                # Typically: Hunt #, Hypothesis, Tactic, Notes, Tags, Submitter
-                potential_tactic = cells[2] if len(cells) > 2 else ""
-                if potential_tactic and potential_tactic.lower() not in ['tactic', '']:
-                    tactic = potential_tactic
-
-                # Extract technique from notes or tags
-                notes = cells[3] if len(cells) > 3 else ""
-                tags_cell = cells[4] if len(cells) > 4 else ""
-
-                # Look for T#### pattern
-                technique_match = re.search(r'T\d{4}(?:\.\d{3})?', notes + ' ' + tags_cell)
-                if technique_match:
-                    technique = technique_match.group(0)
-
-                break
-
-    # Extract all hashtags
-    tags = []
-    for line in lines:
-        tag_matches = re.findall(r'#[\w-]+', line)
-        tags.extend(tag_matches)
-    tags = list(set(tags))  # Remove duplicates
-
-    # Extract submitter from table
-    submitter = ""
-    for i, line in enumerate(lines):
-        if '|' in line and 'Submitter' in line:
-            # Next non-separator row should have submitter
-            for j in range(i +1, min(i +3, len(lines))):
-                if '|' in lines[j] and '---' not in lines[j]:
-                    cells = [c.strip() for c in lines[j].split('|') if c.strip()]
-                    if len(cells) >= 6:
-                        submitter = cells[5]
-                        # Extract name from markdown link [name](url)
-                        link_match = re.search(r'\[(.*?)\]', submitter)
-                        if link_match:
-                            submitter = link_match.group(1)
-                    break
-            break
-
+    path = Path(filepath)
+    category = path.parent.name
+    parsed = parse_hunt_file(path, category)
     return {
-        'hunt_id': hunt_id,
-        'hypothesis': hypothesis,
-        'tactic': tactic,
-        'technique': technique,
-        'tags': tags,
-        'submitter': submitter
+        "hunt_id": parsed["id"],
+        "hypothesis": parsed["hypothesis"],
+        "tactic": ", ".join(parsed.get("tactics", [])),
+        "technique": parsed["techniques"][0] if parsed.get("techniques") else "",
+        "tags": [f"#{t}" for t in parsed.get("tags", [])],
+        "submitter": parsed["submitter"]["name"],
     }
 
 
@@ -215,6 +142,8 @@ def scan_and_update_hunts(conn, hunt_directories, verbose=True):
             print(f"📁 Scanning {directory_name}/ ({len(hunt_files)} files)...")
 
         for hunt_file in hunt_files:
+            if hunt_file.name in SKIP_FILENAMES:
+                continue
             try:
                 # Calculate current file hash
                 current_hash = get_file_hash(hunt_file)
@@ -237,8 +166,7 @@ def scan_and_update_hunts(conn, hunt_directories, verbose=True):
                     if verbose:
                         print(f"  🔄 Updating {hunt_file.name}...")
 
-                    content = hunt_file.read_text()
-                    hunt_info = extract_hunt_info(content, str(hunt_file))
+                    hunt_info = extract_hunt_info(str(hunt_file))
 
                     created_date, last_modified = get_git_dates(hunt_file)
 
@@ -267,8 +195,7 @@ def scan_and_update_hunts(conn, hunt_directories, verbose=True):
                     if verbose:
                         print(f"  ✅ Adding {hunt_file.name}...")
 
-                    content = hunt_file.read_text()
-                    hunt_info = extract_hunt_info(content, str(hunt_file))
+                    hunt_info = extract_hunt_info(str(hunt_file))
 
                     created_date, last_modified = get_git_dates(hunt_file)
 

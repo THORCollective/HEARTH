@@ -10,9 +10,16 @@ const HUNTS_DATA = [
       "baseline",
       "networktraffic",
       "anomalydetection",
-      "T1071_001",
+      "T1071.001",
       "T1041"
     ],
+    "techniques": [
+      "T1071.001",
+      "T1041"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://x.com/letswastetime"
@@ -33,6 +40,12 @@ const HUNTS_DATA = [
       "anomalydetection",
       "T1219"
     ],
+    "techniques": [
+      "T1219"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "John Grageda",
       "link": "https://www.linkedin.com/in/johngrageda/"
@@ -51,8 +64,14 @@ const HUNTS_DATA = [
       "baseline",
       "persistence",
       "anomalydetection",
-      "T1547_001"
+      "T1547.001"
     ],
+    "techniques": [
+      "T1547.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "John Grageda",
       "link": "https://www.linkedin.com/in/johngrageda/"
@@ -74,6 +93,12 @@ const HUNTS_DATA = [
       "sus",
       "T1136"
     ],
+    "techniques": [
+      "T1136"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jamie Williams",
       "link": "https://x.com/jamieantisocial"
@@ -89,12 +114,18 @@ const HUNTS_DATA = [
     "tactic": "Execution, Defense Evasion",
     "notes": "The scope of this hunt could become too wide without defining an area of focus. For one hunt, it might be best to pursue one category of visibility such as command,k process, or module monitoring.",
     "tags": [
-      "Execution",
-      "DefenseEvasion",
-      "LOLBIN",
-      "Rundll32",
-      "T1218_011"
+      "execution",
+      "defenseevasion",
+      "lolbin",
+      "rundll32",
+      "T1218.011"
     ],
+    "techniques": [
+      "T1218.011"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Claire Stromboe",
       "link": "https://x.com/csthreathunting"
@@ -110,12 +141,19 @@ const HUNTS_DATA = [
     "tactic": "Collection, Exfiltration",
     "notes": "The scope of this hunt could become too wide without defining what is considered known good browser extensions. Consider focusing your first baseline on a subsection of the business, specific browser, or by excluding allowed extensions.",
     "tags": [
-      "Collection",
-      "Exfiltration",
-      "BrowserExtensions",
+      "collection",
+      "exfiltration",
+      "browserextensions",
       "T1176",
       "T1005"
     ],
+    "techniques": [
+      "T1176",
+      "T1005"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -131,13 +169,20 @@ const HUNTS_DATA = [
     "tactic": "Collection, Exfiltration",
     "notes": "Email forwarding rules may be disabled in your organization, it may be beneficial to see what rules were setup regardless of success to identify potential malicious activity.",
     "tags": [
-      "Collection",
-      "Exfiltration",
-      "Email",
-      "MailForwarding",
-      "T1114_003",
+      "collection",
+      "exfiltration",
+      "email",
+      "mailforwarding",
+      "T1114.003",
       "T1020"
     ],
+    "techniques": [
+      "T1114.003",
+      "T1020"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -158,6 +203,12 @@ const HUNTS_DATA = [
       "anomalydetection",
       "T1098"
     ],
+    "techniques": [
+      "T1098"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jon Perez",
       "link": "https://bsky.app/profile/j-nohandle.bsky.social"
@@ -173,14 +224,22 @@ const HUNTS_DATA = [
     "tactic": "Defense Evasion (TA0005), Trusted Developer Utilities Proxy Execution (T1127), Masquerading (T1036), Exploitation for Defense Evasion (T1211)",
     "notes": "Awareness should be raised about the flagging of Firefox Nightly.app by EDRs and the necessity for validating all dependencies associated with testing frameworks.",
     "tags": [
-      "DefenseEvasion",
-      "Masquerading",
-      "TrustedDeveloperUtilities",
-      "ProxyExecution",
+      "defenseevasion",
+      "masquerading",
+      "trusteddeveloperutilities",
+      "proxyexecution",
       "T1036",
       "T1127",
       "T1211"
     ],
+    "techniques": [
+      "T1036",
+      "T1127",
+      "T1211"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Joshua Hines",
       "link": ""
@@ -196,10 +255,17 @@ const HUNTS_DATA = [
     "tactic": "Lateral Movement",
     "notes": "Explore typical peering requests, initiators, unusual IPs, and connection events.",
     "tags": [
-      "LateralMovement",
+      "lateralmovement",
       "T1599",
       "T1021"
     ],
+    "techniques": [
+      "T1599",
+      "T1021"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Bruce Breuer",
       "link": ""
@@ -215,10 +281,16 @@ const HUNTS_DATA = [
     "tactic": "Initial Access",
     "notes": "Indicators of Xcode usage can be found in EDR telemetry and potential for detection if Xcode is not utilized/approved in the environment.",
     "tags": [
-      "InitialAccess",
-      "Baseline",
-      "T1195_001"
+      "initialaccess",
+      "baseline",
+      "T1195.001"
     ],
+    "techniques": [
+      "T1195.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Collin McClaine",
       "link": ""
@@ -235,13 +307,19 @@ const HUNTS_DATA = [
     "notes": "AI agent deployments are accelerating but no lifecycle management standard exists for their identities. Orphaned agent accounts with API keys, OAuth tokens, and service principals persist long after the agent is decommissioned — retaining permissions with no owner and no monitoring.",
     "tags": [
       "persistence",
-      "T1078_004",
       "non_human_identity",
       "service_account",
       "ai_agent",
       "orphan_account",
-      "lifecycle"
+      "lifecycle",
+      "T1078.004"
     ],
+    "techniques": [
+      "T1078.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -259,11 +337,17 @@ const HUNTS_DATA = [
     "tags": [
       "baseline",
       "credential_access",
-      "T1003_001",
       "lsass",
       "sysmon",
-      "process_access"
+      "process_access",
+      "T1003.001"
     ],
+    "techniques": [
+      "T1003.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -281,11 +365,17 @@ const HUNTS_DATA = [
     "tags": [
       "baseline",
       "defense_evasion",
-      "T1218_007",
       "msiexec",
       "msi",
-      "software_installation"
+      "software_installation",
+      "T1218.007"
     ],
+    "techniques": [
+      "T1218.007"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -303,13 +393,19 @@ const HUNTS_DATA = [
     "tags": [
       "baseline",
       "credential_access",
-      "T1003_003",
       "ntdsutil",
       "wbadmin",
       "vssadmin",
       "domain_controller",
-      "active_directory"
+      "active_directory",
+      "T1003.003"
     ],
+    "techniques": [
+      "T1003.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -331,6 +427,10 @@ const HUNTS_DATA = [
       "qemu",
       "evasion"
     ],
+    "techniques": [],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -351,6 +451,12 @@ const HUNTS_DATA = [
       "vpn",
       "T1110"
     ],
+    "techniques": [
+      "T1110"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://x.com/letswastetime"
@@ -372,6 +478,12 @@ const HUNTS_DATA = [
       "lolbin",
       "T1219"
     ],
+    "techniques": [
+      "T1219"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://x.com/letswastetime"
@@ -389,8 +501,15 @@ const HUNTS_DATA = [
     "tags": [
       "exfiltration",
       "T1030",
-      "T1560_001"
+      "T1560.001"
     ],
+    "techniques": [
+      "T1030",
+      "T1560.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -411,6 +530,12 @@ const HUNTS_DATA = [
       "windows",
       "T1197"
     ],
+    "techniques": [
+      "T1197"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "John Grageda",
       "link": "https://www.linkedin.com/in/johngrageda/"
@@ -429,8 +554,14 @@ const HUNTS_DATA = [
       "persistence",
       "lolbas",
       "linux",
-      "T1546_004"
+      "T1546.004"
     ],
+    "techniques": [
+      "T1546.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "John Grageda",
       "link": "https://www.linkedin.com/in/johngrageda/"
@@ -450,6 +581,12 @@ const HUNTS_DATA = [
       "sus",
       "T1021"
     ],
+    "techniques": [
+      "T1021"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jamie Williams",
       "link": "https://x.com/jamieantisocial"
@@ -469,6 +606,12 @@ const HUNTS_DATA = [
       "sus",
       "T1059"
     ],
+    "techniques": [
+      "T1059"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jamie Williams",
       "link": "https://x.com/jamieantisocial"
@@ -484,10 +627,16 @@ const HUNTS_DATA = [
     "tactic": "Persistence",
     "notes": "Domain Accounts can cover user, administrator, and service accounts.",
     "tags": [
-      "Persistence",
-      "ActiveDirectory",
-      "T1136_002"
+      "persistence",
+      "activedirectory",
+      "T1136.002"
     ],
+    "techniques": [
+      "T1136.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Audra Streetman",
       "link": "https://x.com/audrastreetman"
@@ -503,10 +652,16 @@ const HUNTS_DATA = [
     "tactic": "Defense Evasion",
     "notes": "Data requirements: Windows Sysmon, EDR telemetry, Proxy logs",
     "tags": [
-      "DefenseEvasion",
-      "SystemBinaryProxyExecutionMshta",
-      "T1218_005"
+      "defenseevasion",
+      "systembinaryproxyexecutionmshta",
+      "T1218.005"
     ],
+    "techniques": [
+      "T1218.005"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Azrara",
       "link": "https://www.linkedin.com/in/azrara/"
@@ -523,8 +678,15 @@ const HUNTS_DATA = [
     "notes": "<ul><li>Data requirements: EDR telemetry, Windows event logs id 5140</li></br><li>Implementation examples in SIGMA:</li></br>Title: Suspicious Network Share Enumeration and Access</br>Id:xxxxx</br>Status: test</br>Description: Detects commands used for network share enumeration and correlates with Event ID 5140 for access to shared resources.</br>Author: Your Name</br>Date:2024/11/14</br>Tags:</br><ul><li>attack.discovery</br><li>attack.t1135</li></ul></br>logsource:</br>category: process_creation</br>product:windows</br>detection:</br>selection_cmd:</br>Image&#124;endswith:</br><ul><li>'\\cmd.exe'</br><li>'\\powershell.exe'</br>ComandLine&#124;contains&#124;all:</br><li>'net view'</br><li>'&bsol;'</br>selection_event:</br>EventID: 5140</br>condition: selection_cmd or selection_event</br>falsepositives:</br><li>Legitimate administrative tasks</br><li>Regular file-sharing activities</br>level: medium #T1039",
     "tags": [
       "collection",
-      "DatafromNetworkSharedDrive"
+      "datafromnetworkshareddrive",
+      "T1039"
     ],
+    "techniques": [
+      "T1039"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Azrara",
       "link": "https://www.linkedin.com/in/azrara/"
@@ -540,12 +702,18 @@ const HUNTS_DATA = [
     "tactic": "Persistence, Privilege Escalation, Defense Evasion",
     "notes": "Limitations: There are no such limitations other than non-availability of required logs. Sometimes, we tend to not collect \"Module Load\" events due to their huge volume. In such case we would not be able to perform this hunt. Also, for correlation of data we need advance query language such as SQL, KQL or better enough if we can use Pandas.</br></br>Assumption: Assuming that threat actor is using standard user rights and is using a DLL that has unverifiable digital signature (DLL is signed but certificates are not verified).</br></br>Data sets required: EDR logs - \"File Creation\" and \"Module Load\" events.</br></br>Query creation steps:</br></br>1. Select .dll File Creation Events: From the \"File Creation\" logs, select all .dll file creation events. Ensure that the folder path of the newly created .dll file is not among the following: c:\\windows\\system32, c:\\windows\\syswow64, and c:\\windows\\sxs. Additionally, the verification status of the .dll file should be \"Not Verified\".</br></br>2. Select .exe File Creation Events: Next, from the \"File Creation\" logs, select all .exe file creation events. The condition for selection is that the folder path of the .exe file matches the folder path of the .dll files identified in the previous step. Furthermore, the absolute time difference between the .dll file creation event and the .exe file creation event should be less than one minute.</br></br>3. Select DLL Load Events: Finally, from the \"Module Load\" logs, select all DLL load events where the file name and path of the loaded DLL and the file name and path of the EXE loading that DLL match the names and paths of the .dll and .exe files identified in the previous steps. Additionally, the time of the module load event should be greater than the time of the DLL creation event.",
     "tags": [
-      "Persistence",
-      "Privilege",
-      "Defense",
-      "DLLSideloading",
-      "T1574_002"
+      "persistence",
+      "privilege_escalation",
+      "defense_evasion",
+      "dllsideloading",
+      "T1574.002"
     ],
+    "techniques": [
+      "T1574.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "hu983r",
       "link": "https://github.com/Communicateme"
@@ -561,12 +729,19 @@ const HUNTS_DATA = [
     "tactic": "Exfiltration",
     "notes": "Attackers are interested in finding unmonitored communication channels to evade detection.",
     "tags": [
-      "DNS",
-      "Tunneling",
-      "Exfiltration",
+      "dns",
+      "tunneling",
+      "exfiltration",
       "T1048",
-      "T1071_004"
+      "T1071.004"
     ],
+    "techniques": [
+      "T1048",
+      "T1071.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Cody Lunday",
       "link": "https://www.linkedin.com/in/codylunday/"
@@ -582,13 +757,18 @@ const HUNTS_DATA = [
     "tactic": "Execution",
     "notes": "Below are key implementation notes to guide this process: <br></br>1. Sysmon Configuration<br></br>Event ID 1 (Process Creation): Configure Sysmon to capture detailed information about process creations, focusing on powershell.exe executions. Ensure that command-line arguments are logged to detect potentially malicious scripts or commands.<br></br>Event ID 4104 (PowerShell Script Block Logging): While Sysmon does not natively capture PowerShell script block logging, enabling this feature in PowerShell settings can provide visibility into the content of executed scripts. This requires configuring PowerShell to log detailed script blocks to the Windows Event Log.<br></br>2. Detection Logic and Filtering<br></br>Baseline Normal Activity: Establish a baseline of normal PowerShell usage within the environment to differentiate between legitimate administrative activities and potential malicious behavior.<br></br>Anomaly Detection: Develop detection rules to identify anomalies, such as unusual command-line arguments, execution times, or user contexts that deviate from the established baseline.<br></br>Filtering Noise: Apply filters to exclude known legitimate PowerShell activities to reduce false positives and focus on suspicious events.<br></br>Limitations and Assumptions<br></br>Encrypted or Obfuscated Scripts: Attackers may use obfuscation or encryption to evade detection. Regularly update detection mechanisms to recognize and alert on such techniques.",
     "tags": [
-      "Powershell",
-      "Sysmon",
-      "Execution",
-      "TA0002",
-      "T1059.001",
-      "T1059_001"
+      "powershell",
+      "sysmon",
+      "execution",
+      "ta0002",
+      "T1059.001"
     ],
+    "techniques": [
+      "T1059.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Siddhant Mishra",
       "link": "https://www.linkedin.com/in/siddhant-mishra-b190b630/"
@@ -604,14 +784,21 @@ const HUNTS_DATA = [
     "tactic": "Command and Control",
     "notes": "<ul> <li>Named Pipes as C2 Channels: Named pipes are inter-process communication mechanisms in Windows environments. Adversaries exploit them to create covert C2 channels, enabling stealthy communication between compromised systems.</li><br><li>Detection Strategy: Monitor Sysmon Event ID 17 (Pipe Creation) for the creation of suspicious named pipes. Correlate these events with process creation logs (Event ID 1) to identify unusual parent-child process relationships, which may indicate malicious activity.</li><br><li>Reference List: Utilize a curated list of named pipes commonly associated with adversary techniques to aid in identifying potential threats.</li></br>",
     "tags": [
-      "CobaltStrike",
-      "NamedPipes",
-      "CommandAndControl",
-      "Sysmon",
-      "ThreatHunting",
+      "cobaltstrike",
+      "namedpipes",
+      "commandandcontrol",
+      "sysmon",
+      "threathunting",
       "T1559",
       "T1090"
     ],
+    "techniques": [
+      "T1559",
+      "T1090"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Siddhant Mishra",
       "link": "https://github.com/Blackbird2Raven"
@@ -627,13 +814,20 @@ const HUNTS_DATA = [
     "tactic": "Defense Evasion",
     "notes": "<ul> <li><strong>Assumptions:</strong></li><ul><li>If done with local admin right, the attack creates new registry values in the registry key HKLM\\System\\CurrentControlSet\\Services\\Dnscache\\Parameters\\DnsPolicyConfig{UUID</li><li>Value of registry key listed upper contains a domain related to a cybersecurity tool, such as .endpoint.security.microsoft.com</li><li>Add-DnsClientNrptRule Powershell function can be used to reach such purpose</ul></li><li><strong>Data Requirements:</strong><ul><li>Works only on Windows 7 and later operating systems</li><li>Requires to log registry key changes and/or any way to log command execution</ul></li><li><strong>Notes on Limitation:</strong><ul><li>Defenders must have multiple ways to log registry key changes and/or command execution to detect the attack once it was executed by attacker, as it aims to silence cybersecurity tool(s)</ul></li></ul>",
     "tags": [
-      "Registry",
-      "EDR",
-      "DNS",
-      "DefenseEvasion",
-      "T1562_001",
+      "registry",
+      "edr",
+      "dns",
+      "defenseevasion",
+      "T1562.001",
       "T1112"
     ],
+    "techniques": [
+      "T1562.001",
+      "T1112"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "wikijm",
       "link": "https://github.com/wikijm"
@@ -649,10 +843,16 @@ const HUNTS_DATA = [
     "tactic": "Initial Access",
     "notes": "Based on ATT&CK technique T1078, using compromised credentials.",
     "tags": [
-      "InitialAccess",
-      "T1078",
-      "SonicWall"
+      "initialaccess",
+      "sonicwall",
+      "T1078"
     ],
+    "techniques": [
+      "T1078"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "HEARTH Bot",
       "link": "https://github.com/THORCollective/HEARTH"
@@ -673,6 +873,12 @@ const HUNTS_DATA = [
       "apache",
       "T1068"
     ],
+    "techniques": [
+      "T1068"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "HEARTH Bot",
       "link": "https://github.com/THORCollective/HEARTH"
@@ -693,6 +899,12 @@ const HUNTS_DATA = [
       "cloud",
       "T1098"
     ],
+    "techniques": [
+      "T1098"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "HEARTH Bot",
       "link": "https://github.com/THORCollective/HEARTH"
@@ -711,9 +923,15 @@ const HUNTS_DATA = [
       "persistence",
       "initialaccess",
       "userexecution",
-      "ELF",
+      "elf",
       "T1204"
     ],
+    "techniques": [
+      "T1204"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "HEARTH Bot",
       "link": "https://github.com/THORCollective/HEARTH"
@@ -729,10 +947,16 @@ const HUNTS_DATA = [
     "tactic": "Execution",
     "notes": "Based on ATT&CK technique T1047, using WMI for execution of PowerShell commands.",
     "tags": [
-      "Execution",
-      "T1047",
-      "WMI"
+      "execution",
+      "wmi",
+      "T1047"
     ],
+    "techniques": [
+      "T1047"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "HEARTH Bot",
       "link": "https://github.com/THORCollective/HEARTH"
@@ -749,9 +973,15 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1562.001, using the undocumented Windows Security Center (WSC) APIs",
     "tags": [
       "defenseevasion",
-      "T1562_001",
-      "WSC"
+      "wsc",
+      "T1562.001"
     ],
+    "techniques": [
+      "T1562.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "HEARTH Bot",
       "link": "https://github.com/THORCollective/HEARTH"
@@ -768,9 +998,15 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1110. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "credentialaccess",
-      "T1110",
-      "socialengineering"
+      "socialengineering",
+      "T1110"
     ],
+    "techniques": [
+      "T1110"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -786,10 +1022,16 @@ const HUNTS_DATA = [
     "tactic": "Defense Evasion",
     "notes": "Based on ATT&CK technique T1564. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
-      "DefenseEvasion",
-      "T1564",
-      "AttribCommand"
+      "defenseevasion",
+      "attribcommand",
+      "T1564"
     ],
+    "techniques": [
+      "T1564"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -808,9 +1050,16 @@ const HUNTS_DATA = [
       "initialaccess",
       "phishing",
       "spearphishinglink",
-      "T1566_001",
-      "T1204_002"
+      "T1566.001",
+      "T1204.002"
     ],
+    "techniques": [
+      "T1566.001",
+      "T1204.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -830,9 +1079,16 @@ const HUNTS_DATA = [
       "execution",
       "userexecution",
       "commandandscriptinginterpreter",
-      "T1204_002",
-      "T1059_006"
+      "T1204.002",
+      "T1059.006"
     ],
+    "techniques": [
+      "T1204.002",
+      "T1059.006"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -849,9 +1105,15 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1070.004. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defenseevasion",
-      "T1070_004",
-      "cipher.exe"
+      "cipher_exe",
+      "T1070.004"
     ],
+    "techniques": [
+      "T1070.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -868,10 +1130,16 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1566.002. BlueNoroff campaign targeting Web3 organizations using deepfake meetings and fake Zoom extensions.",
     "tags": [
       "initialaccess",
-      "T1566_002",
       "applescript",
-      "bluenoroff"
+      "bluenoroff",
+      "T1566.002"
     ],
+    "techniques": [
+      "T1566.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -888,10 +1156,16 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1497.003. Using display state awareness to time malicious activities when users are away from their systems.",
     "tags": [
       "defenseevasion",
-      "T1497_003",
       "evasion",
-      "macos"
+      "macos",
+      "T1497.003"
     ],
+    "techniques": [
+      "T1497.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -908,10 +1182,16 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1055. Using debugger entitlements for process injection with task_for_pid and mach_vm APIs on macOS.",
     "tags": [
       "defenseevasion",
-      "T1055",
       "processinjection",
-      "macos"
+      "macos",
+      "T1055"
     ],
+    "techniques": [
+      "T1055"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -928,10 +1208,16 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1543.004. Creating LaunchDaemon persistence using legitimate service names with suspicious execution paths.",
     "tags": [
       "persistence",
-      "T1543_004",
       "launchdaemon",
-      "macos"
+      "macos",
+      "T1543.004"
     ],
+    "techniques": [
+      "T1543.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -948,10 +1234,16 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1005. Automated collection of cryptocurrency wallet data from browser extensions including MetaMask, Phantom, Keplr, and others.",
     "tags": [
       "collection",
-      "T1005",
       "cryptocurrency",
-      "bluenoroff"
+      "bluenoroff",
+      "T1005"
     ],
+    "techniques": [
+      "T1005"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -971,8 +1263,14 @@ const HUNTS_DATA = [
       "command_and_scripting_interpreter",
       "applescript",
       "malware",
-      "T1059_002"
+      "T1059.002"
     ],
+    "techniques": [
+      "T1059.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -992,8 +1290,14 @@ const HUNTS_DATA = [
       "command_and_scripting_interpreter",
       "powershell",
       "ransomware",
-      "T1059_001"
+      "T1059.001"
     ],
+    "techniques": [
+      "T1059.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1013,8 +1317,14 @@ const HUNTS_DATA = [
       "lateral_movement",
       "ide_plugin",
       "event_triggered_execution",
-      "T1546_016"
+      "T1546.016"
     ],
+    "techniques": [
+      "T1546.016"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1033,9 +1343,18 @@ const HUNTS_DATA = [
       "initial_access",
       "hardware_additions",
       "air_gap",
+      "T0847",
       "T1091",
       "T1200"
     ],
+    "techniques": [
+      "T0847",
+      "T1091",
+      "T1200"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1054,8 +1373,14 @@ const HUNTS_DATA = [
       "defense_evasion",
       "proxy",
       "chisel",
-      "T1090_001"
+      "T1090.001"
     ],
+    "techniques": [
+      "T1090.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1077,6 +1402,12 @@ const HUNTS_DATA = [
       "malvertising",
       "T1027"
     ],
+    "techniques": [
+      "T1027"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1097,6 +1428,12 @@ const HUNTS_DATA = [
       "powershell",
       "T1560"
     ],
+    "techniques": [
+      "T1560"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1115,8 +1452,14 @@ const HUNTS_DATA = [
       "reconnaissance",
       "active_scanning",
       "network_service_scanning",
-      "T1595_001"
+      "T1595.001"
     ],
+    "techniques": [
+      "T1595.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1135,8 +1478,14 @@ const HUNTS_DATA = [
       "initial_access",
       "password_spraying",
       "rdp",
-      "T1110_003"
+      "T1110.003"
     ],
+    "techniques": [
+      "T1110.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1157,6 +1506,12 @@ const HUNTS_DATA = [
       "juniper",
       "T1055"
     ],
+    "techniques": [
+      "T1055"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jocko",
       "link": ""
@@ -1177,6 +1532,12 @@ const HUNTS_DATA = [
       "earth_estries",
       "T1140"
     ],
+    "techniques": [
+      "T1140"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jocko",
       "link": ""
@@ -1197,6 +1558,12 @@ const HUNTS_DATA = [
       "persistence",
       "T1112"
     ],
+    "techniques": [
+      "T1112"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jocko",
       "link": ""
@@ -1215,8 +1582,14 @@ const HUNTS_DATA = [
       "execution",
       "powershell",
       "rat",
-      "T1059_001"
+      "T1059.001"
     ],
+    "techniques": [
+      "T1059.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1235,8 +1608,14 @@ const HUNTS_DATA = [
       "execution",
       "mshta",
       "living_off_the_land",
-      "T1218_005"
+      "T1218.005"
     ],
+    "techniques": [
+      "T1218.005"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1252,13 +1631,19 @@ const HUNTS_DATA = [
     "tactic": "Command and Control",
     "notes": "Look for processes with \"ssh -R\" and use JA4SSH for TLS/JA4+ fingerprinting.",
     "tags": [
-      "CommandAndControl",
+      "commandandcontrol",
       "networktraffic",
       "ssh",
       "linux",
       "windows",
       "T1572"
     ],
+    "techniques": [
+      "T1572"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "DarkWizardCatcher",
       "link": ""
@@ -1279,6 +1664,12 @@ const HUNTS_DATA = [
       "powershell",
       "T1105"
     ],
+    "techniques": [
+      "T1105"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1294,14 +1685,22 @@ const HUNTS_DATA = [
     "tactic": "Defense Evasion (TA0005), Execution (TA0002), Masquerading (T1036), Signed Binary Proxy Execution (T1218), Ingress Tool Transfer (T1105)",
     "notes": "The legitimacy of the Cisco vpndownloader can be verified by identifying the running process and capturing command-line information.",
     "tags": [
-      "DefenseEvasion",
-      "Execution",
-      "Masquerading",
-      "ProxyExecution",
+      "defenseevasion",
+      "execution",
+      "masquerading",
+      "proxyexecution",
       "T1036",
       "T1218",
       "T1105"
     ],
+    "techniques": [
+      "T1036",
+      "T1218",
+      "T1105"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Joshua Hines",
       "link": ""
@@ -1317,12 +1716,19 @@ const HUNTS_DATA = [
     "tactic": "Defense Evasion, Collection, Initial Access",
     "notes": "Apply a multi-faceted approach to detect malicious mailbox rules.",
     "tags": [
-      "DefenseEvasion",
-      "Phishing",
-      "Collection",
-      "T1564_008",
+      "defenseevasion",
+      "phishing",
+      "collection",
+      "T1564.008",
       "T1114"
     ],
+    "techniques": [
+      "T1564.008",
+      "T1114"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Bruce Breuer",
       "link": ""
@@ -1338,12 +1744,18 @@ const HUNTS_DATA = [
     "tactic": "Credential Access",
     "notes": "DC sync attacks leave behind a variety of indicators.",
     "tags": [
-      "CredentialAccess",
-      "ActiveDirectory",
-      "Identity",
-      "Secretsdump",
-      "T1003_006"
+      "credentialaccess",
+      "activedirectory",
+      "identity",
+      "secretsdump",
+      "T1003.006"
     ],
+    "techniques": [
+      "T1003.006"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Bruce Breuer",
       "link": ""
@@ -1360,11 +1772,17 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1219. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "commandandcontrol",
-      "T1219",
       "hvnc",
       "remoteaccess",
-      "glassworm"
+      "glassworm",
+      "T1219"
     ],
+    "techniques": [
+      "T1219"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Apramey \"Apps\" S",
       "link": ""
@@ -1381,11 +1799,17 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1219. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "command_and_control",
-      "T1219",
       "backconnect",
       "vnc",
-      "dllhost"
+      "dllhost",
+      "T1219"
     ],
+    "techniques": [
+      "T1219"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1403,8 +1827,15 @@ const HUNTS_DATA = [
     "tags": [
       "discovery",
       "networkscan",
-      "AI_powered"
+      "ai_powered",
+      "T1046"
     ],
+    "techniques": [
+      "T1046"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1421,11 +1852,17 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1553.001. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defense_evasion",
-      "T1553_001",
       "macos",
       "gatekeeper",
-      "applescript"
+      "applescript",
+      "T1553.001"
     ],
+    "techniques": [
+      "T1553.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -1442,11 +1879,17 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1082. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "discovery",
-      "T1082",
       "gootloader",
       "powershell",
-      "systeminfo"
+      "systeminfo",
+      "T1082"
     ],
+    "techniques": [
+      "T1082"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Anonymous",
       "link": ""
@@ -1463,10 +1906,16 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1550.001. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defense_evasion",
-      "T1550.001",
       "oauth",
-      "session_hijacking"
+      "session_hijacking",
+      "T1550.001"
     ],
+    "techniques": [
+      "T1550.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Azrara",
       "link": "https://www.linkedin.com/in/azrara/"
@@ -1483,10 +1932,16 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1135. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "discovery",
-      "T1135",
       "financial",
-      "powershell"
+      "powershell",
+      "T1135"
     ],
+    "techniques": [
+      "T1135"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Shaimon Weslley",
       "link": "https://www.linkedin.com/in/weslley-s-1540b356/"
@@ -1503,11 +1958,17 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1068. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "privilege_escalation",
-      "T1068",
-      "BYOVD",
-      "EDR_killer",
-      "ransomware"
+      "byovd",
+      "edr_killer",
+      "ransomware",
+      "T1068"
     ],
+    "techniques": [
+      "T1068"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Duc Viet Hoang",
       "link": "https://linkedin.com/in/hvdtsof/"
@@ -1523,12 +1984,18 @@ const HUNTS_DATA = [
     "tactic": "Exfiltration",
     "notes": "Identify and block unauthorized AI chatbot platforms used for data exfiltration.",
     "tags": [
-      "Exfiltration",
-      "Insider",
-      "T1567",
-      "IF001.006",
-      "IF018.002"
+      "exfiltration",
+      "insider",
+      "if001_006",
+      "if018_002",
+      "T1567"
     ],
+    "techniques": [
+      "T1567"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "samuel-lucas6",
       "link": ""
@@ -1546,10 +2013,16 @@ const HUNTS_DATA = [
     "tags": [
       "netsh",
       "powershell",
-      "TA0005",
-      "T1562.004",
-      "firewall"
+      "ta0005",
+      "firewall",
+      "T1562.004"
     ],
+    "techniques": [
+      "T1562.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "tsof-smoky",
       "link": ""
@@ -1566,11 +2039,17 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1562.001. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defense_evasion",
-      "T1562_001",
       "esxi",
       "hypervisor",
-      "ransomware"
+      "ransomware",
+      "T1562.001"
     ],
+    "techniques": [
+      "T1562.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "p-o-s-t",
       "link": "https://github.com/p-o-s-t"
@@ -1588,10 +2067,16 @@ const HUNTS_DATA = [
     "tags": [
       "c2",
       "tunnel",
-      "TA0011",
-      "T1572",
-      "t1102"
+      "ta0011",
+      "t1102",
+      "T1572"
     ],
+    "techniques": [
+      "T1572"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "p-o-s-t",
       "link": "https://github.com/p-o-s-t"
@@ -1608,11 +2093,17 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1562.001. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defense_evasion",
-      "T1562_001",
       "macos",
       "tcc",
-      "unc1069"
+      "unc1069",
+      "T1562.001"
     ],
+    "techniques": [
+      "T1562.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "odanh",
       "link": ""
@@ -1629,11 +2120,17 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1036.005. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defense_evasion",
-      "T1036_005",
       "punycode",
       "idn",
-      "dns"
+      "dns",
+      "T1036.005"
     ],
+    "techniques": [
+      "T1036.005"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "DarkWizardCatcher",
       "link": ""
@@ -1650,12 +2147,18 @@ const HUNTS_DATA = [
     "notes": "Observed in Muddled Libra (Scattered Spider) September 2025 incident. Attackers provisioned a VM named \"New Virtual Machine\" via vSphere within 2 hours of initial access, then used it for 15+ hours as their primary operations host — no EDR coverage.",
     "tags": [
       "defense_evasion",
-      "T1564_006",
       "vmware",
       "vsphere",
       "rogue_vm",
-      "muddled_libra"
+      "muddled_libra",
+      "T1564.006"
     ],
+    "techniques": [
+      "T1564.006"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1672,13 +2175,20 @@ const HUNTS_DATA = [
     "notes": "Multiple campaigns in late 2025/early 2026 — 16+ malicious Chrome/Edge extensions stealing ChatGPT session tokens, 900K+ users affected. Extensions clone legitimate tools and add token/conversation exfil under the guise of \"analytics data\" collection.",
     "tags": [
       "credential_access",
-      "T1528",
-      "T1185",
       "browser_extension",
       "ai_tokens",
       "chatgpt",
-      "session_hijack"
+      "session_hijack",
+      "T1528",
+      "T1185"
     ],
+    "techniques": [
+      "T1528",
+      "T1185"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1695,13 +2205,19 @@ const HUNTS_DATA = [
     "notes": "First malicious MCP server found on npm in 2025. MCP servers have direct access to AI agents and connected systems — a compromised server can modify tool descriptions between sessions to inject prompts, exfiltrate context, or execute arbitrary code on the host.",
     "tags": [
       "initial_access",
-      "T1195_002",
       "mcp",
       "supply_chain",
       "typosquatting",
       "tool_poisoning",
-      "ai_agent"
+      "ai_agent",
+      "T1195.002"
     ],
+    "techniques": [
+      "T1195.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1714,7 +2230,7 @@ const HUNTS_DATA = [
     "id": "H068",
     "category": "Flames",
     "title": "An adversary is bypassing Windows SmartScreen and MSHTML security warnings via crafted links targeting end users to deliver malware without triggering protective prompts",
-    "tactic": "Defense Evasion (T1218 / T1566.002)",
+    "tactic": "Defense Evasion (T1218, T1566.002)",
     "notes": "CVE-2026-21510 (SmartScreen) and CVE-2026-21513 (MSHTML) — both actively exploited zero-days from Feb 2026 Patch Tuesday. CISA KEV deadline March 3. Attackers dismantle warning systems to make social engineering exponentially more effective.",
     "tags": [
       "zerodday",
@@ -1723,6 +2239,10 @@ const HUNTS_DATA = [
       "defense_evasion",
       "cisa_kev"
     ],
+    "techniques": [],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1739,13 +2259,21 @@ const HUNTS_DATA = [
     "notes": "Observed in CrashFix/KongTuke campaign (Jan 2026). finger.exe copied to %TEMP% and renamed to ct.exe to retrieve obfuscated PowerShell payloads. Selectively targets domain-joined machines. Finger protocol (TCP 79) is effectively dead in modern enterprises, making any activity highly anomalous.",
     "tags": [
       "command_and_control",
-      "T1105",
-      "T1036_003",
-      "T1218",
       "finger_exe",
       "lolbin",
-      "crashfix"
+      "crashfix",
+      "T1105",
+      "T1036.003",
+      "T1218"
     ],
+    "techniques": [
+      "T1105",
+      "T1036.003",
+      "T1218"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1767,6 +2295,10 @@ const HUNTS_DATA = [
       "cisa_kev",
       "post_compromise"
     ],
+    "techniques": [],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1788,6 +2320,10 @@ const HUNTS_DATA = [
       "execution",
       "powershell"
     ],
+    "techniques": [],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1809,6 +2345,10 @@ const HUNTS_DATA = [
       "phishing",
       "cve_2025_8088"
     ],
+    "techniques": [],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1825,13 +2365,21 @@ const HUNTS_DATA = [
     "notes": "Cloud storage C2 blends with legitimate traffic; fileless execution; compromised .gov sender accounts",
     "tags": [
       "command_and_control",
-      "T1102_002",
-      "T1203",
-      "T1055",
       "cloud_c2",
       "apt28",
-      "filen"
+      "filen",
+      "T1102.002",
+      "T1203",
+      "T1055"
     ],
+    "techniques": [
+      "T1102.002",
+      "T1203",
+      "T1055"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1849,13 +2397,20 @@ const HUNTS_DATA = [
     "tags": [
       "lateral_movement",
       "defense_evasion",
-      "T1021",
-      "T1497",
       "esxi",
       "vmware",
       "ghost_nic",
-      "unc6201"
+      "unc6201",
+      "T1021",
+      "T1497"
     ],
+    "techniques": [
+      "T1021",
+      "T1497"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1873,13 +2428,20 @@ const HUNTS_DATA = [
     "tags": [
       "persistence",
       "defense_evasion",
-      "T1205_001",
-      "T1562_004",
       "iptables",
       "port_knocking",
       "spa",
-      "unc6201"
+      "unc6201",
+      "T1205.001",
+      "T1562.004"
     ],
+    "techniques": [
+      "T1205.001",
+      "T1562.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1897,14 +2459,22 @@ const HUNTS_DATA = [
     "tags": [
       "initial_access",
       "credential_access",
-      "T1195_002",
-      "T1056_002",
-      "T1114",
       "outlook",
       "office_addin",
       "supply_chain",
-      "agreeToSteal"
+      "agreetosteal",
+      "T1195.002",
+      "T1056.002",
+      "T1114"
     ],
+    "techniques": [
+      "T1195.002",
+      "T1056.002",
+      "T1114"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1922,14 +2492,22 @@ const HUNTS_DATA = [
     "tags": [
       "lateral_movement",
       "defense_evasion",
-      "T1021",
-      "T1599",
-      "T1049",
       "esxi",
       "vmware",
       "ghost_nic",
-      "unc6201"
+      "unc6201",
+      "T1021",
+      "T1599",
+      "T1049"
     ],
+    "techniques": [
+      "T1021",
+      "T1599",
+      "T1049"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1949,14 +2527,23 @@ const HUNTS_DATA = [
       "execution",
       "persistence",
       "command_and_control",
-      "T1566_001",
-      "T1059_005",
-      "T1546_015",
-      "T1102",
       "apt28",
       "notdoor",
-      "com_hijacking"
+      "com_hijacking",
+      "T1566.001",
+      "T1059.005",
+      "T1546.015",
+      "T1102"
     ],
+    "techniques": [
+      "T1566.001",
+      "T1059.005",
+      "T1546.015",
+      "T1102"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -1974,14 +2561,22 @@ const HUNTS_DATA = [
     "tags": [
       "lateral_movement",
       "defense_evasion",
-      "T1484_001",
-      "T1562_001",
-      "T1106",
       "byovd",
       "gpo",
       "ransomware",
-      "crazyhunter"
+      "crazyhunter",
+      "T1484.001",
+      "T1562.001",
+      "T1106"
     ],
+    "techniques": [
+      "T1484.001",
+      "T1562.001",
+      "T1106"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2000,13 +2595,21 @@ const HUNTS_DATA = [
       "initial_access",
       "execution",
       "command_and_control",
-      "T1566_002",
-      "T1204_002",
-      "T1219",
       "clickfix",
       "social_engineering",
-      "rat"
+      "rat",
+      "T1566.002",
+      "T1204.002",
+      "T1219"
     ],
+    "techniques": [
+      "T1566.002",
+      "T1204.002",
+      "T1219"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2025,14 +2628,22 @@ const HUNTS_DATA = [
       "initial_access",
       "credential_access",
       "collection",
-      "T1195_002",
-      "T1555",
-      "T1119",
       "npm",
       "supply_chain",
       "mcp",
-      "ai_coding_assistant"
+      "ai_coding_assistant",
+      "T1195.002",
+      "T1555",
+      "T1119"
     ],
+    "techniques": [
+      "T1195.002",
+      "T1555",
+      "T1119"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2050,13 +2661,20 @@ const HUNTS_DATA = [
     "tags": [
       "initial_access",
       "execution",
-      "T1195_001",
-      "T1059_004",
       "supply_chain",
       "mcp",
       "ai_coding_tools",
-      "claude_code"
+      "claude_code",
+      "T1195.001",
+      "T1059.004"
     ],
+    "techniques": [
+      "T1195.001",
+      "T1059.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2074,13 +2692,20 @@ const HUNTS_DATA = [
     "tags": [
       "initial_access",
       "defense_evasion",
-      "T1566_001",
-      "T1553_005",
       "mshtml",
       "motw_bypass",
       "lnk",
-      "apt28"
+      "apt28",
+      "T1566.001",
+      "T1553.005"
     ],
+    "techniques": [
+      "T1566.001",
+      "T1553.005"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2099,14 +2724,22 @@ const HUNTS_DATA = [
       "initial_access",
       "command_and_control",
       "defense_evasion",
-      "T1091",
-      "T1092",
-      "T1036_005",
       "usb",
       "air_gap",
       "apt37",
-      "rubyjumper"
+      "rubyjumper",
+      "T1091",
+      "T1092",
+      "T1036.005"
     ],
+    "techniques": [
+      "T1091",
+      "T1092",
+      "T1036.005"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2123,12 +2756,18 @@ const HUNTS_DATA = [
     "notes": "Silver Dragon/APT41 GearDoor backdoor; Google Drive API for C2; file-based tasking via extensions; blends with legitimate Workspace traffic",
     "tags": [
       "command_and_control",
-      "T1102_002",
       "google_drive",
       "cloud_c2",
       "apt41",
-      "silver_dragon"
+      "silver_dragon",
+      "T1102.002"
     ],
+    "techniques": [
+      "T1102.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2146,13 +2785,20 @@ const HUNTS_DATA = [
     "tags": [
       "defense_evasion",
       "initial_access",
-      "T1574_002",
-      "T1195_002",
       "dll_sideloading",
       "supply_chain",
       "notepadpp",
-      "chrysalis"
+      "chrysalis",
+      "T1574.002",
+      "T1195.002"
     ],
+    "techniques": [
+      "T1574.002",
+      "T1195.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2170,13 +2816,20 @@ const HUNTS_DATA = [
     "tags": [
       "initial_access",
       "credential_access",
-      "T1195_001",
-      "T1552_001",
       "npm",
       "supply_chain",
       "worm",
-      "shai_hulud"
+      "shai_hulud",
+      "T1195.001",
+      "T1552.001"
     ],
+    "techniques": [
+      "T1195.001",
+      "T1552.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2195,14 +2848,22 @@ const HUNTS_DATA = [
       "initial_access",
       "execution",
       "defense_evasion",
-      "T1204_002",
-      "T1059_001",
-      "T1027_004",
       "clickfix",
       "windows_terminal",
       "ransomware",
-      "velvet_tempest"
+      "velvet_tempest",
+      "T1204.002",
+      "T1059.001",
+      "T1027.004"
     ],
+    "techniques": [
+      "T1204.002",
+      "T1059.001",
+      "T1027.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2220,14 +2881,22 @@ const HUNTS_DATA = [
     "tags": [
       "execution",
       "credential_access",
-      "T1204_002",
-      "T1059_001",
-      "T1555",
       "clickfix",
       "windows_terminal",
       "lumma_stealer",
-      "infostealer"
+      "infostealer",
+      "T1204.002",
+      "T1059.001",
+      "T1555"
     ],
+    "techniques": [
+      "T1204.002",
+      "T1059.001",
+      "T1555"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2245,14 +2914,21 @@ const HUNTS_DATA = [
     "tags": [
       "initial_access",
       "defense_evasion",
-      "T1204_002",
-      "T1218",
       "clickfix",
       "lolbin",
       "finger_exe",
       "ransomware",
-      "velvet_tempest"
+      "velvet_tempest",
+      "T1204.002",
+      "T1218"
     ],
+    "techniques": [
+      "T1204.002",
+      "T1218"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2271,14 +2947,22 @@ const HUNTS_DATA = [
       "initial_access",
       "persistence",
       "credential_access",
-      "T1195_001",
-      "T1554",
-      "T1555",
       "vscode",
       "supply_chain",
       "glassworm",
-      "developer_tooling"
+      "developer_tooling",
+      "T1195.001",
+      "T1554",
+      "T1555"
     ],
+    "techniques": [
+      "T1195.001",
+      "T1554",
+      "T1555"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2295,13 +2979,19 @@ const HUNTS_DATA = [
     "notes": "CVE-2026-25253 (Hunt.io research, Mar 2026): unauthenticated `/api/export-auth` endpoint in OpenClaw, Clawdbot, and Moltbot exposes AI service credentials (Claude, OpenAI, Google AI). 17,500+ internet-exposed instances identified; 68.9% Clawdbot, 22.3% Moltbot, 8.8% OpenClaw. 98.6% on cloud infrastructure across 52 countries.",
     "tags": [
       "credential_access",
-      "T1552",
       "cve_2026_25253",
       "ai_agent_security",
       "api_key_exfil",
       "openclaw",
-      "clawdbot"
+      "clawdbot",
+      "T1552"
     ],
+    "techniques": [
+      "T1552"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2318,14 +3008,20 @@ const HUNTS_DATA = [
     "notes": "APT36/Transparent Tribe campaign (Mar 2026, Bitdefender): Pakistan-aligned APT uses AI code generation (\"vibe-coding\") to mass-produce unique Nim, Zig, and Crystal malware samples; volume combined with obscure language compilation produces AV-unknown binaries at scale; paired with C2 over Slack/Discord/Google Sheets (see H091).",
     "tags": [
       "defense_evasion",
-      "T1027",
       "nim",
       "zig",
       "crystal",
       "obscure_language_malware",
       "apt36",
-      "ai_generated_malware"
+      "ai_generated_malware",
+      "T1027"
     ],
+    "techniques": [
+      "T1027"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2343,13 +3039,19 @@ const HUNTS_DATA = [
     "tags": [
       "initial_access",
       "supply_chain",
-      "T1195_001",
       "macos",
       "infostealer",
       "amos",
       "agentic_ai",
-      "openclaw"
+      "openclaw",
+      "T1195.001"
     ],
+    "techniques": [
+      "T1195.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2366,15 +3068,21 @@ const HUNTS_DATA = [
     "notes": "CVE-2025-68613: Improper Control of Dynamically-Managed Code Resources (CVSS 9.9) in n8n expression evaluation. Added to CISA KEV 2026-03-11, due date 2026-03-25. 24,700 instances remain internet-exposed per The Hacker News at time of KEV addition. n8n instances typically hold API keys, OAuth tokens, and database credentials in workflow configs — a compromised node is a credential treasure chest and a trusted pivot point into internal APIs. (VLM-2026-03-12-002/013, CISA KEV)",
     "tags": [
       "execution",
-      "T1059",
       "rce",
       "n8n",
       "cisa_kev",
-      "CVE_2025_68613",
+      "cve_2025_68613",
       "workflow_automation",
       "lateral_movement",
-      "credential_access"
+      "credential_access",
+      "T1059"
     ],
+    "techniques": [
+      "T1059"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2391,7 +3099,6 @@ const HUNTS_DATA = [
     "notes": "Active campaign abusing CVE-2024-47575 and CVE-2024-55591 (FortiGate auth bypass / command injection) to extract config files containing plaintext AD/LDAP service account credentials. Targets observed: healthcare, government, MSPs — sectors with high-value AD environments. Credentials extracted from FortiGate configs are often service accounts with broad internal access, enabling fast lateral movement post-extraction. (VLM-2026-03-12-004, SentinelOne / kensai.app, Mar 12 2026)",
     "tags": [
       "credential_access",
-      "T1552_001",
       "fortinet",
       "fortigate",
       "active_directory",
@@ -2399,9 +3106,16 @@ const HUNTS_DATA = [
       "lateral_movement",
       "healthcare",
       "government",
-      "CVE_2024_47575",
-      "CVE_2024_55591"
+      "cve_2024_47575",
+      "cve_2024_55591",
+      "T1552.001"
     ],
+    "techniques": [
+      "T1552.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2419,14 +3133,20 @@ const HUNTS_DATA = [
     "tags": [
       "execution",
       "initial_access",
-      "T1204_002",
       "clickfix",
       "infostealer",
       "odyssey_stealer",
       "social_engineering",
       "credential_theft",
-      "session_hijacking"
+      "session_hijacking",
+      "T1204.002"
     ],
+    "techniques": [
+      "T1204.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2443,15 +3163,21 @@ const HUNTS_DATA = [
     "notes": "Hive0163 \"Slopoly\" campaign — financially motivated threat actor using AI-generated PowerShell for backdoor deployment. Represents expansion of AI-assisted malware beyond nation-state actors into financially motivated cybercrime. AI-generated code tends to produce functionally equivalent but syntactically diverse variants that bypass static signatures, while retaining detectable behavioral patterns (network beaconing, persistence mechanisms, staging). Active March 2026.",
     "tags": [
       "execution",
-      "T1059_001",
       "powershell",
       "ai_generated_malware",
       "ransomware",
       "hive0163",
       "slopoly",
       "backdoor",
-      "financial_crime"
+      "financial_crime",
+      "T1059.001"
     ],
+    "techniques": [
+      "T1059.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2468,15 +3194,21 @@ const HUNTS_DATA = [
     "notes": "CVE-2026-26144 — zero-click data exfil via Excel + Microsoft Copilot Agent. Malicious Excel file triggers Copilot Agent execution on open; agent can read and exfiltrate workbook contents without user action. Patched in Microsoft Patch Tuesday March 2026. Unpatched systems exposed to phishing/document delivery attacks. High-value targets: finance, legal, healthcare (spreadsheet-heavy data environments).",
     "tags": [
       "exfiltration",
-      "T1048",
-      "CVE_2026_26144",
+      "cve_2026_26144",
       "microsoft_excel",
       "copilot",
       "ai_agent",
       "zero_click",
       "document_delivery",
-      "patch_tuesday"
+      "patch_tuesday",
+      "T1048"
     ],
+    "techniques": [
+      "T1048"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2494,14 +3226,20 @@ const HUNTS_DATA = [
     "tags": [
       "defense_evasion",
       "initial_access",
-      "T1078",
       "mcp",
       "model_context_protocol",
       "auth_bypass",
-      "CVE_2026_27896",
+      "cve_2026_27896",
       "ai_agent",
-      "tool_execution"
+      "tool_execution",
+      "T1078"
     ],
+    "techniques": [
+      "T1078"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -2518,11 +3256,17 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1485. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "impact",
-      "T1485",
       "intune",
       "mdm",
-      "wiper"
+      "wiper",
+      "T1485"
     ],
+    "techniques": [
+      "T1485"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Alan G",
       "link": ""
@@ -2539,11 +3283,17 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1027.002. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defense_evasion",
-      "T1027_002",
       "iocontrol",
       "ot_iot",
-      "upx"
+      "upx",
+      "T1027.002"
     ],
+    "techniques": [
+      "T1027.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Alan G",
       "link": ""
@@ -2560,11 +3310,17 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1059.007. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "execution",
-      "T1059_007",
       "supply_chain",
       "npm",
-      "cicd"
+      "cicd",
+      "T1059.007"
     ],
+    "techniques": [
+      "T1059.007"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "_No response_",
       "link": ""
@@ -2581,10 +3337,16 @@ const HUNTS_DATA = [
     "notes": "Based on ATT&CK technique T1550.004. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
     "tags": [
       "defense_evasion",
-      "T1550_004",
       "forticlient",
-      "authentication_bypass"
+      "authentication_bypass",
+      "T1550.004"
     ],
+    "techniques": [
+      "T1550.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "smossmos",
       "link": "https://github.com/smossmos"
@@ -2601,12 +3363,18 @@ const HUNTS_DATA = [
     "notes": "Focus on web application logs, WAF alerts, and endpoint telemetry from DMZ hosts. Look for ClassPathXmlApplicationContext abuse in ActiveMQ, unexpected child processes from Java/application server processes, and exploitation signatures in HTTP request bodies.",
     "tags": [
       "initial_access",
-      "T1190",
-      "CVE_2023_46604",
+      "cve_2023_46604",
       "activemq",
       "exploit",
-      "rce"
+      "rce",
+      "T1190"
     ],
+    "techniques": [
+      "T1190"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2623,12 +3391,19 @@ const HUNTS_DATA = [
     "notes": "Look for creation of short-lived Windows services with random names, named pipe creation by non-standard processes, and token impersonation API calls (ImpersonateNamedPipeClient, DuplicateTokenEx). Sysmon Event IDs 17/18 (pipe created/connected) and 1 (process creation) with ParentUser != ChildUser are key data sources.",
     "tags": [
       "privilege_escalation",
-      "T1134_005",
-      "T1134",
       "named_pipe",
       "getsystem",
-      "token_impersonation"
+      "token_impersonation",
+      "T1134.005",
+      "T1134"
     ],
+    "techniques": [
+      "T1134.005",
+      "T1134"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2645,10 +3420,16 @@ const HUNTS_DATA = [
     "notes": "Hunt for Event ID 1102 (Security log cleared), Event ID 104 (System log cleared), wevtutil.exe cl executions, and PowerShell Clear-EventLog cmdlet usage. Also look for gaps in event log continuity or event logs with abnormally small file sizes.",
     "tags": [
       "defense_evasion",
-      "T1070_001",
       "event_log_clearing",
-      "anti_forensics"
+      "anti_forensics",
+      "T1070.001"
     ],
+    "techniques": [
+      "T1070.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2665,11 +3446,17 @@ const HUNTS_DATA = [
     "notes": "Key indicators include suspicious process access to lsass.exe with GrantedAccess values 0x1010, 0x1410, or 0x1FFFFF (Sysmon Event ID 10), unsigned binaries opening handles to LSASS, use of comsvcs.dll MiniDump via rundll32, and procdump targeting lsass.exe by PID or name.",
     "tags": [
       "credential_access",
-      "T1003_001",
       "lsass",
       "credential_dumping",
-      "mimikatz"
+      "mimikatz",
+      "T1003.001"
     ],
+    "techniques": [
+      "T1003.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2686,11 +3473,17 @@ const HUNTS_DATA = [
     "notes": "Look for a single source IP generating SMB (port 445) connections to many destinations in a short time window. Correlate with failed authentication events and compare against baseline SMB traffic patterns. Network flow data and Windows Security Event IDs 4624/4625 with Logon Type 3 are primary data sources.",
     "tags": [
       "discovery",
-      "T1018",
       "smb_scanning",
       "network_enumeration",
-      "reconnaissance"
+      "reconnaissance",
+      "T1018"
     ],
+    "techniques": [
+      "T1018"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2707,12 +3500,19 @@ const HUNTS_DATA = [
     "notes": "Hunt for execution of net group \"Domain Admins\" /domain, net user /domain, nltest /dclist, and Get-ADGroupMember commands from non-administrative workstations or service accounts. Process creation logs (Sysmon Event ID 1, Windows Security Event ID 4688) with command-line auditing enabled are the primary data source.",
     "tags": [
       "discovery",
-      "T1087_002",
-      "T1087",
       "account_enumeration",
       "active_directory",
-      "net_commands"
+      "net_commands",
+      "T1087.002",
+      "T1087"
     ],
+    "techniques": [
+      "T1087.002",
+      "T1087"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2729,11 +3529,17 @@ const HUNTS_DATA = [
     "notes": "Look for execution of known scanner binaries (advanced_ip_scanner.exe, netscan.exe, nmap.exe), files masquerading as legitimate tools (e.g., scanner binary named as a different tool), and rapid sequential TCP SYN connections across multiple ports to many hosts. Network flow data showing a single host connecting to common service ports across many destinations is a key indicator.",
     "tags": [
       "discovery",
-      "T1046",
       "port_scanning",
       "network_scanning",
-      "advanced_ip_scanner"
+      "advanced_ip_scanner",
+      "T1046"
     ],
+    "techniques": [
+      "T1046"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2750,12 +3556,18 @@ const HUNTS_DATA = [
     "notes": "Hunt for processes generating an abnormally high volume of file write/rename operations, creation of files with known ransomware extensions (.lockbit, .encrypted, .crypt), and identical ransom note filenames appearing in multiple directories simultaneously. Monitor for Volume Shadow Copy deletion (vssadmin delete shadows) and bcdedit modifications that often precede encryption.",
     "tags": [
       "impact",
-      "T1486",
       "ransomware",
       "encryption",
       "lockbit",
-      "data_encrypted_for_impact"
+      "data_encrypted_for_impact",
+      "T1486"
     ],
+    "techniques": [
+      "T1486"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2772,12 +3584,18 @@ const HUNTS_DATA = [
     "notes": "Hunt for registry modifications to HKCU\\Control Panel\\Desktop\\Wallpaper and HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\legalnoticecaption by non-standard processes, creation of .txt/.hta/.html files with ransom-related keywords in multiple directories simultaneously, and changes to OEMBackground registry values.",
     "tags": [
       "impact",
-      "T1491_001",
       "defacement",
       "ransom_note",
       "wallpaper",
-      "extortion"
+      "extortion",
+      "T1491.001"
     ],
+    "techniques": [
+      "T1491.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2794,12 +3612,18 @@ const HUNTS_DATA = [
     "notes": "Hunt for downloads of known IT administration tools (ManageEngine, PuTTY, WinSCP, AnyDesk, Teams) from domains that are not the vendor's official site. Correlate web proxy logs showing search engine referrers leading to non-vendor download domains, followed by MSI/EXE execution with suspicious child processes. Look for newly registered domains mimicking vendor names in DNS query logs.",
     "tags": [
       "initial_access",
-      "T1189",
       "seo_poisoning",
       "malvertising",
       "trojanized_installer",
-      "drive_by"
+      "drive_by",
+      "T1189"
     ],
+    "techniques": [
+      "T1189"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2817,11 +3641,17 @@ const HUNTS_DATA = [
     "tags": [
       "defense_evasion",
       "execution",
-      "T1218_007",
       "msiexec",
       "signed_binary_proxy",
-      "lolbin"
+      "lolbin",
+      "T1218.007"
     ],
+    "techniques": [
+      "T1218.007"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2838,14 +3668,20 @@ const HUNTS_DATA = [
     "notes": "Hunt for ntdsutil.exe execution with IFM (Install From Media) arguments, wbadmin.exe start backup commands targeting system state on DCs, vssadmin create shadow on the drive containing NTDS, and diskshadow.exe script execution. Monitor Directory Service Event ID 1917 (ntds.dit backup), System Event ID 7036 (VSS service start), and Security Event ID 4688 with command-line auditing on domain controllers. Also watch for copies of ntds.dit or SYSTEM registry hive appearing in non-standard directories.",
     "tags": [
       "credential_access",
-      "T1003_003",
       "ntds",
       "active_directory",
       "ntdsutil",
       "wbadmin",
       "vssadmin",
-      "credential_dumping"
+      "credential_dumping",
+      "T1003.003"
     ],
+    "techniques": [
+      "T1003.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2862,11 +3698,17 @@ const HUNTS_DATA = [
     "notes": "Hunt for unusual file write activity in common staging directories (C:\\ProgramData, C:\\Windows\\Temp, %APPDATA%, Recycle Bin, C:\\perflogs). Look for archive creation (7z.exe, rar.exe, zip utilities) in these locations, especially when preceded by file aggregation from multiple source directories. Monitor for command-line tools copying files with extensions associated with sensitive data (.docx, .xlsx, .pdf, .pst, .csv, .sql) into a single destination. Endpoint file creation telemetry and process command-line auditing are key data sources.",
     "tags": [
       "collection",
-      "T1074_001",
       "data_staging",
       "exfiltration_prep",
-      "archive"
+      "archive",
+      "T1074.001"
     ],
+    "techniques": [
+      "T1074.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2883,11 +3725,17 @@ const HUNTS_DATA = [
     "notes": "Defender XDR Advanced Hunting (primary approach): Use CloudAppEvents where Application == \"Microsoft Teams\" and ActionType == \"ChatCreated\" with RawEventData.ParticipantInfo.HasForeignTenantUsers == true and CommunicationType == \"OneOnOne\" — filter on display names impersonating support roles (\"Help Desk\", \"Microsoft Security\", \"IT Support\"). Cross-join with DeviceProcessEvents to correlate the target user launching QuickAssist.exe, AnyDesk.exe, ScreenConnect, or TeamViewer.exe within 30 minutes. The source article provides a full KQL query (Query A) that joins MessageEvents with DeviceProcessEvents on VictimAccountObjectId within a 30-minute window. Quick Assist-anchored recon detection (Query J): Join RMM tool launches with immediate reconnaissance commands (whoami, systeminfo, ipconfig, nltest, net user) within 10 minutes. Email bombing precursor (Query from Storm-1811): Use EmailEvents with series_decompose_anomalies to detect inbound email volume spikes (AnomalyScore >= 10) — attackers flood the inbox before calling as \"helpdesk\" to remediate. Also monitor for external Teams chats from recently registered domains or tenants using ParticipatingDomains/ParticipatingSIPDomains fields.",
     "tags": [
       "initial_access",
-      "T1566_003",
       "phishing_via_service",
       "teams",
-      "social_engineering"
+      "social_engineering",
+      "T1566.003"
     ],
+    "techniques": [
+      "T1566.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2904,11 +3752,17 @@ const HUNTS_DATA = [
     "notes": "Hunt for Windows Event ID 7045 (new service installed) with service names matching PsExec patterns (PSEXESVC) or random-character names. Correlate with Sysmon Event ID 3 or firewall logs showing SMB (TCP 445) connections from a single host to multiple destinations. Monitor for Sysmon Event ID 17/18 (pipe created/connected) for PsExec's named pipe (\\\\.\\pipe\\PSEXESVC). Check Windows Security Event ID 5145 (network share object access) for ADMIN$ and C$ share access from non-admin workstations. Monitor for Impacket's atexec.py artifacts including cmd.exe spawned by services.exe with /C flags, and CrackMapExec/NetExec SMB execution patterns. Look for failed authentication attempts (Event ID 4625) across admin shares from a single source — this may indicate password spray preceding lateral movement.",
     "tags": [
       "lateral_movement",
-      "T1021_002",
       "smb",
       "admin_shares",
-      "psexec"
+      "psexec",
+      "T1021.002"
     ],
+    "techniques": [
+      "T1021.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2925,11 +3779,17 @@ const HUNTS_DATA = [
     "notes": "Hunt for wmiprvse.exe spawning cmd.exe, PowerShell, or other execution engines (Sysmon Event ID 1). Correlate with network connections on RPC/DCOM ports (TCP 135, 49152-65535) from non-admin workstations. Check Windows Security Event ID 4648 (logon with explicit credentials) paired with WMI activity — this reveals the credential used for remote WMI execution. Monitor WMI activity logs (Microsoft-Windows-WMI-Activity/Operational) for Win32_Process Create method invocations, especially with encoded or obfuscated command lines (Impacket WmiExec pattern). Pay special attention to WMI connections targeting Entra Connect, ADFS, or PKI servers, as these indicate attempts to access identity synchronization credentials. Also monitor for WinRM (ports 5985/5986) activity from the same source hosts, as attackers often use WMI and WinRM interchangeably.",
     "tags": [
       "lateral_movement",
-      "T1021_003",
       "dcom",
       "wmi",
-      "wmiexec"
+      "wmiexec",
+      "T1021.003"
     ],
+    "techniques": [
+      "T1021.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2947,12 +3807,19 @@ const HUNTS_DATA = [
     "tags": [
       "execution",
       "persistence",
-      "T1053_005",
-      "T1003_003",
       "scheduled_task",
       "domain_controller",
-      "ntds"
+      "ntds",
+      "T1003.003",
+      "T1053.005"
     ],
+    "techniques": [
+      "T1003.003",
+      "T1053.005"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2969,12 +3836,18 @@ const HUNTS_DATA = [
     "notes": "Exchange/On-Prem: Hunt in Exchange Admin Audit Logs and M365 Unified Audit Logs for Add-MailboxPermission cmdlet executions granting FullAccess to a non-standard delegate. Monitor for New-ManagementRoleAssignment operations adding ApplicationImpersonation roles — use `Get-ManagementRoleAssignment -Role ApplicationImpersonation -GetEffectiveUsers` to enumerate current holders. Also check Add-MailboxFolderPermission for subtler folder-level delegation grants. MailItemsAccessed (E5/E3): Hunt for MailItemsAccessed audit events showing a single account or service principal accessing messages across multiple mailboxes — this covers all protocols (EWS, MAPI, REST, POP, IMAP, ActiveSync). Note: throttling kicks in at 1,000+ events in 24 hours, which is itself an indicator of bulk collection. Graph API / OAuth abuse: Monitor for Entra ID app registrations or consent grants with Mail.Read or Mail.ReadWrite application-level permissions (not delegated). Hunt for service principals with full_access_as_app Exchange role — Midnight Blizzard used an abandoned OAuth app with this role to read employee mailboxes. Check CloudAppEvents for EWS or Graph API access from service principals that don't normally access mail. Look for remote PowerShell sessions to Exchange from unusual source IPs or through Impacket atexec.py execution chains.",
     "tags": [
       "collection",
-      "T1114_002",
       "email_collection",
       "exchange",
       "mailbox_delegation",
-      "oauth"
+      "oauth",
+      "T1114.002"
     ],
+    "techniques": [
+      "T1114.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2991,11 +3864,17 @@ const HUNTS_DATA = [
     "notes": "Hunt for web server processes (w3wp.exe, httpd.exe, tomcat*.exe, java.exe) spawning cmd.exe, powershell.exe, certutil.exe, or whoami.exe using process creation logs (Sysmon Event ID 1, Windows Event ID 4688). Monitor for new file creation in web server directories (wwwroot, webapps, OWA/forms) with extensions .aspx, .asp, .jsp, .php. Use file integrity monitoring on Exchange and Tomcat application directories. Look for HTTP POST requests to newly created files with unusual response sizes.",
     "tags": [
       "persistence",
-      "T1505_003",
       "web_shell",
       "godzilla",
-      "exchange"
+      "exchange",
+      "T1505.003"
     ],
+    "techniques": [
+      "T1505.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3012,11 +3891,17 @@ const HUNTS_DATA = [
     "notes": "Hunt for Sysmon Event ID 7 (image loaded) where known-abused DLLs (CRYPTBASE.dll, VERSION.dll, dbghelp.dll, winmm.dll) load from user-writable paths (Downloads, AppData, ProgramData, Temp) instead of C:\\Windows\\System32. Cross-reference with HijackLibs for the full list of vulnerable DLL/application pairs. Monitor for unsigned DLLs loaded by signed executables in non-standard directories. Look for recently created DLL files co-located with legitimate portable executables.",
     "tags": [
       "defense_evasion",
-      "T1574_001",
       "dll_search_order_hijacking",
       "sideloading",
-      "cryptbase"
+      "cryptbase",
+      "T1574.001"
     ],
+    "techniques": [
+      "T1574.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3033,11 +3918,17 @@ const HUNTS_DATA = [
     "notes": "Hunt for InstallUtil.exe process creation (Sysmon Event ID 1) with the /u flag targeting DLL or EXE files in %TEMP%, %APPDATA%, or other user-writable directories. Monitor for InstallUtil.exe making outbound network connections (Sysmon Event ID 3) — legitimate installations rarely require network access. Correlate with preceding csc.exe compilations in Temp directories, which indicate dynamic .NET assembly generation before proxy execution. Look for InstallUtil.exe executed outside of software deployment windows. Also monitor .NET CLR ETW events (Microsoft-Windows-DotNETRuntime provider) for assembly loads triggered by InstallUtil from non-standard paths. Note that attackers may copy InstallUtil.exe to a different directory — hunt for any process calling System.Configuration.Install.ManagedInstallerClass from user-writable locations.",
     "tags": [
       "defense_evasion",
-      "T1218_004",
       "installutil",
       "lolbin",
-      "proxy_execution"
+      "proxy_execution",
+      "T1218.004"
     ],
+    "techniques": [
+      "T1218.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3054,11 +3945,17 @@ const HUNTS_DATA = [
     "notes": "Hunt for chrome.exe or msedge.exe process creation with --no-sandbox and --disable-gpu flags where the parent process is not explorer.exe, a browser updater, or a known browser launcher. The STXRAT case showed calc.exe spawning browsers — any non-browser parent should be investigated. Monitor for non-browser processes accessing Chrome \"Login Data\" or Edge \"Login Data\" SQLite databases in user profile directories. Look for temporary user-data-dir arguments pointing to randomly-named Temp subdirectories (e.g., AppData\\Local\\Temp\\{random}).",
     "tags": [
       "credential_access",
-      "T1555_003",
       "browser_credentials",
       "infostealer",
-      "chrome"
+      "chrome",
+      "T1555.003"
     ],
+    "techniques": [
+      "T1555.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3075,12 +3972,18 @@ const HUNTS_DATA = [
     "notes": "Hunt for rclone.exe process creation with \"serve webdav\" arguments, especially when exposing broad paths (C:\\) on localhost. Monitor for QEMU binaries (qemu-system-*.exe) executing from non-standard locations like ProgramData, particularly with user-mode networking (-nic user) and no display (-nographic -display none). Correlate rclone localhost listeners with QEMU outbound connections to identify the tunnel pattern. Look for PowerShell downloading rclone from downloads.rclone.org and QEMU images from bitbucket.org. Alert on sustained high-volume TLS connections from QEMU processes.",
     "tags": [
       "exfiltration",
-      "T1048_001",
       "rclone",
       "qemu",
       "data_exfiltration",
-      "vm_tunnel"
+      "vm_tunnel",
+      "T1048.001"
     ],
+    "techniques": [
+      "T1048.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3097,11 +4000,17 @@ const HUNTS_DATA = [
     "notes": "Hunt for Sysmon Event ID 8 (CreateRemoteThread) targeting browser processes (chrome.exe, msedge.exe, firefox.exe) where the source process is NOT a known legitimate injector. Critical: filter noise by excluding source processes signed by Microsoft, Google, Mozilla, and your EDR vendor — AV/EDR tools, accessibility software, and GPU drivers routinely inject into browsers. Focus on unsigned source processes or those running from Temp/AppData/ProgramData paths. Use Sysmon Event ID 10 (ProcessAccess) with GrantedAccess values of 0x1F0FFF (PROCESS_ALL_ACCESS) or 0x0040 (PROCESS_DUP_HANDLE) targeting browser processes from non-standard parents. Look specifically for calc.exe, notepad.exe, svchost.exe (non-standard service), or other LOLBins accessing DPAPI master keys (Windows Security Event ID 4692) or Chrome/Edge \"Login Data\" SQLite databases. Correlate with Sysmon Event ID 7 showing unsigned DLLs loaded into browser process space from Temp directories. The STXRAT case showed PureLogs injected into calc.exe — filter your CreateRemoteThread results by source process global prevalence to surface rare injectors.",
     "tags": [
       "credential_access",
-      "T1056_004",
       "api_hooking",
       "credential_interception",
-      "process_injection"
+      "process_injection",
+      "T1056.004"
     ],
+    "techniques": [
+      "T1056.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3118,12 +4027,18 @@ const HUNTS_DATA = [
     "notes": "Hunt for PowerShell Script Block Logging (Event ID 4104) containing Reflection.Assembly, Assembly.Load, [System.Reflection], or Invoke-Expression patterns with byte array arguments. The PhantomPulse PHANTOMPULL loader reflectively loaded an AES-256-CBC encrypted PE entirely in memory. Monitor .NET CLR ETW events (Microsoft-Windows-DotNETRuntime provider, keyword 0x8 for Loader events) for AssemblyLoad events where the assembly path is empty or points to a memory address — this indicates in-memory loading without a backing file. Look for Sysmon Event ID 7 (image loaded) where the loaded image is unsigned and has no corresponding file on disk. Hunt for processes with anomalously high private memory (WorkingSet) relative to their on-disk module list — a process loading large payloads in memory will show a significant gap between committed memory and loaded DLLs. Also monitor for VirtualAlloc/VirtualProtect API calls changing memory permissions to RWX (PAGE_EXECUTE_READWRITE) via ETW or EDR telemetry — this is required for executing reflectively loaded code.",
     "tags": [
       "defense_evasion",
-      "T1620",
       "reflective_loading",
       "memory_only",
       "fileless",
-      "windows"
+      "windows",
+      "T1620"
     ],
+    "techniques": [
+      "T1620"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3140,11 +4055,17 @@ const HUNTS_DATA = [
     "notes": "Hunt for sqlite3 process creation with arguments containing \"TCC.db\", \"TCC/TCC.db\", or the table name \"access\" — the injection command typically looks like `INSERT OR REPLACE INTO access VALUES('kTCCServiceAppleEvents', ...)`. Key service identifiers to watch for: kTCCServiceAppleEvents (Finder/app automation), kTCCServiceCamera, kTCCServiceMicrophone, kTCCServiceSystemPolicyAllFiles (Full Disk Access). Rename-inject-restore technique (Sapphire Sleet): Monitor ESF ES_EVENT_TYPE_NOTIFY_RENAME on both the user TCC directory (~/Library/Application Support/com.apple.TCC/) and system TCC directory (/Library/Application Support/com.apple.TCC/). The user-level TCC.db does NOT require root to modify but IS protected by FDA since Mojave — the rename trick bypasses FDA by moving the directory so tccd loses track, injecting via sqlite3, then restoring it. macOS 15.4+: Apple added ESF `tcc_modify` event type — use this for direct detection of TCC database changes. Note: this event may not fire when the database is modified via sqlite3 with root after a directory rename, so the rename detection remains critical. dscl home directory bypass (HM Surf / CVE-2024-44133): Hunt for `dscl . -change` commands modifying the NFSHomeDirectory attribute — attackers change the user's home directory, modify TCC-protected files at the real path, then change it back. Also hunt for `tccutil reset` process creation (resets all TCC permissions for a bundle ID). Unified Log: Query `log show --predicate 'subsystem == \"com.apple.TCC\"'` for permission checks, resets, and errors — unexpected permission grants without corresponding user consent prompts are indicators. Legitimate TCC grants come from user consent prompts or MDM PPPC profiles, never from direct sqlite3 modification.",
     "tags": [
       "defense_evasion",
-      "T1562_001",
       "tcc_bypass",
       "macos",
-      "privacy_controls"
+      "privacy_controls",
+      "T1562.001"
     ],
+    "techniques": [
+      "T1562.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3161,11 +4082,17 @@ const HUNTS_DATA = [
     "notes": "Hunt for new plist file creation in /Library/LaunchDaemons/ using file creation events (es_event_create_t or Endpoint Security Framework). Cross-reference the ProgramArguments binary against code signing using `codesign -dvvv` — legitimate Apple daemons are signed by Apple, legitimate Google daemons by Google. The Sapphire Sleet campaign installed com.google.webkit.service.plist pointing to an unsigned backdoor. Monitor for launchctl load/bootstrap commands immediately following plist creation. Check for plists with RunAtLoad set to true pointing to unsigned or ad-hoc signed binaries. Inspect KeepAlive and StartInterval keys — persistent restart behavior is common in implants. Use `launchctl list` to enumerate loaded daemons and cross-reference against known-good baselines.",
     "tags": [
       "persistence",
-      "T1543_004",
       "launch_daemon",
       "macos",
-      "masquerading"
+      "masquerading",
+      "T1543.004"
     ],
+    "techniques": [
+      "T1543.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3179,11 +4106,24 @@ const HUNTS_DATA = [
     "category": "Flames",
     "title": "An adversary is using cascading curl-to-osascript or curl-to-shell chains on macOS to download and immediately execute multi-stage payloads without writing intermediate files to disk, indicated by curl output piped directly to osascript, bash, or zsh.",
     "tactic": "Execution",
-    "notes": "Hunt for process creation events where curl's output is piped to osascript, sh, bash, or zsh — this pattern appears in command-line arguments as \"curl ... \\",
-    "tags": [],
+    "notes": "Hunt for process creation events where curl's output is piped to osascript, sh, bash, or zsh — this pattern appears in command-line arguments as \"curl ... | osascript\" or as parent-child process relationships. The Sapphire Sleet campaign used 5 sequential stages (mac-cur1 through mac-cur5) with distinct user-agent strings to track campaign progress. Monitor for curl processes with custom user-agent strings (mac-cur*, audio, beacon) followed by interpreter execution. Look for curl invoked with --silent/-s flag (suppresses progress output, standard in attack scripts) piped to any interpreter. Monitor for osascript -e executing inline AppleScript or JavaScript (osascript -l JavaScript -e) received from network sources. Also look for Script Editor (or Obsidian per the PhantomPulse campaign) spawning curl or shell processes — application process trees should not include network download utilities.",
+    "tags": [
+      "execution",
+      "applescript",
+      "curl_pipe",
+      "macos",
+      "fileless",
+      "T1059.002"
+    ],
+    "techniques": [
+      "T1059.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
-      "name": "#execution #T1059_002 #applescript #curl_pipe #macos #fileless",
-      "link": ""
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
     },
     "why": "- In the Sapphire Sleet campaign, the entire infection chain from initial lure to full compromise was orchestrated through cascading curl-to-osascript chains — each stage downloaded and executed the next without writing persistent scripts to disk, making forensic recovery of the full chain difficult\n- The curl-pipe-execute pattern is macOS's equivalent of Windows PowerShell cradles — it's a fundamental technique for fileless payload delivery that bypasses file quarantine, Gatekeeper, and on-disk scanning\n- Custom user-agent strings in curl requests (mac-cur1 through mac-cur5) serve as campaign tracking beacons that are trivially detectable through network monitoring or process command-line auditing\n- Script Editor or note-taking applications (Obsidian in the PhantomPulse case) spawning curl or shell interpreters is highly anomalous and provides a reliable behavioral detection signal regardless of payload obfuscation",
     "references": "- [MITRE ATT&CK T1059.002 - Command and Scripting Interpreter: AppleScript](https://attack.mitre.org/techniques/T1059/002/)\n- [Microsoft Security Blog - Dissecting Sapphire Sleet's macOS Intrusion](https://www.microsoft.com/en-us/security/blog/2026/04/16/dissecting-sapphire-sleets-macos-intrusion-from-lure-to-compromise/)\n- [Elastic Security Labs - Phantom in the Vault: Obsidian Abused to Deliver PhantomPulse RAT](https://www.elastic.co/security-labs/phantom-in-the-vault)\n- [Red Canary - AppleScript Threat Detection Report](https://redcanary.com/threat-detection-report/techniques/applescript/)\n- [Elastic - Suspicious macOS MS Office Child Process](https://www.elastic.co/guide/en/security/current/suspicious-macos-ms-office-child-process.html)",
@@ -3197,11 +4137,17 @@ const HUNTS_DATA = [
     "notes": "Hunt for new plist file creation in ~/Library/LaunchAgents/ using file creation monitoring (es_event_create_t, FSEvents, or Endpoint Security Framework). Cross-reference the ProgramArguments binary path against code signing using `codesign -dvvv` — legitimate agents are Apple-signed or from verified developers. The Sapphire Sleet campaign used ~/Library/LaunchAgents/ for user-level persistence pointing to binaries in hidden directories. The PhantomPulse campaign abused Obsidian's plugin system to load malicious code at application launch. Monitor for launchctl load/bootstrap commands executed shortly after plist creation. Check for plists with RunAtLoad set to true and KeepAlive enabled — this combination ensures the agent starts at login and restarts if killed, which is standard implant behavior. Flag agents with StandardOutPath/StandardErrorPath set to /dev/null (suppressing output). Also check for plists pointing to binaries in /tmp, /var/tmp, dot-prefixed hidden directories (e.g., ~/.hidden/), or user-writable locations outside /Applications.",
     "tags": [
       "persistence",
-      "T1543_001",
       "launch_agent",
       "plist",
-      "macos"
+      "macos",
+      "T1543.001"
     ],
+    "techniques": [
+      "T1543.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3218,11 +4164,17 @@ const HUNTS_DATA = [
     "notes": "Hunt for processes performing multiple system property queries in rapid succession — WMI queries for Win32_ComputerSystem (Model, Manufacturer), Win32_BIOS, Win32_DiskDrive within a short time window from a single process. JanelaRAT checked for Magnifier.exe (magnify.exe) via FindWindow as a host-validation gate — hunt for processes calling FindWindow or CreateToolhelp32Snapshot targeting legitimate Windows accessibility or utility binaries (magnify.exe, narrator.exe, osk.exe) before payload execution. Monitor for GetTickCount/GetTickCount64 calls where the returned value is compared against a threshold (sandbox uptime < 10-20 minutes indicates analysis environment) — the PhantomPulse PHANTOMPULL loader used this before reflective loading. Look for registry queries to HKLM\\SYSTEM\\CurrentControlSet\\Services\\Disk\\Enum or HKLM\\HARDWARE\\DESCRIPTION\\System\\BIOS for VM vendor strings. Check for processes querying MAC address prefixes associated with VM vendors (00:0C:29, 00:50:56 for VMware; 08:00:27 for VirtualBox). Correlate: a process performing 3+ of these checks and then spawning a child process or loading a DLL is a strong detonation-gate pattern.",
     "tags": [
       "defense_evasion",
-      "T1497_001",
       "sandbox_evasion",
       "environmental_keying",
-      "vm_detection"
+      "vm_detection",
+      "T1497.001"
     ],
+    "techniques": [
+      "T1497.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3239,12 +4191,18 @@ const HUNTS_DATA = [
     "notes": "Hunt for outbound network connections from non-browser processes where traffic lacks a valid TLS handshake (no ClientHello/ServerHello) but carries encrypted payloads. JanelaRAT used Rijndael (AES) encryption with MD5-derived keys from hardcoded strings to encrypt C2 traffic — this produces traffic without standard TLS negotiation. Network-side detection: Use Zeek or Suricata to flag TCP connections on common ports (80, 443, 8080) where the initial bytes do not match expected protocol signatures (no HTTP verbs, no TLS record headers). Monitor for regular beacon intervals (fixed or jittered check-in patterns) from non-browser processes — use connection metadata (duration, bytes sent/received ratio, interval regularity) rather than payload inspection. Look for connections to dynamic DNS providers (duckdns.org, no-ip.com, dynu.com) or IP-literal URLs over non-standard ports. Host-side detection: Hunt for .NET processes importing System.Security.Cryptography.RijndaelManaged or AesManaged alongside System.Net.Sockets — this combination in a non-standard application strongly suggests custom encrypted C2. Use Sysmon Event ID 3 to correlate network connections with process creation and identify unsigned binaries making persistent outbound connections.",
     "tags": [
       "command_and_control",
-      "T1573_001",
       "encrypted_channel",
       "aes",
       "custom_crypto",
-      "c2"
+      "c2",
+      "T1573.001"
     ],
+    "techniques": [
+      "T1573.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3261,12 +4219,18 @@ const HUNTS_DATA = [
     "notes": "Key insight: On modern macOS (dyld3+), NSCreateObjectFileImageFromMemory no longer loads purely in memory — NSLinkModule now writes the payload to a temp file at `/private/var/folders/.../NSCreateObjectFileImageFromMemory-XXXXXXXX` before loading it via dlopen. Hunt for these temp files using file creation monitoring on /private/var/folders/ matching the NSCreateObjectFileImageFromMemory-* pattern — this is a high-fidelity indicator that catches the standard API path. The Sapphire Sleet campaign used these APIs to load the icloudz backdoor. For custom loaders (attackers using reimplemented loader code to bypass the temp file, as demonstrated by Patrick Wardle): Use ESF ES_EVENT_TYPE_NOTIFY_MMAP with PROT_EXEC on anonymous memory regions (no backing file). Filter noise by focusing on processes that receive network data (curl, osascript) followed by executable memory mapping without intervening file writes. Elastic Defend 8.11+ captures dylib load events with signature data — hunt for unsigned dylib loads from non-standard paths or memory-backed regions. Hardened runtime context: macOS restricts PROT_WRITE + PROT_EXEC without MAP_JIT and the `com.apple.security.cs.allow-jit` entitlement — processes without hardened runtime that map RWX memory are suspicious. On systems with dtrace, probe dyld_image_notifier for images loaded from anonymous memory regions (no backing file path).",
     "tags": [
       "defense_evasion",
-      "T1620",
       "reflective_loading",
       "macos",
       "fileless",
-      "gatekeeper_bypass"
+      "gatekeeper_bypass",
+      "T1620"
     ],
+    "techniques": [
+      "T1620"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3274,6 +4238,906 @@ const HUNTS_DATA = [
     "why": "- In the Sapphire Sleet macOS campaign, the icloudz backdoor was loaded via NSCreateObjectFileImageFromMemory — while these APIs were originally designed for pure in-memory loading, on modern macOS (dyld3+) they write a temp file to /private/var/folders/, creating a detectable artifact that many defenders don't know to look for\n- Sophisticated attackers (as demonstrated by Patrick Wardle at OBTS and OFTW) can reimplement Apple's older loader code to restore true in-memory loading, bypassing the temp file — this means both file-based and memory-based detection are needed for complete coverage\n- macOS reflective loading is fundamentally different from Windows reflective loading (H129) — it uses Mach-O dyld APIs rather than PE loading, requires different telemetry sources (ESF vs Sysmon/ETW), and bypasses different security controls (Gatekeeper/notarization vs AMSI)\n- Elastic Defend 8.11+ captures dylib load events with code signing metadata, providing the first scalable detection surface for unsigned in-memory module loads — prior to this, detection required raw ESF access or dtrace",
     "references": "- [MITRE ATT&CK T1620 - Reflective Code Loading](https://attack.mitre.org/techniques/T1620/)\n- [Microsoft Security Blog - Dissecting Sapphire Sleet's macOS Intrusion](https://www.microsoft.com/en-us/security/blog/2026/04/16/dissecting-sapphire-sleets-macos-intrusion-from-lure-to-compromise/)\n- [Objective-See - Restoring Reflective Code Loading on macOS (Part I)](https://objective-see.org/blog/blog_0x7C.html)\n- [Objective-See - Restoring Reflective Code Loading on macOS (Part II)](https://objective-see.org/blog/blog_0x82.html)\n- [Meta Red Team X - In-Memory Execution in macOS: the Old and the New](https://rtx.meta.security/post-exploitation/2022/12/19/In-Memory-Execution-in-macOS.html)\n- [slyd0g - Understanding and Defending Against Reflective Code Loading on macOS](https://slyd0g.medium.com/understanding-and-defending-against-reflective-code-loading-on-macos-e2e83211e48f)\n- [Elastic Security Labs - Sinking macOS Pirate Ships with Behavior Detections (dylib load events)](https://www.elastic.co/security-labs/sinking-macos-pirate-ships)\n- [XPN InfoSec - Restoring Dyld Memory Loading](https://blog.xpnsec.com/restoring-dyld-memory-loading/)\n- [Red Canary - Reflective Code Loading Threat Detection Report](https://redcanary.com/threat-detection-report/techniques/reflective-code-loading/)",
     "file_path": "Flames/H136.md"
+  },
+  {
+    "id": "H137",
+    "category": "Flames",
+    "title": "An adversary has chained a server-side request forgery (SSRF) vulnerability in a GCP-hosted web application with the GCP Instance Metadata Service (IMDS) to exfiltrate the underlying VM's service account access token, indicated by IMDS requests to /computeMetadata/v1/instance/service-accounts/default/token originating from a workload process (Node.js, Python, Java app server) rather than the GCE metadata SDK.",
+    "tactic": "Credential Access",
+    "notes": "Platform: GCP (IaaS). The Unit 42 \"Zealot\" autonomous agent reproduced this classic chain end-to-end against a vulnerable web app on port 3000 — the same chain used in the 2019 Capital One breach (AWS) and the December 2025 GCP misconfiguration campaigns. Detection data sources: VPC Flow Logs (look for traffic to 169.254.169.254 from non-system processes), GCP audit logs (data_access.googleapis.com is silent for IMDS calls — they happen entirely on the VM), and host-side endpoint telemetry on the GCE instance itself. Host-side hunt: process executing outbound HTTP GET to 169.254.169.254 with `Metadata-Flavor: Google` header, where the process is the application server (node, java, python, php-fpm) rather than the gcloud SDK or google-cloud-ops-agent. Use osquery or GCP Ops Agent to capture process_open_sockets joined with processes table. Cortex XDR / XSIAM has a managed BIOC alert: \"Cloud Unusual Instance Metadata Service (IMDS) access.\" Defender for Cloud equivalent: CloudAppEvents where ActionType == \"InstanceMetadataServiceAccessed\" and the calling service principal is a workload identity. Network-side hunt: any non-trivial volume of 169.254.169.254 traffic from web-tier subnets is suspicious — IMDS is normally called once per token refresh (~3600s). Focus on workload service accounts that have broader-than-necessary IAM bindings (storage.admin, bigquery.dataOwner) since those are the high-value SSRF targets. Cross-reference with T1190 (Exploit Public-Facing Application) for the SSRF root cause and T1078.004 (Valid Accounts: Cloud Accounts) for the post-token-theft activity that follows.",
+    "tags": [
+      "credential_access",
+      "gcp",
+      "imds",
+      "cloud",
+      "ssrf",
+      "service_account",
+      "T1552.005"
+    ],
+    "techniques": [
+      "T1552.005"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- The Unit 42 Zealot multi-agent system demonstrated end-to-end automation of the SSRF→IMDS→service-account-token→cloud-data-exfil chain against GCP, and the same fundamental chain has produced multiple high-impact breaches (Capital One 2019 on AWS, multiple GCP incidents in 2025–2026) — the technique is now both reliably automatable and actively exploited\n- IMDS access is invisible in GCP audit logs because the call never touches a GCP API endpoint — it's intercepted by the hypervisor at the link-local address — meaning detection has to come from VPC Flow Logs, host-side telemetry, or workload identity audit on the *uses* of the stolen token after the fact\n- Legitimate IMDS access patterns are extremely narrow: the GCE metadata SDK, gcloud CLI, the Ops Agent, and a handful of Google-supplied workload SDKs — any other process making the call is highly anomalous, and modifying applications to call IMDS directly is rare in well-architected services that use Workload Identity Federation\n- A stolen service account token grants the same effective permissions as the workload itself for up to one hour — and the attacker's first action is almost always rapid IAM enumeration (T1069.003) followed by data discovery (T1619, T1526) to map what the token can reach, creating a detectable burst of cross-service API calls from a single token",
+    "references": "- [MITRE ATT&CK T1552.005 - Unsecured Credentials: Cloud Instance Metadata API](https://attack.mitre.org/techniques/T1552/005/)\n- [Unit 42 - Can AI Attack the Cloud? Lessons from the Zealot Autonomous Agent](https://unit42.paloaltonetworks.com/autonomous-ai-cloud-attacks/)\n- [Google Cloud - Best Practices for Securing the Metadata Server](https://cloud.google.com/compute/docs/metadata/overview#querying_metadata)\n- [Datadog Security Labs - The State of GCP Threats: SSRF and IMDS Exploitation](https://securitylabs.datadoghq.com/articles/the-state-of-gcp-threats/)\n- [Wiz - The Top Cloud Threats of 2025: IMDS Token Theft Patterns](https://www.wiz.io/blog/cloud-threats-2025)\n- [Sigma Rule - Suspicious Cloud Metadata Service Access](https://github.com/SigmaHQ/sigma/blob/master/rules/cloud/gcp/audit/gcp_metadata_service_access.yml)\n- [Red Canary Atomic Red Team - T1552.005 Cloud Instance Metadata API](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1552.005/T1552.005.md)",
+    "file_path": "Flames/H137.md"
+  },
+  {
+    "id": "H138",
+    "category": "Flames",
+    "title": "An adversary using a stolen or compromised GCP service account token is performing a rapid enumeration sequence — listing projects, services, IAM bindings, and compute resources within minutes — to map the blast radius of the compromised identity, indicated by a burst of resourcemanager.projects.list, serviceusage.services.list, iam.roles.list, and compute.instances.list calls from a single principal within a short time window.",
+    "tactic": "Discovery",
+    "notes": "Platform: GCP (IaaS). Covers three chained techniques: T1580 (Cloud Infrastructure Discovery — compute/network/image enumeration), T1526 (Cloud Service Discovery — what GCP services are enabled in the project), and T1069.003 (Permission Groups Discovery: Cloud Groups — IAM roles and bindings). The Zealot agent executed all three in sequence within minutes of stealing the IMDS token. Detection data sources: GCP Cloud Audit Logs, specifically the Admin Activity log stream (always on, free) and Data Access logs (must be explicitly enabled per service). Key methodNames to hunt as a sequence within ~10 minutes from a single principalEmail: google.cloud.resourcemanager.v3.Projects.ListProjects, google.iam.admin.v1.ListServiceAccounts, google.iam.admin.v1.ListRoles, google.iam.v1.IAMPolicy.GetIamPolicy, google.cloud.serviceusage.v1.ServiceUsage.ListServices, google.cloud.compute.v1.Instances.AggregatedList. KQL/CloudAppEvents (Defender for Cloud Apps GCP connector): CloudAppEvents | where Application == \"Google Cloud Platform\" | where ActionType in (\"ListProjects\", \"ListServiceAccounts\", \"ListRoles\", \"GetIamPolicy\", \"AggregatedListInstances\") | summarize distinct_actions = dcount(ActionType), action_list = make_set(ActionType) by AccountObjectId, bin(Timestamp, 10m) | where distinct_actions >= 4. Cortex XDR managed alert: \"Cloud infrastructure enumeration activity\" (T1580, T1526). Baseline expectation: human admins enumerate occasionally (e.g., when running terraform plan); workload service accounts almost never enumerate broadly — a service account that suddenly enumerates outside its normal API call set is the strongest signal. Cross-reference H137 (IMDS token theft) as the typical precursor and H139 (service account impersonation) as a typical follow-on if the attacker finds a higher-privileged target. AWS analog: same hunt works for ListBuckets + ListUsers + ListRoles + DescribeInstances burst from a single principal.",
+    "tags": [
+      "discovery",
+      "gcp",
+      "cloud",
+      "iam_enumeration",
+      "service_account",
+      "T1580",
+      "T1526",
+      "T1069.003"
+    ],
+    "techniques": [
+      "T1580",
+      "T1526",
+      "T1069.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- The Zealot agent's \"Cloud Reconnaissance Agent\" and \"Cloud Security Agent\" in the Unit 42 study performed the full project/service/IAM/compute enumeration sequence in under 10 minutes — this rapid breadth-first survey is the canonical opening move for any cloud attacker (human or AI) because it determines what's worth attacking next\n- Service account enumeration patterns are radically different from human admin patterns: humans tend to focus on what they already know, while a token-stealing attacker hits multiple unrelated APIs (IAM + Compute + Storage + BigQuery) trying to find any open door — the breadth itself is the signal, not any single API call\n- GCP Admin Activity logs are enabled and retained by default for 400 days — the data is already there for free in every GCP environment, but most organizations don't have a hunt or alert that ties together the \"burst of distinct enumerations from one principal\" pattern\n- Combining T1580 + T1526 + T1069.003 into a single sequence-based hunt is more useful operationally than three separate technique hunts, because the techniques almost never appear in isolation in real cloud attacks — defenders want to catch the attacker mid-enumeration, not after they've moved on to data exfil",
+    "references": "- [MITRE ATT&CK T1580 - Cloud Infrastructure Discovery](https://attack.mitre.org/techniques/T1580/)\n- [MITRE ATT&CK T1526 - Cloud Service Discovery](https://attack.mitre.org/techniques/T1526/)\n- [MITRE ATT&CK T1069.003 - Permission Groups Discovery: Cloud Groups](https://attack.mitre.org/techniques/T1069/003/)\n- [Unit 42 - Can AI Attack the Cloud? Lessons from the Zealot Autonomous Agent](https://unit42.paloaltonetworks.com/autonomous-ai-cloud-attacks/)\n- [Google Cloud - Audit Logs Reference: Admin Activity vs Data Access](https://cloud.google.com/logging/docs/audit)\n- [Mitiga - Detection Engineering for GCP: Hunting Service Account Abuse](https://www.mitiga.io/blog/gcp-service-account-abuse-detection)\n- [Splunk - Detecting Cloud Reconnaissance Across AWS, Azure, and GCP](https://www.splunk.com/en_us/blog/security/cloud-reconnaissance-detection.html)\n- [SigmaHQ - GCP Service Account Enumeration Rule](https://github.com/SigmaHQ/sigma/blob/master/rules/cloud/gcp/audit/gcp_service_account_enumeration.yml)",
+    "file_path": "Flames/H138.md"
+  },
+  {
+    "id": "H139",
+    "category": "Flames",
+    "title": "An adversary holding a low-privilege GCP service account token is escalating privilege by impersonating a higher-privileged service account via the iam.serviceAccounts.generateAccessToken or iam.serviceAccounts.signJwt API, indicated by a service account calling generateAccessToken against a target principal it has not previously impersonated, especially when the source principal is a workload identity (compute-default, GKE node SA) and the target is a privileged role-bound SA (storage-admin, bq-admin, owner).",
+    "tactic": "Privilege Escalation, Defense Evasion",
+    "notes": "Platform: GCP (IaaS). Technique T1548.005 (Temporary Elevated Cloud Access) — adversary uses GCP's native service-account impersonation primitive, which is legitimate but commonly abused after a workload-identity compromise. Detection data source: GCP Cloud Audit Logs (Admin Activity stream), specifically methodName == \"google.iam.credentials.v1.IAMCredentials.GenerateAccessToken\" or \"google.iam.credentials.v1.IAMCredentials.SignJwt\". Key fields to extract: protoPayload.authenticationInfo.principalEmail (the source SA), protoPayload.request.name (the target SA being impersonated, format: projects/-/serviceAccounts/<email>), and protoPayload.response.expireTime (token lifetime). KQL hunt (Defender for Cloud Apps GCP connector): CloudAppEvents | where Application == \"Google Cloud Platform\" | where ActionType == \"GenerateAccessToken\" | extend Source = AccountObjectId, Target = tostring(RawEventData.request.name) | join kind=leftanti (CloudAppEvents | where ActionType == \"GenerateAccessToken\" | where Timestamp < ago(30d) | distinct Source, Target) on Source, Target | project Timestamp, Source, Target, IPAddress. Cortex XDR managed alert: \"GCP service account impersonation attempt.\" Baseline behavior: most workloads impersonate the same 1-3 SAs repeatedly (CI runners impersonating deploy SAs is common); adversary behavior is impersonating a never-before-seen, more-privileged SA. High-fidelity flag: source SA is a compute-default or GKE node SA AND target SA has an *Admin or owner role binding. Cross-reference H137 (IMDS token theft) as the typical precursor; once the attacker has a workload token, T1548.005 is how they reach the admin-tier permissions needed for T1537 (data exfil). Required IAM permission: roles/iam.serviceAccountTokenCreator on the target — flag any unexpected grants of this role.",
+    "tags": [
+      "privilege_escalation",
+      "defense_evasion",
+      "gcp",
+      "cloud",
+      "service_account_impersonation",
+      "T1548.005"
+    ],
+    "techniques": [
+      "T1548.005"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Service account impersonation is the canonical privilege-escalation path in GCP because workload identities are typically scoped to least privilege, and admin-tier capabilities are deliberately gated behind roles/iam.serviceAccountTokenCreator — but once an attacker compromises any workload that has been granted that role on an admin SA, escalation is a single API call\n- The Zealot agent demonstrated this exact pivot in the Unit 42 study, going from compute-default service account (via IMDS) to a project-owner-bound SA via generateAccessToken before attempting BigQuery exfiltration\n- generateAccessToken calls are logged in the always-on Admin Activity audit stream, which means the data is universally available — the gap is detection logic that catches *novel* impersonation pairs (Source SA → Target SA combinations not seen in the prior 30-day baseline), not just the API call itself\n- Misconfigured roles/iam.serviceAccountTokenCreator bindings are extremely common: a 2024 Wiz study found ~38% of GCP projects had at least one workload identity with token-creator on an admin SA, often granted \"temporarily\" during setup and never revoked — making this a high-prevalence, high-impact privilege path",
+    "references": "- [MITRE ATT&CK T1548.005 - Abuse Elevation Control Mechanism: Temporary Elevated Cloud Access](https://attack.mitre.org/techniques/T1548/005/)\n- [Unit 42 - Can AI Attack the Cloud? Lessons from the Zealot Autonomous Agent](https://unit42.paloaltonetworks.com/autonomous-ai-cloud-attacks/)\n- [Google Cloud - Service Account Impersonation: How It Works](https://cloud.google.com/iam/docs/service-account-impersonation)\n- [Wiz - The Top Cloud IAM Misconfigurations (2024 Cloud Security Report)](https://www.wiz.io/blog/cloud-iam-misconfigurations-2024)\n- [Mitiga - Privilege Escalation in GCP via Service Account Impersonation](https://www.mitiga.io/blog/privilege-escalation-gcp-service-account-impersonation)\n- [SigmaHQ - GCP Service Account Token Generation Rule](https://github.com/SigmaHQ/sigma/blob/master/rules/cloud/gcp/audit/gcp_iam_credentials_generateaccesstoken.yml)\n- [Datadog Security Labs - Hunting Privilege Escalation in GCP](https://securitylabs.datadoghq.com/articles/hunting-privilege-escalation-in-gcp/)\n- [Red Canary - Cloud IAM Privilege Escalation Detection Patterns](https://redcanary.com/blog/cloud-iam-privilege-escalation/)",
+    "file_path": "Flames/H139.md"
+  },
+  {
+    "id": "H140",
+    "category": "Flames",
+    "title": "An adversary with stolen GCP credentials is exfiltrating BigQuery data by exporting query results or table contents to a Cloud Storage bucket in a project outside the organization's known projects, indicated by jobservice.jobcompleted or BigQuery extract jobs whose destinationUris reference gs:// buckets in foreign projects, or by storage.objects.create activity from a BigQuery service principal targeting a previously-unseen bucket.",
+    "tactic": "Exfiltration, Discovery",
+    "notes": "Platform: GCP (IaaS, BigQuery, Cloud Storage). Covers T1537 (Transfer Data to Cloud Account) and T1619 (Cloud Storage Object Discovery — the enumeration step that precedes the exfil). The Zealot agent executed an end-to-end BigQuery extract → cross-project gs:// bucket pattern in the Unit 42 study. Detection data sources: BigQuery audit logs (resourceName starts with \"projects/<proj>/jobs/\") and Cloud Storage Data Access logs (must be explicitly enabled — many environments do not have this on, which is the first gap to close). Key methodNames: jobservice.jobcompleted with metadataJson.jobChange.job.jobConfig.type == \"EXPORT\", and google.cloud.bigquery.v2.JobService.InsertJob for jobs.insert with type EXPORT or COPY. KQL hunt (Defender for Cloud Apps): CloudAppEvents | where Application == \"Google Cloud Platform\" | where ActionType == \"BigQueryExportJob\" | extend dest_uri = tostring(RawEventData.destinationUris[0]) | extend dest_project = extract(\"gs://([^/]+)/\", 1, dest_uri) | where dest_project !in (known_org_buckets) | project Timestamp, AccountObjectId, dest_uri. Cortex XDR managed alert: \"BigQuery table or query results exfiltrated to a foreign project.\" Cross-project exfil signal: resource.labels.project_id (where job runs) != extracted project from destinationUris[0] (where data lands). For T1619, hunt for storage.buckets.list and storage.objects.list calls across many buckets within minutes from a single principal — the discovery step before the export. High-fidelity flags: (1) any BigQuery export to a gs:// URI whose bucket name doesn't match the org's naming convention, (2) any storage.objects.create to a bucket in a project outside the GCP organization, (3) any BigQuery query with result size >100 MB followed within 5 minutes by an export job. Baseline expectation: legitimate exports go to a small set of well-known analytics buckets with predictable naming — anything outside that pattern from a service account is suspicious. Cross-reference H137 (IMDS), H138 (enumeration), and H139 (impersonation) as typical precursors.",
+    "tags": [
+      "exfiltration",
+      "discovery",
+      "gcp",
+      "cloud",
+      "bigquery",
+      "cloud_storage",
+      "T1537",
+      "T1619"
+    ],
+    "techniques": [
+      "T1537",
+      "T1619"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- BigQuery is the highest-value data target in GCP environments — it routinely contains years of customer, financial, and PII data that competitors and ransomware groups will pay for — and the EXPORT job type is a single API call that can move terabytes to an attacker-controlled bucket in seconds\n- The destination of a BigQuery EXPORT can be any gs:// URI the calling principal has write access to — including buckets in *other GCP projects outside the victim organization* — and this cross-project signal is the single most reliable detection for this technique because legitimate exports almost always stay within the org's project set\n- The Zealot agent in the Unit 42 study completed the BigQuery → cross-project bucket exfil in under 60 seconds end-to-end after privilege escalation, which means alerting on \"completed\" exfil is too late — the value is in detecting the bucket-creation/enumeration burst (T1619) that precedes the export, giving defenders a chance to revoke the token before data moves\n- Cloud Storage Data Access logs are off by default on most projects, creating a major blind spot — turning them on for production projects is a low-cost configuration change that materially improves detection of all storage-tier exfiltration, not just BigQuery EXPORT",
+    "references": "- [MITRE ATT&CK T1537 - Transfer Data to Cloud Account](https://attack.mitre.org/techniques/T1537/)\n- [MITRE ATT&CK T1619 - Cloud Storage Object Discovery](https://attack.mitre.org/techniques/T1619/)\n- [Unit 42 - Can AI Attack the Cloud? Lessons from the Zealot Autonomous Agent](https://unit42.paloaltonetworks.com/autonomous-ai-cloud-attacks/)\n- [Google Cloud - BigQuery Data Exfiltration: Detection and Prevention](https://cloud.google.com/bigquery/docs/exporting-data)\n- [Mandiant - Cloud Data Exfiltration Patterns Across AWS, Azure, and GCP](https://cloud.google.com/blog/topics/threat-intelligence/cloud-data-exfiltration-patterns)\n- [Wiz - Hunting BigQuery Exfiltration in Production GCP Environments](https://www.wiz.io/blog/bigquery-exfiltration-detection)\n- [SigmaHQ - GCP BigQuery Job Export to Foreign Project](https://github.com/SigmaHQ/sigma/blob/master/rules/cloud/gcp/audit/gcp_bigquery_export_foreign_project.yml)\n- [Splunk - Detecting Data Exfiltration via Cloud Storage Buckets](https://www.splunk.com/en_us/blog/security/detecting-cloud-storage-exfiltration.html)",
+    "file_path": "Flames/H140.md"
+  },
+  {
+    "id": "H141",
+    "category": "Flames",
+    "title": "A malicious npm package executed during `npm install` on a developer workstation or CI runner is harvesting environment variables, dotfiles (~/.npmrc, ~/.aws/credentials, ~/.ssh/id_*), and cloud-credential files via a preinstall or postinstall lifecycle hook, then exfiltrating them over HTTPS POST to an endpoint themed as legitimate analytics or telemetry, indicated by a Node child process reading credential files and making outbound HTTPS to a non-allowlisted domain within seconds of an `npm install` invocation.",
+    "tactic": "Initial Access, Credential Access",
+    "notes": "Platform: developer workstations and CI/CD runners across Windows, macOS, and Linux (this hunt is platform-agnostic by design — the npm install attack surface is the same across all three). Primary techniques: T1195.002 (Compromise Software Supply Chain) for the install-time vector and T1555 (Credentials from Password Stores — extended interpretation covering the dotfile pattern). The Unit 42 npm threat landscape paper (Apr 2026) documented the Bun-runtime variant beaconing to audit.checkmarx[.]cx (94.154.172.43) using AES-256-GCM-encrypted POST bodies and a fallback C2 lookup via GitHub Search API. Detection data sources: Sysmon (Windows) Event ID 1 (process create) + Event ID 3 (network connect) joined by ProcessGuid; ESF on macOS (ES_EVENT_TYPE_NOTIFY_EXEC, ES_EVENT_TYPE_NOTIFY_OPEN on credential file paths); auditd on Linux (execve + connect syscalls); for CI: GitHub Actions / GitLab Runner workflow logs and self-hosted runner host telemetry. KQL (DeviceProcessEvents): DeviceProcessEvents | where InitiatingProcessFileName in (\"npm.cmd\", \"npm.ps1\", \"node.exe\") | where FileName in~ (\"node.exe\", \"bun.exe\", \"node\") | join kind=inner (DeviceNetworkEvents | where ActionType == \"ConnectionSuccess\") on DeviceId, $left.ProcessId == $right.InitiatingProcessId | where RemoteUrl !in (allowlisted_npm_endpoints) | project Timestamp, DeviceName, ProcessCommandLine, RemoteUrl, RemoteIP. High-fidelity host signals: (1) any process spawned by `npm install` (parent npm, grandparent shell) that reads ~/.npmrc, ~/.aws/credentials, ~/.ssh/id_rsa, or enumerates process.env entirely (auditd execve with `printenv` or equivalent JS env dump), (2) Bun runtime download from github.com/oven-sh/bun/releases followed by execution from a non-system path, (3) outbound HTTPS POST with high-entropy body (>0.8 bits/byte) from a node child within 60s of npm install start, (4) creation of `.github/workflows/format-check.yml` or similar transient workflow file in a CI checkout. Baseline allowlist for outbound domains: registry.npmjs.org, *.npmjs.com, github.com (clone/fetch), raw.githubusercontent.com (limited), and the org's own artifact registry — any other destination from a node child process during install is suspicious. Skip-detection bypass to watch for: Signal handlers catching SIGINT/SIGTERM with no-ops (the Bun loader does this) — an `npm install` that takes longer than expected or appears to ignore Ctrl+C is a manual-investigation signal. Cross-reference: this is the developer-endpoint side of the same supply-chain attack surface that appears in cloud telemetry as anomalous CloudAppEvents from CI runners reading AWS_*, AZURE_*, GCP_* env vars.",
+    "tags": [
+      "initial_access",
+      "credential_access",
+      "supply_chain",
+      "npm",
+      "developer_endpoint",
+      "ci_cd",
+      "T1195.002",
+      "T1555"
+    ],
+    "techniques": [
+      "T1195.002",
+      "T1555"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- The npm ecosystem averaged a new credential-stealing package campaign every ~9 days through 2025–2026 per the Unit 42 landscape paper, and the Bun-runtime variant (audit.checkmarx[.]cx) demonstrated that attackers are now bundling full secondary runtimes inside packages to evade Node-based EDR signatures — making generic detection that doesn't depend on a specific package name essential\n- Developer workstations are the most under-monitored asset class in most enterprises: they're not in the same scope as production servers, they have legitimate reason to read credential files locally (gcloud auth, aws configure, ssh-agent), and they generate enormous noise — making the *install-time* window (the seconds immediately after `npm install`) the highest-fidelity hunt window\n- The \"npm install → child process reads ~/.aws/credentials → outbound HTTPS POST\" chain is detectable using only stock Sysmon/ESF/auditd telemetry that most orgs already collect, but the join across process and network events keyed on the npm parent process is rarely written as a hunt rule — this hunt closes that specific gap\n- CI runners amplify the impact because they hold higher-value secrets (cloud admin credentials, signing keys, deploy tokens) and run untrusted package code on every PR — the same hunt logic applies but the data sources shift to GitHub Actions audit logs and self-hosted runner host telemetry, which often aren't piped to the SIEM at all",
+    "references": "- [MITRE ATT&CK T1195.002 - Supply Chain Compromise: Compromise Software Supply Chain](https://attack.mitre.org/techniques/T1195/002/)\n- [MITRE ATT&CK T1555 - Credentials from Password Stores](https://attack.mitre.org/techniques/T1555/)\n- [Unit 42 - The npm Threat Landscape: Attack Surface and Mitigations](https://unit42.paloaltonetworks.com/monitoring-npm-supply-chain-attacks/)\n- [Checkmarx - Anatomy of an npm Supply Chain Attack: The Bun Loader Pattern](https://checkmarx.com/blog/npm-supply-chain-bun-loader/)\n- [Snyk - Malicious npm Packages: Detection Strategies for Developer Endpoints](https://snyk.io/blog/malicious-npm-packages-detection/)\n- [GitHub Security Lab - Detecting Workflow Injection from Untrusted Dependencies](https://securitylab.github.com/research/github-actions-untrusted-input/)\n- [Sigma Rule - Suspicious Process Spawned by Node/NPM During Install](https://github.com/SigmaHQ/sigma/blob/master/rules/category/process_creation/proc_creation_node_install_suspicious.yml)\n- [Red Canary Atomic Red Team - T1195.002 Software Supply Chain Compromise](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1195.002/T1195.002.md)\n- [Datadog Security Labs - Hunting npm Package Compromise on Developer Workstations](https://securitylabs.datadoghq.com/articles/hunting-npm-package-compromise/)",
+    "file_path": "Flames/H141.md"
+  },
+  {
+    "id": "H142",
+    "category": "Flames",
+    "title": "Threat actors are using the Snowflake GET command to exfiltrate compressed GZIP files from temporary internal stages to locally specified directories on attacker-controlled systems after staging stolen database records.",
+    "tactic": "Exfiltration",
+    "notes": "Based on ATT&CK technique T1567.002. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
+    "tags": [
+      "exfiltration",
+      "snowflake",
+      "saas",
+      "unc5537",
+      "T1567.002"
+    ],
+    "techniques": [
+      "T1567.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Omer M",
+      "link": ""
+    },
+    "why": "- UNC5537 systematically used this specific exfiltration technique across hundreds of Snowflake customer instances to steal significant volumes of sensitive data for extortion and sale on cybercrime forums\n- The GET command combined with GZIP compression represents the final stage of a multi-step data theft operation, making it a critical detection point before data leaves the environment\n- This technique is highly observable in Snowflake query history logs and represents a distinctive behavior pattern that differs from legitimate data export activities, especially when combined with temporary stage usage\n- Detection of this activity can prevent large-scale data breaches affecting cloud data warehousing platforms, which are increasingly targeted by financially motivated threat actors\n- The campaign demonstrates how SaaS platforms are becoming prime targets for credential-based attacks, with this exfiltration method likely to be replicated against other similar platforms",
+    "references": "- [MITRE ATT&CK T1567.002 - Exfiltration Over Web Service: Exfiltration to Cloud Storage](https://attack.mitre.org/techniques/T1567/002/)\n- [Source CTI Report](https://cloud.google.com/blog/topics/threat-intelligence/unc5537-snowflake-data-theft-extortion)",
+    "file_path": "Flames/H142.md"
+  },
+  {
+    "id": "H143",
+    "category": "Flames",
+    "title": "Threat actors are abusing the signed Logitech \"Logi AI Prompt Builder\" binary to sideload a malicious screen_retriever_plugin.dll from %LocalAppData%\\LogiAI\\, executing TCLBANKER under the trust of a legitimate Flutter plugin loader path.",
+    "tactic": "Defense Evasion",
+    "notes": "TCLBANKER campaign (Elastic, May 2026). Detection: Sysmon Event ID 7 (ImageLoad) — flag `LogiAiPromptBuilder.exe` loading any DLL from `%LocalAppData%\\LogiAI\\` (legit installs live under `%ProgramFiles%`); Sysmon 1 / Defender XDR `DeviceProcessEvents` for `LogiAiPromptBuilder.exe` parent of `tclloader.exe`, `cmd.exe`, `msiexec.exe`, or `powershell.exe`; Sysmon 11 for file creates of `screen_retriever_plugin.dll` outside Program Files; Sysmon 17/18 for unusual named-pipe activity from the host process. KQL: `DeviceImageLoadEvents | where InitiatingProcessFileName =~ \"LogiAiPromptBuilder.exe\" | where FolderPath has \"AppData\\\\Local\\\\LogiAI\"`. Cross-reference T1036.005 (Match Legitimate Name or Location) — the dropped install masquerades under a Logitech-style directory tree.",
+    "tags": [
+      "defense_evasion",
+      "dll_sideloading",
+      "tclbanker",
+      "masquerading",
+      "T1036.005",
+      "T1574.002"
+    ],
+    "techniques": [
+      "T1036.005",
+      "T1574.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- TCLBANKER (Elastic Security Labs, May 2026) is the first publicly reported abuse of the Logi AI Prompt Builder Flutter plugin search path — defenders without a hunt for it will miss every infection where the loader runs from %LocalAppData%\n- DLL sideloading from %LocalAppData% is rare for legitimately signed Logitech software (which installs under %ProgramFiles%), so the path itself is a high-signal anchor that does not require knowing the malicious DLL's hash\n- The host process (LogiAiPromptBuilder.exe) is signed and trusted, so EDR allowlists and code-signing-only detections will not catch the malicious child process tree without an explicit ImageLoad or parent-child hunt\n- Multiple Brazilian banking trojans (TCLBANKER, prior Mispadu/Casbaneiro variants) have converged on Flutter/Electron host-process sideloading — establishing this hunt now generalizes to the next campaign that picks a different signed Flutter app",
+    "references": "- [MITRE ATT&CK T1574.002 - Hijack Execution Flow: DLL Side-Loading](https://attack.mitre.org/techniques/T1574/002/)\n- [Elastic Security Labs - TCLBANKER: Brazilian Banking Trojan Spreading via WhatsApp and Outlook](https://www.elastic.co/security-labs/tclbanker-brazilian-banking-trojan)\n- [MITRE ATT&CK T1036.005 - Masquerading: Match Legitimate Name or Location](https://attack.mitre.org/techniques/T1036/005/)\n- [Red Canary Atomic Red Team - T1574.002 DLL Side-Loading](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1574.002/T1574.002.md)\n- [Elastic Detection Rules - Unusual DLL Loaded by a Trusted Process](https://www.elastic.co/guide/en/security/current/unusual-dll-loaded-by-a-trusted-process.html)\n- [SigmaHQ - Suspicious DLL Side Loading from Programdata](https://github.com/SigmaHQ/sigma/blob/master/rules/windows/file/file_event/file_event_win_lolbin_susp_dll_lateral_movement.yml)\n- [Splunk - Hunting for DLL Side-Loading Activity](https://www.splunk.com/en_us/blog/security/dll-side-loading-detection-with-splunk.html)",
+    "file_path": "Flames/H143.md"
+  },
+  {
+    "id": "H144",
+    "category": "Flames",
+    "title": "Threat actors are abusing the Windows UI Automation framework to read the foreground browser's address bar from a non-AT host process and trigger banking-session hijacking when targeted domains appear.",
+    "tactic": "Collection",
+    "notes": "TCLBANKER (Elastic, May 2026) is the second public abuse of UIA after Coyote (Akamai, July 2025). Detection: Sysmon Event ID 7 — flag `UIAutomationCore.dll` loaded by processes that are NOT screen readers, accessibility tools, or UI test runners (carve a baseline list and alert on outliers); Sysmon Event ID 17/18 for named-pipe activity matching `UIA_PIPE_*` from non-allowlisted processes; Defender XDR `DeviceImageLoadEvents` join with `DeviceProcessEvents` to surface foreign-signed processes loading UIAutomationCore.dll; correlate with outbound WebSocket (wss://) connections (Sysmon 3) within a short window. KQL: `DeviceImageLoadEvents | where FileName =~ \"UIAutomationCore.dll\" | join kind=inner (DeviceProcessEvents) on DeviceId, InitiatingProcessId | where InitiatingProcessSignatureStatus != \"Signed\" or InitiatingProcessFolderPath has_any (\"AppData\\\\Local\",\"AppData\\\\Roaming\",\"ProgramData\")`. Cross-reference T1056.003 (Web Portal Capture) — the UIA polling is reconnaissance for browser-resident credential capture.",
+    "tags": [
+      "collection",
+      "ui_automation",
+      "tclbanker",
+      "coyote",
+      "browser_session_hijacking",
+      "T1056.003",
+      "T1185"
+    ],
+    "techniques": [
+      "T1056.003",
+      "T1185"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- TCLBANKER is the second documented case (after Coyote in 2025) of a banking trojan using UIA to read the browser address bar — detections built off the Coyote IOCs alone will miss it; the abuse pattern is what generalizes\n- UIA is a Microsoft-supported accessibility framework loaded by very few legitimate processes on a typical endpoint (screen readers, UI test harnesses, RPA tools), so the loader-set is small enough to allowlist and alert on outliers\n- This is a stealth alternative to API hooking and process injection — the malware never injects into the browser, never touches a hooked function, and reads cleartext URL/banking-page text via documented Windows APIs, defeating most behavior-based browser-protection detections\n- UIA polling is paired with a fast pivot to outbound WebSocket C2 — the combined Image-Load + outbound wss:// pattern from a non-AT process is a high-fidelity, low-volume hunt that will catch this family and the inevitable copycats",
+    "references": "- [MITRE ATT&CK T1185 - Browser Session Hijacking](https://attack.mitre.org/techniques/T1185/)\n- [Elastic Security Labs - TCLBANKER: Brazilian Banking Trojan Spreading via WhatsApp and Outlook](https://www.elastic.co/security-labs/tclbanker-brazilian-banking-trojan)\n- [Akamai - Coyote in the Wild: First-Ever Malware That Abuses UI Automation](https://www.akamai.com/blog/security-research/active-exploitation-coyote-malware-first-ui-automation-abuse-in-the-wild)\n- [The Hacker News - New Coyote Malware Variant Exploits Windows UI Automation to Steal Banking Credentials](https://thehackernews.com/2025/07/new-coyote-malware-variant-exploits.html)\n- [MITRE ATT&CK T1056.003 - Input Capture: Web Portal Capture](https://attack.mitre.org/techniques/T1056/003/)\n- [Microsoft Docs - UI Automation Overview](https://learn.microsoft.com/en-us/dotnet/framework/ui-automation/ui-automation-overview)\n- [Elastic Detection Rules - Suspicious DLL Loaded for Persistence or Privilege Escalation](https://www.elastic.co/guide/en/security/current/suspicious-dll-loaded-for-persistence-or-privilege-escalation.html)",
+    "file_path": "Flames/H144.md"
+  },
+  {
+    "id": "H145",
+    "category": "Flames",
+    "title": "Threat actors are using Outlook COM automation from a non-Office host process to enumerate contacts and send phishing emails from the victim's mailbox.",
+    "tactic": "Lateral Movement",
+    "notes": "TCLBANKER (Elastic, May 2026) used `Marshal.GetActiveObject(\"Outlook.Application\")` from a sideloaded process to harvest contacts and send malicious links from the victim's authenticated session. Detection: Sysmon Event ID 7 — flag any non-Office process loading `OUTLOOK.EXE` COM-related DLLs (`mso*.dll`, `OUTLLIB.DLL`, `EMSMDB32.DLL`); Sysmon 1 / Defender XDR `DeviceProcessEvents` for `powershell.exe`, `pythonw.exe`, `tclloader.exe`, or any non-Office binary that has `OUTLOOK.EXE` running and accesses the messaging APIs; Defender XDR `EmailEvents` joined with `DeviceProcessEvents` to find outbound emails sent at moments when a non-Office process spawned/loaded Outlook automation. KQL: `DeviceImageLoadEvents | where FileName in~ (\"OUTLLIB.DLL\",\"EMSMDB32.DLL\",\"MSO.DLL\") | where InitiatingProcessFileName !endswith \"OUTLOOK.EXE\" and InitiatingProcessFileName !endswith \"EXCEL.EXE\" and InitiatingProcessFileName !endswith \"WINWORD.EXE\"`. Cross-reference T1114.001 (Local Email Collection) — the same automation is used to read contacts before sending.",
+    "tags": [
+      "lateral_movement",
+      "outlook_com",
+      "tclbanker",
+      "internal_spearphishing",
+      "T1114.001",
+      "T1534"
+    ],
+    "techniques": [
+      "T1114.001",
+      "T1534"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Internal spearphishing from a compromised user's authenticated Outlook session bypasses SEG/anti-spoof controls because the email is genuinely sent from the trusted user — recipients see normal sender reputation, DMARC/DKIM pass, and no banner warnings\n- COM-based Outlook automation does not require a malicious VBA macro, OAuth grant, or mailbox-rule change, so it sidesteps the most common Office 365 abuse detections (mailbox rule monitoring, OAuth app review, macro telemetry)\n- TCLBANKER's use of this technique demonstrates that crimeware (not just APTs) is now operationalizing internal spearphishing via COM — the technique will spread to other commodity loaders quickly\n- The image-load fingerprint of a non-Office process loading EMSMDB32.DLL/OUTLLIB.DLL is rare in normal environments — even RPA/automation tooling typically hosts within mso.dll or uses Microsoft Graph instead of legacy COM, so this hunt is high signal",
+    "references": "- [MITRE ATT&CK T1534 - Internal Spearphishing](https://attack.mitre.org/techniques/T1534/)\n- [Elastic Security Labs - TCLBANKER: Brazilian Banking Trojan Spreading via WhatsApp and Outlook](https://www.elastic.co/security-labs/tclbanker-brazilian-banking-trojan)\n- [MITRE ATT&CK T1114.001 - Email Collection: Local Email Collection](https://attack.mitre.org/techniques/T1114/001/)\n- [Microsoft Learn - Marshal.GetActiveObject Method](https://learn.microsoft.com/en-us/dotnet/fundamentals/runtime-libraries/system-runtime-interopservices-marshal-getactiveobject)\n- [Elastic Detection Rules - Suspicious MS Outlook Child Process](https://www.elastic.co/guide/en/security/current/suspicious-ms-outlook-child-process.html)\n- [Microsoft - Detect and Remediate Outlook Rules and Custom Forms Injections](https://learn.microsoft.com/en-us/defender-office-365/detect-and-remediate-outlook-rules-forms-attack)\n- [SigmaHQ - Outlook EnableUnsafeClientMailRules](https://github.com/SigmaHQ/sigma/blob/master/rules/windows/registry/registry_set/registry_set_enable_unsafe_client_mail_rules.yml)",
+    "file_path": "Flames/H145.md"
+  },
+  {
+    "id": "H146",
+    "category": "Flames",
+    "title": "Non-root processes invoke /usr/bin/su from anomalous parent processes shortly after issuing AF_ALG socket / splice() syscalls, indicating Copy Fail (CVE-2026-31431) exploitation against page-cached setuid binaries.",
+    "tactic": "Privilege Escalation",
+    "notes": "Linux only — the algif_aead vulnerability lives in the kernel crypto subsystem (kernels 4.14–6.19.12). Detection: auditd rules for `socket(AF_ALG)` (audit `arch=b64 -S socket -F a0=38`), `splice()`, and `sendmsg()` from non-root EUID combined with subsequent `execve` of `/usr/bin/su`; eBPF/Falco rule on `crypto_alg_lookup` or AF_ALG bind followed by setuid binary execution; XDR/EDR — Cortex XQL example from Unit 42: `actor_effective_user_sid != \"0\" and action_process_image_name = \"su\" and actor_process_image_name not in (\"bash\",\"sh\",\"zsh\",\"ksh\",\"sudo\",\"su\")`. Equivalent KQL for Defender for Endpoint Linux: `DeviceProcessEvents | where DeviceOSPlatform == \"Linux\" | where FileName == \"su\" and AccountName != \"root\" | where InitiatingProcessFileName !in (\"bash\",\"sh\",\"zsh\",\"ksh\",\"dash\",\"sudo\",\"su\",\"login\",\"sshd\")`. Also hunt for short-window correlation of `curl` to \"copy.fail\" or any kernel-exploit gist followed by `su` execution. Page modifications leave NO disk artifact — file integrity monitoring will MISS this; behavioral detection is the only layer.",
+    "tags": [
+      "privilege_escalation",
+      "linux",
+      "copy_fail",
+      "cve_2026_31431",
+      "af_alg",
+      "T1068"
+    ],
+    "techniques": [
+      "T1068"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Copy Fail is the most severe Linux privilege-escalation flaw in years per Unit 42 / Microsoft (May 2026) — the exploit is deterministic, requires no race, and ships as a 732-byte standalone Python script using only stdlib, so weaponization across cloud and container fleets is trivial\n- The exploit modifies setuid binaries IN MEMORY (page cache only); the on-disk binary is unchanged, so AIDE / Tripwire / Tetragon-FIM will not detect successful exploitation — behavioral detection on the resulting setuid execution is the only viable layer\n- Container escape impact is severe: any unprivileged user inside a Linux container with AF_ALG access can break out to the host, putting Kubernetes multi-tenant workloads and CI/CD pipelines at high risk\n- The \"non-root → su via anomalous parent\" signal is high signal even outside this CVE — it generalizes to other privilege-escalation primitives (DirtyCow, DirtyPipe, kernel use-after-frees) where the final step is hijacking a setuid binary",
+    "references": "- [MITRE ATT&CK T1068 - Exploitation for Privilege Escalation](https://attack.mitre.org/techniques/T1068/)\n- [Unit 42 - Copy Fail: What You Need to Know About the Most Severe Linux Threat in Years](https://unit42.paloaltonetworks.com/cve-2026-31431-copy-fail/)\n- [Microsoft Security Blog - CVE-2026-31431 Copy Fail Vulnerability Enables Linux Root Privilege Escalation](https://www.microsoft.com/en-us/security/blog/2026/05/01/cve-2026-31431-copy-fail-vulnerability-enables-linux-root-privilege-escalation/)\n- [Falco - Detect Privilege Escalation via Suspicious su Activity](https://falco.org/docs/rules/default-macros/)\n- [Linux auditd - Auditing System Calls](https://linux-audit.com/linux-audit-framework/auditing-system-calls/)\n- [Red Canary Atomic Red Team - T1068 Linux Privilege Escalation](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1068/T1068.md)\n- [Elastic Detection Rules - Privilege Escalation via Linux su Anomalous Parent](https://www.elastic.co/guide/en/security/current/linux-restricted-shell-breakout-via-linux-binary-s.html)",
+    "file_path": "Flames/H146.md"
+  },
+  {
+    "id": "H147",
+    "category": "Flames",
+    "title": "Threat actors deliver macOS infostealers via ClickFix lures that trick users into pasting a base64-encoded shell pipeline into Terminal, decoding into a curl-piped osascript or sh payload.",
+    "tactic": "Execution",
+    "notes": "macOS only — Microsoft Threat Intelligence (May 2026) reports SHub Stealer / AMOS / Macsync delivered via fake macOS-utility Squarespace, Medium, and Craft pages. Detection: ESF subscribers (ES_EVENT_TYPE_NOTIFY_EXEC) for process trees where `Terminal.app` → `zsh`/`bash` → (`base64 -D` or `base64 --decode`) piped into `sh`/`zsh`/`osascript`; Unified Log predicate `process == \"osascript\" AND parentProcess CONTAINS \"curl\"`; KQL on Defender for Endpoint macOS — verbatim from Microsoft: `DeviceNetworkEvents | where InitiatingProcessCommandLine has_any (\"loader.sh?build=\",\"payload.applescript?build=\")` and `DeviceProcessEvents | where ProcessCommandLine has_all(\"curl\",\"POST\",\"txid\",\"osascript\",\"bmodule\",\"max-time\")`. Hunt for `/tmp/shub_*` and `/tmp/<random_id>/` directory creation. Cross-reference T1204.004 (User Execution: Malicious Copy and Paste) — the user is the delivery mechanism.",
+    "tags": [
+      "execution",
+      "macos",
+      "clickfix",
+      "shub_stealer",
+      "amos",
+      "osascript",
+      "T1204.004",
+      "T1059.002"
+    ],
+    "techniques": [
+      "T1204.004",
+      "T1059.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- ClickFix is the dominant macOS initial-access vector in 2026 — Jamf, Datadog, Microsoft, and Hunt.io have all published on it within the past quarter, and the technique works because it converts the user into an unsigned-binary execution path that bypasses Gatekeeper and codesign verification entirely\n- The curl|base64|osascript pipeline is fileless on the disk (no .scpt, no .sh dropped), so file-based AV/EDR signatures will not catch it — process telemetry on the pipeline shape and the unusual parent-child chain is the only durable detection\n- Microsoft's KQL queries are public and ready to deploy, but the underlying behavior generalizes: any future macOS lure that pivots to `curl ... | osascript` will trigger this hunt regardless of campaign branding\n- Each of the three identified payloads (SHub, AMOS, Macsync) targets keychain databases, browser credential stores, and crypto wallets — early detection at the execution stage prevents irreversible credential and wallet seed-phrase loss",
+    "references": "- [MITRE ATT&CK T1059.002 - Command and Scripting Interpreter: AppleScript](https://attack.mitre.org/techniques/T1059/002/)\n- [Microsoft Threat Intelligence - ClickFix Campaign Uses Fake macOS Utilities Lures to Deliver Infostealers](https://www.microsoft.com/en-us/security/blog/2026/05/06/clickfix-campaign-uses-fake-macos-utilities-lures-deliver-infostealers/)\n- [MITRE ATT&CK T1204.004 - User Execution: Malicious Copy and Paste](https://attack.mitre.org/techniques/T1204/004/)\n- [Jamf Threat Labs - ClickFix Malware Uses macOS Script Editor to Deliver Atomic Stealer](https://www.jamf.com/blog/clickfix-macos-script-editor-atomic-stealer/)\n- [Hunt.io - ClickFix on macOS: AppleScript Stealer, Terminal Phishing, and C2 Infrastructure](https://hunt.io/blog/macos-clickfix-applescript-terminal-phishing)\n- [Datadog Security Labs - Tech Impersonators: ClickFix and macOS Infostealers](https://securitylabs.datadoghq.com/articles/tech-impersonators-clickfix-and-macos-infostealers/)\n- [Microsoft Community Hub - Hunting Infostealers - macOS Threats](https://techcommunity.microsoft.com/blog/microsoftsecurityexperts/hunting-infostealers---macos-threats/4494435)",
+    "file_path": "Flames/H147.md"
+  },
+  {
+    "id": "H148",
+    "category": "Flames",
+    "title": "Threat actors persist macOS infostealers via LaunchAgent plists in ~/Library/LaunchAgents/ that masquerade as Apple/Google update services and reference unsigned binaries under user-writable paths.",
+    "tactic": "Persistence",
+    "notes": "macOS only — TCLBANKER's macOS cousin and Microsoft's ClickFix (May 2026) both used `~/Library/LaunchAgents/com.google.keystone.agent.plist` referencing `~/Library/Application Support/Google/GoogleUpdate.app/Contents/MacOS/GoogleUpdate`, plus `~/LaunchAgents/com.<random>.plist` variants. Detection: ESF (ES_EVENT_TYPE_NOTIFY_CREATE / _RENAME) on file paths matching `~/Library/LaunchAgents/*.plist` and `/Library/LaunchAgents/*.plist`; Unified Log subsystem predicate `subsystem == \"com.apple.xpc.launchd\" AND eventMessage CONTAINS \"load\"`; runtime check via `launchctl list",
+    "tags": [],
+    "techniques": [],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "com\\.google)'` followed by `codesign -dvvv <referenced binary>` — flag plists pointing to unsigned, ad-hoc-signed, or non-notarized binaries. KQL on Defender for Endpoint macOS: `DeviceFileEvents | where FileName endswith \".plist\" and FolderPath has_any (\"/Library/LaunchAgents\",\"/Library/LaunchDaemons\") | where InitiatingProcessFileName !in (\"Installer\",\"installd\",\"softwareupdated\",\"System Events\")`. Cross-reference T1036.005 (Match Legitimate Name or Location) — `com.google.keystone.agent` and `com.apple.*` plists from non-Apple/non-Google processes are the masquerade signal. Cross-reference T1543.004 (Launch Daemon) when persistence lands in `/Library/LaunchDaemons/com.finder.helper.plist` instead.",
+      "link": ""
+    },
+    "why": "- LaunchAgent plists are the dominant macOS user-mode persistence mechanism in 2026 — adversaries from APTs to commodity infostealers (AMOS, SHub, Atomic) all converge here, so a strong detection on this single path covers the majority of macOS post-compromise persistence\n- Masquerading as `com.apple.*` or `com.google.keystone.agent` defeats name-based allowlists that trust Apple/Google service names — verifying that the referenced binary is signed and notarized is the required additional check\n- Plist creation in LaunchAgents/Daemons folders by `Terminal`, `osascript`, `curl`, `Python`, or any non-installer process is rare and high-signal in practice — Elastic's prebuilt rule set has flagged this since 2022 with low false-positive rates\n- Persistence detection lets defenders catch the campaign even if the initial-access ClickFix or trojanized-installer step is missed, providing a second-chance opportunity before C2 beaconing or credential theft completes",
+    "references": "- [MITRE ATT&CK T1543.001 - Create or Modify System Process: Launch Agent](https://attack.mitre.org/techniques/T1543/001/)\n- [Microsoft Threat Intelligence - ClickFix Campaign Uses Fake macOS Utilities Lures to Deliver Infostealers](https://www.microsoft.com/en-us/security/blog/2026/05/06/clickfix-campaign-uses-fake-macos-utilities-lures-deliver-infostealers/)\n- [Elastic Detection Rules - Persistence via Suspicious Launch Agent or Launch Daemon](https://www.elastic.co/guide/en/security/8.19/persistence-via-suspicious-launch-agent-or-launch-daemon.html)\n- [Elastic Detection Rules - Creation of Hidden Launch Agent or Daemon](https://elastic.co/guide/en/security/current/creation-of-hidden-launch-agent-or-daemon.html)\n- [Elastic Security Labs - Sinking macOS Pirate Ships with Elastic Behavior Detections](https://www.elastic.co/security-labs/sinking-macos-pirate-ships)\n- [Detection.FYI - Persistence via Suspicious Launch Agent or Launch Daemon](https://detection.fyi/elastic/detection-rules/macos/persistence_suspicious_launch_agent_or_launch_daemon/)\n- [Red Canary Atomic Red Team - T1543.001 Launch Agent](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1543.001/T1543.001.md)",
+    "file_path": "Flames/H148.md"
+  },
+  {
+    "id": "H149",
+    "category": "Flames",
+    "title": "Microsoft 365 users are clicking a \"code of conduct\" / \"internal regulatory\" phishing lure that routes through a Cloudflare-CAPTCHA-gated staging page before a Microsoft sign-in proxy, yielding session-token theft visible as anomalous-token / unfamiliar-properties / impossible-travel risk events in Entra ID.",
+    "tactic": "Credential Access",
+    "notes": "M365 / Entra ID. Microsoft Threat Intelligence (May 2026) reports ~35,000 users across 13,000 orgs in 26 countries hit by this campaign. Detection: Microsoft 365 Defender — verbatim sender list query: `EmailEvents | where SenderMailFromAddress in (\"cocpostmaster@cocinternal.com\",\"nationaladmin@gadellinet.com\",\"nationalintegrity@harteprn.com\",\"m365premiumcommunications@cocinternal.com\",\"documentviewer@na.businesshellosign.de\")`. Pivot from `EmailEvents` to `UrlClickEvents` for clicks on `compliance-protectionoutlook[.]de`, `acceptable-use-policy-calendly[.]de`, then to `AADSignInEventsBeta` for risk events `RiskEventType in (\"anomalousToken\",\"unfamiliarFeatures\",\"unfamiliarFeaturesSession\")` from the same UPN within a 1-hour window. Hunt `IdentityLogonEvents` for new sign-in IP/ASN combinations within minutes of the URL click. Hunt `CloudAppEvents` for `ImpossibleTravelActivity` and `MailItemsAccessedAnomalously`. Cross-reference T1078.004 (Valid Accounts: Cloud Accounts) — the stolen token is replayed against M365 services. Cross-reference T1564.008 (Email Hiding Rules) when the attacker creates inbox rules post-token-theft.",
+    "tags": [
+      "credential_access",
+      "m365",
+      "entra_id",
+      "aitm",
+      "phishing",
+      "code_of_conduct",
+      "T1078.004",
+      "T1564.008",
+      "T1539"
+    ],
+    "techniques": [
+      "T1078.004",
+      "T1564.008",
+      "T1539"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- This campaign hit ~35,000 users across 13,000 organizations in 26 countries (92% US-based) per Microsoft's May 2026 disclosure — Healthcare, Financial Services, and Professional Services are the top targets, all sectors with regulatory-themed lure susceptibility\n- AiTM token theft renders MFA ineffective — once the session cookie is stolen, the attacker bypasses MFA entirely on every subsequent service hit; detecting at the click-through-to-anomalous-sign-in window is the last reliable layer before mailbox compromise\n- The Cloudflare CAPTCHA + image-selection CAPTCHA double-gate is specifically designed to defeat sandbox detonation and URL-rewrite scanning — defenders cannot rely on inline URL inspection, only on post-click identity telemetry\n- The \"code of conduct\" / regulatory-compliance lure theme is novel and effective against compliance-aware industries (healthcare, financial services) — it is likely to recur across multiple operator clusters in 2026, and a generalized hunt on the click→risk-event sequence will catch follow-on variants regardless of sender domain rotation",
+    "references": "- [MITRE ATT&CK T1539 - Steal Web Session Cookie](https://attack.mitre.org/techniques/T1539/)\n- [Microsoft Threat Intelligence - Breaking the Code: Multi-Stage 'Code of Conduct' Phishing Campaign Leads to AiTM Token Compromise](https://www.microsoft.com/en-us/security/blog/2026/05/04/breaking-the-code-multi-stage-code-of-conduct-phishing-campaign-leads-to-aitm-token-compromise/)\n- [MITRE ATT&CK T1078.004 - Valid Accounts: Cloud Accounts](https://attack.mitre.org/techniques/T1078/004/)\n- [Microsoft - Anomalous Token Detection in Entra ID Protection](https://learn.microsoft.com/en-us/entra/id-protection/concept-identity-protection-risks)\n- [Microsoft - Impossible Travel Detection in Defender for Cloud Apps](https://learn.microsoft.com/en-us/defender-cloud-apps/anomaly-detection-policy)\n- [Mandiant - Tycoon 2FA / AiTM Phishing-as-a-Service Analysis](https://cloud.google.com/blog/topics/threat-intelligence/tycoon2fa)\n- [Microsoft Sentinel - Hunting Queries for AiTM Phishing](https://github.com/Azure/Azure-Sentinel/tree/master/Hunting%20Queries/MicrosoftThreatProtection)",
+    "file_path": "Flames/H149.md"
+  },
+  {
+    "id": "H150",
+    "category": "Flames",
+    "title": "Threat actors deliver Python supply-chain malware via PyPI packages (colorinal/termncolor/uuid32-utils) that load an attacker-controlled native DLL on import, drop a payload to %LOCALAPPDATA%\\vcpacket\\, and persist via an HKCU Run key.",
+    "tactic": "Initial Access",
+    "notes": "Windows. OceanLotus / APT32 (Securelist, May 2026) — three malicious wheels on PyPI starting July 2025. Detection: Sysmon Event ID 7 — flag `python.exe`/`pythonw.exe` loading DLLs from `site-packages\\colorinal\\`, `site-packages\\termncolor\\`, `site-packages\\uuid32-utils\\`, or any non-stdlib site-packages path that is not on the org's pip-install allowlist; Sysmon Event ID 1 for `python.exe` parent of `vcpktsvr.exe`; Sysmon Event ID 11 for file creates under `%LOCALAPPDATA%\\vcpacket\\`; Sysmon Event ID 13 for `HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\pkt-update` Set; Sysmon Event ID 3 / `DeviceNetworkEvents` for outbound HTTPS to `helper.zulipchat.com` from `vcpktsvr.exe`. KQL: `DeviceImageLoadEvents | where InitiatingProcessFileName in~ (\"python.exe\",\"pythonw.exe\") and FileName endswith \".dll\" | where FolderPath has \"site-packages\" and FolderPath !has_any (\"\\\\numpy\\\\\",\"\\\\pandas\\\\\",\"\\\\cryptography\\\\\",\"\\\\lxml\\\\\",\"\\\\pillow\\\\\",\"\\\\torch\\\\\")`. KQL persistence: `DeviceRegistryEvents | where RegistryKey has \"CurrentVersion\\\\Run\" and RegistryValueName == \"pkt-update\"`. Cross-reference T1059.006 (Python) — the entire dropper chain runs inside the Python interpreter.",
+    "tags": [
+      "initial_access",
+      "pypi",
+      "supply_chain",
+      "oceanlotus",
+      "apt32",
+      "zichatbot",
+      "T1059.006",
+      "T1195.002"
+    ],
+    "techniques": [
+      "T1059.006",
+      "T1195.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Python interpreters loading native DLLs from inside site-packages directories is rare for the typical engineering workstation outside a small set of known-native libraries (numpy, pandas, cryptography, lxml, pillow, torch) — this hunt reliably surfaces unfamiliar wheels with C extensions\n- OceanLotus (APT32) using PyPI as a malware delivery channel — confirmed by Kaspersky in May 2026 — represents a meaningful upgrade in supply-chain targeting from a state-aligned actor; expect more APT entrants to mirror this technique through 2026\n- Zulip team-chat APIs are a novel C2 channel that bypasses domain-reputation and threat-intel feeds entirely (helper.zulipchat.com is a legitimate cloud service) — defenders cannot rely on URL/domain blocklists; the host-side Run-key + native DLL combo is the durable signal\n- Developer workstations and CI/CD runners are typically less monitored than user endpoints and have credentials, source code, and cloud-provider tokens — supply-chain compromise via PyPI yields outsized impact, justifying tighter Sysmon coverage there",
+    "references": "- [MITRE ATT&CK T1195.002 - Supply Chain Compromise: Compromise Software Supply Chain](https://attack.mitre.org/techniques/T1195/002/)\n- [Securelist (Kaspersky) - OceanLotus Suspected of Using PyPI to Deliver ZiChatBot Malware](https://securelist.com/oceanlotus-suspected-pypi-zichatbot-campaign/119603/)\n- [MITRE ATT&CK T1059.006 - Command and Scripting Interpreter: Python](https://attack.mitre.org/techniques/T1059/006/)\n- [Snyk - Malicious Packages Found to Be Typosquatting in PyPI](https://snyk.io/blog/malicious-packages-found-to-be-typo-squatting-in-pypi/)\n- [Check Point - PyPI Inundated by Malicious Typosquatting Campaign](https://blog.checkpoint.com/securing-the-cloud/pypi-inundated-by-malicious-typosquatting-campaign/)\n- [Socket - Typosquatting on PyPI: Malicious Package Mimics Popular Browser-Cookie Library](https://socket.dev/blog/typosquatting-on-pypi-malicious-package-mimics-popular-browser-cookie-library)\n- [SigmaHQ - Suspicious Python DLL Load](https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_python_susp_module.yml)",
+    "file_path": "Flames/H150.md"
+  },
+  {
+    "id": "H151",
+    "category": "Flames",
+    "title": "Silver Fox persists ABCDoor on Windows via an HKCU Run key value \"AppClient\" and a Scheduled Task \"AppClient\" both invoking `pythonw.exe -m appclient`, with installation artifacts under HKCU\\Software\\CarEmu and %LOCALAPPDATA%\\applogs.",
+    "tactic": "Persistence",
+    "notes": "Windows. Silver Fox APT tax-notification campaign targeting Russia and India (Securelist, April–May 2026). Detection: Sysmon Event ID 13 / `DeviceRegistryEvents` for Set on `HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\AppClient`; Sysmon Event ID 1 / Windows Event ID 4698 (Scheduled Task created) for task name `AppClient` with action `pythonw.exe -m appclient`; Sysmon Event ID 11 for file creates in `%LOCALAPPDATA%\\applogs\\device.log` and `exception_logs.zip`; Sysmon Event ID 13 for Set on `HKCU\\Software\\CarEmu\\FirstInstallTime` or `InstallChannel`; Sysmon Event ID 3 / `DeviceNetworkEvents` for outbound HTTPS to `abc.*` C2 domains and `45.118.133[.]205:5000`. KQL: `DeviceProcessEvents | where FileName =~ \"pythonw.exe\" and ProcessCommandLine has \"-m appclient\"`. KQL Run key: `DeviceRegistryEvents | where RegistryKey has \"CurrentVersion\\\\Run\" and RegistryValueName == \"AppClient\" and RegistryValueData has \"pythonw.exe\"`. KQL Scheduled Task: `DeviceProcessEvents | where FileName =~ \"schtasks.exe\" and ProcessCommandLine has_all (\"/Create\",\"AppClient\",\"pythonw\")`. Cross-reference T1053.005 (Scheduled Task) — both persistence anchors should be hunted together. Cross-reference T1574.002 (DLL Side-Loading) — Silver Fox's loader chain uses RustSL with sideloaded `登录模块.dll_bin` ValleyRAT components.",
+    "tags": [
+      "persistence",
+      "windows",
+      "silver_fox",
+      "abcdoor",
+      "valleyrat",
+      "T1053.005",
+      "T1574.002",
+      "T1547.001"
+    ],
+    "techniques": [
+      "T1053.005",
+      "T1574.002",
+      "T1547.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- pythonw.exe running with `-m appclient` is virtually never benign on a corporate Windows endpoint — most environments have no legitimate Python application named `appclient`, making the command line a single-string anchor that catches the technique with near-zero false positives\n- Silver Fox is targeting industrial, consulting, retail, and transportation organizations across two strategic countries (Russia, India) with >1,600 phishing emails in a single window — defenders in those verticals should treat this as an active, high-volume threat\n- Dual persistence (Run key + Scheduled Task with a 1-minute trigger) is unusually aggressive — the Scheduled Task respawns the implant if the user kills it, and the every-minute trigger generates Event ID 4688 noise that defenders can pivot from once they know the binary\n- The ABCDoor implant inherits its \"remote control\" primitives from ValleyRAT (broad screen capture and HID emulation) but lacks a remote shell — defenders can rely on persistence and beacon detection rather than command-execution telemetry, which is unusual and instructive for tooling decisions",
+    "references": "- [MITRE ATT&CK T1547.001 - Boot or Logon Autostart Execution: Registry Run Keys / Startup Folder](https://attack.mitre.org/techniques/T1547/001/)\n- [Securelist (Kaspersky) - Silver Fox Uses the New ABCDoor Backdoor to Target Organizations in Russia and India](https://securelist.com/silver-fox-tax-notification-campaign/119575/)\n- [MITRE ATT&CK T1053.005 - Scheduled Task/Job: Scheduled Task](https://attack.mitre.org/techniques/T1053/005/)\n- [Red Canary Atomic Red Team - T1547.001 Registry Run Keys](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1547.001/T1547.001.md)\n- [Elastic Detection Rules - Persistence via Scheduled Task](https://www.elastic.co/guide/en/security/current/persistence-via-scheduled-job-creation.html)\n- [SigmaHQ - Suspicious Run Key from Download](https://github.com/SigmaHQ/sigma/blob/master/rules/windows/registry/registry_set/registry_set_run_key_susp_download.yml)\n- [Splunk - Hunting for Scheduled Task Persistence](https://www.splunk.com/en_us/blog/security/hunting-for-malicious-scheduled-tasks.html)",
+    "file_path": "Flames/H151.md"
+  },
+  {
+    "id": "H152",
+    "category": "Flames",
+    "title": "Threat actors register attacker-controlled key credentials in `msDS-KeyCredentialLink` on privileged AD user/computer objects (Whisker, pyWhisker, Certipy `shadow auto`) to obtain a persistent passwordless PKINIT authentication primitive that survives password resets.",
+    "tactic": "Credential Access",
+    "notes": "Windows / Active Directory. Unit 42 AD CS exploitation report (May 2026) called shadow credentials out as a primary persistence/escalation primitive paired with AD CS abuse. Detection: Windows Security Event ID 5136 (directory object modified) with `AttributeLDAPDisplayName == \"msDS-KeyCredentialLink\"` — by default this is not audited for user objects, so a custom AuditRule for the attribute GUID must be deployed first; exclude legitimate writers (Azure AD Connect `MSOL_*`, ADFS service account, Windows Hello for Business enrollment service). Sysmon Event ID 1 / `DeviceProcessEvents` for `Whisker.exe`, `Rubeus.exe asktgt`, or `certipy shadow auto`/`certipy auth -pfx`. Cross-reference T1556 (Modify Authentication Process) — the msDS-KeyCredentialLink write is the auth-process modification. Cross-reference T1550 (Use Alternate Authentication Material) — the follow-on PKINIT TGT request uses the shadow credential. KQL: `IdentityDirectoryEvents | where ActionType == \"Directory object modified\" and AdditionalFields has \"msDS-KeyCredentialLink\" and AccountName !startswith \"MSOL_\"`. Sigma: SigmaHQ `win_security_susp_possible_shadow_credentials_added.yml`.",
+    "tags": [
+      "credential_access",
+      "shadow_credentials",
+      "ad_cs",
+      "windows",
+      "T1556",
+      "T1550",
+      "T1649"
+    ],
+    "techniques": [
+      "T1556",
+      "T1550",
+      "T1649"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Shadow credentials are an EDR-resistant persistence primitive: the attacker never touches LSASS, never extracts a hash, and never needs the user's password — they simply append a key to the target's `msDS-KeyCredentialLink` and authenticate via PKINIT, so credential-theft and password-rotation controls do nothing\n- The technique is now a default option in Certipy (`shadow auto`, baked into the AD CS toolchain) and Unit 42's May 2026 report flags it as paired with ESC1-ESC16 abuse — meaning operators with AD CS access will almost always set a shadow credential as their persistence anchor\n- Detection requires explicit configuration of a custom Directory Service AuditRule for the `msDS-KeyCredentialLink` attribute (GUID `5b47d60f-6090-40b2-9f37-2a4de88f3063`) because the default audit policy doesn't cover this attribute on user objects — so most environments have ZERO visibility today, and even adding the audit rule is a high-value defensive win\n- Legitimate writers are a small allowlist (Azure AD Connect `MSOL_*`, ADFS svc, Windows Hello for Business enrollment) — once excluded, residual 5136 events on this attribute become extremely high signal",
+    "references": "- [MITRE ATT&CK T1649 - Steal or Forge Authentication Certificates](https://attack.mitre.org/techniques/T1649/)\n- [Unit 42 - Inside AD CS Escalation: Unpacking Advanced Misuse Techniques and Tools](https://unit42.paloaltonetworks.com/active-directory-certificate-services-exploitation/)\n- [MITRE ATT&CK T1556 - Modify Authentication Process](https://attack.mitre.org/techniques/T1556/)\n- [SigmaHQ - Possible Shadow Credentials Added (5136 + msDS-KeyCredentialLink)](https://github.com/SigmaHQ/sigma/blob/master/rules/windows/builtin/security/win_security_susp_possible_shadow_credentials_added.yml)\n- [Elastic Prebuilt Detection - Potential Shadow Credentials added to AD Object](https://www.elastic.co/docs/reference/security/prebuilt-rules/rules/windows/credential_access_shadow_credentials)\n- [Black Hills InfoSec - Enable Auditing of Changes to msDS-KeyCredentialLink](https://www.blackhillsinfosec.com/enable-auditing-of-changes-to-msds-keycredentiallink/)\n- [DefensiveOrigins - Detect-msDS-KeyCredentialLink (audit rule deployment)](https://github.com/DefensiveOrigins/Detect-msDS-KeyCredentialLink)",
+    "file_path": "Flames/H152.md"
+  },
+  {
+    "id": "H153",
+    "category": "Flames",
+    "title": "Threat actors are exploiting ESC1-vulnerable certificate templates (`ENROLLEE_SUPPLIES_SUBJECT` + Client Authentication EKU + low/empty approval requirements) via Certify or Certipy to request a certificate with an arbitrary Subject Alternative Name impersonating a privileged account, then authenticating to a DC via PKINIT.",
+    "tactic": "Privilege Escalation",
+    "notes": "Windows / Active Directory. Unit 42 AD CS exploitation report (May 2026). Detection requires CA-level audit logging enabled (`certutil -setreg CA\\AuditFilter 127` + OS-level \"Audit Certification Services\" success/failure). Hunt: Windows Security Event ID 4886 (cert request received) and 4887 (cert issued) on the CA — flag any certificate where the SAN UPN/DNS name does NOT match the requester account; correlate within minutes to Windows Event ID 4768 on a DC with `PreAuthType == 16` (PKINIT) and `TicketOptions` starting `0x4080` for the impersonated account from a host that does not normally authenticate as that account. Sysmon Event ID 1 for `Certify.exe request /ca:.. /template:.. /altname:..`, `certipy req`, or `Rubeus asktgt /certificate:`. KQL (Defender XDR): join `DeviceProcessEvents` on certify/certipy invocations with `IdentityLogonEvents` PKINIT TGT requests for the SAN'd identity. Cross-reference T1649 (Steal or Forge Authentication Certificates) parent technique. Cross-reference T1550 (Use Alternate Authentication Material) for the TGT request follow-on. Splunk Security Content: `Windows Steal Authentication Certificates - ESC1 Abuse` and `ESC1 Authentication`.",
+    "tags": [
+      "privilege_escalation",
+      "esc1",
+      "ad_cs",
+      "certify",
+      "certipy",
+      "windows",
+      "T1649",
+      "T1550"
+    ],
+    "techniques": [
+      "T1649",
+      "T1550"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- ESC1 is the highest-impact AD CS misconfiguration that still ships in many environments — a single template with `ENROLLEE_SUPPLIES_SUBJECT` + a broad enrollment ACL is a direct path from low-privileged domain user to Domain Admin, and Unit 42 reported active exploitation in May 2026\n- The mismatch between requester identity and SAN is a near-zero-FP anchor — a legitimate cert request issued for `alice@corp.local` should be requested by `alice`, not by `bob`; a deviation is virtually always abuse or misconfiguration that warrants investigation either way\n- Most environments do NOT enable AD CS audit logging by default — establishing the hunt forces the prerequisite work of turning on `4886`/`4887` and the OS-level CertSvc audit subcategory, which is a defensive win independent of catching this specific attacker\n- The Certify and Certipy toolchain leaves distinctive command-line patterns (`/altname:`, `/upn:`, `req --upn`) that survive renames; combined with the SAN-vs-requester mismatch this becomes a robust, multi-signal hunt",
+    "references": "- [MITRE ATT&CK T1649 - Steal or Forge Authentication Certificates](https://attack.mitre.org/techniques/T1649/)\n- [Unit 42 - Inside AD CS Escalation: Unpacking Advanced Misuse Techniques and Tools](https://unit42.paloaltonetworks.com/active-directory-certificate-services-exploitation/)\n- [Splunk Security Content - Windows Steal Authentication Certificates - ESC1 Abuse](https://research.splunk.com/endpoint/cbe761fc-d945-4c8c-a71d-e26d12255d32/)\n- [Splunk Security Content - ESC1 Authentication](https://research.splunk.com/endpoint/f0306acf-a6ab-437a-bbc6-8628f8d5c97e/)\n- [Splunk Security Content - Windows Steal Authentication Certificates Certificate Issued (SAN)](https://research.splunk.com/endpoint/9b1a5385-0c31-4c39-9753-dc26b8ce64c2/)\n- [Lares Labs - Common ADCS Vulnerabilities: Logging, Exploitation, and Investigation (Part 2)](https://labs.lares.com/adcs-exploits-investigations-pt2/)\n- [Semperis - ESC1 Attack Explained](https://www.semperis.com/blog/esc1-attack-explained/)",
+    "file_path": "Flames/H153.md"
+  },
+  {
+    "id": "H154",
+    "category": "Flames",
+    "title": "Threat actors with local-admin access to an Enterprise CA host are modifying `HKLM\\SYSTEM\\CurrentControlSet\\Services\\CertSvc\\Configuration\\<CAName>\\AuditFilter` (via `certutil -setreg CA\\AuditFilter 0` or direct reg write) to silence Certificate Services events 4886/4887/4898 before performing ESC1-ESC16 abuse.",
+    "tactic": "Defense Evasion",
+    "notes": "Windows / Active Directory CA hosts. Unit 42 AD CS exploitation report (May 2026) calls out CA audit policy tampering as a precursor to certificate forgery. Detection: Windows Security Event ID 4885 (\"The audit filter for Certificate Services changed\") fires whenever the CA Audit tab is modified — this is a tier-zero alert. Sysmon Event ID 13 (RegistryEvent SetValue) on `HKLM\\SYSTEM\\CurrentControlSet\\Services\\CertSvc\\Configuration\\*\\AuditFilter` with new value != 127 (127 = all categories audited). Sysmon Event ID 1 / `DeviceProcessEvents` for `certutil.exe -setreg CA\\AuditFilter`. Windows Security Event ID 4719 (system audit policy changed) and 4906/4907 (SACL changed). Cross-reference T1070 (Indicator Removal) — the goal is destroying evidence of subsequent cert abuse. Cross-reference T1649 (Steal or Forge Authentication Certificates) — this hunt is the precursor; pair with H153 (ESC1) for end-to-end coverage. KQL: `DeviceRegistryEvents | where RegistryKey has \"CertSvc\\\\Configuration\" and RegistryValueName =~ \"AuditFilter\" and RegistryValueData != \"127\"`.",
+    "tags": [
+      "defense_evasion",
+      "ad_cs",
+      "certutil",
+      "windows",
+      "T1070",
+      "T1649",
+      "T1562.002"
+    ],
+    "techniques": [
+      "T1070",
+      "T1649",
+      "T1562.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- CA audit logging is the single source of truth for AD CS abuse — without `4886`/`4887`/`4898` defenders cannot see who requested what certificate with which SAN — so tampering with `AuditFilter` is the prerequisite step a sophisticated AD CS attacker takes before forging certificates\n- Legitimate changes to the AuditFilter are rare and almost always come from a known CA administrator during planned configuration — any modification outside a change window is suspect and warrants pager-grade response\n- Event ID **4885** is a built-in, single-event detection for this exact behavior that ships with Windows but is rarely alerted on — building this hunt is a low-cost, high-value defensive win that catches every variation of the technique (certutil, direct registry, GPO push) without needing to enumerate the toolchain\n- Many environments never enable CA audit logging in the first place — running this hunt surfaces hosts where `AuditFilter` is permanently set below `127`, which is a configuration finding worth fixing even if no adversary touched it",
+    "references": "- [MITRE ATT&CK T1562.002 - Impair Defenses: Disable Windows Event Logging](https://attack.mitre.org/techniques/T1562/002/)\n- [Unit 42 - Inside AD CS Escalation: Unpacking Advanced Misuse Techniques and Tools](https://unit42.paloaltonetworks.com/active-directory-certificate-services-exploitation/)\n- [Ultimate Windows Security - Event ID 4885: The audit filter for Certificate Services changed](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventid=4885)\n- [PKI Solutions - Enabling Active Directory Certificate Services (ADCS) Advanced Audit](https://www.pkisolutions.com/enabling-active-directory-certificate-services-adcs-advanced-audit/)\n- [Encryption Consulting - How to Enable Certification Authority Advanced Filter](https://www.encryptionconsulting.com/how-to-enable-certification-authority-advanced-audit-filter/)\n- [Heirhabarov - Hunting for Active Directory Certificate Services Abuse (Speaker Deck)](https://speakerdeck.com/heirhabarov/hunting-for-active-directory-certificate-services-abuse)\n- [JUMPSEC Labs - Active Directory Certificate Service Defensive Guidance](https://labs.jumpsec.com/active-directory-certificate-service-defensive-guidance/)",
+    "file_path": "Flames/H154.md"
+  },
+  {
+    "id": "H155",
+    "category": "Flames",
+    "title": "Threat actors are submitting stolen or forged user certificates (from ESC1 abuse, shadow credentials, or extracted PFX) to a Domain Controller via PKINIT — appearing as Kerberos TGT requests with `PreAuthType=16` and `TicketOptions=0x40810010` from hosts that do not normally authenticate as that user.",
+    "tactic": "Lateral Movement",
+    "notes": "Windows / Active Directory. Unit 42 AD CS exploitation report (May 2026) maps cert-based TGT requests to T1550. Detection: Windows Security Event ID 4768 on every DC with `Certificate Information` fields populated (`CertIssuerName`, `CertSerialNumber`, `CertThumbprint`) AND `PreAuthType == 16` (PKINIT) AND `TicketOptions` starting `0x4080` — baseline expected sources (Windows Hello for Business endpoints, smartcard-enabled admins, ADFS) and alert on outliers, especially TGT requests for privileged accounts (Domain Admins, Enterprise Admins, service accounts with high-value SPNs) from non-typical hosts. Sysmon Event ID 1 / `DeviceProcessEvents` for `Rubeus.exe asktgt /certificate:` or `certipy auth -pfx`. KQL (Defender XDR): `IdentityLogonEvents | where Protocol == \"Kerberos\" and LogonType == \"PKINIT\"` joined to `DeviceLogonEvents` on `AccountUpn` and time-window. Cross-reference T1649 (the cert was stolen or forged) and T1556 (shadow credentials enabled the PKINIT) — pair with H152 and H153. Note: Windows Hello for Business produces high-volume legitimate PKINIT TGTs — baseline by `IpAddress` and device first.",
+    "tags": [
+      "lateral_movement",
+      "pkinit",
+      "kerberos",
+      "ad_cs",
+      "windows",
+      "T1550",
+      "T1649",
+      "T1556"
+    ],
+    "techniques": [
+      "T1550",
+      "T1649",
+      "T1556"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- PKINIT abuse is the \"use\" half of AD CS attack chains — the forge/steal step (T1649) gets defensive attention but the TGT-request step is where the attacker actually pivots, and most SOCs don't watch `4768 PreAuthType=16` because PreAuthType 16 is also produced by every Windows Hello for Business logon\n- Unlike kerberoasting or AS-REP roasting, PKINIT abuse leaves a clean audit trail in the certificate fields on `4768` — `CertIssuerName`, `CertSerialNumber`, `CertThumbprint` — that maps directly back to the issued cert and can be correlated to the `4887` issuance event from H153 to build a full attack timeline\n- After baseline PKINIT noise is excluded, a PKINIT TGT for `Administrator` or `krbtgt` or a Tier 0 service account is virtually always an attack — the baseline work pays for itself the first time the hunt fires\n- This hunt is the canonical example of a cross-event-source hunt: cert issuance (CA host), key registration (DC `5136` for shadow creds), and TGT request (DC `4768`) live on different hosts and must be correlated — building it forces SOC pipelines to ingest all three sources",
+    "references": "- [MITRE ATT&CK T1550 - Use Alternate Authentication Material](https://attack.mitre.org/techniques/T1550/)\n- [Unit 42 - Inside AD CS Escalation: Unpacking Advanced Misuse Techniques and Tools](https://unit42.paloaltonetworks.com/active-directory-certificate-services-exploitation/)\n- [Securelist - Anomaly Detection in Certificate-Based TGT Requests](https://securelist.com/anomaly-detection-in-certificate-based-tgt-requests/110242/)\n- [SOC Stories - Detecting ADCS Attacks](https://www.socstories.blog/detecting-adcs-attacks/)\n- [Microsoft Learn - Event 4768: A Kerberos authentication ticket (TGT) was requested](https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4768)\n- [Lares Labs - Kerberos II: Credential Access (PKINIT & Rubeus asktgt)](https://labs.lares.com/fear-kerberos-pt2/)\n- [Noah H - Offensive Kerberos Techniques for Detection Engineering](https://medium.com/@noah_h/offensive-kerberos-techniques-for-detection-engineering-16a81483f676)",
+    "file_path": "Flames/H155.md"
+  },
+  {
+    "id": "H156",
+    "category": "Flames",
+    "title": "Threat actors are registering a malicious Network Provider DLL (e.g., `mslogon.dll`) at `HKLM\\SYSTEM\\CurrentControlSet\\Services\\<svc>\\NetworkProvider\\ProviderPath` on a Domain Controller — letting Windows invoke `NPLogonNotify` / `NPPasswordChangeNotify` on every interactive logon and password change to harvest cleartext credentials.",
+    "tactic": "Credential Access",
+    "notes": "Windows / Domain Controllers. Microsoft Threat Intelligence trust-boundary intrusion report (May 2026, third-party HPOM compromise). Detection (KQL verbatim from Microsoft): `DeviceRegistryEvents | where RegistryKey has_all (@'\\Services\\', @'\\NetworkProvider')`. Windows Security Event ID 7045 (a service was installed) for unfamiliar service names with an associated `NetworkProvider` subkey; Event ID 4657 on `\\Services\\<name>\\NetworkProvider\\ProviderPath`; Sysmon Event ID 13 (registry SetValue) on the same path; Sysmon Event ID 7 (ImageLoad) for `mpnotify.exe` loading non-Microsoft DLLs from non-`%SystemRoot%\\System32` paths. Baseline: legitimate providers are short (`LanmanWorkstation`, `RDPNP`, `webclient`); any new entry is high signal — and a new entry on a Domain Controller is almost never legitimate. Cross-reference T1556.002 (Password Filter DLL) — adversaries often install both for redundancy (pair with H157). Cross-reference T1199 (Trusted Relationship) — Microsoft's intrusion entered via a trusted third-party IT provider.",
+    "tags": [
+      "credential_access",
+      "network_provider",
+      "lsa",
+      "domain_controller",
+      "windows",
+      "T1556.002",
+      "T1199",
+      "T1556.008"
+    ],
+    "techniques": [
+      "T1556.002",
+      "T1199",
+      "T1556.008"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- The May 2026 Microsoft Threat Intelligence report is the first major public writeup of network provider DLL credential capture used in a real intrusion — most SOC playbooks do not have a hunt for it, and the actor deliberately chose this technique BECAUSE it survives credential rotation and LSASS protections\n- `NPLogonNotify` receives cleartext credentials by API design — Windows hands them to every registered provider; there is no protection or detection at the credential-flow level, so the only defensive control is alerting on the provider registration itself\n- The legitimate set of network providers is tiny and well-known per environment (LanmanWorkstation, RDPNP, webclient, sometimes a VPN client) — a single new entry, especially on a DC, is a tier-zero alert with effectively zero false positives once a one-time baseline is captured\n- The Microsoft KQL detection is short, copy-pasteable, and covers every variant of the technique (any service name, any DLL path) because the `NetworkProvider` subkey itself is the universal signal — this is the easiest CTI-to-detection conversion in this batch",
+    "references": "- [MITRE ATT&CK T1556.008 - Modify Authentication Process: Network Provider DLL](https://attack.mitre.org/techniques/T1556/008/)\n- [Microsoft Security Blog - Undermining the Trust Boundary: Investigating a Stealthy Intrusion Through Third-Party Compromise](https://www.microsoft.com/en-us/security/blog/2026/05/12/undermining-the-trust-boundary-investigating-a-stealthy-intrusion-through-third-party-compromise/)\n- [MITRE ATT&CK Detection Strategy DET0580 - Detect Network Provider DLL Registration and Credential Capture](https://attack.mitre.org/detectionstrategies/DET0580/)\n- [MITRE ATT&CK T1199 - Trusted Relationship](https://attack.mitre.org/techniques/T1199/)\n- [Praetorian - How to Detect and Dump Credentials from the Windows Registry](https://www.praetorian.com/blog/how-to-detect-and-dump-credentials-from-the-windows-registry/)\n- [SigmaHQ - Security Support Provider (SSP) Added to LSA Configuration](https://detection.fyi/sigmahq/sigma/windows/registry/registry_event/registry_event_ssp_added_lsa_config/)\n- [Red Canary Atomic Red Team - T1556.008 Network Provider DLL](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1556.008/T1556.008.md)",
+    "file_path": "Flames/H156.md"
+  },
+  {
+    "id": "H157",
+    "category": "Flames",
+    "title": "Threat actors are appending a malicious Password Filter DLL (e.g., `passms.dll`) to `HKLM\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\Notification Packages` (REG_MULTI_SZ) on a Domain Controller — receiving cleartext credentials from LSA via `PasswordFilter` callbacks on every password set/change after the next reboot.",
+    "tactic": "Credential Access",
+    "notes": "Windows / Domain Controllers. Microsoft Threat Intelligence trust-boundary intrusion report (May 2026, third-party HPOM compromise). Detection (KQL verbatim from Microsoft): `DeviceRegistryEvents | where RegistryKey has @\"control\\LSA\" and RegistryValueName has \"Notification Packages\"`. Windows Security Event ID 4657 (registry value modified) on `HKLM\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\Notification Packages` — requires a SACL on the key. Sysmon Event ID 13 on the same path. Sysmon Event ID 11 for file creates of unsigned DLLs in `%SystemRoot%\\System32\\` (filter must live in System32 to load). Sysmon Event ID 7 (ImageLoad) for `lsass.exe` loading any DLL not on the known-good filter list (`scecli.dll`, `rassfm.dll`, vendor password-quality DLLs). Baseline: in most environments `Notification Packages` is `scecli\\0rassfm` — any addition is high signal. Cross-reference T1556.008 (Network Provider DLL) — same actor commonly installs both for redundancy (pair with H156). Cross-reference T1547.005 (Security Support Provider) — adjacent LSA-loaded-DLL persistence with similar detection pattern.",
+    "tags": [
+      "credential_access",
+      "lsa",
+      "password_filter",
+      "domain_controller",
+      "windows",
+      "T1556.008",
+      "T1547.005",
+      "T1556.002"
+    ],
+    "techniques": [
+      "T1556.008",
+      "T1547.005",
+      "T1556.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Password Filter DLLs are part of the official Windows authentication architecture — Microsoft documents how to install them — so the malicious DLL runs inside LSASS with full credential access, gets cleartext passwords by API contract, and inherits LSASS's defenses against most EDR\n- The detection set is small and stable: `Notification Packages` is rarely changed by any legitimate process post-build; on a DC it's almost never changed at all, so a single 4657 / DeviceRegistryEvents hit on this value is a tier-zero alert\n- Unlike LSASS memory scraping, password filter abuse leaves NO Mimikatz-style artifact — the only telemetry is the registration event and the `lsass.exe` ImageLoad of the foreign DLL after reboot, which makes this hunt one of the very few ways to catch a post-reboot credential-capture implant\n- Microsoft's May 2026 report shows a sophisticated actor installing BOTH a password filter (`passms.dll`) AND a network provider DLL (`mslogon.dll`) on the same DC — pair this hunt with H156 to catch the full pattern, and tune both for the same allowlist of legitimate filters",
+    "references": "- [MITRE ATT&CK T1556.002 - Modify Authentication Process: Password Filter DLL](https://attack.mitre.org/techniques/T1556/002/)\n- [Microsoft Security Blog - Undermining the Trust Boundary: Investigating a Stealthy Intrusion Through Third-Party Compromise](https://www.microsoft.com/en-us/security/blog/2026/05/12/undermining-the-trust-boundary-investigating-a-stealthy-intrusion-through-third-party-compromise/)\n- [SigmaHQ - Dropping Of Password Filter DLL (Notification Packages registry add)](https://detection.fyi/sigmahq/sigma/windows/process_creation/proc_creation_win_reg_credential_access_via_password_filter/)\n- [Microsoft Learn - Installing and Registering a Password Filter DLL](https://learn.microsoft.com/en-us/windows/win32/secmgmt/installing-and-registering-a-password-filter-dll)\n- [PentestLab - Credential Access: Password Filter DLL](https://pentestlab.blog/2020/02/10/credential-access-password-filter-dll/)\n- [Red Canary Atomic Red Team - T1556.002 Password Filter DLL](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1556.002/T1556.002.md)\n- [nFront Security - Monitoring for Malicious Password Filters](https://nfrontsecurity.com/blog/monitoring-for-malicious-password-filters/)",
+    "file_path": "Flames/H157.md"
+  },
+  {
+    "id": "H158",
+    "category": "Flames",
+    "title": "Information stealers (Gremlin Stealer, Laplas Clipper, and variants) are running a persistent thread that polls the Windows clipboard for cryptocurrency wallet patterns and replaces matched strings with an attacker-controlled wallet address before the victim pastes — `SetClipboardData` is called by a foreign process with the same handle the user just copied to.",
+    "tactic": "Collection",
+    "notes": "Windows. Unit 42 Gremlin Stealer evolution report (May 2026) — \"Crypto clipper functionality continuously monitors the system clipboard for strings matching cryptocurrency wallet patterns…replaces the victim's address with the attacker's wallet.\" Detection: Sysmon Event ID 24 (ClipboardChange) — baseline the small set of legitimate clipboard writers (`explorer.exe`, browsers, password managers, Office apps, RDP/Teams clients) and alert on writes from any other process, especially from `%AppData%`, `%LocalAppData%`, `%Temp%`, or ProgramData paths. Sysmon Event ID 1 for short-lived processes that immediately spawn clipboard activity. Specific anchor: two `Event ID 24` events within the same second from different processes for what appears to be the same content position (user copy → stealer write) — the second write is the replacement. ETW `Microsoft-Windows-Win32k` clipboard events as a fallback when Sysmon is not deployed. KQL (Defender XDR): `DeviceEvents | where ActionType has \"Clipboard\"` (where available). Cross-reference T1027 (Obfuscated Files/Info) — Gremlin Stealer also hides its payload in XOR-encoded .NET resource sections. Note: Sysmon clipboard capture has performance overhead and must be enabled with `<ClipboardChange onmatch=\"include\">` rules — define narrowly.",
+    "tags": [
+      "collection",
+      "crypto_clipper",
+      "gremlin_stealer",
+      "laplas",
+      "windows",
+      "T1027",
+      "T1115"
+    ],
+    "techniques": [
+      "T1027",
+      "T1115"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Crypto clippers are a high-volume, low-sophistication threat that bypasses every traditional credential and data-loss control — the user willingly pastes the wrong wallet address; no exfil channel is needed and no credential is touched, so they evade DLP, EDR memory scans, and network monitoring entirely\n- The only reliable detection point is the clipboard write itself — Sysmon Event ID 24 (added in v12) is purpose-built for this and most organizations either have not deployed it or have not configured the include rules to capture clipboard changes at all\n- Gremlin Stealer (Unit 42, May 2026) is the second major stealer family in 12 months to add a dedicated clipper module — the technique is becoming standard in the commodity stealer market, so hunts built for one family generalize cleanly to the rest (Laplas, RedLine variants, ClipboardWalletHijacker)\n- After a one-time baseline of legitimate clipboard writers, alerting on writes from any process in user-writable paths (AppData, Temp, ProgramData) catches every clipper without needing a wallet-pattern signature — pattern signatures are brittle (every coin has a different regex) but writer-process anomalies are not",
+    "references": "- [MITRE ATT&CK T1115 - Clipboard Data](https://attack.mitre.org/techniques/T1115/)\n- [Unit 42 - Gremlin Stealer's Evolved Tactics: Hiding in Plain Sight With Resource Files](https://unit42.paloaltonetworks.com/gremlin-stealer-evolution/)\n- [TrustedSec - Sysmon Community Guide: Clipboard Capture (EventID 24)](https://github.com/trustedsec/SysmonCommunityGuide/blob/master/chapters/clipboard-capture.md)\n- [Olaf Hartong / FalconForce - Sysmon 12.0 EventID 24 Deep Dive](https://medium.com/falconforce/sysmon-12-0-eventid-24-31e0109c78e3)\n- [Hunt.io - Laplas Clipper: Cryptocurrency Clipboard Hijacker Threat](https://hunt.io/malware-families/laplas-clipper)\n- [Red Canary Atomic Red Team - T1115 Clipboard Data](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1115/T1115.md)\n- [BleepingComputer - Microsoft Sysmon Now Logs Data Copied to the Windows Clipboard](https://www.bleepingcomputer.com/news/microsoft/microsoft-sysmon-now-logs-data-copied-to-the-windows-clipboard/)",
+    "file_path": "Flames/H158.md"
+  },
+  {
+    "id": "H159",
+    "category": "Flames",
+    "title": "Kazuar operators are using Exchange Web Services (EWS) as a covert command-and-control channel — `CreateItem`, `FindItem`, `GetItem`, `UpdateItem`, and `DeleteItem` SOAP operations against `/EWS/Exchange.asmx` from a compromised mailbox carry tasking and exfiltration data, blending in with legitimate Outlook traffic.",
+    "tactic": "Command and Control",
+    "notes": "Windows / M365 / Exchange Online. Microsoft Threat Intelligence Kazuar nation-state botnet report (May 2026) — \"Exchange Web Services (EWS), HTTP, WebSockets (WSS)\" used for redundant C2. Detection: `CloudAppEvents` for EWS operations with unusual `UserAgent` strings (Kazuar does not present as Outlook/MAPI client UAs); baseline expected EWS clients per tenant (Outlook desktop, mobile Outlook, third-party mail clients) and alert on outliers. Specific EWS operations to focus on: `CreateItem` + `UpdateItem` on the SAME item within seconds (read-write tasking pattern); `FindItem` against `Drafts` or custom folders with low-volume but periodic cadence; high item-count drafts that never get sent. `DeviceNetworkEvents` for outbound HTTPS to `/EWS/Exchange.asmx` from processes that are NOT `outlook.exe`, `msteams.exe`, `lync.exe`, or known mail-sync agents — Kazuar runs inside an injected process tree so the initiator will look anomalous. Microsoft Unified Audit Log: `MailItemsAccessed`, `Update`, `New-InboxRule` with unusual frequency from low-activity accounts. KQL: `CloudAppEvents | where Application has \"Exchange\" and ActionType in~ (\"FindItem\",\"CreateItem\",\"UpdateItem\") and UserAgent !has \"Outlook\" and UserAgent !has \"Microsoft Office\"`. Cross-reference T1114.002 (Email Collection: Remote Email Collection) — the same EWS API is used for mail theft and for tasking. Cross-reference T1102 (Web Service) — Kazuar's WSS fallback channel.",
+    "tags": [
+      "command_and_control",
+      "kazuar",
+      "ews",
+      "exchange",
+      "m365",
+      "T1114.002",
+      "T1102",
+      "T1071.003"
+    ],
+    "techniques": [
+      "T1114.002",
+      "T1102",
+      "T1071.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Mail-protocol C2 is one of the hardest channels to detect because EWS traffic to Exchange Online is universally present and is allowed through every egress filter — Kazuar deliberately chose it as a redundancy channel for exactly this reason\n- Microsoft's May 2026 Kazuar writeup names EWS as a first-class C2 mechanism alongside HTTP and WebSockets — combined with the actor's nation-state attribution, this is a high-confidence forward-looking technique that other APTs will adopt\n- The detection logic does not depend on signatures of Kazuar — it depends on EWS access patterns (initiator process, user agent, operation cadence, item lifecycle) that any mail-protocol C2 implant will exhibit, so the hunt generalizes to APT29's MAPI C2, Hafnium's EWS abuse, and future variants\n- M365 Unified Audit Log + CloudAppEvents are already collected by most tenants — the hunt is largely a query-tuning exercise, not a telemetry-deployment exercise, which makes it cheap to implement",
+    "references": "- [MITRE ATT&CK T1071.003 - Application Layer Protocol: Mail Protocols](https://attack.mitre.org/techniques/T1071/003/)\n- [Microsoft Security Blog - Kazuar: Anatomy of a Nation-State Botnet](https://www.microsoft.com/en-us/security/blog/2026/05/14/kazuar-anatomy-of-a-nation-state-botnet/)\n- [Microsoft Security Blog - Stopping Attacks Against On-Premises Exchange Server with AMSI (EWS abuse patterns)](https://www.microsoft.com/en-us/security/blog/2025/04/09/stopping-attacks-against-on-premises-exchange-server-and-sharepoint-server-with-amsi/)\n- [MITRE ATT&CK T1114.002 - Email Collection: Remote Email Collection](https://attack.mitre.org/techniques/T1114/002/)\n- [Microsoft Learn - Control Access to EWS in Exchange Online](https://learn.microsoft.com/en-us/exchange/client-developer/exchange-web-services/how-to-control-access-to-ews-in-exchange)\n- [PT SWARM - Attacking MS Exchange Web Interfaces (EWS surface)](https://swarm.ptsecurity.com/attacking-ms-exchange-web-interfaces/)\n- [OWASP Frankfurt - Abusing Cloud Apps 101: Command and Control](https://owasp.org/www-chapter-frankfurt/assets/slides/56_OWASP_Frankfurt_Stammtisch_2.pdf)",
+    "file_path": "Flames/H159.md"
+  },
+  {
+    "id": "H160",
+    "category": "Flames",
+    "title": "Kimsuky (DPRK) is persisting PebbleDash / AppleSeed implants on Windows hosts by creating scheduled tasks named `ChromeCheck` (elevated) or `EdgeCheck` (non-elevated) that invoke `regsvr32 /s <path>` every minute — disguising the persistence under browser-update branding.",
+    "tactic": "Persistence",
+    "notes": "Windows. Securelist Kimsuky PebbleDash campaign report (May 2026). Detection: Windows Security Event ID 4698 (scheduled task created) where TaskName is `ChromeCheck`, `EdgeCheck`, `GoogleCache`, `GoogleUpdate`, or other browser-update-masquerading names AND the task action invokes `regsvr32` with `/s` (silent). Sysmon Event ID 1 / `DeviceProcessEvents` for `schtasks.exe /create /tn ChromeCheck` or `/tn EdgeCheck` with `/tr` containing `regsvr32` or `wscript`. Sysmon Event ID 1 for `regsvr32.exe /s` with parent `svchost.exe -k netsvcs` (Task Scheduler) and a child loading a DLL or .cfg from `%ProgramData%\\Chrome\\`, `%LocalAppData%\\FoxitReader\\`, or other user-writable paths. KQL (Defender XDR): `DeviceProcessEvents | where FileName =~ \"schtasks.exe\" and ProcessCommandLine has_any (\"ChromeCheck\",\"EdgeCheck\",\"GoogleCache\",\"GoogleUpdate\") and ProcessCommandLine has \"regsvr32\"`. KQL (regsvr32 via Task Scheduler): `DeviceProcessEvents | where InitiatingProcessFileName =~ \"svchost.exe\" and FileName =~ \"regsvr32.exe\" and ProcessCommandLine has \"/s\" and ProcessCommandLine matches regex @\"\\.(cfg|db|dat|xml)\"`. Network indicator: outbound HTTPS to `*.trycloudflare.com`, `*.p-e.kr`, `*.o-r.kr`, or `*.n-e.kr` from the regsvr32 host within 5 minutes. Cross-reference T1218.010 (Regsvr32) — the execution side of this persistence anchor. Cross-reference T1071.001 (Application Layer Protocol: Web Protocols) — Kimsuky's HTTP POST C2 with `m=`, `u=`, `d=` parameters.",
+    "tags": [
+      "persistence",
+      "kimsuky",
+      "appleseed",
+      "pebbledash",
+      "regsvr32",
+      "windows",
+      "T1218.010",
+      "T1071.001",
+      "T1053.005"
+    ],
+    "techniques": [
+      "T1218.010",
+      "T1071.001",
+      "T1053.005"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- The task names `ChromeCheck` and `EdgeCheck` are exact, campaign-specific strings that Kimsuky has reused across multiple PebbleDash and AppleSeed waves (Securelist May 2026; ASEC historical reporting on `GoogleCache` / `GoogleUpdate`) — name-based detection is a near-zero-FP first pass because legitimate Chrome/Edge updaters use service names, not user-created tasks\n- Pairing the task name with the `regsvr32 /s <unusual extension>` action catches the technique even when Kimsuky renames the task — `regsvr32` loading a `.cfg`, `.db`, `.dat`, or `.xml` from `%ProgramData%` or `%LocalAppData%` is rare in benign software and almost universal in this campaign family\n- A 1-minute trigger interval on a task that calls `regsvr32` generates very loud telemetry once detection is wired up — defenders who instrument this hunt will see the persistence within minutes of infection, not days\n- Kimsuky has been operating PebbleDash since 2018 and pivots through new lures and droppers every campaign — but the scheduled-task + regsvr32 + browser-named-task triad has remained stable, making this one of the most cost-effective hunts in the Kimsuky kill chain",
+    "references": "- [MITRE ATT&CK T1053.005 - Scheduled Task/Job: Scheduled Task](https://attack.mitre.org/techniques/T1053/005/)\n- [Securelist - Disclosing New PebbleDash-Based Tools by Kimsuky](https://securelist.com/kimsuky-appleseed-pebbledash-campaigns/119785/)\n- [ASEC - APT Attack Cases of Kimsuky Group (PebbleDash)](https://asec.ahnlab.com/en/30022/)\n- [ASEC - Analysis Report on Kimsuky Group's APT Attacks (AppleSeed, PebbleDash)](https://asec.ahnlab.com/en/30532/)\n- [MITRE ATT&CK T1218.010 - System Binary Proxy Execution: Regsvr32](https://attack.mitre.org/techniques/T1218/010/)\n- [SigmaHQ - Suspicious Scheduled Task Creation Involving Temp Folder](https://github.com/SigmaHQ/sigma/blob/master/rules/windows/builtin/security/win_security_susp_schtask_creation_temp_folder.yml)\n- [Red Canary Atomic Red Team - T1053.005 Scheduled Task](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1053.005/T1053.005.md)",
+    "file_path": "Flames/H160.md"
+  },
+  {
+    "id": "H161",
+    "category": "Flames",
+    "title": "An attacker on a compromised Linux host (Confluence or F5 BIG-IP) is performing NTLM relay coercion against an internal Windows domain controller — running `responder`, `ntlmrelayx`, `kerbrute`, or a CVE-2025-33073 PoC to coerce and relay authentication for credential theft and lateral movement.",
+    "tactic": "Credential Access",
+    "notes": "Linux source, Windows AD impact. Microsoft Security Blog \"From edge appliance to enterprise compromise\" (May 2026) — F5/Confluence intrusion using CVE-2025-33073. Detection sources: Linux: `auditd` `execve` rules for `responder`, `ntlmrelayx`, `kerbrute`, `nxc` (NetExec), `impacket-*`, `dnstool.py`; Defender for Endpoint DeviceProcessEvents where `FileName in (\"python\",\"python3\",\"responder\",\"kerbrute\",\"nxc\",\"ntlmrelayx.py\")` and `ProcessCommandLine has_any (\"-r\",\"--target\",\"relay\",\"CVE-2025-33073\",\"SMBSERVER\",\"HTTPSERVER\")`. Network: Linux→DC connections on TCP 445 (SMB), 88 (Kerberos), 389/636 (LDAP), 5985/5986 (WinRM), or 80/443 with SPN/HTTP coercion — these are unusual from a Confluence/F5 host. Pair with Windows Security Event ID 4624 logon type 3 to a DC with source IP = Linux appliance/Confluence host. Windows Event ID 4625 failures with `Failure Reason: Unknown user name or bad password` and `Source Workstation` = Linux hostname (Responder NTLMv2 challenge collection). KQL: `DeviceNetworkEvents | where DeviceName has_any (\"confluence\",\"bigip\",\"f5\") and RemotePort in (445,88,389,636) | join (DeviceInfo | where MachineGroup has \"Domain Controllers\") on $left.RemoteIP == $right.IPAddresses`. Cross-reference T1557 (AiTM relay infrastructure on the same host), T1110.003 (Password Spraying via kerbrute), and T1190 (Exploit Public-Facing Application — Confluence/F5 RCE that enabled the position).",
+    "tags": [
+      "credential_access",
+      "ntlm_relay",
+      "cve_2025_33073",
+      "linux",
+      "confluence",
+      "f5",
+      "T1557",
+      "T1110.003",
+      "T1190",
+      "T1187"
+    ],
+    "techniques": [
+      "T1557",
+      "T1110.003",
+      "T1190",
+      "T1187"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Linux edge appliances (F5 BIG-IP, Confluence, BIG-IQ) and DMZ Linux jump hosts are an emerging staging pattern for NTLM relay — the attacker bypasses Windows-side EDR and uses Linux as a \"blind spot\" to run `responder`, `ntlmrelayx`, and PetitPotam-style coercion tools (Microsoft, May 2026); historically this tradecraft lived on attacker-controlled VMs, but now lives on the victim's own appliances\n- CVE-2025-33073 (June 2025) removed the prior requirement that relay attacks needed admin access on the relayer — making coerced NTLM authentication a near-universal post-RCE pivot from any internet-facing Linux host with a path to the internal network (Synacktiv, Praetorian, Zero Networks deep dives)\n- The detection signal is extremely high-fidelity: **Confluence and F5 management hosts should never connect to a DC on SMB/Kerberos/LDAP** — these are management or web-tier devices, not domain-joined endpoints. Any 445/88/389 connection from an internet-facing Linux host to a DC IP is anomaly-by-baseline and worth chasing every time\n- Pairing the network signal with `auditd` process telemetry catches both the tool execution (responder/kerbrute binaries) AND the in-memory Python relay (`impacket` libraries via `python3`) — closing the gap where attackers rename or strip tool binaries",
+    "references": "- [MITRE ATT&CK T1187 - Forced Authentication](https://attack.mitre.org/techniques/T1187/)\n- [Microsoft Security Blog - From edge appliance to enterprise compromise: Multi-stage Linux intrusion via F5 and Confluence](https://www.microsoft.com/en-us/security/blog/2026/05/22/from-edge-appliance-to-enterprise-compromise-multi-stage-linux-intrusion-via-f5-and-confluence/)\n- [Synacktiv - NTLM reflection is dead, long live NTLM reflection (CVE-2025-33073 in-depth)](https://www.synacktiv.com/en/publications/ntlm-reflection-is-dead-long-live-ntlm-reflection-an-in-depth-analysis-of-cve-2025)\n- [Praetorian - CVE-2025-33073 NTLM Reflection One-Hop](https://www.praetorian.com/blog/cve-2025-33073-ntlm-reflection-one-hop/)\n- [Zero Networks - Examining Relay Attacks Through the Lens of CVE-2025-33073](https://zeronetworks.com/blog/examining-relay-attacks-through-the-lens-of-cve-2025-33073)\n- [SOC Prime - PetitPotam NTLM Relay Attack Detection](https://socprime.com/blog/petitpotam-ntlm-relay-attack-detection/)\n- [MITRE ATT&CK T1557 - Adversary-in-the-Middle](https://attack.mitre.org/techniques/T1557/)",
+    "file_path": "Flames/H161.md"
+  },
+  {
+    "id": "H162",
+    "category": "Flames",
+    "title": "A compromised Linux web service (Confluence/Java, F5 management) is staging a payload in `/dev/shm` or `/tmp` by performing `chmod 777` on the directory or file — enabling execution of a downloaded second-stage binary from a world-writable, RAM-backed location that survives no reboots but defeats common executable-path allowlists.",
+    "tactic": "Defense Evasion",
+    "notes": "Linux. Microsoft Security Blog \"From edge appliance to enterprise compromise\" (May 2026). Detection sources: auditd rule `-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -k perm_mod` filtering on path `/dev/shm` or `/tmp` and mode `0777`/`0755`. Defender for Endpoint KQL (from source article): `DeviceProcessEvents | where InitiatingProcessFileName == \"java\" | where ProcessCommandLine has_any(\"chmod 777 /dev/shm\",\"chmod 777 /tmp\",\"base64 -d > /dev/shm\",\"curl -o /dev/shm/\",\"wget -O /dev/shm/\",\"wget -O /tmp/\")`. Falco rule `Write below /dev/shm` and `Mkdir binary dirs`. eBPF/Sysdig capture of `execve(\"/usr/bin/chmod\",\"777\",\"/dev/shm/...\")` with parent `java`, `httpd`, `nginx`, or `tomcat`. Pair with the immediate next child process — a binary executed FROM `/dev/shm/` or `/tmp/` within 60 seconds (Sysmon-for-Linux Event ID 1 with `Image` starting with `/dev/shm/` or `/tmp/`). Cross-reference T1059.004 (Unix Shell) and T1105 (Ingress Tool Transfer) — the chmod is the connective tissue between the download and the execute. Cross-reference T1036.005 (Match Legitimate Name) — staged binaries often named to mimic system tools (e.g., `/dev/shm/systemd-update`, `/tmp/dbus-daemon`).",
+    "tags": [
+      "defense_evasion",
+      "linux",
+      "chmod",
+      "dev_shm",
+      "tmp",
+      "confluence",
+      "f5",
+      "T1059.004",
+      "T1105",
+      "T1036.005",
+      "T1222.002"
+    ],
+    "techniques": [
+      "T1059.004",
+      "T1105",
+      "T1036.005",
+      "T1222.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- The Microsoft May 2026 F5/Confluence intrusion writeup lists `chmod 777 /dev/shm` and `chmod 777 /tmp` as direct attacker commands — these are not commands a Java application server runs in normal operation, so the `parent_process=java + chmod 777 /dev/shm` pairing is a near-zero-FP signal\n- `/dev/shm` is RAM-backed (`tmpfs`), so files placed there leave no on-disk forensic trail after reboot — making it the preferred staging directory for in-memory loaders, fileless payloads, and credentials staging. Defenders who do not monitor `tmpfs` writes are blind to this\n- Legitimate users rarely need `0777` on `/dev/shm` or `/tmp` — those directories already have the sticky bit and world-writable permissions at the directory level. A `chmod 777` operation on a specific file inside them is a strong adversary signal because attackers do it to defeat per-user umask defaults on dropped payloads\n- Coupling the `chmod 777` event with the very next `execve` from the same directory yields full attack-chain visibility: download → permission-change → execute, all from a Linux service that should never originate any of these calls",
+    "references": "- [MITRE ATT&CK T1222.002 - File and Directory Permissions Modification: Linux and Mac](https://attack.mitre.org/techniques/T1222/002/)\n- [Microsoft Security Blog - From edge appliance to enterprise compromise: Multi-stage Linux intrusion via F5 and Confluence](https://www.microsoft.com/en-us/security/blog/2026/05/22/from-edge-appliance-to-enterprise-compromise-multi-stage-linux-intrusion-via-f5-and-confluence/)\n- [Red Canary Atomic Red Team - T1222.002 Linux File and Directory Permissions Modification](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1222.002/T1222.002.md)\n- [Falco - Falco Rules for /dev/shm and /tmp Writes](https://github.com/falcosecurity/rules/blob/main/rules/falco_rules.yaml)\n- [Elastic Security - Suspicious chmod in Temporary Folder](https://github.com/elastic/detection-rules/blob/main/rules/linux/defense_evasion_chmod_executable_in_world_writeable_dir.toml)\n- [MITRE ATT&CK T1105 - Ingress Tool Transfer](https://attack.mitre.org/techniques/T1105/)\n- [Sigma - Linux File Permission Modification Detection](https://github.com/SigmaHQ/sigma/blob/master/rules/linux/auditd/lnx_auditd_susp_file_chmod.yml)",
+    "file_path": "Flames/H162.md"
+  },
+  {
+    "id": "H163",
+    "category": "Flames",
+    "title": "After a successful Self-Service Password Reset (SSPR) on an Entra ID account, an adversary is removing the user's legitimate MFA methods (Authenticator app, phone, FIDO key) and registering a new attacker-controlled MFA method in the same session — completing a full identity takeover that survives password rotation and bypasses conditional access that trusts \"MFA-registered\" devices.",
+    "tactic": "Persistence",
+    "notes": "M365 / Entra ID. Microsoft Security Blog \"How Storm-2949 turned a compromised identity into a cloud-wide breach\" (May 2026). Detection sources: Entra ID Audit Logs (Defender XDR `AuditLogs` / Sentinel `AuditLogs`) operations: `Reset password (self-service)`, `User registered security info`, `User deleted security info`, `User changed default security info`. Sign-in Logs (`SigninLogs`) joined by `UserPrincipalName` and `CorrelationId`. KQL: `AuditLogs | where TimeGenerated > ago(7d) | where OperationName in (\"User registered security info\",\"User deleted security info\",\"Reset password (self-service)\") | extend Target = tostring(TargetResources[0].userPrincipalName) | summarize Ops=make_set(OperationName), Times=make_list(TimeGenerated), IPs=make_set(InitiatedBy.user.ipAddress) by Target, CorrelationId | where Ops has \"User deleted security info\" and Ops has \"User registered security info\" and Ops has \"Reset password (self-service)\"`. Pair with SigninLogs anomaly: post-reset sign-in from a different `IPAddress`, `Country`, or `UserAgent` than the 30-day baseline. Pair with risky users: `IdentityProtection.RiskyUsers` and `UserRiskEvents` flagged within ±6h. Cross-reference T1621 (MFA Request Generation — the upstream MFA fatigue that often precedes the swap), T1098.005 (Device Registration — attackers typically register their device after MFA swap), and T1078.004 (Cloud Accounts — the valid-account abuse that follows).",
+    "tags": [
+      "persistence",
+      "entra_id",
+      "m365",
+      "mfa",
+      "sspr",
+      "storm_2949",
+      "T1621",
+      "T1098.005",
+      "T1078.004",
+      "T1556.006"
+    ],
+    "techniques": [
+      "T1621",
+      "T1098.005",
+      "T1078.004",
+      "T1556.006"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Storm-2949 (Microsoft, May 2026) and prior actors (Midnight Blizzard, Storm-0501) all converge on the same MFA-swap-after-SSPR pattern because it produces a fully-authenticated identity that survives password rotation, defeats user-notification of \"new device sign-in,\" and looks identical to a legitimate forgotten-password flow in Entra\n- The three audit operations — `Reset password (self-service)` + `User deleted security info` + `User registered security info` — happening on the **same UPN** within a **single session/correlation ID** is a high-fidelity composite signal. Legitimate users almost never delete *and* re-add MFA factors in the same session as a self-service reset; they typically add a new factor without deleting the old\n- Hunters using only the password-reset event miss the persistence step; hunters using only the MFA-registration event miss the takeover step. The composite query is the only way to surface the full chain in a single pivot\n- Conditional access policies that trust \"MFA-registered devices\" or \"compliant devices\" become a persistence enabler once the attacker owns the MFA factor — so this hunt is also a feed-in to a periodic review of CA assignments for accounts with recent MFA swaps",
+    "references": "- [MITRE ATT&CK T1556.006 - Modify Authentication Process: Multi-Factor Authentication](https://attack.mitre.org/techniques/T1556/006/)\n- [MITRE ATT&CK T1621 - Multi-Factor Authentication Request Generation](https://attack.mitre.org/techniques/T1621/)\n- [Microsoft Security Blog - How Storm-2949 turned a compromised identity into a cloud-wide breach](https://www.microsoft.com/en-us/security/blog/2026/05/18/storm-2949-turned-compromised-identity-into-cloud-wide-breach/)\n- [Microsoft Community Hub - Hunting for MFA manipulations in Entra ID tenants using KQL](https://techcommunity.microsoft.com/blog/microsoftsecurityexperts/hunting-for-mfa-manipulations-in-entra-id-tenants-using-kql/4154039)\n- [Red Canary Threat Detection Report - MFA Request Generation](https://redcanary.com/threat-detection-report/techniques/mfa-request-generation/)\n- [Elastic Detection Rules - Successful Azure AD MFA Fatigue Attack](https://github.com/elastic/detection-rules/issues/2440)\n- [Jeffrey Appel - How to Mitigate MFA Fatigue and Learn from the Uber Breach](https://jeffreyappel.nl/how-to-prevent-mfa-fatigue-and-learn-from-the-uber-breach-for-additional-protection/)",
+    "file_path": "Flames/H163.md"
+  },
+  {
+    "id": "H164",
+    "category": "Flames",
+    "title": "An adversary with stolen Entra ID credentials is registering an attacker-controlled device in the tenant using ROADtools `roadtx` — visible in audit logs as a `Register device` operation from `Device Registration Service`, with a `Microsoft.OData.Client` user agent, a default OS string of `Windows 10.0.19041.928`, and a hostname matching `DESKTOP-<8 digits>` — enabling Primary Refresh Token (PRT) acquisition and conditional-access bypass for \"trusted device\" policies.",
+    "tactic": "Persistence",
+    "notes": "M365 / Entra ID. Unit 42 \"Paved With Intent: ROADtools and Nation-State Tactics in the Cloud\" (May 2026, attributed to Curious Serpens / Iranian APT). Detection sources: Entra ID Audit Logs `AuditLogs` table — operations `Add device`, `Register device`, `Add registered owner to device`, `Add registered user to device` where `LoggedByService == \"Device Registration Service\"`. Sign-in Logs (`SigninLogs`) joined by `CorrelationId` — look for `UserAgent has_any (\"Microsoft.OData.Client\",\"python-requests\",\"aiohttp\",\"urllib\")` against `AppDisplayName in (\"Device Registration Service\",\"Microsoft Authentication Broker\")`. KQL (composite): `AuditLogs | where OperationName in (\"Add device\",\"Register device\") and LoggedByService == \"Device Registration Service\" | extend DeviceName = tostring(TargetResources[0].displayName), DeviceOS = tostring(parse_json(tostring(TargetResources[0].modifiedProperties))[0].newValue) | where DeviceName matches regex @\"^DESKTOP-[0-9]{8}$\" or DeviceOS has \"10.0.19041.928\" | join kind=leftouter SigninLogs on CorrelationId | where UserAgent has_any (\"Microsoft.OData.Client\",\"python-requests\",\"aiohttp\")`. AADGraphActivityLogs: hunt for `UserAgent has \"Microsoft.OData.Client\"` or `UserAgent has \"aiohttp\"` — these are ROADtools' default. Pair with subsequent token issuance (`SigninLogs` where `AuthenticationProtocol == \"deviceCode\"` or `ResourceDisplayName == \"Microsoft Graph\"`) and Graph API enumeration bursts against `/users`, `/groups`, `/devices`, `/servicePrincipals` from the new device. Cross-reference T1078.004 (Cloud Accounts — the stolen identity that enables registration), T1098.001 (Additional Cloud Credentials — service principal cred adds that often follow), and T1550.001 (Application Access Token — the PRT-based reuse).",
+    "tags": [
+      "persistence",
+      "entra_id",
+      "m365",
+      "roadtools",
+      "prt",
+      "curious_serpens",
+      "T1078.004",
+      "T1098.001",
+      "T1550.001",
+      "T1098.005"
+    ],
+    "techniques": [
+      "T1078.004",
+      "T1098.001",
+      "T1550.001",
+      "T1098.005"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- ROADtools' default registration values — OS `10.0.19041.928`, hostname `DESKTOP-<8 random digits>`, user agent `Microsoft.OData.Client` — are **trivially modifiable** by the attacker, but in the wild a striking percentage of operators leave them as defaults because their goal is fast PRT acquisition, not OPSEC. Hunters who key on the default fingerprint catch a meaningful slice of real attacks at near-zero cost\n- A successful device registration grants the attacker a **Primary Refresh Token (PRT)** — which can be used to silently acquire access tokens for Microsoft Graph, Outlook, SharePoint, and any app trusted by Entra. PRT abuse is invisible in user sign-in logs after the initial registration, so catching the **registration event** is the only reliable choke point\n- The audit-log → sign-in-log → Graph-API-burst sequence (Unit 42, May 2026 Curious Serpens; Elastic detection-rules `entra_id_device_registration_detected_roadtools`) is a tight temporal pattern — within ~5 minutes of the device add, the attacker queries Graph for users/groups/apps. Joining the three telemetry sources by `CorrelationId` or by user+time-window produces a high-fidelity composite signal\n- Many tenants have Conditional Access policies that grant elevated trust to devices in a \"compliant\" or \"Hybrid Azure AD Joined\" state. Once an attacker registers a device, follow-on policies that look at \"device-registered\" alone (without compliance/MDM enrollment) become persistence enablers — making this hunt also a forcing function to audit CA grants around device state",
+    "references": "- [MITRE ATT&CK T1098.005 - Account Manipulation: Device Registration](https://attack.mitre.org/techniques/T1098/005/)\n- [Unit 42 - Paved With Intent: ROADtools and Nation-State Tactics in the Cloud](https://unit42.paloaltonetworks.com/roadtools-cloud-attacks/)\n- [Elastic Security - Entra ID Device Registration Detected (ROADtools)](https://www.elastic.co/guide/en/security/current/entra-id-device-registration-detected-roadtools.html)\n- [Elastic Security - Entra ID Unusual Cloud Device Registration](https://www.elastic.co/guide/en/security/8.19/entra-id-unusual-cloud-device-registration.html)\n- [Detection.FYI - Entra ID Unusual Cloud Device Registration](https://detection.fyi/elastic/detection-rules/integrations/azure/persistence_entra_id_suspicious_cloud_device_registration/)\n- [Cloudbrothers - AADGraphActivityLogs: ROADtools and Legacy Graph Detection](https://cloudbrothers.info/en/aadgraphactivitylogs/)\n- [Invictus IR - AADGraphActivityLogs: How to Detect Legacy Azure AD Graph Attacks](https://www.invictus-ir.com/news/the-missing-link-aadgraphactivitylogs-finally-arrives)",
+    "file_path": "Flames/H164.md"
+  },
+  {
+    "id": "H165",
+    "category": "Flames",
+    "title": "A legitimate .NET application (e.g., `setup.exe`, `update.exe`) is being hijacked via an attacker-planted `<appname>.exe.config` file that sets `<appDomainManagerAssembly>` and `<appDomainManagerType>` to a malicious DLL — with `<etwEnable enabled=\"false\"/>` and `<bypassTrustedAppStrongNames enabled=\"true\"/>` directives that suppress ETW telemetry and disable strong-name validation before the CLR's `Main()` even runs.",
+    "tactic": "Persistence",
+    "notes": "Windows. Unit 42 \"Tracking Iranian APT Screening Serpens' 2026 Espionage Campaigns\" (May 2026) — MiniUpdate and MiniJunk V2 loaders against aerospace/defense/telecom. Detection sources: Sysmon Event ID 11 (`FileCreate`) for any `*.exe.config` written under `%APPDATA%`, `%LOCALAPPDATA%`, `%PROGRAMDATA%`, or a user-writable subdirectory of `%PROGRAMFILES%` — config files in user-writable paths are abnormal. Sysmon Event ID 7 (`ImageLoad`) for a non-Microsoft-signed DLL loading into a Microsoft-signed .NET host process within 1 second of process start (AppDomainManager runs before `Main()`). Defender XDR KQL: `DeviceFileEvents | where FileName endswith \".exe.config\" and FolderPath has_any (@\"AppData\\Local\",@\"AppData\\Roaming\",@\"ProgramData\") | join kind=inner (DeviceProcessEvents | where InitiatingProcessFileName has \".exe\" | extend ConfigPath = strcat(FolderPath,InitiatingProcessFileName,\".config\")) on $left.FolderPath == $right.FolderPath`. Content-based hunt: file content search for `<etwEnable enabled=\"false\"` or `<appDomainManagerAssembly` in any `*.exe.config` under user-writable paths — use Defender ASR file inventory or Velociraptor `Windows.Search.FileFinder` artifact. Persistence task pairing: this campaign creates Scheduled Tasks named `WindowsSecurityUpdate` or `Synchronize OS` that run the hijacked binary daily at 09:30 local — pair AppDomainManager .config write events with Event ID 4698 for tasks of those names. Cross-reference T1574.001 (DLL Sideloading — the planted DLL is loaded alongside this technique), T1053.005 (Scheduled Task persistence on the same campaign), and T1562.006 (Indicator Blocking — `etwEnable=false` is a textbook ETW evasion).",
+    "tags": [
+      "persistence",
+      "defense_evasion",
+      "appdomainmanager",
+      "screening_serpens",
+      "iran",
+      "windows",
+      "T1574.001",
+      "T1053.005",
+      "T1562.006",
+      "T1574.014"
+    ],
+    "techniques": [
+      "T1574.001",
+      "T1053.005",
+      "T1562.006",
+      "T1574.014"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- The `<etwEnable enabled=\"false\"/>` directive is unique to attacker-crafted .NET config files — Microsoft's own .NET applications **never** ship with ETW disabled in their config. A simple content search for that string across all `*.exe.config` files on a host returns near-zero false positives and is one of the highest-fidelity Windows persistence-hunt signals available (ipslav.github.io, Trellix OneClik analysis)\n- AppDomainManager hijacking executes the malicious assembly **before** `Main()` runs — earlier than DLL sideloading, earlier than process injection, earlier than any user-mode hook. Combined with `etwEnable=false`, this means EDR products that rely on ETW for .NET visibility (most of them) are blinded by the time their first callback fires. The only reliable detection is at the **file-write step**, not the execution step\n- Iranian APT (Curious Serpens / Screening Serpens) and the OneClik APT campaign (Trellix, 2024–2026) have repeatedly used this technique against aerospace, energy, and oil-and-gas targets — pairing AppDomainManager with DLL sideloading and Scheduled Task persistence at fixed daily times (09:30 local in the Unit 42 May 2026 writeup). The triad `.exe.config write + ScheduledTask write + 09:30 trigger` is the campaign fingerprint\n- The hunt scales cheaply across an entire fleet because `*.exe.config` files in user-writable paths are uncommon in benign software — most apps either ship their config alongside `Program Files` (admin-write only) or skip a config entirely. The full-fleet search returns a tractable result set even on tenants with 100k+ endpoints",
+    "references": "- [MITRE ATT&CK T1574.014 - Hijack Execution Flow: AppDomainManager](https://attack.mitre.org/techniques/T1574/014/)\n- [Unit 42 - Tracking Iranian APT Screening Serpens' 2026 Espionage Campaigns](https://unit42.paloaltonetworks.com/tracking-iran-apt-screening-serpens/)\n- [Trellix Research - OneClik: A ClickOnce-Based APT Campaign Targeting Energy, Oil and Gas Infrastructure](https://www.trellix.com/blogs/research/oneclik-a-clickonce-based-red-team-campaign-simulating-apt-tactics-in-energy-infrastructure/)\n- [ipslav - Let Me Manage Your AppDomain (AppDomainManager Injection Deep-Dive)](https://ipslav.github.io/2023-12-12-let-me-manage-your-appdomain/)\n- [MITRE ATT&CK Detection Strategy DET0517 - AppDomainManager Hijack Execution Flow](https://attack.mitre.org/detectionstrategies/DET0517/)\n- [CISA - Eviction Strategies Tool: T1574.014](https://www.cisa.gov/eviction-strategies-tool/info-attack/T1574.014)\n- [MITRE ATT&CK T1574.001 - Hijack Execution Flow: DLL](https://attack.mitre.org/techniques/T1574/001/)",
+    "file_path": "Flames/H165.md"
   },
   {
     "id": "M001",
@@ -3287,6 +5151,10 @@ const HUNTS_DATA = [
       "anomalydetection",
       "userbehavior"
     ],
+    "techniques": [],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://x.com/letswastetime"
@@ -3307,6 +5175,10 @@ const HUNTS_DATA = [
       "dns",
       "machinelearning"
     ],
+    "techniques": [],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://x.com/letswastetime"
@@ -3325,6 +5197,10 @@ const HUNTS_DATA = [
       "exfiltration",
       "machinelearning"
     ],
+    "techniques": [],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "John Grageda",
       "link": "https://www.linkedin.com/in/johngrageda/"
@@ -3343,6 +5219,10 @@ const HUNTS_DATA = [
       "impact",
       "machinelearning"
     ],
+    "techniques": [],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "John Grageda",
       "link": "https://www.linkedin.com/in/johngrageda/"
@@ -3358,9 +5238,13 @@ const HUNTS_DATA = [
     "tactic": "Defense Evasion",
     "notes": "Adversaries can use Base64 encoded commands and scripts in a variety of interpreters, such as PowerShell, Windows Command Shell, and Bash.",
     "tags": [
-      "DefenseEvasion",
-      "Obfuscation"
+      "defenseevasion",
+      "obfuscation"
     ],
+    "techniques": [],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Audra Streetman",
       "link": "https://x.com/audrastreetman"
@@ -3376,10 +5260,17 @@ const HUNTS_DATA = [
     "tactic": "Command and Control",
     "notes": "<ul><li>Deploying a model-based detection against a high-volume logging source like web traffic can be costly and resource-intensive. For this task, I recommend a retroactive hunt using a deduplicated list of domains, enabling a quick and efficient M-ATH method for finding threats, or at least reducing our dataset for hunting.</br><li>This is an evolving research area. Efficacy of a model may be heavily tied to the timeliness of the data, or the inclusion of the target malware family in the underlying training set.</br><li>Sample data and pre-trained models are available for this hunt, however it is also possible to generate new data by modifying the reverse-engineered DGA algorithms [here](https://github.com/baderj/domain_generation_algorithms).</br><li>False positives may be caused by Content Delivery Networks, Ad-tracking mechanisms.",
     "tags": [
-      "CommandandControl",
-      "T1568.002",
-      "DGA"
+      "commandandcontrol",
+      "t1568_002",
+      "dga",
+      "T1568.002"
     ],
+    "techniques": [
+      "T1568.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Ryan Fetterman",
       "link": "https://github.com/fetterm4n"
@@ -3395,9 +5286,18 @@ const HUNTS_DATA = [
     "tactic": "Command and Control, Execution",
     "notes": "<ul><li>Data Collection and Preparation: Gather and encode data into numerical formats to support analysis (e.g., text vectorization or image hashing).</br><li>Similarity Analysis: Use similarity metrics (e.g., Levenshtein, cosine, or hash-based) to find related patterns or anomalies.</br><li>Clustering: Apply clustering (e.g., K-means) to group similar items, visualizing patterns and outliers.</br><li>Prioritization and Investigation: Flag clusters or anomalies for deeper analysis, focusing on items of interest or risk.",
     "tags": [
+      "command_and_control",
+      "execution",
       "T1071.001",
       "T1203"
     ],
+    "techniques": [
+      "T1071.001",
+      "T1203"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Ryan Fetterman",
       "link": "https://github.com/fetterm4n"
@@ -3422,6 +5322,13 @@ const HUNTS_DATA = [
       "T1059",
       "T1218"
     ],
+    "techniques": [
+      "T1059",
+      "T1218"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -3440,14 +5347,22 @@ const HUNTS_DATA = [
       "initial_access",
       "collection",
       "credential_access",
-      "T1195_002",
-      "T1119",
-      "T1555",
       "npm",
       "mcp",
       "supply_chain",
-      "ai_coding_assistant"
+      "ai_coding_assistant",
+      "T1195.002",
+      "T1119",
+      "T1555"
     ],
+    "techniques": [
+      "T1195.002",
+      "T1119",
+      "T1555"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -3465,12 +5380,18 @@ const HUNTS_DATA = [
     "tags": [
       "initial_access",
       "model_assisted",
-      "T1189",
       "seo_poisoning",
       "malvertising",
       "domain_scoring",
-      "anomaly_detection"
+      "anomaly_detection",
+      "T1189"
     ],
+    "techniques": [
+      "T1189"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
