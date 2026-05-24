@@ -372,6 +372,46 @@
     .sec-head{grid-template-columns:1fr;gap:18px}
     .foot-grid{grid-template-columns:1fr 1fr}
   }
+  @media (max-width:480px){
+    .wrap{padding:0 16px}
+    .topbar-inner{padding:12px 16px;gap:12px}
+    .mark .sub{display:none}
+    .hero{padding:40px 0 32px}
+    .hero-grid{gap:24px}
+    .lede{font-size:16px}
+    .sec{padding:48px 0}
+    .sec-title{font-size:clamp(32px,8vw,80px)}
+    .sec-head{gap:12px}
+    .stats{grid-template-columns:1fr 1fr}
+    .stat{padding:16px}
+    .stat .n{font-size:36px}
+    .ticker{display:none}
+    .cat{min-height:auto}
+    .cat-art{min-height:180px}
+    .sidecar{padding:16px}
+    .feed-item{grid-template-columns:48px 1fr auto;gap:10px}
+    .demo{gap:24px}
+    .hypothesis{padding:16px}
+    .h-title{font-size:20px}
+    .h-attck{grid-template-columns:1fr 1fr}
+    .feature .left,.feature .right{padding:20px 18px}
+    .feature h3{font-size:32px}
+    pre{overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:11.5px}
+    .search{flex-wrap:wrap;gap:10px}
+    .search .chips{flex-wrap:wrap;width:100%}
+    .lib-head,.lib-row{grid-template-columns:1fr 60px}
+    .lib-head>div:nth-child(2),.lib-row .badge{display:none}
+    .lib-foot{font-size:11px}
+    .leader-row{grid-template-columns:24px 1fr 60px;gap:10px}
+    .leader-row .bar{display:none}
+    .keeper{padding:16px}
+    .keeper .name{font-size:20px}
+    .cta{padding:32px 20px}
+    .cta-row{flex-direction:column;gap:16px;align-items:flex-start}
+    .cta h3{font-size:clamp(28px,7vw,60px)}
+    .foot-grid{grid-template-columns:1fr}
+    .foot-end{flex-direction:column;gap:8px;font-size:11px}
+  }
 </style>
 </head>
 <body>
