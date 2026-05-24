@@ -360,6 +360,19 @@ html,body{margin:0;padding:0;background:var(--bg);min-height:100%}
   .hl-workbar{top:49px}
   .hl-statrow{grid-template-columns:1fr 1fr;border-left:0}
   .hl-selects{display:none}
+  .hl-mark .hl-sub{display:none}
+  .hl-search{min-width:0}
+  .hl-statstrip{display:none}
+}
+@media (max-width:480px){
+  .hl-workbar .wrap,.hl-workspace .wrap{padding:0 12px}
+  .hl-search input{font-size:13px}
+  .hl-segments .seg{padding:8px 10px;font-size:12px}
+  .hl-lib-head,.hl-lib-row{grid-template-columns:1fr 36px}
+  .hl-lib-head>*:nth-child(n+2):not(:last-child),
+  .hl-lib-row>*:nth-child(n+2):not(:last-child){display:none}
+  .hl-lib-row .name{font-size:15px;padding-right:8px}
+  .hl-pv-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
