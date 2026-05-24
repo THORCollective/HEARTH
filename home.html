@@ -4,6 +4,22 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>HEARTH — Hunting Exchange and Research Threat Hub</title>
+<meta name="description" content="An open library of threat hunting hypotheses — drafted by hunters, refined by AI, and organized around the PEAK framework. Browse what works. Paste a CTI link, get a hunt. Contribute one back." />
+
+<!-- Open Graph (Facebook, LinkedIn, Slack, iMessage, Discord) -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="HEARTH" />
+<meta property="og:title" content="HEARTH — Hunting Exchange and Research Threat Hub" />
+<meta property="og:description" content="An open library of threat hunting hypotheses — drafted by hunters, refined by AI, and organized around the PEAK framework." />
+<meta property="og:url" content="https://hearth.thorcollective.com/home.html" />
+<meta property="og:image" content="https://hearth.thorcollective.com/Assets/HEARTH-logo.png" />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="HEARTH — Hunting Exchange and Research Threat Hub" />
+<meta name="twitter:description" content="An open library of threat hunting hypotheses, organized around the PEAK framework." />
+<meta name="twitter:image" content="https://hearth.thorcollective.com/Assets/HEARTH-logo.png" />
+
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-B4FE1Q174V"></script>
 <script>
@@ -428,6 +444,7 @@
       <a class="on" href="home.html">Home</a>
       <a href="index.html">Library</a>
       <a href="graph.html">Coverage</a>
+      <a href="actors.html">Actors</a>
       <a href="context-graph.html">Context</a>
       <a href="submit.html">Submit</a>
     </nav>
@@ -633,12 +650,81 @@
   </div>
 </section>
 
+<!-- ====== ACTORS TEASER ====== -->
+<section class="sec" id="actors-teaser" style="padding-top:0;padding-bottom:48px">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="sec-num">03 — Actor coverage</div>
+        <h2 class="sec-title">Got a <em>target?</em><br/>Check the coverage.</h2>
+      </div>
+      <p class="sec-blurb">Name a threat actor. HEARTH shows which hunts cover them, where coverage runs thin, and which of their techniques nobody has hunted yet.</p>
+    </div>
+
+    <div class="demo">
+      <!-- left: lead-in card with try-it CTAs -->
+      <div class="pane" style="background:linear-gradient(180deg, oklch(0.23 0.024 300 / .9), oklch(0.18 0.022 300 / .85))">
+        <div class="pane-head">
+          <div class="dots"><i></i><i></i><i></i></div>
+          <span class="ti">hearth · /actors</span>
+        </div>
+        <div class="hypothesis">
+          <div class="h-id">live · drawn from public/context-graph-data.json</div>
+          <h3 class="h-title">Match HEARTH to <em>your</em> threat model.</h3>
+          <p class="h-q">Type a name or alias. We'll surface every hunt that covers that group's tradecraft, score the coverage tactic by tactic, and call out the techniques where HEARTH is still blind — with a one-click path to fill them in.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:18px">
+            <a class="btn primary" style="font-size:12px" href="actors.html">Open actor coverage →</a>
+            <a class="btn" style="font-size:12px" href="actors.html?actor=G0016">Try APT29</a>
+            <a class="btn" style="font-size:12px" href="actors.html?actor=G1017">Try Volt Typhoon</a>
+            <a class="btn" style="font-size:12px" href="actors.html?q=cozy%20bear">Try Cozy Bear</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- right: real mini coverage card, populated by home.ts -->
+      <div class="pane" id="actor-preview-pane" style="display:none">
+        <div class="pane-head">
+          <div class="dots"><i style="background:var(--ember)"></i><i></i><i></i></div>
+          <span class="ti" id="actor-preview-ti">actors / —</span>
+        </div>
+        <div class="hypothesis" id="actor-preview-body">
+          <!-- rendered by home.ts -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ----- Actor preview card (home page teaser) ----- */
+  .actor-preview-name{font-family:var(--serif);font-size:30px;letter-spacing:-.01em;line-height:1.1;margin:0 0 8px}
+  .actor-preview-name em{font-style:italic;color:var(--ember-2)}
+  .actor-preview-aliases{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+  .actor-preview-aliases .alias{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--fg-mute);padding:3px 9px;border:1px solid var(--line-soft);border-radius:999px}
+  .actor-preview-stats{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);margin-bottom:18px}
+  .actor-preview-stats .s{padding:14px 0;display:flex;flex-direction:column;gap:4px}
+  .actor-preview-stats .s + .s{border-left:1px solid var(--line-soft);padding-left:18px}
+  .actor-preview-stats .n{font-family:var(--serif);font-size:34px;letter-spacing:-.02em;line-height:1}
+  .actor-preview-stats .n em{font-style:italic;color:var(--ember-2);font-size:18px}
+  .actor-preview-stats .l{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-dim)}
+  .actor-preview-tactics{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+  .actor-preview-tactics .row{display:grid;grid-template-columns:130px 1fr 56px;align-items:center;gap:12px;font-family:var(--mono);font-size:11px;color:var(--fg-mute);letter-spacing:.05em}
+  .actor-preview-tactics .row .name{text-transform:uppercase;letter-spacing:.1em;color:var(--fg-dim)}
+  .actor-preview-tactics .row .bar{height:8px;background:oklch(0.27 0.022 300);border-radius:4px;overflow:hidden;position:relative}
+  .actor-preview-tactics .row .bar i{display:block;height:100%;background:linear-gradient(90deg, var(--ember), var(--ember-2));border-radius:4px}
+  .actor-preview-tactics .row .nums{text-align:right;color:var(--fg);font-feature-settings:"tnum"}
+  .actor-preview-more{font-family:var(--mono);font-size:10.5px;color:var(--fg-dim);letter-spacing:.06em;margin-top:-4px}
+  .actor-preview-cta{display:flex;justify-content:flex-end}
+  .actor-preview-cta a{font-family:var(--mono);font-size:11.5px;color:var(--ember-2);letter-spacing:.04em;border-bottom:1px solid var(--line)}
+  .actor-preview-cta a:hover{color:var(--ember)}
+</style>
+
 <!-- ====== FEATURED HUNT + LIBRARY ====== -->
 <section class="sec" id="library" style="padding-top:0">
   <div class="wrap">
     <div class="sec-head">
       <div>
-        <div class="sec-num">03 — Hunt library</div>
+        <div class="sec-num">04 — Hunt library</div>
         <h2 class="sec-title">Browse, fork,<br/>and <em>burn it down.</em></h2>
       </div>
       <p class="sec-blurb">Every hypothesis is a versioned markdown file — readable, forkable, runnable. Start with the featured hunt of the week, or filter the full library by tactic, data source, or PEAK category.</p>
@@ -718,7 +804,7 @@ SigninLogs
   <div class="wrap">
     <div class="sec-head">
       <div>
-        <div class="sec-num">04 — Keepers &amp; contributors</div>
+        <div class="sec-num">05 — Keepers &amp; contributors</div>
         <h2 class="sec-title">It takes<br/>a <em>collective.</em></h2>
       </div>
       <p class="sec-blurb">HEARTH is built by working hunters. The Keepers maintain the framework and review every PR — and <span id="contributors-blurb">—</span> contributors and counting have submitted hunts from the trenches of their own SOCs.</p>

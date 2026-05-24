@@ -118,6 +118,16 @@ def main():
         count = len([h for h in all_hunts if h['category'] == cat])
         print(f"  {cat}: {count}")
 
+    # Refresh the actor-mentions index so the Actors page stays in sync with hunt prose.
+    # Failure here is non-fatal — the page falls back to technique-only matching if the
+    # mentions file is stale or missing.
+    try:
+        from scripts.build_actor_mentions import build as build_actor_mentions
+        result = build_actor_mentions()
+        print(f"  Refreshed actor-mentions.json ({len(result['mentions'])} actors)")
+    except Exception as exc:  # noqa: BLE001 — non-fatal best-effort refresh
+        print(f"  ! actor-mentions refresh failed: {exc}")
+
 
 if __name__ == "__main__":
     main()

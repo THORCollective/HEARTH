@@ -258,6 +258,7 @@
       <a href="home.html">Home</a>
       <a href="index.html">Library</a>
       <a href="graph.html">Coverage</a>
+      <a href="actors.html">Actors</a>
       <a href="context-graph.html">Context</a>
       <a class="on" href="submit.html">Submit</a>
     </nav>
@@ -303,6 +304,11 @@
         <div class="card-kicker">Recommended</div>
         <h2 class="card-title">Submit a <em>CTI link</em></h2>
         <p class="card-blurb">Drop a threat intelligence report URL below. We'll open a GitHub issue pre-filled with the source so a Keeper can run the CTI pipeline and draft the hunt hypothesis for you.</p>
+
+        <div id="techniqueHint" hidden style="margin:0 0 18px;padding:14px 18px;border:1px solid var(--line-soft);border-radius:12px;background:oklch(0.22 0.024 300 / .7);font-size:14px;color:var(--fg-mute);line-height:1.5">
+          <span style="font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ember-2);display:block;margin-bottom:6px">From Actor coverage page</span>
+          Target technique: <a id="techniqueHintLink" href="" target="_blank" rel="noopener" style="font-family:var(--mono);color:var(--ember-2);border-bottom:1px solid var(--line)"></a>. We'll tag the GitHub issue with this so a Keeper knows what gap you're filling.
+        </div>
 
         <form id="ctiSubmissionForm">
           <div class="field">
