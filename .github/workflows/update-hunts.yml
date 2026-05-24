@@ -31,7 +31,7 @@ jobs:
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add hunts-data.js public/hunts-data.json
+          git add hunts-data.js public/hunts-data.json public/actor-mentions.json
           # Commit only if there are changes
           if ! git diff --staged --quiet; then
             git commit -m "chore: Auto-update hunt database"

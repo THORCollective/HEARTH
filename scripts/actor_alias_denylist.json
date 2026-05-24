@@ -1,0 +1,6 @@
+{
+  "_comment": "Per-actor alias denylist. Suppress false-positive name-mention matches. Format: { 'actor:Gxxxx': ['alias to skip', ...] }. Aliases are matched case-insensitively against this list.",
+  "denylist": {
+    "actor:G0091": ["Silence"]
+  }
+}

@@ -15,6 +15,7 @@ export default defineConfig({
         home: resolve(__dirname, 'home.html'),
         main: resolve(__dirname, 'index.html'),
         submit: resolve(__dirname, 'submit.html'),
+        actors: resolve(__dirname, 'actors.html'),
       },
     },
 

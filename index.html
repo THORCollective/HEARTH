@@ -596,6 +596,7 @@ function TopBar() {
           <a href="home.html">Home</a>
           <a className="on" href="index.html">Library</a>
           <a href="graph.html">Coverage</a>
+          <a href="actors.html">Actors</a>
           <a href="context-graph.html">Context</a>
           <a href="submit.html">Submit</a>
         </nav>
@@ -736,6 +737,17 @@ function LibraryToolFirst() {
     hunts.forEach(h => { if (counts[h.cat] != null) counts[h.cat]++; });
     return counts;
   }, [hunts]);
+
+  // Deep-link support: ?hunt=<id> auto-selects that hunt in the preview rail.
+  // Used by the Actors page so a matched-hunt row opens the right entry.
+  useEffect(() => {
+    if (hunts.length === 0) return;
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('hunt');
+    if (!id) return;
+    const match = hunts.find((h) => h.id === id);
+    if (match) setPicked(match);
+  }, [hunts.length]);
 
   return (
     <div className="hl-page variant-tool">

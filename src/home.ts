@@ -1,10 +1,104 @@
 import type { Hunt } from './types/Hunt';
+import {
+  analyzeActor,
+  buildActorIndex,
+  computeAllCoverage,
+  topMatchedActors,
+  type ActorMentionsData,
+  type ContextGraphData,
+} from './lib/actor-matching';
 
 const BOTS = new Set(['HEARTH Bot']);
 
 let allHunts: Hunt[] = [];
 let activeCategory = '';
 let searchQuery = '';
+
+async function renderActorPreview(): Promise<void> {
+  const pane = document.getElementById('actor-preview-pane');
+  const body = document.getElementById('actor-preview-body');
+  const ti = document.getElementById('actor-preview-ti');
+  if (!pane || !body || !ti) return;
+
+  const [graph, mentions] = await Promise.all([
+    fetch('/context-graph-data.json').then((r) => r.json() as Promise<ContextGraphData>),
+    fetch('/actor-mentions.json').then((r) => r.json() as Promise<ActorMentionsData>),
+  ]);
+
+  const index = buildActorIndex(graph);
+  const allCoverage = computeAllCoverage(allHunts, mentions, index);
+
+  // Pick a featured actor from the top-matched list — bias toward variety
+  // across reloads while staying within the high-value set so the preview
+  // always looks impressive.
+  const top = topMatchedActors(allCoverage, 6);
+  if (top.length === 0) return;
+  const pick = top[Math.floor(Math.random() * top.length)].actor;
+
+  const result = analyzeActor(pick.id, allHunts, mentions, index);
+  if (!result) return;
+
+  // Top 4 tactics by techniques the actor employs — densest signal in the
+  // smallest amount of space.
+  const tacticRows = result.tacticCoverage
+    .filter((t) => t.techniquesUsed > 0)
+    .sort((a, b) => b.techniquesUsed - a.techniquesUsed)
+    .slice(0, 4);
+  const totalActiveTactics = result.tacticCoverage.filter((t) => t.techniquesUsed > 0).length;
+  const hiddenTactics = Math.max(0, totalActiveTactics - tacticRows.length);
+
+  const groupId = pick.id.replace('actor:', '');
+  ti.textContent = `actors / ${groupId.toLowerCase()}`;
+
+  const aliasChips = pick.aliases
+    .slice(0, 3)
+    .map((a) => `<span class="alias">${escapeHtml(a)}</span>`)
+    .join('');
+
+  const tacticRowsHtml = tacticRows
+    .map((t) => {
+      const pct = t.techniquesUsed === 0 ? 0 : (t.techniquesCovered / t.techniquesUsed) * 100;
+      return `<div class="row">
+        <span class="name">${escapeHtml(t.tactic)}</span>
+        <span class="bar"><i style="width:${pct.toFixed(0)}%"></i></span>
+        <span class="nums">${t.techniquesCovered}/${t.techniquesUsed}</span>
+      </div>`;
+    })
+    .join('');
+
+  const coveredTechs = result.coverage.actorTechniqueCount - result.coverage.gapTechniqueCount;
+
+  body.innerHTML = `
+    <div class="h-id">live · ${escapeHtml(groupId)} · sampled from ${top.length} top-matched actors</div>
+    <h3 class="actor-preview-name">${escapeHtml(pick.label)}</h3>
+    ${aliasChips ? `<div class="actor-preview-aliases">${aliasChips}</div>` : ''}
+    <div class="actor-preview-stats">
+      <div class="s">
+        <span class="n">${result.coverage.matchedHuntCount}</span>
+        <span class="l">Matched hunts</span>
+      </div>
+      <div class="s">
+        <span class="n">${coveredTechs}<em>/${result.coverage.actorTechniqueCount}</em></span>
+        <span class="l">Techniques covered</span>
+      </div>
+    </div>
+    <div class="actor-preview-tactics">${tacticRowsHtml}</div>
+    ${hiddenTactics > 0 ? `<div class="actor-preview-more">+ ${hiddenTactics} more tactic${hiddenTactics === 1 ? '' : 's'} →</div>` : ''}
+    <div class="actor-preview-cta">
+      <a href="actors.html?actor=${encodeURIComponent(groupId)}">Open full coverage for ${escapeHtml(pick.label)} →</a>
+    </div>
+  `;
+
+  pane.style.display = 'flex';
+}
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
 
 async function init() {
   buildEmbersGlyph();
@@ -26,6 +120,12 @@ async function init() {
   try { renderLeaderboard(); } catch (err) { console.error('[HEARTH] renderLeaderboard:', err); }
   try { renderLibrary(); } catch (err) { console.error('[HEARTH] renderLibrary:', err); }
   setupSearch();
+
+  // Best-effort: hydrate the actors teaser preview card with live coverage data.
+  // If any of these fetches fail, the teaser still renders the static left pane.
+  renderActorPreview().catch((err) =>
+    console.error('[HEARTH] renderActorPreview:', err),
+  );
 }
 
 // ----- Embers glyph -----
