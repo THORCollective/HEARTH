@@ -311,6 +311,34 @@ html,body{margin:0;padding:0;background:var(--bg);min-height:100%}
 }
 @keyframes hl-pulse{0%,100%{opacity:.3}50%{opacity:1}}
 
+/* Mobile nav toggle */
+.hl-nav-toggle{
+  display:none;
+  background:transparent;
+  border:1px solid var(--line-soft);
+  color:var(--fg);
+  width:36px;height:36px;
+  border-radius:8px;cursor:pointer;font-size:18px;
+  align-items:center;justify-content:center;
+  flex-shrink:0;transition:.15s;padding:0;
+}
+.hl-nav-toggle:hover{background:var(--surface);border-color:var(--line)}
+
+.hl-nav-drawer{
+  display:flex;flex-direction:column;
+  background:oklch(0.17 0.020 300 / 0.98);
+  border-top:1px solid var(--line-soft);
+  padding:8px 20px 16px;
+}
+.hl-nav-drawer a{
+  display:flex;align-items:center;min-height:44px;
+  font-size:15px;color:var(--fg-mute);
+  border-bottom:1px solid var(--line-soft);
+  padding:0 4px;text-decoration:none;transition:.15s;
+}
+.hl-nav-drawer a:last-child{border-bottom:0}
+.hl-nav-drawer a.on,.hl-nav-drawer a:hover{color:var(--fg)}
+
 /* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width:1100px){
   .hl-workspace .two-col{grid-template-columns:1fr}
@@ -321,6 +349,7 @@ html,body{margin:0;padding:0;background:var(--bg);min-height:100%}
   .hl-lib-head > *:nth-child(n+4):not(:last-child),
   .hl-lib-row  > *:nth-child(n+4):not(:last-child){display:none}
   .hl-nav{display:none}
+  .hl-nav-toggle{display:flex}
   .hl-statrow{grid-template-columns:1fr 1fr}
   .hl-statcell:last-child{display:none}
 }
@@ -331,6 +360,19 @@ html,body{margin:0;padding:0;background:var(--bg);min-height:100%}
   .hl-workbar{top:49px}
   .hl-statrow{grid-template-columns:1fr 1fr;border-left:0}
   .hl-selects{display:none}
+  .hl-mark .hl-sub{display:none}
+  .hl-search{min-width:0}
+  .hl-statstrip{display:none}
+}
+@media (max-width:480px){
+  .hl-workbar .wrap,.hl-workspace .wrap{padding:0 12px}
+  .hl-search input{font-size:13px}
+  .hl-segments .seg{padding:8px 10px;font-size:12px}
+  .hl-lib-head,.hl-lib-row{grid-template-columns:1fr 36px}
+  .hl-lib-head>*:nth-child(n+2):not(:last-child),
+  .hl-lib-row>*:nth-child(n+2):not(:last-child){display:none}
+  .hl-lib-row .name{font-size:15px;padding-right:8px}
+  .hl-pv-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -584,8 +626,10 @@ function useFilteredHunts({ q, cat, tactic, sort }) {
 
 function TopBar() {
   const stats = window.HUNT_STATS || {};
+  const [navOpen, setNavOpen] = React.useState(false);
+  const close = () => setNavOpen(false);
   return (
-    <header className="hl-topbar">
+    <header className={`hl-topbar${navOpen ? ' nav-open' : ''}`}>
       <div className="hl-topbar-inner">
         <a className="hl-mark" href="/">
           <Glyph />
@@ -603,8 +647,19 @@ function TopBar() {
           <span className="hl-pill">{stats.hypotheses || 0} hunts indexed</span>
           <a className="hl-btn" href="https://github.com/THORCollective/HEARTH" target="_blank" rel="noopener">View on GitHub ↗</a>
           <a className="hl-btn primary" href="/submit.html">Submit a hunt &rarr;</a>
+          <button className="hl-nav-toggle" aria-label="Toggle navigation"
+                  aria-expanded={navOpen} onClick={() => setNavOpen(o => !o)}>&#9776;</button>
         </div>
       </div>
+      {navOpen && (
+        <nav className="hl-nav-drawer">
+          <a href="home.html" onClick={close}>Home</a>
+          <a className="on" href="index.html" onClick={close}>Library</a>
+          <a href="graph.html" onClick={close}>Coverage</a>
+          <a href="context-graph.html" onClick={close}>Context</a>
+          <a href="submit.html" onClick={close}>Submit</a>
+        </nav>
+      )}
     </header>
   );
 }
