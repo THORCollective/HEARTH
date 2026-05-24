@@ -311,6 +311,49 @@
   .foot-end{margin-top:48px;padding-top:24px;border-top:1px solid var(--line-soft);display:flex;justify-content:space-between;font-family:var(--mono);font-size:11.5px;color:var(--fg-dim);letter-spacing:.05em}
   .foot-end em{font-style:italic;color:var(--ember-2)}
 
+  /* Hamburger nav toggle */
+  .nav-toggle {
+    display: none;
+    background: transparent;
+    border: 1px solid var(--line-soft);
+    color: var(--fg);
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: .15s;
+    padding: 0;
+  }
+  .nav-toggle:hover { background: var(--surface); border-color: var(--line); }
+
+  /* Mobile nav drawer */
+  .nav-drawer {
+    display: none;
+    flex-direction: column;
+    background: oklch(0.17 0.020 300 / 0.98);
+    border-top: 1px solid var(--line-soft);
+    padding: 8px 20px 16px;
+  }
+  .nav-drawer a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 15px;
+    color: var(--fg-mute);
+    border-bottom: 1px solid var(--line-soft);
+    padding: 0 4px;
+    text-decoration: none;
+    transition: .15s;
+  }
+  .nav-drawer a:last-child { border-bottom: 0; }
+  .nav-drawer a.on, .nav-drawer a:hover { color: var(--fg); }
+
+  .topbar.nav-open .nav-drawer { display: flex; }
+
   /* responsive */
   @media (max-width:1020px){
     .hero-grid{grid-template-columns:1fr;gap:36px}
@@ -324,6 +367,8 @@
     .lib-head,.lib-row{grid-template-columns:1.5fr .9fr 60px}
     .lib-head .h3,.lib-head .h4,.lib-head .h5,.lib-row .c3,.lib-row .c4,.lib-row .c5{display:none}
     .nav{display:none}
+    .nav-toggle{display:flex}
+    .pill-mono,.top-cta .btn:not(.primary){display:none}
     .sec-head{grid-template-columns:1fr;gap:18px}
     .foot-grid{grid-template-columns:1fr 1fr}
   }
@@ -350,8 +395,16 @@
       <span class="pill-mono" id="topbar-pill">— hunts</span>
       <a class="btn" href="index.html">Search <span class="kbd">⌘K</span></a>
       <a class="btn primary" href="submit.html">Submit a hunt →</a>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">&#9776;</button>
     </div>
-  </div>
+  </div><!-- end topbar-inner -->
+  <nav class="nav-drawer" id="nav-drawer" aria-hidden="true">
+    <a class="on" href="home.html">Home</a>
+    <a href="index.html">Library</a>
+    <a href="graph.html">Coverage</a>
+    <a href="context-graph.html">Context</a>
+    <a href="submit.html">Submit</a>
+  </nav>
 </header>
 
 <!-- ====== HERO ====== -->
@@ -715,6 +768,25 @@ SigninLogs
   </div>
 </footer>
 
+<script>
+  (function(){
+    var toggle = document.querySelector('.nav-toggle');
+    var header = document.querySelector('.topbar');
+    if (!toggle || !header) return;
+    toggle.addEventListener('click', function() {
+      var open = header.classList.toggle('nav-open');
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      document.getElementById('nav-drawer').setAttribute('aria-hidden', open ? 'false' : 'true');
+    });
+    document.querySelectorAll('.nav-drawer a').forEach(function(a) {
+      a.addEventListener('click', function() {
+        header.classList.remove('nav-open');
+        toggle.setAttribute('aria-expanded', 'false');
+        document.getElementById('nav-drawer').setAttribute('aria-hidden', 'true');
+      });
+    });
+  })();
+</script>
 <script type="module" src="/src/home.ts"></script>
 </body>
 </html>
