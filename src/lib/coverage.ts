@@ -61,6 +61,14 @@ export function bucketFor(count: number): CoverageBucket {
   return 'covered';
 }
 
+export interface TacticTechnique {
+  id: string;
+  name: string;
+  count: number;
+  is_subtechnique: boolean;
+  parent: string | null;
+}
+
 export interface TacticCoverage {
   shortname: string;
   name: string;
@@ -68,7 +76,7 @@ export interface TacticCoverage {
   techniqueCount: number;
   coveredTechniqueCount: number;
   hunts: Hunt[];
-  techniques: { id: string; name: string; count: number; is_subtechnique: boolean }[];
+  techniques: TacticTechnique[];
 }
 
 /** Aggregate the technique-level coverage to the tactic level (deduped hunts per tactic). */
@@ -102,6 +110,7 @@ export function buildTacticCoverage(
         name: tech.name,
         count: cell.count,
         is_subtechnique: tech.is_subtechnique,
+        parent: tech.parent,
       });
       tc.techniqueCount += 1;
       if (cell.count > 0) tc.coveredTechniqueCount += 1;

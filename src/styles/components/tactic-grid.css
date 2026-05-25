@@ -81,26 +81,33 @@
   align-items: center;
   gap: 12px;
   padding: 10px 14px;
-  background: var(--bg-2, oklch(0.20 0.022 300));
-  border: 1px solid var(--line-soft, oklch(0.29 0.026 300));
+  /* Same heat mix as the tactic cards. */
+  background: color-mix(
+    in oklch,
+    var(--bg-2, oklch(0.20 0.022 300)),
+    var(--ember, oklch(0.66 0.220 300)) calc(var(--intensity, 0) * 55%)
+  );
+  border: 1px solid color-mix(
+    in oklch,
+    var(--line-soft, oklch(0.29 0.026 300)),
+    var(--ember-2, oklch(0.80 0.150 310)) calc(var(--intensity, 0) * 45%)
+  );
   border-radius: 8px;
   cursor: pointer;
   text-align: left;
   color: var(--fg, oklch(0.965 0.012 300));
-  transition: border-color 0.15s ease, transform 0.15s ease;
+  transition: transform 0.15s ease, filter 0.15s ease;
 }
 
 .tg-technique:hover {
-  border-color: var(--fg-mute, oklch(0.78 0.022 300));
   transform: translateX(-2px);
-}
-
-.tg-technique--sub {
-  margin-left: 18px;
+  filter: brightness(1.12);
 }
 
 .tg-technique--gap {
-  opacity: 0.55;
+  background: var(--bg-2, oklch(0.20 0.022 300));
+  border: 1px dashed var(--line-soft, oklch(0.29 0.026 300));
+  opacity: 0.6;
 }
 
 .tg-technique-id {
@@ -117,17 +124,37 @@
   color: var(--fg, oklch(0.965 0.012 300));
 }
 
+.tg-technique-subnote {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--fg-dim, oklch(0.60 0.030 300));
+}
+
 .tg-technique-count {
   font-family: var(--mono, ui-monospace, monospace);
   font-size: 10px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--ember-2, oklch(0.80 0.150 310));
+  color: color-mix(
+    in oklch,
+    var(--ember-2, oklch(0.80 0.150 310)),
+    oklch(0.985 0.005 300) calc(var(--intensity, 0) * 80%)
+  );
   white-space: nowrap;
 }
 
 .tg-technique--gap .tg-technique-count {
   color: var(--fg-dim, oklch(0.60 0.030 300));
+}
+
+.tg-subtech-note {
+  margin: 14px 0 0;
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--fg-dim, oklch(0.60 0.030 300));
+  text-transform: uppercase;
 }
 
 .tg-empty-note {
