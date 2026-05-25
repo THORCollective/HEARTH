@@ -217,7 +217,7 @@
   <section class="hero">
     <span class="eyebrow">Coverage</span>
     <h1 class="title serif">Where the community hunts.</h1>
-    <p class="lede">Every MITRE ATT&amp;CK technique, colored by how many HEARTH hunts cover it. Filter by PEAK category. Click any cell to see the hunts — or the gap.</p>
+    <p class="lede">How HEARTH covers MITRE ATT&amp;CK. Start with a tactic to see what's hunted there, or switch to the full technique matrix. Filter by PEAK category along the way.</p>
   </section>
 
   <section class="controls">
@@ -226,6 +226,10 @@
       <button class="filter-chip" data-peak="Flames" role="tab" aria-selected="false">Flames</button>
       <button class="filter-chip" data-peak="Embers" role="tab" aria-selected="false">Embers</button>
       <button class="filter-chip" data-peak="Alchemy" role="tab" aria-selected="false">Alchemy</button>
+    </div>
+    <div class="view-toggle" id="view-toggle" role="group" aria-label="Switch between tactic and technique view">
+      <button class="view-toggle__btn view-toggle__btn--active" data-view="tactic" aria-pressed="true">Tactic</button>
+      <button class="view-toggle__btn" data-view="technique" aria-pressed="false">Technique</button>
     </div>
     <div class="stats-strip" id="stats-strip" aria-live="polite"></div>
   </section>

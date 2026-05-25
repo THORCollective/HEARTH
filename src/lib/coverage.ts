@@ -61,6 +61,65 @@ export function bucketFor(count: number): CoverageBucket {
   return 'covered';
 }
 
+export interface TacticCoverage {
+  shortname: string;
+  name: string;
+  huntCount: number;
+  techniqueCount: number;
+  coveredTechniqueCount: number;
+  hunts: Hunt[];
+  techniques: { id: string; name: string; count: number; is_subtechnique: boolean }[];
+}
+
+/** Aggregate the technique-level coverage to the tactic level (deduped hunts per tactic). */
+export function buildTacticCoverage(
+  matrix: MitreMatrix,
+  coverage: CoverageMap,
+): Map<string, TacticCoverage> {
+  const out = new Map<string, TacticCoverage>();
+  const huntsByTactic = new Map<string, Map<string, Hunt>>();
+  for (const t of matrix.tactics) {
+    out.set(t.shortname, {
+      shortname: t.shortname,
+      name: t.name,
+      huntCount: 0,
+      techniqueCount: 0,
+      coveredTechniqueCount: 0,
+      hunts: [],
+      techniques: [],
+    });
+    huntsByTactic.set(t.shortname, new Map());
+  }
+
+  for (const tech of matrix.techniques) {
+    const cell = coverage.get(tech.id);
+    if (!cell) continue;
+    for (const shortname of tech.tactic_shortnames) {
+      const tc = out.get(shortname);
+      if (!tc) continue;
+      tc.techniques.push({
+        id: tech.id,
+        name: tech.name,
+        count: cell.count,
+        is_subtechnique: tech.is_subtechnique,
+      });
+      tc.techniqueCount += 1;
+      if (cell.count > 0) tc.coveredTechniqueCount += 1;
+      const huntMap = huntsByTactic.get(shortname)!;
+      for (const h of cell.hunts) huntMap.set(h.id, h);
+    }
+  }
+
+  for (const tc of out.values()) {
+    const huntMap = huntsByTactic.get(tc.shortname)!;
+    tc.hunts = Array.from(huntMap.values());
+    tc.huntCount = huntMap.size;
+    tc.techniques.sort((a, b) => b.count - a.count || a.id.localeCompare(b.id));
+  }
+
+  return out;
+}
+
 /** Totals for the stats strip. */
 export function summarize(map: CoverageMap): {
   huntsCount: number;

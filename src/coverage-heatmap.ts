@@ -2,23 +2,32 @@ import type { Hunt } from './types/Hunt';
 import type { MitreMatrix } from './types/Mitre';
 import {
   buildCoverageMap,
+  buildTacticCoverage,
   summarize,
   type CoverageMap,
   type PeakCategory,
+  type TacticCoverage,
 } from './lib/coverage';
 import { renderMatrix } from './components/Matrix';
+import { renderTacticGrid } from './components/TacticGrid';
 import { renderTechniquePanel } from './components/TechniquePanel';
+import { renderTacticPanel } from './components/TacticPanel';
 import { Drawer } from './components/Drawer';
 
 import './styles/components/matrix.css';
 import './styles/components/drawer.css';
 import './styles/components/techniquepanel.css';
+import './styles/components/tactic-grid.css';
+
+type View = 'tactic' | 'technique';
 
 interface State {
   hunts: Hunt[];
   matrix: MitreMatrix;
   peakFilter: PeakCategory | null;
+  view: View;
   coverage: CoverageMap;
+  tacticCoverage: Map<string, TacticCoverage>;
   drawer: Drawer;
 }
 
@@ -37,13 +46,16 @@ async function init(): Promise<void> {
   }
 
   const peakFilter = readPeakFromUrl();
-  const drawer = new Drawer({ onClose: () => clearTechniqueFromUrl() });
+  const view = readViewFromUrl();
+  const drawer = new Drawer({ onClose: () => clearDrawerFromUrl() });
   const coverage = buildCoverageMap(hunts, matrix, peakFilter ?? undefined);
-  const state: State = { hunts, matrix, peakFilter, coverage, drawer };
+  const tacticCoverage = buildTacticCoverage(matrix, coverage);
+  const state: State = { hunts, matrix, peakFilter, view, coverage, tacticCoverage, drawer };
 
   paintFilterChips(state);
+  paintViewToggle(state);
   paintStats(state);
-  paintMatrix(state);
+  paintGrid(state);
 
   document.getElementById('peak-filter')?.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
@@ -52,16 +64,29 @@ async function init(): Promise<void> {
     setPeak(state, peak === 'all' ? null : (peak as PeakCategory));
   });
 
+  document.getElementById('view-toggle')?.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    const v = target.dataset.view;
+    if (v !== 'tactic' && v !== 'technique') return;
+    setView(state, v);
+  });
+
   window.addEventListener('popstate', () => {
     const nextPeak = readPeakFromUrl();
     if (nextPeak !== state.peakFilter) applyPeak(state, nextPeak);
+    const nextView = readViewFromUrl();
+    if (nextView !== state.view) applyView(state, nextView);
     const techId = readTechniqueFromUrl();
+    const tacticShort = readTacticFromUrl();
     if (techId) openTechnique(state, techId, { updateUrl: false });
+    else if (tacticShort) openTactic(state, tacticShort, { updateUrl: false });
     else state.drawer.close();
   });
 
   const initialTech = readTechniqueFromUrl();
+  const initialTactic = readTacticFromUrl();
   if (initialTech) openTechnique(state, initialTech, { updateUrl: false });
+  else if (initialTactic) openTactic(state, initialTactic, { updateUrl: false });
 }
 
 function setPeak(state: State, peak: PeakCategory | null): void {
@@ -73,9 +98,22 @@ function setPeak(state: State, peak: PeakCategory | null): void {
 function applyPeak(state: State, peak: PeakCategory | null): void {
   state.peakFilter = peak;
   state.coverage = buildCoverageMap(state.hunts, state.matrix, peak ?? undefined);
+  state.tacticCoverage = buildTacticCoverage(state.matrix, state.coverage);
   paintFilterChips(state);
   paintStats(state);
-  paintMatrix(state);
+  paintGrid(state);
+}
+
+function setView(state: State, view: View): void {
+  if (view === state.view) return;
+  applyView(state, view);
+  writeViewToUrl(view);
+}
+
+function applyView(state: State, view: View): void {
+  state.view = view;
+  paintViewToggle(state);
+  paintGrid(state);
 }
 
 function openTechnique(state: State, techId: string, opts: { updateUrl?: boolean } = {}): void {
@@ -83,7 +121,7 @@ function openTechnique(state: State, techId: string, opts: { updateUrl?: boolean
   const cell = state.coverage.get(techId);
   if (!technique || !cell) {
     console.warn(`[coverage] No technique found for ?t=${techId}`);
-    clearTechniqueFromUrl();
+    clearDrawerFromUrl();
     return;
   }
   const tactic = state.matrix.tactics.find((t) => t.shortname === technique.tactic_shortnames[0]);
@@ -96,6 +134,21 @@ function openTechnique(state: State, techId: string, opts: { updateUrl?: boolean
   if (opts.updateUrl !== false) writeTechniqueToUrl(techId);
 }
 
+function openTactic(state: State, shortname: string, opts: { updateUrl?: boolean } = {}): void {
+  const tactic = state.tacticCoverage.get(shortname);
+  if (!tactic) {
+    console.warn(`[coverage] No tactic found for ?tactic=${shortname}`);
+    clearDrawerFromUrl();
+    return;
+  }
+  state.drawer.setContent(renderTacticPanel({
+    tactic,
+    onTechniqueClick: (techId) => openTechnique(state, techId),
+  }));
+  state.drawer.open();
+  if (opts.updateUrl !== false) writeTacticToUrl(shortname);
+}
+
 function paintFilterChips(state: State): void {
   const chips = document.querySelectorAll<HTMLElement>('#peak-filter [data-peak]');
   chips.forEach((chip) => {
@@ -103,6 +156,15 @@ function paintFilterChips(state: State): void {
       || chip.dataset.peak === state.peakFilter;
     chip.classList.toggle('filter-chip--active', isActive);
     chip.setAttribute('aria-selected', String(isActive));
+  });
+}
+
+function paintViewToggle(state: State): void {
+  const buttons = document.querySelectorAll<HTMLElement>('#view-toggle [data-view]');
+  buttons.forEach((btn) => {
+    const isActive = btn.dataset.view === state.view;
+    btn.classList.toggle('view-toggle__btn--active', isActive);
+    btn.setAttribute('aria-pressed', String(isActive));
   });
 }
 
@@ -126,16 +188,25 @@ function statSpan(strongText: string, suffix: string): HTMLSpanElement {
   return span;
 }
 
-function paintMatrix(state: State): void {
+function paintGrid(state: State): void {
   const container = document.getElementById('matrix-container');
   if (!container) return;
   container.setAttribute('aria-busy', 'false');
-  renderMatrix({
-    container,
-    matrix: state.matrix,
-    coverage: state.coverage,
-    onCellClick: (techId) => openTechnique(state, techId),
-  });
+  if (state.view === 'tactic') {
+    const tactics = state.matrix.tactics.map((t) => state.tacticCoverage.get(t.shortname)!).filter(Boolean);
+    renderTacticGrid({
+      container,
+      tactics,
+      onTacticClick: (shortname) => openTactic(state, shortname),
+    });
+  } else {
+    renderMatrix({
+      container,
+      matrix: state.matrix,
+      coverage: state.coverage,
+      onCellClick: (techId) => openTechnique(state, techId),
+    });
+  }
 }
 
 function readPeakFromUrl(): PeakCategory | null {
@@ -144,8 +215,17 @@ function readPeakFromUrl(): PeakCategory | null {
   return null;
 }
 
+function readViewFromUrl(): View {
+  const v = new URLSearchParams(window.location.search).get('view');
+  return v === 'technique' ? 'technique' : 'tactic';
+}
+
 function readTechniqueFromUrl(): string | null {
   return new URLSearchParams(window.location.search).get('t');
+}
+
+function readTacticFromUrl(): string | null {
+  return new URLSearchParams(window.location.search).get('tactic');
 }
 
 function writePeakToUrl(peak: PeakCategory | null): void {
@@ -155,15 +235,31 @@ function writePeakToUrl(peak: PeakCategory | null): void {
   history.pushState({}, '', url.toString());
 }
 
-function writeTechniqueToUrl(techId: string): void {
+function writeViewToUrl(view: View): void {
   const url = new URL(window.location.href);
-  url.searchParams.set('t', techId);
+  if (view === 'technique') url.searchParams.set('view', 'technique');
+  else url.searchParams.delete('view');
   history.pushState({}, '', url.toString());
 }
 
-function clearTechniqueFromUrl(): void {
+function writeTechniqueToUrl(techId: string): void {
+  const url = new URL(window.location.href);
+  url.searchParams.set('t', techId);
+  url.searchParams.delete('tactic');
+  history.pushState({}, '', url.toString());
+}
+
+function writeTacticToUrl(shortname: string): void {
+  const url = new URL(window.location.href);
+  url.searchParams.set('tactic', shortname);
+  url.searchParams.delete('t');
+  history.pushState({}, '', url.toString());
+}
+
+function clearDrawerFromUrl(): void {
   const url = new URL(window.location.href);
   url.searchParams.delete('t');
+  url.searchParams.delete('tactic');
   history.pushState({}, '', url.toString());
 }
 

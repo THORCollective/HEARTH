@@ -1,0 +1,152 @@
+.tactic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.tactic-card {
+  appearance: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 22px 22px 20px;
+  background: var(--surface, oklch(0.23 0.024 300));
+  border: 1px solid var(--line-soft, oklch(0.29 0.026 300));
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--fg, oklch(0.965 0.012 300));
+  transition: border-color 0.15s ease, transform 0.15s ease, background 0.15s ease;
+  min-height: 110px;
+}
+
+.tactic-card:hover {
+  border-color: var(--fg-mute, oklch(0.78 0.022 300));
+  background: var(--surface-2, oklch(0.27 0.028 300));
+  transform: translateY(-2px);
+}
+
+.tactic-card__name {
+  font-family: var(--serif, "Instrument Serif", serif);
+  font-size: 22px;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--fg, oklch(0.965 0.012 300));
+}
+
+.tactic-card__count {
+  margin-top: auto;
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ember-2, oklch(0.80 0.150 310));
+}
+
+/* technique list rendered inside the tactic drawer */
+.tg-technique-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tg-technique {
+  appearance: none;
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--bg-2, oklch(0.20 0.022 300));
+  border: 1px solid var(--line-soft, oklch(0.29 0.026 300));
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--fg, oklch(0.965 0.012 300));
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.tg-technique:hover {
+  border-color: var(--fg-mute, oklch(0.78 0.022 300));
+  transform: translateX(-2px);
+}
+
+.tg-technique--sub {
+  margin-left: 18px;
+}
+
+.tg-technique--gap {
+  opacity: 0.55;
+}
+
+.tg-technique-id {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--fg-dim, oklch(0.60 0.030 300));
+}
+
+.tg-technique-name {
+  font-family: var(--sans, system-ui, sans-serif);
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--fg, oklch(0.965 0.012 300));
+}
+
+.tg-technique-count {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ember-2, oklch(0.80 0.150 310));
+  white-space: nowrap;
+}
+
+.tg-technique--gap .tg-technique-count {
+  color: var(--fg-dim, oklch(0.60 0.030 300));
+}
+
+.tg-empty-note {
+  font-family: var(--serif, "Instrument Serif", serif);
+  font-size: 14px;
+  color: var(--fg-mute, oklch(0.78 0.022 300));
+  margin: 0;
+  padding: 14px;
+  border: 1px dashed var(--line-soft, oklch(0.29 0.026 300));
+  border-radius: 8px;
+}
+
+/* view toggle (Tactic / Technique) — sits inline with filter chips */
+.view-toggle {
+  display: inline-flex;
+  background: var(--surface, oklch(0.23 0.024 300));
+  border: 1px solid var(--line-soft, oklch(0.29 0.026 300));
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.view-toggle__btn {
+  appearance: none;
+  background: transparent;
+  color: var(--fg-mute, oklch(0.78 0.022 300));
+  border: none;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-family: var(--sans, system-ui, sans-serif);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.view-toggle__btn:hover {
+  color: var(--fg, oklch(0.965 0.012 300));
+}
+
+.view-toggle__btn--active {
+  background: var(--ember, oklch(0.66 0.220 300));
+  color: oklch(0.985 0.005 300);
+  font-weight: 600;
+}
