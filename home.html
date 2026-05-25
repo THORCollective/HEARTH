@@ -327,6 +327,49 @@
   .foot-end{margin-top:48px;padding-top:24px;border-top:1px solid var(--line-soft);display:flex;justify-content:space-between;font-family:var(--mono);font-size:11.5px;color:var(--fg-dim);letter-spacing:.05em}
   .foot-end em{font-style:italic;color:var(--ember-2)}
 
+  /* Hamburger nav toggle */
+  .nav-toggle {
+    display: none;
+    background: transparent;
+    border: 1px solid var(--line-soft);
+    color: var(--fg);
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: .15s;
+    padding: 0;
+  }
+  .nav-toggle:hover { background: var(--surface); border-color: var(--line); }
+
+  /* Mobile nav drawer */
+  .nav-drawer {
+    display: none;
+    flex-direction: column;
+    background: oklch(0.17 0.020 300 / 0.98);
+    border-top: 1px solid var(--line-soft);
+    padding: 8px 20px 16px;
+  }
+  .nav-drawer a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 15px;
+    color: var(--fg-mute);
+    border-bottom: 1px solid var(--line-soft);
+    padding: 0 4px;
+    text-decoration: none;
+    transition: .15s;
+  }
+  .nav-drawer a:last-child { border-bottom: 0; }
+  .nav-drawer a.on, .nav-drawer a:hover { color: var(--fg); }
+
+  .topbar.nav-open .nav-drawer { display: flex; }
+
   /* responsive */
   @media (max-width:1020px){
     .hero-grid{grid-template-columns:1fr;gap:36px}
@@ -340,8 +383,50 @@
     .lib-head,.lib-row{grid-template-columns:1.5fr .9fr 60px}
     .lib-head .h3,.lib-head .h4,.lib-head .h5,.lib-row .c3,.lib-row .c4,.lib-row .c5{display:none}
     .nav{display:none}
+    .nav-toggle{display:flex}
+    .pill-mono,.top-cta .btn:not(.primary){display:none}
     .sec-head{grid-template-columns:1fr;gap:18px}
     .foot-grid{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:480px){
+    .wrap{padding:0 16px}
+    .topbar-inner{padding:12px 16px;gap:12px}
+    .mark .sub{display:none}
+    .hero{padding:40px 0 32px}
+    .hero-grid{gap:24px}
+    .lede{font-size:16px}
+    .sec{padding:48px 0}
+    .sec-title{font-size:clamp(32px,8vw,80px)}
+    .sec-head{gap:12px}
+    .stats{grid-template-columns:1fr 1fr}
+    .stat{padding:16px}
+    .stat .n{font-size:36px}
+    .ticker{display:none}
+    .cat{min-height:auto}
+    .cat-art{min-height:180px}
+    .sidecar{padding:16px}
+    .feed-item{grid-template-columns:48px 1fr auto;gap:10px}
+    .demo{gap:24px}
+    .hypothesis{padding:16px}
+    .h-title{font-size:20px}
+    .h-attck{grid-template-columns:1fr 1fr}
+    .feature .left,.feature .right{padding:20px 18px}
+    .feature h3{font-size:32px}
+    pre{overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:11.5px}
+    .search{flex-wrap:wrap;gap:10px}
+    .search .chips{flex-wrap:wrap;width:100%}
+    .lib-head,.lib-row{grid-template-columns:1fr 60px}
+    .lib-head>div:nth-child(2),.lib-row .badge{display:none}
+    .lib-foot{font-size:11px}
+    .leader-row{grid-template-columns:24px 1fr 60px;gap:10px}
+    .leader-row .bar{display:none}
+    .keeper{padding:16px}
+    .keeper .name{font-size:20px}
+    .cta{padding:32px 20px}
+    .cta-row{flex-direction:column;gap:16px;align-items:flex-start}
+    .cta h3{font-size:clamp(28px,7vw,60px)}
+    .foot-grid{grid-template-columns:1fr}
+    .foot-end{flex-direction:column;gap:8px;font-size:11px}
   }
 </style>
 </head>
@@ -362,13 +447,23 @@
       <a href="actors.html">Actors</a>
       <a href="context-graph.html">Context</a>
       <a href="submit.html">Submit</a>
+      <a href="https://dispatch.thorcollective.com/" target="_blank" rel="noopener">Dispatch ↗</a>
     </nav>
     <div class="top-cta">
       <span class="pill-mono" id="topbar-pill">— hunts</span>
       <a class="btn" href="index.html">Search <span class="kbd">⌘K</span></a>
       <a class="btn primary" href="submit.html">Submit a hunt →</a>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">&#9776;</button>
     </div>
-  </div>
+  </div><!-- end topbar-inner -->
+  <nav class="nav-drawer" id="nav-drawer" aria-hidden="true">
+    <a class="on" href="home.html">Home</a>
+    <a href="index.html">Library</a>
+    <a href="graph.html">Coverage</a>
+    <a href="context-graph.html">Context</a>
+    <a href="submit.html">Submit</a>
+    <a href="https://dispatch.thorcollective.com/" target="_blank" rel="noopener">Dispatch ↗</a>
+  </nav>
 </header>
 
 <!-- ====== HERO ====== -->
@@ -748,7 +843,7 @@ SigninLogs
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <a class="btn primary" href="submit.html">Submit a CTI link →</a>
           <a class="btn" href="submit.html">Open a manual submission</a>
-          <a class="btn" href="https://github.com/THORCollective/HEARTH/blob/main/CONTRIBUTORS.md" target="_blank" rel="noopener">Read the contributor guide</a>
+          <a class="btn" href="https://github.com/THORCollective/HEARTH/blob/main/Keepers/CONTRIBUTING.md" target="_blank" rel="noopener">Read the contributor guide</a>
         </div>
       </div>
     </div>
@@ -780,7 +875,7 @@ SigninLogs
         <ul>
           <li><a href="submit.html">Submit CTI link</a></li>
           <li><a href="submit.html">Manual submission</a></li>
-          <li><a href="https://github.com/THORCollective/HEARTH/blob/main/CONTRIBUTORS.md" target="_blank" rel="noopener">Contributor guide</a></li>
+          <li><a href="https://github.com/THORCollective/HEARTH/blob/main/Keepers/CONTRIBUTING.md" target="_blank" rel="noopener">Contributor guide</a></li>
           <li><a href="https://github.com/THORCollective/HEARTH/issues" target="_blank" rel="noopener">Open issues</a></li>
         </ul>
       </div>
@@ -790,6 +885,7 @@ SigninLogs
           <li><a href="https://github.com/THORCollective" target="_blank" rel="noopener">About THOR</a></li>
           <li><a href="#keepers">Keepers</a></li>
           <li><a href="https://github.com/THORCollective/HEARTH" target="_blank" rel="noopener">GitHub ↗</a></li>
+          <li><a href="https://dispatch.thorcollective.com/" target="_blank" rel="noopener">Dispatch ↗</a></li>
           <li><a href="https://github.com/THORCollective/HEARTH/blob/main/LICENSE" target="_blank" rel="noopener">License · MIT</a></li>
         </ul>
       </div>
@@ -801,6 +897,25 @@ SigninLogs
   </div>
 </footer>
 
+<script>
+  (function(){
+    var toggle = document.querySelector('.nav-toggle');
+    var header = document.querySelector('.topbar');
+    if (!toggle || !header) return;
+    toggle.addEventListener('click', function() {
+      var open = header.classList.toggle('nav-open');
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      document.getElementById('nav-drawer').setAttribute('aria-hidden', open ? 'false' : 'true');
+    });
+    document.querySelectorAll('.nav-drawer a').forEach(function(a) {
+      a.addEventListener('click', function() {
+        header.classList.remove('nav-open');
+        toggle.setAttribute('aria-expanded', 'false');
+        document.getElementById('nav-drawer').setAttribute('aria-hidden', 'true');
+      });
+    });
+  })();
+</script>
 <script type="module" src="/src/home.ts"></script>
 </body>
 </html>
