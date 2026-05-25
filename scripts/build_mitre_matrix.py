@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE = ROOT / "data" / "enterprise-attack.json"
 TARGET = ROOT / "public" / "mitre-matrix.json"
-DESC_MAX_CHARS = 80
+DESC_MAX_CHARS = 200
 
 
 def main() -> int:
