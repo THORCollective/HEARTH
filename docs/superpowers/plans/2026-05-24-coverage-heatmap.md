@@ -199,9 +199,9 @@
   python3 scripts/build_mitre_matrix.py
   ```
 
-  Expected stdout: `Wrote .../public/mitre-matrix.json — 14 tactics, ~650-700 techniques, < 200.0 KB`.
+  Expected stdout: `Wrote .../public/mitre-matrix.json — 15 tactics, ~697 techniques, ~329 KB`.
 
-  If the file size exceeds 250 KB, lower `DESC_MAX_CHARS` (e.g. to 300) and re-run. If the tactic count isn't 14, investigate — MITRE may have changed its taxonomy.
+  (Note: as of 2026-05 MITRE has 15 tactics — they split the old `defense-evasion` into `stealth` and `defense-impairment`. The original plan target of "< 200 KB" was incompatible with leaving descriptions readable, so `DESC_MAX_CHARS` is pinned to 200; ~329 KB is the accepted size. If MITRE adds significant new content and the file balloons past ~500 KB, consider trimming descriptions further or splitting per-tactic.)
 
 - [ ] **Step 3: Sanity-check the JSON**
 
@@ -1300,7 +1300,7 @@
 
 - **Type drift to watch:** `Hunt` is defined in `src/types/Hunt.ts`. If its `techniques` field is missing or differently named than `public/hunts-data.json` actually contains, Task 2 will fail type-check. Align the type to the data, not the other way around.
 - **Drawer focus management** is intentionally minimal — no focus trap, no `inert` on background. The spec doesn't require accessibility-grade focus management for this iteration; promote if needed.
-- **MITRE schema drift:** if the `x-mitre-tactic` shape changes upstream, Task 1's `_tactic_order` might silently fall through to alphabetical. The "tactics list starts with reconnaissance" sanity check in Task 1 step 3 is what catches that.
+- **MITRE schema drift:** Task 1 currently produces 15 tactics (not the 14 the original plan expected). MITRE evolves; if the `x-mitre-tactic` shape changes more dramatically and `_tactic_order` falls through to alphabetical, the "tactics list starts with reconnaissance" sanity check in Task 1 step 3 catches it.
 - **Token sharing:** `coverage.html` re-declares the OKLCH token block as `actors.html` does today. If you find yourself wanting to extract these to a shared CSS file mid-task, do it as a small refactor commit *separate* from coverage work — don't bundle.
 - **No innerHTML:** every component in this plan uses `createElement` + `textContent`. If a step in your implementation tempts you toward template-string HTML, resist — keep the security posture consistent.
 - **Deviation from spec's "Components reused vs new" table:**

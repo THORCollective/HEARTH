@@ -59,8 +59,8 @@ Two inputs at runtime:
      ]
    }
    ```
-   - Description is trimmed to first paragraph (~500 chars) to keep file size reasonable.
-   - File size target: < 200 KB.
+   - Description is trimmed to ~200 chars (~2 short sentences) to keep file size reasonable while leaving the drawer description meaningful.
+   - File size: ~329 KB at 200-char descriptions with the current MITRE dataset (15 tactics, 697 techniques). Earlier target of < 200 KB proved incompatible with leaving descriptions readable — 200 KB would force ~80-char descriptions that get truncated mid-sentence. 329 KB is a one-time fetch and smaller than the existing `hunts-data.js` the page already loads, so this is acceptable.
    - Refreshed via `scripts/build_mitre_matrix.py`; not auto-updated by workflows (manual refresh is fine — MITRE doesn't change often).
 
 Page logic at load:
