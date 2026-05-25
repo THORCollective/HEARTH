@@ -12,6 +12,7 @@ import { Drawer } from './components/Drawer';
 
 import './styles/components/matrix.css';
 import './styles/components/drawer.css';
+import './styles/components/techniquepanel.css';
 
 interface State {
   hunts: Hunt[];
@@ -55,12 +56,12 @@ async function init(): Promise<void> {
     const nextPeak = readPeakFromUrl();
     if (nextPeak !== state.peakFilter) applyPeak(state, nextPeak);
     const techId = readTechniqueFromUrl();
-    if (techId) openTechnique(state, techId);
+    if (techId) openTechnique(state, techId, { updateUrl: false });
     else state.drawer.close();
   });
 
   const initialTech = readTechniqueFromUrl();
-  if (initialTech) openTechnique(state, initialTech);
+  if (initialTech) openTechnique(state, initialTech, { updateUrl: false });
 }
 
 function setPeak(state: State, peak: PeakCategory | null): void {
@@ -77,10 +78,14 @@ function applyPeak(state: State, peak: PeakCategory | null): void {
   paintMatrix(state);
 }
 
-function openTechnique(state: State, techId: string): void {
+function openTechnique(state: State, techId: string, opts: { updateUrl?: boolean } = {}): void {
   const technique = state.matrix.techniques.find((t) => t.id === techId);
   const cell = state.coverage.get(techId);
-  if (!technique || !cell) return;
+  if (!technique || !cell) {
+    console.warn(`[coverage] No technique found for ?t=${techId}`);
+    clearTechniqueFromUrl();
+    return;
+  }
   const tactic = state.matrix.tactics.find((t) => t.shortname === technique.tactic_shortnames[0]);
   state.drawer.setContent(renderTechniquePanel({
     technique,
@@ -88,7 +93,7 @@ function openTechnique(state: State, techId: string): void {
     tacticName: tactic?.name ?? technique.tactic_shortnames[0] ?? '',
   }));
   state.drawer.open();
-  writeTechniqueToUrl(techId);
+  if (opts.updateUrl !== false) writeTechniqueToUrl(techId);
 }
 
 function paintFilterChips(state: State): void {

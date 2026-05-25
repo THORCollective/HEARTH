@@ -1,0 +1,194 @@
+.tp-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.tp-id {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ember-2, oklch(0.80 0.150 310));
+}
+
+.tp-title {
+  font-family: var(--serif, "Instrument Serif", serif);
+  font-size: 26px;
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--fg, oklch(0.965 0.012 300));
+  margin: 0;
+}
+
+.tp-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.tp-chip {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--surface-2, oklch(0.27 0.028 300));
+  border: 1px solid var(--line-soft, oklch(0.29 0.026 300));
+  color: var(--fg-mute, oklch(0.78 0.022 300));
+  white-space: nowrap;
+}
+
+.tp-chip--tactic {
+  background: var(--coal, oklch(0.32 0.060 295));
+  color: var(--ember-2, oklch(0.80 0.150 310));
+  border-color: transparent;
+}
+
+.tp-chip--count {
+  background: var(--ember, oklch(0.66 0.220 300));
+  color: oklch(0.15 0.020 300);
+  border-color: transparent;
+}
+
+.tp-chip--flames,
+.tp-chip--embers,
+.tp-chip--alchemy {
+  background: transparent;
+}
+
+.tp-desc {
+  font-family: var(--serif, "Instrument Serif", serif);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--fg-mute, oklch(0.78 0.022 300));
+  margin: 0 0 18px;
+}
+
+.tp-mitre {
+  display: inline-block;
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--ember-2, oklch(0.80 0.150 310));
+  padding: 6px 0;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s ease;
+  margin-bottom: 28px;
+}
+
+.tp-mitre:hover {
+  border-bottom-color: var(--ember-2, oklch(0.80 0.150 310));
+}
+
+.tp-hunts-section {
+  margin-top: 12px;
+}
+
+.tp-section-title {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg-dim, oklch(0.60 0.030 300));
+  font-weight: 500;
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line-soft, oklch(0.29 0.026 300));
+}
+
+.tp-hunts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tp-hunt {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--bg-2, oklch(0.20 0.022 300));
+  border: 1px solid var(--line-soft, oklch(0.29 0.026 300));
+  border-radius: 8px;
+  color: var(--fg, oklch(0.965 0.012 300));
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.tp-hunt:hover {
+  border-color: var(--fg-mute, oklch(0.78 0.022 300));
+  transform: translateX(-2px);
+}
+
+.tp-hunt-id {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--fg-dim, oklch(0.60 0.030 300));
+  min-width: 44px;
+}
+
+.tp-hunt-title {
+  font-family: var(--sans, system-ui, sans-serif);
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--fg, oklch(0.965 0.012 300));
+}
+
+.tp-hunt-cat {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  white-space: nowrap;
+}
+
+.tp-hunt-cat--flames {
+  color: var(--ember, oklch(0.66 0.220 300));
+}
+
+.tp-hunt-cat--embers {
+  color: var(--ember-2, oklch(0.80 0.150 310));
+}
+
+.tp-hunt-cat--alchemy {
+  color: var(--good, oklch(0.78 0.130 160));
+}
+
+.tp-empty {
+  text-align: center;
+  padding: 32px 16px;
+  border: 1px dashed var(--line-soft, oklch(0.29 0.026 300));
+  border-radius: 8px;
+}
+
+.tp-empty p {
+  font-family: var(--serif, "Instrument Serif", serif);
+  font-size: 16px;
+  color: var(--fg-mute, oklch(0.78 0.022 300));
+  margin: 0 0 14px;
+}
+
+.tp-cta {
+  display: inline-block;
+  font-family: var(--sans, system-ui, sans-serif);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 16px;
+  background: var(--ember, oklch(0.66 0.220 300));
+  color: oklch(0.15 0.020 300);
+  border-radius: 999px;
+  transition: background 0.15s ease;
+}
+
+.tp-cta:hover {
+  background: var(--ember-2, oklch(0.80 0.150 310));
+}
