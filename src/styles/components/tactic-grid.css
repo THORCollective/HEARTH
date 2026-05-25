@@ -11,20 +11,34 @@
   align-items: flex-start;
   gap: 10px;
   padding: 22px 22px 20px;
-  background: var(--surface, oklch(0.23 0.024 300));
-  border: 1px solid var(--line-soft, oklch(0.29 0.026 300));
+  /* Background heat-mixes from surface to ember based on --intensity (0..1). */
+  background: color-mix(
+    in oklch,
+    var(--surface, oklch(0.23 0.024 300)),
+    var(--ember, oklch(0.66 0.220 300)) calc(var(--intensity, 0) * 62%)
+  );
+  border: 1px solid color-mix(
+    in oklch,
+    var(--line-soft, oklch(0.29 0.026 300)),
+    var(--ember-2, oklch(0.80 0.150 310)) calc(var(--intensity, 0) * 50%)
+  );
   border-radius: 12px;
   cursor: pointer;
   text-align: left;
   color: var(--fg, oklch(0.965 0.012 300));
-  transition: border-color 0.15s ease, transform 0.15s ease, background 0.15s ease;
+  transition: transform 0.15s ease, filter 0.15s ease;
   min-height: 110px;
 }
 
 .tactic-card:hover {
-  border-color: var(--fg-mute, oklch(0.78 0.022 300));
-  background: var(--surface-2, oklch(0.27 0.028 300));
   transform: translateY(-2px);
+  filter: brightness(1.12);
+}
+
+.tactic-card--gap {
+  background: var(--surface, oklch(0.23 0.024 300));
+  border: 1px dashed var(--line-soft, oklch(0.29 0.026 300));
+  opacity: 0.72;
 }
 
 .tactic-card__name {
@@ -41,7 +55,16 @@
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--ember-2, oklch(0.80 0.150 310));
+  /* On dark cards, this glows ember-2. On bright cards, it adapts toward fg so it stays readable. */
+  color: color-mix(
+    in oklch,
+    var(--ember-2, oklch(0.80 0.150 310)),
+    oklch(0.985 0.005 300) calc(var(--intensity, 0) * 80%)
+  );
+}
+
+.tactic-card--gap .tactic-card__count {
+  color: var(--fg-dim, oklch(0.60 0.030 300));
 }
 
 /* technique list rendered inside the tactic drawer */
