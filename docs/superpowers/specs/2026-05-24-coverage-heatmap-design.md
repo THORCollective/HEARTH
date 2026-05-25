@@ -1,6 +1,6 @@
 # Coverage Heatmap — Design
 
-**Page:** `/coverage.html`
+**Page:** `/coverage-heatmap.html` (sits under the `/coverage.html` hub alongside `graph.html`)
 **Date:** 2026-05-24
 **Status:** Design approved by Lauren; ready for implementation plan.
 **Roadmap context:** This is the first ship from the [HEARTH Visual Surfaces roadmap](2026-05-24-visual-surfaces-roadmap.md). It's the technique-axis render of the shared hunts × techniques × actors data layer.

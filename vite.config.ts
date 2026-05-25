@@ -17,6 +17,7 @@ export default defineConfig({
         submit: resolve(__dirname, 'submit.html'),
         actors: resolve(__dirname, 'actors.html'),
         coverage: resolve(__dirname, 'coverage.html'),
+        coverage_heatmap: resolve(__dirname, 'coverage-heatmap.html'),
       },
     },
 

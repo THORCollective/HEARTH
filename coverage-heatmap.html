@@ -3,23 +3,22 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>HEARTH — Coverage</title>
-<meta name="description" content="Two views of HEARTH's community coverage — the relationship graph and the MITRE ATT&amp;CK heatmap. Pick the angle that helps you." />
+<title>HEARTH — ATT&amp;CK Heatmap</title>
+<meta name="description" content="Every MITRE ATT&amp;CK technique, colored by how many HEARTH hunts cover it. Click a cell to see the hunts — or the gap." />
 
-<!-- Open Graph -->
+<!-- Open Graph (Facebook, LinkedIn, Slack, iMessage, Discord) -->
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="HEARTH" />
-<meta property="og:title" content="HEARTH — Coverage" />
-<meta property="og:description" content="Two views of HEARTH's community coverage — the relationship graph and the MITRE ATT&amp;CK heatmap. Pick the angle that helps you." />
-<meta property="og:url" content="https://hearth.thorcollective.com/coverage.html" />
+<meta property="og:title" content="HEARTH — ATT&amp;CK Heatmap" />
+<meta property="og:description" content="Every MITRE ATT&amp;CK technique, colored by how many HEARTH hunts cover it. Click a cell to see the hunts — or the gap." />
+<meta property="og:url" content="https://hearth.thorcollective.com/coverage-heatmap.html" />
 <meta property="og:image" content="https://hearth.thorcollective.com/Assets/HEARTH-logo.png" />
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="HEARTH — Coverage" />
-<meta name="twitter:description" content="Two views of HEARTH's community coverage — the relationship graph and the MITRE ATT&amp;CK heatmap." />
+<meta name="twitter:title" content="HEARTH — ATT&amp;CK Heatmap" />
+<meta name="twitter:description" content="Every MITRE ATT&amp;CK technique, colored by how many HEARTH hunts cover it. Click a cell to see the hunts — or the gap." />
 <meta name="twitter:image" content="https://hearth.thorcollective.com/Assets/HEARTH-logo.png" />
-
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-B4FE1Q174V"></script>
 <script>
@@ -70,7 +69,7 @@
   .mute{color:var(--fg-mute)}
   .ember{color:var(--ember)}
 
-  /* topbar (same as siblings) */
+  /* ----- Top bar (mirror home.html) ----- */
   .topbar{position:sticky;top:0;z-index:50;backdrop-filter:saturate(140%) blur(10px);background:oklch(0.16 0.020 300 / 0.78);border-bottom:1px solid var(--line-soft)}
   .topbar-inner{display:flex;align-items:center;gap:28px;padding:14px 32px;max-width:1320px;margin:0 auto}
   .mark{display:flex;align-items:baseline;gap:10px}
@@ -93,7 +92,7 @@
   .btn.primary:hover{background:var(--ember-2);color:oklch(0.20 0.05 300)}
   .pill-mono{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-dim);padding:5px 10px;border:1px solid var(--line-soft);border-radius:999px}
 
-  /* hero */
+  /* ----- Hero ----- */
   .hero{padding:72px 0 32px;position:relative}
   .eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ember-2)}
   .eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ember);box-shadow:0 0 12px var(--ember)}
@@ -104,86 +103,71 @@
     line-height:.95;
     letter-spacing:-.025em;
     margin:18px 0 14px;
-    max-width:22ch;
+    max-width:18ch;
   }
   h1.title em{font-style:italic;color:var(--ember-2)}
   .lede{font-size:18px;line-height:1.5;color:var(--fg-mute);max-width:62ch}
   .lede b{color:var(--fg);font-weight:500}
 
-  /* coverage view cards */
-  .views{
-    display:grid;
-    grid-template-columns:repeat(2, 1fr);
-    gap:24px;
-    margin:48px 0 24px;
-  }
-  .view-card{
-    display:flex;
-    flex-direction:column;
-    padding:32px;
-    background:var(--surface);
-    border:1px solid var(--line-soft);
-    border-radius:16px;
-    transition:border-color .18s ease, transform .18s ease, background .18s ease;
-    color:var(--fg);
-  }
-  .view-card:hover{
-    border-color:var(--fg-mute);
-    background:var(--surface-2);
-    transform:translateY(-2px);
-  }
-  .view-eyebrow{
-    font-family:var(--mono);
-    font-size:10px;
-    letter-spacing:.18em;
-    text-transform:uppercase;
-    color:var(--ember-2);
-    margin-bottom:12px;
-  }
-  .view-title{
-    font-family:var(--serif);
-    font-size:36px;
-    line-height:1.05;
-    letter-spacing:-.015em;
-    margin:0 0 14px;
-    color:var(--fg);
-  }
-  .view-desc{
-    font-family:var(--sans);
-    font-size:15px;
-    line-height:1.55;
+  /* ----- Coverage page controls ----- */
+  .controls{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin:24px 0 32px}
+  .filter-row{display:flex;gap:8px}
+  .filter-chip{
+    appearance:none;
+    background:transparent;
     color:var(--fg-mute);
-    margin:0 0 24px;
-    max-width:48ch;
-  }
-  .view-meta{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    margin-bottom:24px;
-  }
-  .view-chip{
-    font-family:var(--mono);
-    font-size:10px;
-    letter-spacing:.1em;
-    text-transform:uppercase;
-    color:var(--fg-dim);
-    padding:4px 10px;
-    border:1px solid var(--line-soft);
+    border:1px solid var(--line);
+    padding:8px 14px;
     border-radius:999px;
+    font-family:var(--sans);
+    font-size:13px;
+    font-weight:500;
+    cursor:pointer;
+    transition:.15s;
   }
-  .view-cta{
-    margin-top:auto;
+  .filter-chip:hover{color:var(--fg);border-color:var(--fg-mute)}
+  .filter-chip--active{
+    background:var(--ember);
+    color:oklch(0.985 0.005 300);
+    border-color:transparent;
+    font-weight:600;
+  }
+  .stats-strip{
+    display:flex;
+    gap:24px;
+    margin-left:auto;
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--fg-dim);
+    letter-spacing:.06em;
+    text-transform:uppercase;
+  }
+  .stats-strip strong{
+    font-family:var(--serif);
+    font-size:18px;
+    font-weight:400;
+    color:var(--fg);
+    letter-spacing:0;
+    text-transform:none;
+    margin-right:4px;
+  }
+  .matrix-section{margin-top:8px}
+  .matrix-skeleton{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--fg-dim);
+    padding:60px;
+    text-align:center;
+    border:1px dashed var(--line-soft);
+    border-radius:8px;
+  }
+  .matrix-error{
     font-family:var(--mono);
     font-size:12px;
-    letter-spacing:.06em;
-    color:var(--ember-2);
-    padding-top:16px;
-    border-top:1px solid var(--line-soft);
-  }
-
-  @media (max-width:820px){
-    .views{grid-template-columns:1fr}
+    color:var(--warn);
+    padding:24px;
+    border:1px solid var(--line);
+    border-radius:8px;
   }
 
   /* footer */
@@ -196,7 +180,10 @@
   .foot-end{margin-top:48px;padding-top:24px;border-top:1px solid var(--line-soft);display:flex;justify-content:space-between;font-family:var(--mono);font-size:11.5px;color:var(--fg-dim);letter-spacing:.05em}
   .foot-end em{font-style:italic;color:var(--ember-2)}
 
+  /* responsive */
   @media (max-width:1020px){
+    .controls{flex-direction:column;align-items:flex-start}
+    .stats-strip{margin-left:0}
     .nav{display:none}
   }
 </style>
@@ -213,13 +200,13 @@
     <nav class="nav">
       <a href="home.html">Home</a>
       <a href="index.html">Library</a>
-      <a class="on" href="coverage.html">Coverage</a>
+      <a class="on" href="coverage.html">Coverage</a><!-- hub is parent; "on" reflects user is in the Coverage area -->
       <a href="actors.html">Actors</a>
       <a href="context-graph.html">Context</a>
       <a href="submit.html">Submit</a>
     </nav>
     <div class="top-cta">
-      <span class="pill-mono">— coverage</span>
+      <span class="pill-mono">— heatmap</span>
       <a class="btn" href="index.html">Library</a>
       <a class="btn primary" href="submit.html">Submit a hunt →</a>
     </div>
@@ -229,34 +216,24 @@
 <main class="wrap">
   <section class="hero">
     <span class="eyebrow">Coverage</span>
-    <h1 class="title serif">Where the <em>hunt</em> lives —<br/>and where it <em>doesn't.</em></h1>
-    <p class="lede">Two views of the same library. One traces the <b>relationships</b> between actors, techniques, and hunts. The other paints them onto the <b>MITRE ATT&amp;CK matrix</b>. Pick the angle that helps you find the gap.</p>
+    <h1 class="title serif">Where the community hunts.</h1>
+    <p class="lede">Every MITRE ATT&amp;CK technique, colored by how many HEARTH hunts cover it. Filter by PEAK category. Click any cell to see the hunts — or the gap.</p>
   </section>
 
-  <section class="views">
-    <a class="view-card" href="graph.html">
-      <span class="view-eyebrow">▮ Network view</span>
-      <h2 class="view-title">Coverage Map</h2>
-      <p class="view-desc">A force-directed graph of every hunt, actor, and technique in the library. See clusters, bridges, and lonely nodes at a glance.</p>
-      <div class="view-meta">
-        <span class="view-chip">Graph</span>
-        <span class="view-chip">Relationships</span>
-        <span class="view-chip">Clusters</span>
-      </div>
-      <div class="view-cta">Open the map →</div>
-    </a>
+  <section class="controls">
+    <div class="filter-row" id="peak-filter" role="tablist" aria-label="Filter by PEAK category">
+      <button class="filter-chip filter-chip--active" data-peak="all" role="tab" aria-selected="true">All</button>
+      <button class="filter-chip" data-peak="Flames" role="tab" aria-selected="false">Flames</button>
+      <button class="filter-chip" data-peak="Embers" role="tab" aria-selected="false">Embers</button>
+      <button class="filter-chip" data-peak="Alchemy" role="tab" aria-selected="false">Alchemy</button>
+    </div>
+    <div class="stats-strip" id="stats-strip" aria-live="polite"></div>
+  </section>
 
-    <a class="view-card" href="coverage-heatmap.html">
-      <span class="view-eyebrow">▮ Matrix view</span>
-      <h2 class="view-title">ATT&amp;CK Heatmap</h2>
-      <p class="view-desc">Every MITRE technique colored by how many community hunts cover it. Filter by PEAK category. Click a cell to see the hunts — or the gap.</p>
-      <div class="view-meta">
-        <span class="view-chip">15 tactics</span>
-        <span class="view-chip">697 techniques</span>
-        <span class="view-chip">Gap-driven</span>
-      </div>
-      <div class="view-cta">Open the heatmap →</div>
-    </a>
+  <section class="matrix-section">
+    <div id="matrix-container" aria-busy="true">
+      <div class="matrix-skeleton">Loading coverage…</div>
+    </div>
   </section>
 </main>
 
@@ -276,7 +253,6 @@
           <li><a href="index.html">Hunt library</a></li>
           <li><a href="home.html#peak">PEAK framework</a></li>
           <li><a href="graph.html">Coverage map</a></li>
-          <li><a href="coverage-heatmap.html">ATT&amp;CK heatmap</a></li>
           <li><a href="actors.html">Actors</a></li>
           <li><a href="context-graph.html">Context graph</a></li>
         </ul>
@@ -306,5 +282,6 @@
   </div>
 </footer>
 
+<script type="module" src="/src/coverage-heatmap.ts"></script>
 </body>
 </html>
