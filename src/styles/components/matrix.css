@@ -1,6 +1,6 @@
 .matrix {
   display: grid;
-  grid-template-columns: repeat(14, minmax(72px, 1fr));
+  grid-template-columns: repeat(15, minmax(72px, 1fr));
   gap: 4px;
   overflow-x: auto;
   padding-bottom: 8px;
