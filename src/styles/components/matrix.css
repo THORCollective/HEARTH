@@ -1,0 +1,68 @@
+.matrix {
+  display: grid;
+  grid-template-columns: repeat(15, minmax(72px, 1fr));
+  gap: 4px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.matrix__col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.matrix__colhead {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 10px;
+  color: var(--fg-dim, oklch(0.60 0.030 300));
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: left;
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--line-soft, oklch(0.29 0.026 300));
+  margin-bottom: 4px;
+  min-height: 32px;
+}
+
+.matrix__cell {
+  appearance: none;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  padding: 6px;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--mono, ui-monospace, monospace);
+  transition: outline-color 100ms ease, transform 100ms ease;
+  color: var(--fg-mute, oklch(0.78 0.022 300));
+}
+
+.matrix__cell-id {
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.matrix__cell:hover {
+  outline: 1px solid var(--fg-mute, oklch(0.78 0.022 300));
+  transform: translateY(-1px);
+}
+
+.matrix__cell--sub { margin-left: 10px; }
+
+.matrix__cell--gap {
+  background: oklch(0.20 0.022 300);
+  color: var(--fg-dim, oklch(0.60 0.030 300));
+}
+.matrix__cell--thin {
+  background: oklch(0.34 0.080 295);
+  color: var(--fg, oklch(0.965 0.012 300));
+}
+.matrix__cell--covered {
+  background: var(--ember, oklch(0.66 0.220 300));
+  color: oklch(0.15 0.020 300);
+}

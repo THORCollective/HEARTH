@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HEARTH — ATT&amp;CK Heatmap</title>
+<meta name="description" content="Every MITRE ATT&amp;CK technique, colored by how many HEARTH hunts cover it. Click a cell to see the hunts — or the gap." />
+
+<!-- Open Graph (Facebook, LinkedIn, Slack, iMessage, Discord) -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="HEARTH" />
+<meta property="og:title" content="HEARTH — ATT&amp;CK Heatmap" />
+<meta property="og:description" content="Every MITRE ATT&amp;CK technique, colored by how many HEARTH hunts cover it. Click a cell to see the hunts — or the gap." />
+<meta property="og:url" content="https://hearth.thorcollective.com/coverage-heatmap.html" />
+<meta property="og:image" content="https://hearth.thorcollective.com/Assets/HEARTH-logo.png" />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="HEARTH — ATT&amp;CK Heatmap" />
+<meta name="twitter:description" content="Every MITRE ATT&amp;CK technique, colored by how many HEARTH hunts cover it. Click a cell to see the hunts — or the gap." />
+<meta name="twitter:image" content="https://hearth.thorcollective.com/Assets/HEARTH-logo.png" />
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-B4FE1Q174V"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-B4FE1Q174V');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:        oklch(0.16 0.020 300);
+    --bg-2:      oklch(0.20 0.022 300);
+    --surface:   oklch(0.23 0.024 300);
+    --surface-2: oklch(0.27 0.028 300);
+    --line:      oklch(0.34 0.030 300);
+    --line-soft: oklch(0.29 0.026 300);
+    --fg:        oklch(0.965 0.012 300);
+    --fg-mute:   oklch(0.78 0.022 300);
+    --fg-dim:    oklch(0.60 0.030 300);
+    --ember:     oklch(0.66 0.220 300);
+    --ember-2:   oklch(0.80 0.150 310);
+    --coal:      oklch(0.32 0.060 295);
+    --good:      oklch(0.78 0.130 160);
+    --warn:      oklch(0.82 0.150 50);
+    --serif: "Instrument Serif", "Times New Roman", serif;
+    --sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-feature-settings:"ss01","cv11";-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--ember);color:var(--bg)}
+  body{
+    background:
+      radial-gradient(1100px 700px at 78% -10%, oklch(0.32 0.10 300 / 0.55), transparent 60%),
+      radial-gradient(900px 600px at -10% 30%, oklch(0.24 0.045 290 / 0.6), transparent 55%),
+      var(--bg);
+    overflow-x:hidden;
+  }
+
+  .wrap{max-width:1320px;margin:0 auto;padding:0 32px}
+  .mono{font-family:var(--mono);font-feature-settings:"zero","ss01";letter-spacing:.02em}
+  .serif{font-family:var(--serif);font-weight:400}
+  .dim{color:var(--fg-dim)}
+  .mute{color:var(--fg-mute)}
+  .ember{color:var(--ember)}
+
+  /* ----- Top bar (mirror home.html) ----- */
+  .topbar{position:sticky;top:0;z-index:50;backdrop-filter:saturate(140%) blur(10px);background:oklch(0.16 0.020 300 / 0.78);border-bottom:1px solid var(--line-soft)}
+  .topbar-inner{display:flex;align-items:center;gap:28px;padding:14px 32px;max-width:1320px;margin:0 auto}
+  .mark{display:flex;align-items:baseline;gap:10px}
+  .mark .glyph{
+    width:22px;height:22px;border-radius:50%;
+    background:radial-gradient(circle at 50% 65%, var(--ember-2), var(--ember) 45%, oklch(0.38 0.16 295) 75%, transparent 78%);
+    box-shadow:0 0 14px oklch(0.66 0.22 300 / 0.55), inset 0 -3px 6px oklch(0.30 0.10 295 / .7);
+    position:relative;top:3px;
+  }
+  .mark .name{font-family:var(--serif);font-size:24px;letter-spacing:.01em}
+  .mark .sub{font-family:var(--mono);font-size:10px;color:var(--fg-dim);text-transform:uppercase;letter-spacing:.18em}
+  .nav{display:flex;gap:6px;margin-left:24px}
+  .nav a{font-size:13px;color:var(--fg-mute);padding:6px 10px;border-radius:999px;border:1px solid transparent;transition:.15s}
+  .nav a:hover{color:var(--fg);background:var(--surface);border-color:var(--line-soft)}
+  .nav a.on{color:var(--fg);background:var(--surface);border-color:var(--line-soft)}
+  .top-cta{display:flex;gap:8px;margin-left:auto;align-items:center}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--sans);font-size:13px;font-weight:500;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--fg);cursor:pointer;transition:.15s;text-decoration:none}
+  .btn:hover{border-color:var(--fg-mute);background:var(--surface)}
+  .btn.primary{background:var(--ember);color:oklch(0.985 0.005 300);border-color:transparent;font-weight:600}
+  .btn.primary:hover{background:var(--ember-2);color:oklch(0.20 0.05 300)}
+  .pill-mono{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-dim);padding:5px 10px;border:1px solid var(--line-soft);border-radius:999px}
+
+  /* ----- Hero ----- */
+  .hero{padding:72px 0 32px;position:relative}
+  .eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ember-2)}
+  .eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ember);box-shadow:0 0 12px var(--ember)}
+  h1.title{
+    font-family:var(--serif);
+    font-weight:400;
+    font-size:clamp(48px, 7vw, 96px);
+    line-height:.95;
+    letter-spacing:-.025em;
+    margin:18px 0 14px;
+    max-width:18ch;
+  }
+  h1.title em{font-style:italic;color:var(--ember-2)}
+  .lede{font-size:18px;line-height:1.5;color:var(--fg-mute);max-width:62ch}
+  .lede b{color:var(--fg);font-weight:500}
+
+  /* ----- Coverage page controls ----- */
+  .controls{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin:24px 0 32px}
+  .filter-row{display:flex;gap:8px}
+  .filter-chip{
+    appearance:none;
+    background:transparent;
+    color:var(--fg-mute);
+    border:1px solid var(--line);
+    padding:8px 14px;
+    border-radius:999px;
+    font-family:var(--sans);
+    font-size:13px;
+    font-weight:500;
+    cursor:pointer;
+    transition:.15s;
+  }
+  .filter-chip:hover{color:var(--fg);border-color:var(--fg-mute)}
+  .filter-chip--active{
+    background:var(--ember);
+    color:oklch(0.985 0.005 300);
+    border-color:transparent;
+    font-weight:600;
+  }
+  .stats-strip{
+    display:flex;
+    gap:24px;
+    margin-left:auto;
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--fg-dim);
+    letter-spacing:.06em;
+    text-transform:uppercase;
+  }
+  .stats-strip strong{
+    font-family:var(--serif);
+    font-size:18px;
+    font-weight:400;
+    color:var(--fg);
+    letter-spacing:0;
+    text-transform:none;
+    margin-right:4px;
+  }
+  .matrix-section{margin-top:8px}
+  .matrix-skeleton{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--fg-dim);
+    padding:60px;
+    text-align:center;
+    border:1px dashed var(--line-soft);
+    border-radius:8px;
+  }
+  .matrix-error{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--warn);
+    padding:24px;
+    border:1px solid var(--line);
+    border-radius:8px;
+  }
+
+  /* footer */
+  footer{padding:48px 0 64px;border-top:1px solid var(--line-soft);margin-top:96px;color:var(--fg-mute)}
+  .foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:32px;align-items:start}
+  footer h6{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-dim);font-weight:500;margin:0 0 14px}
+  footer ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+  footer ul a{font-size:13.5px}
+  footer ul a:hover{color:var(--fg)}
+  .foot-end{margin-top:48px;padding-top:24px;border-top:1px solid var(--line-soft);display:flex;justify-content:space-between;font-family:var(--mono);font-size:11.5px;color:var(--fg-dim);letter-spacing:.05em}
+  .foot-end em{font-style:italic;color:var(--ember-2)}
+
+  /* Hamburger nav toggle */
+  .nav-toggle{
+    display:none;background:transparent;border:1px solid var(--line-soft);
+    color:var(--fg);width:36px;height:36px;border-radius:8px;cursor:pointer;
+    font-size:18px;align-items:center;justify-content:center;flex-shrink:0;
+    transition:.15s;padding:0;
+  }
+  .nav-toggle:hover{background:var(--surface);border-color:var(--line)}
+  .nav-drawer{
+    display:none;flex-direction:column;
+    background:oklch(0.17 0.020 300 / 0.98);
+    border-top:1px solid var(--line-soft);padding:8px 20px 16px;
+  }
+  .nav-drawer a{
+    display:flex;align-items:center;min-height:44px;font-size:15px;
+    color:var(--fg-mute);border-bottom:1px solid var(--line-soft);
+    padding:0 4px;text-decoration:none;transition:.15s;
+  }
+  .nav-drawer a:last-child{border-bottom:0}
+  .nav-drawer a.on,.nav-drawer a:hover{color:var(--fg)}
+  .topbar.nav-open .nav-drawer{display:flex}
+
+  /* responsive */
+  @media (max-width:1020px){
+    .controls{flex-direction:column;align-items:flex-start}
+    .stats-strip{margin-left:0}
+    .nav{display:none}
+    .nav-toggle{display:flex}
+    .pill-mono,.top-cta .btn:not(.primary){display:none}
+    .foot-grid{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:480px){
+    .wrap{padding:0 16px}
+    .topbar-inner{padding:12px 16px;gap:12px}
+    .mark .sub{display:none}
+    .hero{padding:40px 0 32px}
+    .lede{font-size:16px}
+    .foot-grid{grid-template-columns:1fr}
+    .foot-end{flex-direction:column;gap:8px;font-size:11px}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="mark" href="home.html">
+      <span class="glyph"></span>
+      <span class="name">HEARTH</span>
+      <span class="sub">THOR Collective</span>
+    </a>
+    <nav class="nav">
+      <a href="home.html">Home</a>
+      <a href="index.html">Library</a>
+      <a class="on" href="coverage.html">Coverage</a><!-- hub is parent; "on" reflects user is in the Coverage area -->
+      <a href="actors.html">Actors</a>
+      <a href="context-graph.html">Context</a>
+      <a href="submit.html">Submit</a>
+    </nav>
+    <div class="top-cta">
+      <span class="pill-mono">— heatmap</span>
+      <a class="btn" href="index.html">Library</a>
+      <a class="btn primary" href="submit.html">Submit a hunt →</a>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">&#9776;</button>
+    </div>
+  </div>
+  <nav class="nav-drawer" id="nav-drawer" aria-hidden="true">
+    <a href="home.html">Home</a>
+    <a href="index.html">Library</a>
+    <a class="on" href="coverage.html">Coverage</a>
+    <a href="actors.html">Actors</a>
+    <a href="context-graph.html">Context</a>
+    <a href="submit.html">Submit</a>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <span class="eyebrow">Coverage</span>
+    <h1 class="title serif">Where the community hunts.</h1>
+    <p class="lede">How HEARTH covers MITRE ATT&amp;CK. Start with a tactic to see what's hunted there, or switch to the full technique matrix. Filter by PEAK category along the way.</p>
+  </section>
+
+  <section class="controls">
+    <div class="filter-row" id="peak-filter" role="tablist" aria-label="Filter by PEAK category">
+      <button class="filter-chip filter-chip--active" data-peak="all" role="tab" aria-selected="true">All</button>
+      <button class="filter-chip" data-peak="Flames" role="tab" aria-selected="false">Flames</button>
+      <button class="filter-chip" data-peak="Embers" role="tab" aria-selected="false">Embers</button>
+      <button class="filter-chip" data-peak="Alchemy" role="tab" aria-selected="false">Alchemy</button>
+    </div>
+    <div class="view-toggle" id="view-toggle" role="group" aria-label="Switch between tactic and technique view">
+      <button class="view-toggle__btn view-toggle__btn--active" data-view="tactic" aria-pressed="true">Tactic</button>
+      <button class="view-toggle__btn" data-view="technique" aria-pressed="false">Technique</button>
+    </div>
+    <div class="stats-strip" id="stats-strip" aria-live="polite"></div>
+  </section>
+
+  <section class="matrix-section">
+    <div id="matrix-container" aria-busy="true">
+      <div class="matrix-skeleton">Loading coverage…</div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a class="mark" href="home.html">
+          <span class="glyph"></span>
+          <span class="name" style="font-size:28px">HEARTH</span>
+        </a>
+        <p class="mute" style="max-width:42ch;font-size:13.5px;line-height:1.55;margin-top:14px">Hunting Exchange and Research Threat Hub. An open community library of threat hunting hypotheses, built by THE THOR Collective and the global hunting community.</p>
+      </div>
+      <div>
+        <h6>Project</h6>
+        <ul>
+          <li><a href="index.html">Hunt library</a></li>
+          <li><a href="home.html#peak">PEAK framework</a></li>
+          <li><a href="graph.html">Coverage map</a></li>
+          <li><a href="actors.html">Actors</a></li>
+          <li><a href="context-graph.html">Context graph</a></li>
+        </ul>
+      </div>
+      <div>
+        <h6>Contribute</h6>
+        <ul>
+          <li><a href="submit.html">Submit CTI link</a></li>
+          <li><a href="submit.html">Manual submission</a></li>
+          <li><a href="https://github.com/THORCollective/HEARTH/blob/main/CONTRIBUTORS.md" target="_blank" rel="noopener">Contributor guide</a></li>
+          <li><a href="https://github.com/THORCollective/HEARTH/issues" target="_blank" rel="noopener">Open issues</a></li>
+        </ul>
+      </div>
+      <div>
+        <h6>The Collective</h6>
+        <ul>
+          <li><a href="https://github.com/THORCollective" target="_blank" rel="noopener">About THOR</a></li>
+          <li><a href="https://github.com/THORCollective/HEARTH" target="_blank" rel="noopener">GitHub ↗</a></li>
+          <li><a href="https://github.com/THORCollective/HEARTH/blob/main/LICENSE" target="_blank" rel="noopener">License · MIT</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-end">
+      <span>HEARTH · <em>Keep it burning.</em></span>
+      <span>© 2026 THOR Collective · MIT licensed</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var toggle = document.querySelector('.nav-toggle');
+    var header = document.querySelector('.topbar');
+    if (!toggle || !header) return;
+    toggle.addEventListener('click', function() {
+      var open = header.classList.toggle('nav-open');
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      document.getElementById('nav-drawer').setAttribute('aria-hidden', open ? 'false' : 'true');
+    });
+    document.querySelectorAll('.nav-drawer a').forEach(function(a) {
+      a.addEventListener('click', function() {
+        header.classList.remove('nav-open');
+        toggle.setAttribute('aria-expanded', 'false');
+        document.getElementById('nav-drawer').setAttribute('aria-hidden', 'true');
+      });
+    });
+  })();
+</script>
+<script type="module" src="/src/coverage-heatmap.ts"></script>
+</body>
+</html>

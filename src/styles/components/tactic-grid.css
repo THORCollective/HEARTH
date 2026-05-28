@@ -1,0 +1,202 @@
+.tactic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.tactic-card {
+  appearance: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 22px 22px 20px;
+  /* Background heat-mixes from surface to ember based on --intensity (0..1). */
+  background: color-mix(
+    in oklch,
+    var(--surface, oklch(0.23 0.024 300)),
+    var(--ember, oklch(0.66 0.220 300)) calc(var(--intensity, 0) * 62%)
+  );
+  border: 1px solid color-mix(
+    in oklch,
+    var(--line-soft, oklch(0.29 0.026 300)),
+    var(--ember-2, oklch(0.80 0.150 310)) calc(var(--intensity, 0) * 50%)
+  );
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--fg, oklch(0.965 0.012 300));
+  transition: transform 0.15s ease, filter 0.15s ease;
+  min-height: 110px;
+}
+
+.tactic-card:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.12);
+}
+
+.tactic-card--gap {
+  background: var(--surface, oklch(0.23 0.024 300));
+  border: 1px dashed var(--line-soft, oklch(0.29 0.026 300));
+  opacity: 0.72;
+}
+
+.tactic-card__name {
+  font-family: var(--serif, "Instrument Serif", serif);
+  font-size: 22px;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--fg, oklch(0.965 0.012 300));
+}
+
+.tactic-card__count {
+  margin-top: auto;
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  /* On dark cards, this glows ember-2. On bright cards, it adapts toward fg so it stays readable. */
+  color: color-mix(
+    in oklch,
+    var(--ember-2, oklch(0.80 0.150 310)),
+    oklch(0.985 0.005 300) calc(var(--intensity, 0) * 80%)
+  );
+}
+
+.tactic-card--gap .tactic-card__count {
+  color: var(--fg-dim, oklch(0.60 0.030 300));
+}
+
+/* technique list rendered inside the tactic drawer */
+.tg-technique-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tg-technique {
+  appearance: none;
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  /* Same heat mix as the tactic cards. */
+  background: color-mix(
+    in oklch,
+    var(--bg-2, oklch(0.20 0.022 300)),
+    var(--ember, oklch(0.66 0.220 300)) calc(var(--intensity, 0) * 55%)
+  );
+  border: 1px solid color-mix(
+    in oklch,
+    var(--line-soft, oklch(0.29 0.026 300)),
+    var(--ember-2, oklch(0.80 0.150 310)) calc(var(--intensity, 0) * 45%)
+  );
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--fg, oklch(0.965 0.012 300));
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.tg-technique:hover {
+  transform: translateX(-2px);
+  filter: brightness(1.12);
+}
+
+.tg-technique--gap {
+  background: var(--bg-2, oklch(0.20 0.022 300));
+  border: 1px dashed var(--line-soft, oklch(0.29 0.026 300));
+  opacity: 0.6;
+}
+
+.tg-technique-id {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--fg-dim, oklch(0.60 0.030 300));
+}
+
+.tg-technique-name {
+  font-family: var(--sans, system-ui, sans-serif);
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--fg, oklch(0.965 0.012 300));
+}
+
+.tg-technique-subnote {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--fg-dim, oklch(0.60 0.030 300));
+}
+
+.tg-technique-count {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: color-mix(
+    in oklch,
+    var(--ember-2, oklch(0.80 0.150 310)),
+    oklch(0.985 0.005 300) calc(var(--intensity, 0) * 80%)
+  );
+  white-space: nowrap;
+}
+
+.tg-technique--gap .tg-technique-count {
+  color: var(--fg-dim, oklch(0.60 0.030 300));
+}
+
+.tg-subtech-note {
+  margin: 14px 0 0;
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--fg-dim, oklch(0.60 0.030 300));
+  text-transform: uppercase;
+}
+
+.tg-empty-note {
+  font-family: var(--serif, "Instrument Serif", serif);
+  font-size: 14px;
+  color: var(--fg-mute, oklch(0.78 0.022 300));
+  margin: 0;
+  padding: 14px;
+  border: 1px dashed var(--line-soft, oklch(0.29 0.026 300));
+  border-radius: 8px;
+}
+
+/* view toggle (Tactic / Technique) — sits inline with filter chips */
+.view-toggle {
+  display: inline-flex;
+  background: var(--surface, oklch(0.23 0.024 300));
+  border: 1px solid var(--line-soft, oklch(0.29 0.026 300));
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.view-toggle__btn {
+  appearance: none;
+  background: transparent;
+  color: var(--fg-mute, oklch(0.78 0.022 300));
+  border: none;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-family: var(--sans, system-ui, sans-serif);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.view-toggle__btn:hover {
+  color: var(--fg, oklch(0.965 0.012 300));
+}
+
+.view-toggle__btn--active {
+  background: var(--ember, oklch(0.66 0.220 300));
+  color: oklch(0.985 0.005 300);
+  font-weight: 600;
+}

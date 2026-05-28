@@ -86,6 +86,7 @@ Already have a hypothesis? Submit it directly.
 | Feature | Description |
 | :--- | :--- |
 | **Interactive Database** | [Searchable, filterable, sortable](https://thorcollective.github.io/HEARTH/) interface for all hunts. Find what you need fast. |
+| **Coverage Heatmap** | [/coverage-heatmap.html](https://hearth.thorcollective.com/coverage-heatmap.html) — the full MITRE ATT&CK matrix, colored by how many community hunts cover each technique. Click a cell to see the hunts (or the gap). Lives alongside the [Coverage Map](https://hearth.thorcollective.com/graph.html) under the [Coverage hub](https://hearth.thorcollective.com/coverage.html). |
 | **AI-Powered CTI Analysis** | Submit a CTI link — **Claude** reads, analyzes, and drafts a complete hunt hypothesis automatically. |
 | **MITRE ATT&CK Integration** | Validates technique IDs against the full Enterprise framework (691 techniques, 99% accuracy). |
 | **Duplicate Detection** | AI-powered similarity analysis flags potential duplicates before they're merged. 30-60x faster with SQLite indexing. |
