@@ -626,6 +626,67 @@ const HUNTS_DATA = [
     "file_path": "Embers/B022.md"
   },
   {
+    "id": "B023",
+    "category": "Embers",
+    "title": "In the Deception.Pro multi-RAT intrusion, the operator performed SAMR and LSAD RPC\nenumeration against the domain controller to map domains, users, group memberships,\nand trust relationships before deciding on lateral movement. Because nltest, dsquery,\nAD-tooling, and management agents perform domain-trust enumeration as part of normal\noperations, an alert-first approach drowns in false positives. This baseline\ncharacterizes which hosts and accounts legitimately enumerate domain trusts (and via\nwhich mechanism — nltest CLI, LDAP trustedDomain queries, or SAMR/LSARPC named-pipe\naccess) so that trust discovery from a non-admin workstation, a recently-phished user\ncontext, or a host running an unsigned/uncommon binary stands out as anomalous.\n",
+    "tactic": "Discovery",
+    "notes": "Build a 30-day baseline of domain-trust-discovery activity, then deliver an allowlist of normal enumerators so the paired alert can fire only on deviations. DATA COLLECTION: (1) Process telemetry — Security EID 4688 / Sysmon EID 1 for image=nltest.exe with args /domain_trusts, /all_trusts, /dclist:, /dsgetdc:, /parentdomain, /trusted_domains; for dsquery/AdFind with LDAP filter (objectClass=trustedDomain) or (objectCategory=trustedDomain); and PowerShell Get-NetDomainTrust/Get-NetForestTrust/Get-ADTrust. Capture per event: host, ParentImage, account SID/name, account privilege level, command line, signing status. (2) DC-side RPC telemetry — Security EID 5145 (detailed file share) for RelativeTargetName in (lsarpc, samr, srvsvc, netlogon) over IPC$, plus EID 4661/4662 (handle to SAM/AD object, mass attribute enumeration) — source IP, source account, volume. (3) Sysmon EID 3 network connections to DC port 135 + ephemeral high ports from non-server hosts. AGGREGATE over a 30-DAY WINDOW per (source host, account, mechanism). DELIVERABLE: an ALLOWLIST of (host, account, tool) tuples that are baseline-normal — e.g. domain controllers, tier-0 admin jump hosts, vulnerability scanners, and AD management consoles — so anything outside it is investigable. IMMEDIATE-FLAG patterns (do not wait for baseline): nltest /domain_trusts or /all_trusts from a standard user workstation; SAMR+LSARPC+SRVSVC named-pipe access from one source within minutes (BloodHound/SharpHound signature); a spike of EID 4661 (SAMR enumeration) from a single source; trust enumeration whose ParentImage is a browser, mail client, Office app, certutil.exe, or a binary in C:\\Users\\Public\\. CROSS-REF: pairs with the RTLO masquerade Flames hunt [[H186]] — both are stages of the same SSA-phish-to-AdaptixC2 intrusion; an RTLO execution followed within the dwell window by trust discovery from the same host is a high-confidence chain.",
+    "tags": [
+      "discovery",
+      "domain_trust_discovery",
+      "nltest",
+      "bloodhound",
+      "samr",
+      "lsarpc",
+      "active_directory",
+      "T1482"
+    ],
+    "techniques": [
+      "T1482"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- The Deception.Pro op report explicitly documents SAMR and LSAD RPC enumeration of domains, users, group memberships, and trust relationships as the discovery phase that informed the operator's lateral-movement decisions in a live multi-RAT intrusion.\n- Domain trust discovery is performed routinely by administrators, AD management tools, vulnerability scanners, and DC processes, so a naive alert generates excessive noise — a baseline of \"who normally enumerates trusts, from where, and how\" is required before the behavior is alert-able, which is the defining condition for an Embers (baseline) hunt.\n- The activity is observable through multiple complementary telemetry sources (nltest/dsquery/PowerShell process args, DC-side EID 5145 named-pipe access, EID 4661/4662 SAM/AD object enumeration, and Sysmon network connections), letting the baseline cover both CLI and RPC/BloodHound-style enumeration that LDAP-only auditing misses.\n- Trust discovery is a high-value pivot point: once an allowlist exists, deviations (non-admin host, phished user context, RTLO-payload parent) become a precise tripwire — and correlating it with the paired RTLO hunt [[H186]] reconstructs the full intrusion chain.",
+    "references": "- [MITRE ATT&CK T1482 - Domain Trust Discovery](https://attack.mitre.org/techniques/T1482/)\n- [[Op Report] From SSA Phish to AdaptixC2: A Multi-RAT Intrusion - Deception.Pro](https://blog.deception.pro/blog/xworm-sc-hok-may-2026)\n- [Splunk Lantern - Detecting domain trust discovery attempts](https://lantern.splunk.com/Splunk_Platform/Use_Cases/Use_Cases_Security/Threat_Hunting/Detecting_domain_trust_discovery_attempts)\n- [Splunk Security Content - NLTest Domain Trust Discovery](https://research.splunk.com/endpoint/c3e05466-5f22-11eb-ae93-0242ac130002/)\n- [Elastic Security - Enumerating Domain Trusts via NLTEST.EXE](https://www.elastic.co/guide/en/security/8.19/prebuilt-rule-8-3-1-enumerating-domain-trusts-via-nltest-exe.html)\n- [Atomic Red Team - T1482 Domain Trust Discovery](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1482/T1482.md)\n- [Compass Security - BloodHound Inner Workings: SAMR & LSARPC enumeration](https://blog.compass-security.com/2022/05/bloodhound-inner-workings-part-1/)",
+    "file_path": "Embers/B023.md"
+  },
+  {
+    "id": "B024",
+    "category": "Embers",
+    "title": "SPECTRALVIPER's orchestrator instance distributes commands to other compromised hosts over named pipes (XGU::Pivot::StartLink / WaitNew_RemotePipe), so an anomalous named pipe — one connecting hosts that have never communicated via IPC before, or a pipe name absent from the environment's 30-day baseline — indicates OceanLotus lateral pivoting / tool-and-command transfer.",
+    "tactic": "Lateral Movement",
+    "notes": "Windows. Collection: Sysmon EID 17 (PipeCreated) and EID 18 (PipeConnected) — capture PipeName, Image, ProcessGuid, User, Computer; plus Security EID 5145 (detailed file share) for ADMIN$/C$/IPC$ writes of EXE/DLL/scripts and EID 7045 (service install) for remote-exec follow-on. Establish a 30-day baseline of normal PipeName values and the Images that create/connect them per host role (DCs, workstations, servers differ). Deliverable allowlist: enumerate expected pipes — OS/AV/EDR/RMM/SQL/print/RPC pipes (\\\\srvsvc, \\\\lsass, \\\\winreg, \\\\spoolss, \\\\ntsvcs, \\\\epmapper, \\\\PSEXESVC for sanctioned PsExec) — and the signed Images that own them. Immediate flags (do not wait for baseline): high-entropy/random or GUID-like pipe names; pipes created by unsigned images or by images in %TEMP%/%APPDATA%/%PUBLIC%; the same pipe name appearing across multiple hosts in a short window (orchestrator fan-out pattern); a pipe-creating process that is a renamed signed binary (cross-ref [[H187]]); known offensive pipe patterns (\\\\msagent_*, \\\\postex_*, \\\\status_*, \\\\MSSE-*, \\\\win_svc*, \\\\UIA_PIPE*). Correlate pipe activity with EID 5145 admin-share file writes occurring within minutes on the same source->dest pair to catch actual tool transfer. Cross-ref paired Flames [[H187]] (the side-loaded SPECTRALVIPER binary is what owns these pipes). Tune by promoting baselined PipeName+Image pairs to an allowlist and re-baselining quarterly.",
+    "tags": [
+      "lateral_movement",
+      "named_pipes",
+      "oceanlotus",
+      "apt32",
+      "spectralviper",
+      "windows",
+      "sysmon",
+      "pivoting",
+      "T1570"
+    ],
+    "techniques": [
+      "T1570"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- ESET documents SPECTRALVIPER using a named-pipe orchestration layer (`XGU::Pivot::StartLink`, `XGU::Pivot::Internal::WaitNew_RemotePipe`) so one orchestrator instance distributes commands to other compromised hosts — a textbook lateral tool/command transfer over IPC.\n- Named pipes are heavily used by legitimate Windows IPC, so a blind detection drowns in noise; a per-environment 30-day baseline of pipe names and owning images is required to make the anomaly visible — hence Embers, not Flames.\n- The orchestrator fan-out (same pipe name surfacing across multiple hosts in a short window) and pipes owned by unsigned or non-standard-path images are high-signal deviations that survive baselining.\n- Pairing pipe events (Sysmon 17/18) with admin-share writes (EID 5145) catches the moment tools are actually transferred, satisfying the T1570 lateral-tool-transfer hypothesis rather than pipe creation alone.",
+    "references": "- [MITRE ATT&CK T1570 — Lateral Tool Transfer](https://attack.mitre.org/techniques/T1570/)\n- [source report — OceanLotus: From external espionage to domestic targeting (ESET)](https://www.welivesecurity.com/en/eset-research/oceanlotus-external-espionage-domestic-targeting/)\n- [Splunk — Detecting & Hunting Named Pipes](https://www.splunk.com/en_us/blog/security/named-pipe-threats.html)\n- [Detect.FYI — Threat Hunting: Suspicious Named Pipes (mthcht)](https://detect.fyi/threat-hunting-suspicious-named-pipes-a4206e8a4bc8)\n- [Atomic Red Team — T1570 Lateral Tool Transfer](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1570/T1570.md)\n- [Hunting & Detecting SMB Named Pipe Pivoting (Lateral Movement)](https://bherunda.medium.com/hunting-detecting-smb-named-pipe-pivoting-lateral-movement-b4382bd1df4)",
+    "file_path": "Embers/B024.md"
+  },
+  {
     "id": "H001",
     "category": "Flames",
     "title": "An adversary is attempting to brute force the admin account on the externally facing VPN gateway.",
@@ -5953,6 +6014,240 @@ const HUNTS_DATA = [
     "file_path": "Flames/H185.md"
   },
   {
+    "id": "H186",
+    "category": "Flames",
+    "title": "An adversary delivers a malicious executable whose filename embeds the right-to-left override character (U+202E) so it renders as a PDF, tricking the user into running it; the file lands in a user-writable path (Downloads/Temp/extracted RAR) and is the parent of follow-on staging activity.",
+    "tactic": "Defense Evasion",
+    "notes": "Hunt at the byte level, never on rendered names. Sysmon EID 11 (FileCreate) and EID 1 / Security 4688 (ProcessCreate): match `TargetFilename`/`Image`/`CommandLine` against the raw U+202E (‮) char and its encodings `[U+202E]`, `%E2%80%AE`, `\\xE2\\x80\\xAE`. Defender KQL: `DeviceFileEvents | where FileName has_any(\"‮\") ` and `DeviceProcessEvents | where ProcessCommandLine matches regex @\"‮\"`. Reversed-extension regex catches the classic flip: filename contains one of `rcs.`,`fdp.`,`cod.`,`xlsx.`,`gpj.`,`exe.` mid-string. Pivot: any hit whose child process is `certutil.exe` with `-urlcache`/`-split`/`-f`, or that drops to `C:\\Users\\Public\\Documents\\` or `C:\\Users\\Public\\Downloads\\` (observed payload.exe / stub.exe staging), is high-confidence. Note legacy email gateways miss RTLO; EDR file-write events do not. Pairs with domain-trust-discovery baseline hunt [[B023]] for the same intrusion's discovery phase.",
+    "tags": [
+      "defense_evasion",
+      "masquerading",
+      "rtlo",
+      "u202e",
+      "phishing",
+      "certutil",
+      "T1036.002"
+    ],
+    "techniques": [
+      "T1036.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- The Deception.Pro op report documents an SSA-themed phish whose dropper used an RTLO-masked filename (`...№_<U+202E>fdp.exe` posing as a PDF) as the entry point to a multi-RAT (AdaptixC2 + XWorm + ScreenConnect) intrusion — a current, real-world TTP.\n- RTLO is invisible to humans and to many email gateways but is fully recoverable at the byte level from Sysmon/EDR file-write and process-create telemetry, so the hunt has near-zero false-negative cost when scoped to U+202E.\n- The technique is rare in benign traffic (Red Canary reports ~300 true hits per 90 days across a large enterprise fleet), giving an excellent signal-to-noise ratio for a targeted query.\n- Chaining the RTLO hit to its `certutil` staging child and the observed `C:\\Users\\Public\\...` drop paths converts a single masquerade indicator into a full execution-to-staging detection.",
+    "references": "- [MITRE ATT&CK T1036.002 - Masquerading: Right-to-Left Override](https://attack.mitre.org/techniques/T1036/002/)\n- [[Op Report] From SSA Phish to AdaptixC2: A Multi-RAT Intrusion - Deception.Pro](https://blog.deception.pro/blog/xworm-sc-hok-may-2026)\n- [Splunk - Detect RTLO In File Name](https://research.splunk.com/endpoint/468b7e11-d362-43b8-b6ec-7a2d3b246678/)\n- [Sigma - Potential File Extension Spoofing Using Right-to-Left Override (Detection.FYI)](https://detection.fyi/sigmahq/sigma/windows/file/file_event/file_event_win_susp_right_to_left_override_extension_spoofing/)\n- [Sigma - Potential Defense Evasion Via Right-to-Left Override (Detection.FYI)](https://detection.fyi/sigmahq/sigma/windows/process_creation/proc_creation_win_susp_right_to_left_override/)\n- [Red Canary - Right-to-Left Override: Detecting Attacks With EDR Data](https://redcanary.com/blog/threat-detection/right-to-left-override/)\n- [CISA Eviction Strategies - Right-to-Left Override (T1036.002)](https://www.cisa.gov/eviction-strategies-tool/info-attack/T1036.002)\n- [Atomic Red Team - T1036 RTLO file extension spoofing tests](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1036/T1036.md)",
+    "file_path": "Flames/H186.md"
+  },
+  {
+    "id": "H187",
+    "category": "Flames",
+    "title": "A legitimately code-signed executable has been renamed and is side-loading an unsigned/invalid-signature DLL from a user-writable, non-standard path (OceanLotus signed-binary DLL side-loading).",
+    "tactic": "Defense Evasion",
+    "notes": "Windows. Sysmon EID 1 (ProcessCreate): flag `Signed=true` + `SignatureStatus=Valid` images whose `OriginalFileName` (PE metadata) != `Image` filename, OR known signers (e.g. legitimate Toolbox/dtlupdate publishers) running under masquerade names (Genuine.exe, Updater.exe, AutoCAD242.exe, IntelAudioService.exe), OR any command line containing `-uiDll`. Sysmon EID 7 (ImageLoad): correlate same PID loading a DLL where `Signed=false` OR `SignatureStatus` != Valid AND `ImageLoaded` path is outside `C:\\Windows\\` and `C:\\Program Files*` (e.g. `%TEMP%`, `%APPDATA%`, `%PUBLIC%`, ProgramData subdirs). Security EID 4688 fallback for command-line `-uiDll`. Pivot: process runs from a directory it does not normally ship in. Tune by allowlisting signer+OriginalFileName pairs seen in your golden image.",
+    "tags": [
+      "defense_evasion",
+      "dll_side_loading",
+      "oceanlotus",
+      "apt32",
+      "spectralviper",
+      "windows",
+      "sysmon",
+      "T1553.002",
+      "T1574.002"
+    ],
+    "techniques": [
+      "T1553.002",
+      "T1574.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- ESET's report shows OceanLotus uses the trust of valid Authenticode signatures on `Toolbox.exe` and `dtlupdate.exe` to launch SPECTRALVIPER — the signature is real, so allow-by-signature controls pass while malicious code runs.\n- The `-uiDll` parameter is the side-loading trigger and is an unusually specific, high-signal artifact to pivot on in command lines.\n- Renaming a signed binary breaks the link between its PE `OriginalFileName` and its on-disk name — a cheap, reliable anomaly to compute from Sysmon EID 1.\n- Pairing a valid-signed parent with an *unsigned* child DLL loaded from a user-writable path (Sysmon EID 7) is the core defeat of code-signing trust and rarely occurs benignly outside standard install paths.",
+    "references": "- [MITRE ATT&CK T1553.002 — Subvert Trust Controls: Code Signing](https://attack.mitre.org/techniques/T1553/002/)\n- [source report — OceanLotus: From external espionage to domestic targeting (ESET)](https://www.welivesecurity.com/en/eset-research/oceanlotus-external-espionage-domestic-targeting/)\n- [Splunk — Windows Unsigned MS DLL Side-Loading detection](https://research.splunk.com/endpoint/8d9e0e06-ba71-4dc5-be16-c1a46d58728c/)\n- [Detecting DLL hijacking with Sysmon, Chainsaw & custom Sigma rules](https://medium.com/@polygonben/detecting-dll-hijacking-with-sysmon-chainsaw-custom-sigma-rules-7e32215d5d96)\n- [Logpoint — Detect, prevent and respond: a deep dive on malicious DLLs](https://logpoint.com/en/blog/deep-dive-on-malicious-dlls)\n- [MITRE ATT&CK T1574.002 — Hijack Execution Flow: DLL Side-Loading](https://attack.mitre.org/techniques/T1574/002/)",
+    "file_path": "Flames/H187.md"
+  },
+  {
+    "id": "H188",
+    "category": "Flames",
+    "title": "Adversaries with valid AWS access stop, delete, or reconfigure CloudTrail trails to suppress audit visibility before sensitive IAM/S3/KMS actions; these tampering events are visible in CloudTrail as discrete management-plane API calls from non-console identities.",
+    "tactic": "Defense Evasion",
+    "notes": "Hunt CloudTrail management events where `eventSource=cloudtrail.amazonaws.com` and `eventName` in (`StopLogging`, `DeleteTrail`, `UpdateTrail`, `CreateTrail`, `PutEventSelectors`, `DeleteEventDataStore`). Filter to suspicious actors: `userIdentity.type` in (IAMUser, AssumedRole, FederatedUser) and `userIdentity.invokedBy != \"console.amazonaws.com\"` / `userAgent` not the AWS Console. For `UpdateTrail`, inspect `requestParameters` for changed `s3BucketName` (log redirection), removed `includeGlobalServiceEvents`/`isMultiRegionTrail`, or disabled `enableLogFileValidation`. For `StopLogging`, the trail named in `requestParameters.name` goes dark — confirm no benign `StartLogging` follows. Treat `errorCode = AccessDenied` on these as reconnaissance. Pivot: from `userIdentity.arn` + `userIdentity.accessKeyId`, list all subsequent events in the same trail/region (IAM CreateUser/AttachUserPolicy, S3 GetObject/DeleteObject, KMS Decrypt, EC2 export) to scope post-blinding actions. Also alert on the destination S3 bucket itself being deleted (`s3.amazonaws.com` `DeleteBucket`) or `update-trail` repointing to an attacker-controlled `--s3-bucket-name`.",
+    "tags": [
+      "defense_evasion",
+      "cloud",
+      "aws",
+      "cloudtrail",
+      "logging",
+      "T1562.008"
+    ],
+    "techniques": [
+      "T1562.008"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Unit 42's \"Blinding the Watchmen\" documents exactly these AWS primitives — `stop-logging`, `delete-trail`, `update-trail` (KMS/destination changes), `create-trail` for log routing, and S3 `delete-bucket` for destroying log storage — as a defense-evasion playbook, making them high-value hunt targets.\n- Every one of these is a discrete, named CloudTrail `eventName`, so the abuse is recorded in the very service being attacked (until it isn't) — ideal for a precise Flames hunt rather than a behavioral baseline.\n- Filtering to non-console `userAgent`/`invokedBy` cuts the dominant false-positive source (admins toggling trails from the console) and surfaces programmatic, credential-driven tampering, which is the attacker pattern.\n- The pivot from the tampering event to the same actor's subsequent IAM/S3/KMS activity converts a single suspicious API call into an attack-chain narrative, raising fidelity and giving responders immediate scoping.",
+    "references": "- [MITRE ATT&CK T1562.008 — Impair Defenses: Disable or Modify Cloud Logs](https://attack.mitre.org/techniques/T1562/008/)\n- [source report — Unit 42: Blinding the Watchmen: Abusing Cloud Logging Services](https://unit42.paloaltonetworks.com/cloud-logging-defense-evasion/)\n- [Splunk — AWS Defense Evasion Stop Logging Cloudtrail](https://research.splunk.com/cloud/8a2f3ca2-4eb5-4389-a549-14063882e537/)\n- [Splunk — AWS Defense Evasion Delete Cloudtrail](https://research.splunk.com/cloud/82092925-9ca1-4e06-98b8-85a2d3889552/)\n- [Splunk — AWS Defense Evasion Update Cloudtrail](https://research.splunk.com/cloud/7c921d28-ef48-4f1b-85b3-0af8af7697db/)\n- [Elastic — AWS CloudTrail Log Deleted (prebuilt rule)](https://www.elastic.co/docs/reference/security/prebuilt-rules/rules/integrations/aws/defense_evasion_cloudtrail_logging_deleted)\n- [AWS — Security best practices in CloudTrail (DeleteTrail/StopLogging/UpdateTrail access control)](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/best-practices-security.html)",
+    "file_path": "Flames/H188.md"
+  },
+  {
+    "id": "H189",
+    "category": "Flames",
+    "title": "Adversaries in GCP delete, disable, or redirect Cloud Logging sinks and delete log buckets to break log routing and storage, blinding defenders; these actions appear in Cloud Audit Logs as discrete ConfigServiceV2 method calls.",
+    "tactic": "Defense Evasion",
+    "notes": "Query GCP Cloud Audit Logs (`logName` ending `/logs/cloudaudit.googleapis.com%2Factivity`) where `protoPayload.methodName` in (`google.logging.v2.ConfigServiceV2.DeleteSink`, `google.logging.v2.ConfigServiceV2.UpdateSink`, `google.logging.v2.ConfigServiceV2.DeleteBucket`, `google.logging.v2.ConfigServiceV2.CreateSink`). For `UpdateSink`, inspect `protoPayload.request` for `disabled=true` (sink silenced) or a changed `destination` (log redirection to attacker storage/another project). For `DeleteSink`/`DeleteBucket`, capture `protoPayload.resourceName` to identify which sink/bucket (watch for `_Default` / `_Required`). Identify the actor via `protoPayload.authenticationInfo.principalEmail` and source `protoPayload.requestMetadata.callerIp`; flag service-account principals and unfamiliar IPs. Also hunt CMEK impairment via `google.logging.v2.ConfigServiceV2.UpdateBucket` changing `cmekSettings` (key rotation/removal that breaks log readability). Pivot: from `principalEmail`, pull all Admin Activity in the project/folder window (IAM SetIamPolicy, storage.objects.delete, serviceusage.services.disable) to scope post-blinding actions. Treat `protoPayload.status.code != 0` (permission-denied) on these methods as recon.",
+    "tags": [
+      "defense_evasion",
+      "cloud",
+      "gcp",
+      "cloud_logging",
+      "logging",
+      "T1562.008"
+    ],
+    "techniques": [
+      "T1562.008"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Unit 42's report enumerates the GCP-side blinding primitives directly — deleting log routers (`DeleteSink`), disabling a sink (`disabled=true`), redirecting routing (`logging.sinks.update` destination change), deleting log storage (`logging.buckets.delete`), and CMEK impairment — establishing these as concrete hunt targets, not theory.\n- Each maps to a named `protoPayload.methodName` in GCP Cloud Audit Logs, so this is a precise Flames hunt against the log router/storage control plane rather than a behavioral baseline.\n- `UpdateSink` with `disabled=true` or a changed `destination` is a quieter evasion than outright deletion — explicitly inspecting the request body catches the stealthier variant that a deletion-only rule would miss.\n- Sister hunt [[H188]] covers the identical adversary behavior on AWS; running both gives multi-cloud coverage of T1562.008 with provider-native field paths and a consistent pivot-to-actor methodology.",
+    "references": "- [MITRE ATT&CK T1562.008 — Impair Defenses: Disable or Modify Cloud Logs](https://attack.mitre.org/techniques/T1562/008/)\n- [source report — Unit 42: Blinding the Watchmen: Abusing Cloud Logging Services](https://unit42.paloaltonetworks.com/cloud-logging-defense-evasion/)\n- [Elastic — GCP Logging Sink Deletion (prebuilt rule)](https://www.elastic.co/guide/en/security/current/gcp-logging-sink-deletion.html)\n- [Elastic — GCP Logging Bucket Deletion (prebuilt rule)](https://www.elastic.co/guide/en/security/current/gcp-logging-bucket-deletion.html)\n- [Detection.FYI — GCP Logging Sink Deletion](https://detection.fyi/elastic/detection-rules/integrations/gcp/defense_evasion_gcp_logging_sink_deletion/)\n- [Cloudanix — google.logging.v2.ConfigServiceV2.DeleteSink threat detail](https://cloudanix.com/docs/gcp/threats/logging/rules/google.logging.v2.configservicev2.deletesink)\n- [Picus — T1562.008 Impair Defenses: Disable or Modify Cloud Logs (AWS/GCP/Azure methods)](https://www.picussecurity.com/resource/blog/t1562-008-disable-or-modify-cloud-logs)",
+    "file_path": "Flames/H189.md"
+  },
+  {
+    "id": "H190",
+    "category": "Flames",
+    "title": "An adversary is exploiting CVE-2026-35273 by sending crafted unauthenticated POSTs to PeopleSoft PSEMHUB/PSIGW endpoints to achieve RCE/SSRF on the public-facing PIA/WebLogic server.",
+    "tactic": "Initial Access",
+    "notes": "Hunt WebLogic/PIA access logs for `POST /PSEMHUB/hub` and `POST /PSIGW/HttpListeningConnector` from external/non-allowlisted IPs (these endpoints normally take only internal EMHub agent traffic). Flag any such request whose body/headers contain SSRF callback markers `127.0.0.1`, `localhost`, `::1`, or RFC1918 addresses. Correlate with the PIA/WebLogic Java process (`java`/`PSEMAGENT`) spawning shell children (`/bin/sh`, `bash`, `sshpass`, `node`) via Linux auditd `execve` or Sysmon-for-Linux EID 1 where parent is the WebLogic process — web-server-spawns-shell is the single highest-fidelity T1190 signal. Pivot on outbound TCP/445 (SMB) from PeopleSoft hosts to external destinations (NetFlow) and unexpected egress to staging IPs `142.11.200.186-190` (Python SimpleHTTP on 8888) or `azurenetfiles.net` / `176.120.22.24`. WAF: add signature for these URIs + loopback-in-body.",
+    "tags": [
+      "initial_access",
+      "peoplesoft",
+      "cve_2026_35273",
+      "ssrf",
+      "shinyhunters",
+      "weblogic",
+      "T1190"
+    ],
+    "techniques": [
+      "T1190"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- These two endpoints (`/PSEMHUB/hub`, `/PSIGW/HttpListeningConnector`) are the precise vulnerable surfaces for CVE-2026-35273 and legitimately receive only internal EMHub/integration-broker traffic, so external POSTs are inherently anomalous and high-signal.\n- The vuln is fundamentally an SSRF-to-RCE, so loopback/internal-IP markers in the request and unexpected outbound connections from the PIA server are direct exploitation evidence rather than generic noise.\n- Exploitation was an active zero-day before Oracle's 10 June 2026 out-of-band patch, so log review must cover the 27 May–9 June window even on now-patched systems to catch prior compromise.\n- A web server (WebLogic) spawning an interpreter or `sshpass`/`node` is rare in normal PeopleSoft operation and ties the network indicator to host-level RCE.",
+    "references": "- [MITRE ATT&CK T1190 — Exploit Public-Facing Application](https://attack.mitre.org/techniques/T1190/)\n- [source report — Google Cloud / Mandiant: ShinyHunters Targets Education Sector with Oracle PeopleSoft Exploit](https://cloud.google.com/blog/topics/threat-intelligence/shinyhunters-targets-education-sector-oracle-exploit/)\n- [Rapid7 — Active Exploitation of Oracle PeopleSoft Zero-Day (CVE-2026-35273)](https://www.rapid7.com/blog/post/etr-active-exploitation-of-oracle-peoplesoft-zero-day-cve-2026-35273/)\n- [BleepingComputer — Oracle mitigates PeopleSoft zero-day exploited in data theft attacks](https://www.bleepingcomputer.com/news/security/oracle-mitigates-peoplesoft-zero-day-exploited-in-data-theft-attacks/)\n- [Splunk Security Content — Exploit Public-Facing Application (Web datamodel POST/URI detection patterns)](https://research.splunk.com/web/19a481e0-c97c-4d14-b1db-75a708eb592e/)\n- [Log360 — Detecting Exploit Public-Facing Application (T1190) with SIEM](https://www.manageengine.com/log-management/mitre-attack/initial-access/exploit-public-facing-application-t1190.html)",
+    "file_path": "Flames/H190.md"
+  },
+  {
+    "id": "H191",
+    "category": "Flames",
+    "title": "An adversary has written a JSP web shell (or XMLDecoder-abusing XML) into the PeopleSoft PSEMHUB.war web root to persist RCE on the public-facing PIA/WebLogic server.",
+    "tactic": "Persistence",
+    "notes": "Inventory and hunt for newly created/modified `*.jsp` under `<PS_CFG_HOME>/webserv/<domain>/applications/peoplesoft/PSEMHUB.war/` — legitimate PSEMHUB.war contents are static and shipped by Oracle, so any new/changed JSP is suspect. Specifically audit unauthorized staging dirs `PSEMHUB.war/envmetadata/transactions/` and anomalous subdirs named `logs`, `persistantstorage`, `scratchpad`. Flag recently modified XML in `<docroot>/envmetadata/data/environment/*.xml` (XMLDecoder RCE on restart). Detection: Linux auditd file-create watch (`-w <PS_CFG_HOME>/webserv -p wa`) or Sysmon-for-Linux EID 11 for `.jsp`/`.xml` creations in those paths; FIM baseline + diff of PSEMHUB.war. Behavioral: WebLogic `java` process spawning child shells/`whoami`/`id`/`uname`/`ifconfig` (Sigma \"Linux Webshell Indicators\" — web-server parent → recon child). Grep access logs for GETs/POSTs to unfamiliar `.jsp` paths under `/PSEMHUB/`.",
+    "tags": [
+      "persistence",
+      "webshell",
+      "jsp",
+      "peoplesoft",
+      "psemhub",
+      "weblogic",
+      "xmldecoder",
+      "T1505.003"
+    ],
+    "techniques": [
+      "T1505.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- PSEMHUB.war is an Oracle-shipped static application; any newly created `.jsp` or modified XML inside it is almost never legitimate, making file-creation events in that exact path extremely high fidelity.\n- The report names the precise persistence paths and the unauthorized `transactions/`, `logs`, `persistantstorage`, `scratchpad` directories, so the hunt can target real locations rather than monitoring the whole filesystem.\n- The XMLDecoder XML path is a stealth backdoor that fires on application restart, so a host can be reinfected post-reboot even after a JSP shell is removed — both must be checked.\n- A WebLogic Java process spawning recon utilities is a well-established cross-vendor web-shell behavioral signature and ties file-system persistence to live operator interaction.",
+    "references": "- [MITRE ATT&CK T1505.003 — Web Shell](https://attack.mitre.org/techniques/T1505/003/)\n- [source report — Google Cloud / Mandiant: ShinyHunters Targets Education Sector with Oracle PeopleSoft Exploit](https://cloud.google.com/blog/topics/threat-intelligence/shinyhunters-targets-education-sector-oracle-exploit/)\n- [Detection.FYI / SigmaHQ — Linux Webshell Indicators (web-server parent spawning recon child)](https://detection.fyi/sigmahq/sigma/linux/process_creation/proc_creation_lnx_webshell_detection/)\n- [Atomic Red Team — T1505.003 Server Software Component: Web Shell](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1505.003/T1505.003.md)\n- [microsoft/MSTIC-Sysmon — T1505.003 WebShell SuspSubProcesses (Linux Sysmon config)](https://github.com/microsoft/MSTIC-Sysmon/blob/main/linux/configs/attack-based/persistence/T1505.003_WebShell_SuspSubProcesses.xml)\n- [WA Cyber Security Unit — T1505.003 Linux Webshell Indicators hunt guide](https://soc.cyber.wa.gov.au/guidelines/TTP_Hunt/ADS_forms/T1505.003-Linux-Webshell-Indicators/)",
+    "file_path": "Flames/H191.md"
+  },
+  {
+    "id": "H192",
+    "category": "Flames",
+    "title": "An adversary archived/compressed harvested PeopleSoft data with zstd/tar in a staging directory before exfiltrating it over SSH to an external leak-site mirror.",
+    "tactic": "Collection",
+    "notes": "Hunt Linux auditd/Sysmon-for-Linux `execve` (EID 1) for `zstd` invocations — observed exact pattern: `pv -s \"$(du -sb exfil ...)\" | zstd -3 -T0 -o exfil.tar.zst`. Flag `zstd`/`tar`/`gzip`/`xz` run with high thread/compression flags (`-T0`, `-3`) by non-admin/web-service users, or as a child of a web/SSH session originating from the intrusion. Correlate execution with creation (EID 11 / auditd watch on `/tmp`, `/var/tmp`, app dirs) of large `*.tar.zst` / `*.tar.gz` files, especially named `exfil*`. Pivot: `pv`+`zstd` pipe is itself unusual on a PeopleSoft prod server. Then tie the resulting archive to outbound SSH/SCP from the PeopleSoft host to external IPs (notably `176.120.22.24` / `142.11.200.186-190`). For an anomaly variant, baseline normal nightly backup archive sizes/locations and alert on off-schedule, oversized archives or archives written outside backup paths.",
+    "tags": [
+      "collection",
+      "zstd",
+      "archive",
+      "exfil_staging",
+      "peoplesoft",
+      "shinyhunters",
+      "T1560.001"
+    ],
+    "techniques": [
+      "T1560.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- The report gives the exact `pv | zstd -3 -T0 -o exfil.tar.zst` command line, so the hunt can match a precise, rarely-legitimate process-and-pipe pattern rather than generic compression noise.\n- `zstd` driven by `pv` for progress is an interactive-operator pattern that almost never appears in automated PeopleSoft backups, making it a strong behavioral discriminator.\n- Catching the archive-staging step provides a detection window after collection but before data leaves the network, enabling response before publication on the leak site.\n- The resulting artifact and subsequent outbound SSH to the named DLS mirror chain collection directly to exfiltration, supporting confident triage.",
+    "references": "- [MITRE ATT&CK T1560.001 — Archive Collected Data: Archive via Utility](https://attack.mitre.org/techniques/T1560/001/)\n- [source report — Google Cloud / Mandiant: ShinyHunters Targets Education Sector with Oracle PeopleSoft Exploit](https://cloud.google.com/blog/topics/threat-intelligence/shinyhunters-targets-education-sector-oracle-exploit/)\n- [MITRE ATT&CK Detection Strategy DET0298 — Archiving via Utility (Linux execve + staging-dir correlation)](https://attack.mitre.org/detectionstrategies/DET0298/)\n- [Atomic Red Team — T1560.001 Archive via Utility](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1560.001/T1560.001.md)\n- [Log360 — Detecting Archive Collected Data (T1560) with SIEM](https://www.manageengine.com/log-management/mitre-attack/collection/t1560-archive-collected-data.html)\n- [CISA Eviction Strategies Tool — T1560.001](https://www.cisa.gov/eviction-strategies-tool/info-attack/T1560.001)",
+    "file_path": "Flames/H192.md"
+  },
+  {
+    "id": "H193",
+    "category": "Flames",
+    "title": "Adversaries lure users into running AI-branded fake installers (`*AI*Setup.exe`, `deepseek-v4*.exe`, `*Flux*Ai*.exe`) that drop a renamed `pythonw.exe` + `LICENSE.txt` into `%AppData%\\Local` and execute a Python downloader beaconing to a stealer C2.",
+    "tactic": "Execution",
+    "notes": "Endpoint: pivot on Sysmon EID 1 / DeviceProcessEvents where a recently-downloaded installer with an AI-brand token in `ProcessVersionInfoFileDescription`/filename spawns a child interpreter. Process lineage to hunt: `*.exe` (installer in `\\Downloads\\` or `\\Programs\\IA *`) -> `\\AppData\\Local\\pythonw.exe` (no/odd args) -> outbound. File creation (Sysmon EID 11) of `pythonw.exe` AND `LICENSE.txt` co-located in `%AppData%\\Local`. Flag signed binaries whose signer cert is revoked or chains to known MSaaS (e.g., Fox Tempest, cert thumbprint `4f5c5b3ef45cfff7721754487a86aeff9a2e6e32`). KQL: DeviceProcessEvents where InitiatingProcessFolderPath has_any(\"downloads\",\"\\\\programs\\\\\") and FileName==\"pythonw.exe\" and FolderPath has \"appdata\\\\local\"; join DeviceNetworkEvents for first-seen C2 (`brokeapt[.]com`, `pan.ssffaa19[.]xyz`, `pan.rongtv[.]xyz`). Known IOCs (hash-rotating, treat as starting points, not the hunt): `ProFluxeFlowAi-win-Setup.exe` c7c5072d..., shared loader 5455341e...",
+    "tags": [
+      "execution",
+      "infostealer",
+      "vidar",
+      "ai_lure",
+      "masquerading",
+      "fake_installer",
+      "T1204.002"
+    ],
+    "techniques": [
+      "T1204.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- The article documents a repeatable, hash-rotating ecosystem (GPT-5.5, Claude Code, Kimi, Gemma, GrokCLI, Manus AI, FraudGPT) reusing one loader hash, so behavioral hunting on the execution chain outlives any single IOC.\n- The drop pattern is specific and uncommon for benign software: a renamed `pythonw.exe` plus `LICENSE.txt` decoy under `%AppData%\\Local` driving a downloader — strong, low-noise signal.\n- Signed-but-revoked / MSaaS-signed installers (Fox Tempest) defeat reputation checks, so signer-anomaly + path-anomaly pivots catch what AV reputation misses.\n- Single campaigns reached 66,000 devices in a day with hours-to-impact timelines, so a standing hunt materially shrinks dwell time on commodity stealer infections.",
+    "references": "- [MITRE ATT&CK T1204.002 — User Execution: Malicious File](https://attack.mitre.org/techniques/T1204/002/)\n- [source report — Microsoft: AI brands as bait](https://www.microsoft.com/en-us/security/blog/2026/06/08/ai-brands-as-bait-how-threat-actors-are-using-the-ai-hype-in-social-engineering/)\n- [Microsoft — Hunting Infostealers: Python Stealers (KQL/hunting guidance)](https://techcommunity.microsoft.com/blog/microsoftsecurityexperts/hunting-infostealers---python-stealers/4505342)\n- [Detection.FYI — Execute Python Scripts via Python Installer Binary (Sigma: pythonw.exe under \\AppData\\ from setup.exe)](https://detection.fyi/tsale/sigma_rules/lol_bins/proc_creation_windows_setup_pythonw/)\n- [Huntress — Snakes on a Domain: Analysis of a Python Malware Loader](https://www.huntress.com/blog/snakes-on-a-domain-an-analysis-of-a-python-malware-loader)\n- [Acronis TRU — Vidar Stealer 2.0 distributed via fake repos on GitHub](https://www.acronis.com/en/tru/posts/vidar-stealer-20-distributed-via-fake-game-cheats-on-github-and-reddit/)",
+    "file_path": "Flames/H193.md"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
@@ -6305,5 +6600,66 @@ const HUNTS_DATA = [
     "why": "- File and Directory Discovery is the textbook example of a technique that is unhuntable with a static rule — every knowledge worker and every indexing service enumerates files constantly — so the only way to make Luna Moth's harvesting visible is to model each identity against its own normal breadth and rate and alert on the deviation, which is squarely a model-assisted (Alchemy) problem, not a signature one.\n- The malicious burst has a distinctive *shape* even when each individual access looks benign: a single account suddenly touching many more directories, more shares, and far more sensitive-keyword documents than it ever has, often within minutes of an RMM logon. That multi-feature anomaly is detectable precisely because it departs from a stable per-user baseline that legitimate work rarely violates.\n- Anchoring on behavior rather than indicators makes the detection durable: Luna Moth rotates infrastructure, RMM tools, and personas, but the data-theft business model *requires* a wide, fast crawl for valuable documents — so a model trained on enumeration breadth/rate and sensitive-keyword density generalizes across campaigns and even to unrelated insider/extortion actors.\n- This hunt is the connective tissue between the access hunts and the exfil hunts: it fires in the window after [[H181]]/[[H182]] establish access but before the cloud/USB exfil ([[H183]]) completes, giving responders their best chance to intervene while the data is being staged rather than after it has left.",
     "references": "- [MITRE ATT&CK T1083 - File and Directory Discovery](https://attack.mitre.org/techniques/T1083/)\n- [Mandiant / GTIG - Seeking Counsel: Ongoing Targeted Campaign Against US Law Firms (source report)](https://cloud.google.com/blog/topics/threat-intelligence/targeted-campaign-us-law-firms/)\n- [MITRE ATT&CK T1213 - Data from Information Repositories](https://attack.mitre.org/techniques/T1213/)\n- [Microsoft Learn - Search the audit log (FileAccessed / SearchQueryPerformed / FileDownloaded)](https://learn.microsoft.com/en-us/purview/audit-log-activities)\n- [Elastic Security Labs - Anomaly detection and behavioral baselining for data access](https://www.elastic.co/security-labs/)\n- [Varonis - Detecting abnormal data access and insider data theft](https://www.varonis.com/blog/data-exfiltration)\n- [Unit 42 - Threat Assessment: Luna Moth Callback Phishing Campaign](https://unit42.paloaltonetworks.com/luna-moth-callback-phishing/)",
     "file_path": "Alchemy/M018.md"
+  },
+  {
+    "id": "M019",
+    "category": "Alchemy",
+    "title": "SPECTRALVIPER conceals C2 in HTTPS with encrypted host-profiling data embedded in HTTP Cookie headers (prefixes euconsent-v2= or zd_cs_pm=) to fixed endpoints, so a model that scores outbound TLS/HTTPS sessions on JA3 rarity, beacon periodicity, certificate/domain novelty, and Cookie-header entropy will surface the encrypted-channel beacon even though payloads are encrypted.",
+    "tactic": "Command and Control",
+    "notes": "Windows / network egress. Data sources: TLS/proxy/NGFW logs (Zeek conn.log + ssl.log + http.log, Suricata TLS events, or EDR network telemetry); fields needed = src/dst IP, dst domain/SNI, JA3/JA3S hash, TLS version + cipher, cert issuer/subject + validity, bytes_out/bytes_in, timestamps, and (where TLS-inspected or via proxy) HTTP Cookie header + User-Agent + URI. Feature engineering: (1) per src->dst connection inter-arrival times -> mean interval + jitter coefficient (low variance = beacon); (2) JA3/JA3S frequency across the fleet (rare-globally + repeated-on-one-host = suspicious); (3) destination domain novelty/age + ratio of NXDOMAIN-adjacent or low-prevalence FQDNs; (4) Shannon entropy of Cookie header value and flag known prefixes euconsent-v2= / zd_cs_pm= carrying high-entropy blobs; (5) bytes_out:bytes_in asymmetry; (6) requests to single-page deep paths (e.g. /apparatus/wind/twig/statement.html pattern). Model approach: unsupervised beaconing/periodicity detection (FFT or autocorrelation on connection timestamps) + isolation-forest/clustering over the JA3-rarity + entropy + asymmetry feature vector; optionally a supervised classifier seeded with known-bad JA3s. Fire conditions: a src host with (low-jitter periodic outbound TLS) AND (rare/never-before-seen JA3 OR newly-registered/low-prevalence destination) AND (high-entropy Cookie value, esp. euconsent-v2=/zd_cs_pm= prefix). Tuning/allowlist: exclude sanctioned beacon-like telemetry (EDR/AV/MDM/RMM/OS update/CDN/telemetry domains and their JA3s); maintain a fleet JA3 prevalence table refreshed weekly; suppress consent-management platforms that legitimately set euconsent-v2 cookies by requiring the beacon+rare-JA3 conditions to co-occur, not the cookie alone. IOC seeds from report: financemachinelearning[.]com, gatewayrvcenter[.]com. Cross-ref [[H187]] (side-loaded SPECTRALVIPER) and [[B024]] (its lateral pipes) for host-side corroboration of any flagged egress.",
+    "tags": [
+      "command_and_control",
+      "encrypted_channel",
+      "ja3",
+      "beaconing",
+      "oceanlotus",
+      "apt32",
+      "spectralviper",
+      "tls",
+      "T1573"
+    ],
+    "techniques": [
+      "T1573"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- ESET states all SPECTRALVIPER C&C is encrypted over HTTPS with host-profiling data hidden in Cookie headers (`euconsent-v2=` historical, `zd_cs_pm=` in this campaign) — payload inspection is impossible, so detection must rely on metadata/behavioral features rather than content.\n- Encrypted channels (T1573) are best surfaced by TLS-fingerprint rarity (JA3/JA3S) plus beacon periodicity, the classic model-assisted approach for content-blind C2 — squarely Alchemy, not a single deterministic query.\n- The campaign provides distinctive cookie prefixes and deep single-page beacon URLs that become strong high-confidence features when combined with low-jitter periodicity and globally-rare JA3.\n- Embedding encryption keys/config in the malware makes the *behavior* (regular small encrypted callbacks to a fixed, low-prevalence endpoint) the durable signal even as domains rotate — an anomaly model generalizes past the named IOCs.",
+    "references": "- [MITRE ATT&CK T1573 — Encrypted Channel](https://attack.mitre.org/techniques/T1573/)\n- [source report — OceanLotus: From external espionage to domestic targeting (ESET)](https://www.welivesecurity.com/en/eset-research/oceanlotus-external-espionage-domestic-targeting/)\n- [SOC Investigation — Finding the Evil in TLS 1.2 Traffic (JA3/encrypted malware)](https://www.socinvestigation.com/finding-the-evil-in-tls-1-2-traffic-detecting-malware-on-encrypted-traffic/)\n- [Active Countermeasures — Detecting C2 When You Can't See the Queries (beaconing)](https://www.activecountermeasures.com/malware-of-the-day-encrypted-dns-comparison-detecting-c2-when-you-cant-see-the-queries/)\n- [Atomic Red Team — T1573 Encrypted Channel](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1573/T1573.md)\n- [ManageEngine Log360 — Detecting Encrypted Channel (T1573) C2 with SIEM](https://www.manageengine.com/log-management/mitre-attack/command-and-control/encrypted-channel.html)",
+    "file_path": "Alchemy/M019.md"
+  },
+  {
+    "id": "M020",
+    "category": "Alchemy",
+    "title": "Threat actors register lookalike and brand-adjacent domains impersonating popular AI platforms (ChatGPT/OpenAI, Claude/Anthropic, DeepSeek, Copilot, Gemini, Grok) to host phishing landing pages, AiTM credential interception, and fake-installer downloads. By modeling string similarity (edit distance / homoglyph / token-substitution) between resolved/clicked domains and a curated list of legitimate AI-brand domains, and weighting by domain age (newly-registered) and first-seen-in-environment, anomalous AI-impersonation domains can be surfaced before users submit credentials or download payloads.",
+    "tactic": "Resource Development",
+    "notes": "ALCHEMY ANALYTIC — string-similarity + freshness scoring, not a static IOC match. Seed a known-good list of legitimate AI-brand domains (openai.com, chatgpt.com, anthropic.com, claude.ai, deepseek.com, copilot.microsoft.com, gemini.google.com, x.ai). Candidate population: domains observed in M365 EmailEvents/UrlClickEvents, DeviceNetworkEvents, proxy logs, and DNS resolver logs over a rolling window. Scoring features: (1) Damerau-Levenshtein / Jaro-Winkler distance and homoglyph/token-permutation match to a seed brand (generate the permutation set with dnstwist); (2) brand token present but on a non-official TLD or with affix words (e.g., -update, -plus, -appeal, account-, servicing.); (3) domain age < 30 days (newly-registered) via WHOIS/RDAP; (4) first-seen-in-environment within window; (5) certificate-transparency hit for a new cert on a similar SAN. Alert when a domain scores high on similarity AND (NRD OR first-seen) — this isolates lookalikes from legitimate AI usage (handled by [[H193]] on the endpoint execution side). KQL starting point: UrlClickEvents/EmailUrlInfo project Url, parse registrable domain, evaluate against the similarity UDF over the seed list; join to DeviceNetworkEvents RemoteUrl for resolution and to an NRD feed. Article-confirmed patterns to validate the model: legendarytrendsbay[.]shop/ChatGPT/, servicing.pureplantcravings[.]com, dash.awaydouble[.]org, brand-token email lures (\"Claude Appeal Request\", \"ChatGPT Plus\"). Tune by suppressing sanctioned vendor and CDN domains; baseline normal AI-tool domain usage first to keep false positives down.",
+    "tags": [
+      "resource_development",
+      "phishing",
+      "typosquat",
+      "lookalike_domain",
+      "ai_lure",
+      "brand_impersonation",
+      "newly_registered_domain",
+      "T1583.001"
+    ],
+    "techniques": [
+      "T1583.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- The campaigns hinge on brand-token domains and multi-hop redirects (e.g., `legendarytrendsbay[.]shop/ChatGPT/`, `servicing.pureplantcravings[.]com`), so a similarity-plus-freshness model generalizes across the rotating infrastructure better than any blocklist.\n- Static IOC lists go stale within hours (DeepSeek campaign went from setup to first victim in ~4 hours); an analytic that scores newly-seen domains catches the next iteration on day zero.\n- Combining string similarity with newly-registered-domain and first-seen signals separates malicious lookalikes from the surge of legitimate AI-tool adoption, keeping the analytic precise.\n- This is the network/email companion to the endpoint execution hunt ([[H193]]): together they cover the lure-delivery and the payload-execution halves of the same intrusion chain.",
+    "references": "- [MITRE ATT&CK T1583.001 — Acquire Infrastructure: Domains](https://attack.mitre.org/techniques/T1583/001/)\n- [source report — Microsoft: AI brands as bait](https://www.microsoft.com/en-us/security/blog/2026/06/08/ai-brands-as-bait-how-threat-actors-are-using-the-ai-hype-in-social-engineering/)\n- [dnstwist — domain permutation engine for homograph/typosquat/brand-impersonation detection](https://github.com/elceef/dnstwist)\n- [Zscaler ThreatLabz — Phishing, Typosquatting, and Brand Impersonation Trends and Tactics](https://www.zscaler.com/blogs/security-research/phishing-typosquatting-and-brand-impersonation-trends-and-tactics)\n- [Valimail — Domain Lookalike Finder / detecting typosquatting & spoofing risk](https://www.valimail.com/domain-lookalike-finder/)\n- [Breachsense — Typosquatting: Detect Lookalike Domains Before Attacks](https://www.breachsense.com/typosquatting/)",
+    "file_path": "Alchemy/M020.md"
   }
 ];
