@@ -21,18 +21,19 @@ Everyone listed below has submitted ideas that have been added to HEARTH. This l
 | 13 | p-o-s-t | 2 |
 | 14 | Alan G | 2 |
 | 15 | Ryan Fetterman | 2 |
-| 16 | hu983r | 1 |
-| 17 | Cody Lunday | 1 |
-| 18 | wikijm | 1 |
-| 19 | Apramey "Apps" S | 1 |
-| 20 | Shaimon Weslley | 1 |
-| 21 | Duc Viet Hoang | 1 |
-| 22 | samuel-lucas6 | 1 |
-| 23 | tsof-smoky | 1 |
-| 24 | odanh | 1 |
-| 25 | smossmos | 1 |
-| 26 | Omer M | 1 |
-| 27 | asteinbr | 1 |
-| 28 | Claire Stromboe | 1 |
-| 29 | Jon Perez | 1 |
-| 30 | Collin McClaine | 1 |
+| 16 | Badger | 1 |
+| 17 | hu983r | 1 |
+| 18 | Cody Lunday | 1 |
+| 19 | wikijm | 1 |
+| 20 | Apramey "Apps" S | 1 |
+| 21 | Shaimon Weslley | 1 |
+| 22 | Duc Viet Hoang | 1 |
+| 23 | samuel-lucas6 | 1 |
+| 24 | tsof-smoky | 1 |
+| 25 | odanh | 1 |
+| 26 | smossmos | 1 |
+| 27 | Omer M | 1 |
+| 28 | asteinbr | 1 |
+| 29 | Claire Stromboe | 1 |
+| 30 | Jon Perez | 1 |
+| 31 | Collin McClaine | 1 |
