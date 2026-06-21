@@ -686,6 +686,68 @@
     "file_path": "Embers/B024.md"
   },
   {
+    "id": "B025",
+    "category": "Embers",
+    "title": "A per-user and per-role baseline of normal information-repository access — built first for research-data platforms like REDCap (records viewed, data-export/API-token pulls, query volume, source IPs) and extended to wikis/Confluence and cloud document stores (Google Workspace/Drive and, if your org runs it, M365/SharePoint) — makes anomalous bulk collection visible, so when an actor like the China-nexus UNC6508 in this campaign reuses credentials harvested from a compromised research-database server (later escalating to an administrator account) to mine internal repositories at scale, the deviation from that baseline surfaces it even though individual record reads and document downloads look like normal researcher/knowledge-worker behavior.",
+    "tactic": "Collection",
+    "notes": "Multi-platform. Collection (REDCap/research-DB FIRST, then Google Workspace, then M365 if-applicable). REDCap & similar research web-app DBs: application/access logs, web-server (Apache/IIS) access logs, and the database query/export audit trail (REDCap \"Logging\" project records all data exports, and \"Data Exports/Reports/Stats\" + API token report pulls) — capture per event: username, the resolved role (PI/coordinator/admin/service account), project/record-set touched, action (record view, \"Data Exports\" bulk export, API token report pull, raw SQL query against the DB), record/row count, export file size, ClientIP/geo, and timestamp/time-of-day; pull web-server logs for direct .php/web-shell access (e.g. unexpected uploaded scripts) and POST volume to auth endpoints. Google Workspace: Drive Audit log (view/download/copy/print events with actor, file, target-domain, IP), Admin audit log (admin-role grants, OAuth/app authorizations), and the Email/Gmail content-compliance and routing config — enumerate every content-compliance rule and its BCC/forward target (UNC6508 created a malicious compliance rule that silently BCC-forwarded matched mail to an external Gmail), flag any rule routing to an external/free-mail address. M365 (only if your org runs it): Unified Audit Log SharePoint/OneDrive FileAccessed/FileDownloaded/FileSyncDownloadedFull/SearchQueryInitiatedSharePoint, CloudAppEvents (ActionType FileDownloaded/FileSyncDownloadedFull, RawEventData.SiteUrl/SourceFileExtension/ClientIP), OfficeActivity — same per-record fields (UserId, role, repository, ClientIP, UserAgent, CreationTime). Collection window: 30 days. Deliverable: a per-user and per-role access baseline + thresholds — for each user/role record the repositories/projects normally touched, median + p95 daily record-view / export / download counts, normal export row-count and byte volume, typical doc/data types, usual hours, and usual client IPs/geos; promote the steady-state to an allowlist so anything outside it is a hunt lead. Immediate flags (do not wait for the baseline): a single research account performing mass record exports or repeated \"Data Exports\" / API token report pulls far above its norm; API token abuse or arbitrary SQL queries against the research DB from an app or account that does not normally query it; repository/export access from a new IP or geo, especially shortly after credentials were used elsewhere (credential reuse to an admin account drove this campaign); any newly created Google Workspace content-compliance/routing rule that BCCs/forwards to an external address; a service/shared/non-interactive account performing interactive bulk reads or downloads; a single account reading across many unrelated repositories or projects it has no business reason to touch. Cross-ref the email-exfil vector (content-compliance/BCC rule abuse) and any paired Flames covering admin-account compromise or mailbox/repository exfil.",
+    "tags": [
+      "collection",
+      "information_repositories",
+      "redcap",
+      "research_data",
+      "google_workspace",
+      "data_baseline",
+      "china_nexus",
+      "espionage",
+      "T1213"
+    ],
+    "techniques": [
+      "T1213"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Mandiant/GTIG attributes this campaign to the China-nexus actor UNC6508, whose objective was strategic intelligence collection — the report cites \"broad collection aspirations, including sensitive defense intelligence related to national security, Indo-Pacific command operations, artificial intelligence, uncrewed vehicle systems, cyber offensive programs, and medical research.\" Mining internal information repositories at scale is the core data-harvesting behavior, which is exactly T1213.\n- The compromised information repository was a REDCap server — \"a web-based software platform designed specifically for building and managing online databases and surveys... commonly used... in the North American medical research community\" — not SharePoint. The actor deployed a web shell (`help.php`) and the INFINITERED backdoor, which \"captures usernames and passwords submitted via POST requests during the login process\" and can \"execute arbitrary SQL queries against the database and returns the results.\" A faithful hunt baselines research-DB access first.\n- Credential reuse is the access pattern that makes this an information-repository risk for any org: \"More than a year after the initial compromise, UNC6508 used overlapping credentials, harvested from REDCap, to access an administrator account.\" Once an intruder holds valid (and eventually admin) credentials, bulk repository reads blend into normal activity, so the only durable detection is \"this user/role accessed materially more, or different, repositories than their baseline\" — a baseline that must exist first, hence Embers, not Flames.\n- The report names no single repository product across the full intrusion (research DB, email, and admin-level network access), so parent T1213 — Office Suite + SaaS + Databases — correctly scopes the platform-inclusive baseline rather than over-fitting to one sub-technique. The email-exfil leg (a Google Workspace content-compliance rule that \"silently BCC-forwarded\" matched mail to an attacker Gmail) is captured as an immediate flag and a cross-reference, since enumerating repository config is part of the same collection hunt.",
+    "references": "- [MITRE ATT&CK T1213 — Data from Information Repositories](https://attack.mitre.org/techniques/T1213/)\n- [source report — Mandiant/GTIG: Public and Private Medical Community Targeted by China-Nexus Threat Actor (UNC6508, REDCap)](https://cloud.google.com/blog/topics/threat-intelligence/prc-targets-us-medical-research/)\n- [REDCap — Logging and Data Export/Import audit features (per-project log of every data export, report, and API call)](https://projectredcap.org/software/)\n- [Google Workspace Admin — Drive log events (view/download/copy/print) for repository-access auditing](https://support.google.com/a/answer/4579696)\n- [Google Workspace Admin — Set up rules to manage content (content compliance & routing rules; audit BCC/forward targets for email-exfil abuse)](https://support.google.com/a/answer/1346934)\n- [Microsoft Learn — Search the audit log / activities (FileAccessed, FileDownloaded, FileSyncDownloadedFull, SearchQueryInitiatedSharePoint) — apply only if your org runs M365/SharePoint](https://learn.microsoft.com/en-us/purview/audit-log-activities)\n- [Varonis — Sidestepping SharePoint Security: evading exfiltration detection (FileSyncDownloadedFull / User-Agent spoofing) — generic repository bulk-read evasion](https://www.varonis.com/blog/sidestepping-detection-while-exfiltrating-sharepoint-data)",
+    "file_path": "Embers/B025.md"
+  },
+  {
+    "id": "B026",
+    "category": "Embers",
+    "title": "A per-environment baseline of legitimate kernel driver loads and driver-service installs (driver path, hash, signer, service name) makes anomalous BYOVD driver loads — like the Gentlemen group's GentleKiller framework dropping vulnerable/malicious drivers as services to terminate security software — visible as deviations from the approved set.",
+    "tactic": "Defense Evasion",
+    "notes": "Windows. Collection: Sysmon EID 6 (DriverLoad) capturing ImageLoaded (driver path), Hashes (SHA256/IMPHASH), Signature (signer/subject), Signed, SignatureStatus; Windows Security EID 7045 and EID 4697 (service install) capturing ServiceName, ImagePath, ServiceType (flag kernel-mode driver = 0x1), StartType, and the installing account/process; Sysmon EID 13 (registry) for writes under HKLM\\SYSTEM\\CurrentControlSet\\Services\\<svc>\\ImagePath|Type|Start; Sysmon EID 1 / Security 4688 for the installing process lineage (sc.exe, rundll32, custom EXE). Enrich every record with host, user, and host role. Collection window: typically 30 days (driver loads are low-volume, so 30d gives a stable per-role picture; consider 60-90d for rarely-rebooted servers). Deliverable: an allowlist of approved signed drivers/driver-services per host role (workstation, server, DC, VDI, dev box) — each entry = driver path + hash + expected signer + expected service name + expected installing process; anything not on the allowlist is a hunt lead, feeding paired Flames [[H194]]. Immediate flags (do not wait for baseline): unsigned drivers (Signed=false); drivers whose SignatureStatus is Invalid/Expired/Revoked (enable Sysmon <CheckRevocation/>); drivers in user-writable paths (%TEMP%, %PROGRAMDATA%, %PUBLIC%, %APPDATA%, user profile) rather than %SystemRoot%\\System32\\drivers; known-vulnerable/malicious drivers matching LOLDrivers (e.g. dmx.sys CVE-2022-42045, IMFForceDelete CVE-2025-26125, nseckrnl.sys, GameDriverX64.sys, 360netmon_wfp.sys, googleApiUtil64.sys, ThrottleBlood.sys, havoc.sys, eb.sys, G11.sys); kernel-mode services (ServiceType 0x1) installed by a console/user EXE or by sc.exe with binPath outside System32\\drivers; driver whose stated vendor (version info) does not match its signer cert (cross-ref T1036.001). KQL: DeviceEvents | where ActionType == \"DriverLoad\" — baseline FolderPath+SHA256+signer per DeviceId/role, then alert on first-seen; join DeviceRegistryEvents (RegistryKey contains CurrentControlSet\\\\Services) and DeviceProcessEvents (sc.exe create/start) for the install side. Cross-ref T1562.001 (the driver is loaded to disable security tools) and paired Flames [[H194]] (the service-install + load chain) and [[H195]] (invalid/revoked signature).",
+    "tags": [
+      "defense_evasion",
+      "byovd",
+      "vulnerable_driver",
+      "driver_baseline",
+      "loldrivers",
+      "edr_killer",
+      "windows",
+      "sysmon",
+      "T1543.003"
+    ],
+    "techniques": [
+      "T1543.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- BYOVD EDR-killers like GentleKiller (8+ variants, swapping among `eb.sys`, `dmx.sys`, `GameDriverX64.sys`, `IMFForceDelete`, etc.) defeat name/hash blocklists by rotating drivers, so the durable detection is \"this driver/driver-service is not in our approved set,\" which requires a baseline — hence Embers, not Flames.\n- Kernel driver loads and driver-service installs are genuinely low-volume in healthy environments, so a 30-day per-role baseline is cheap to build and produces a tight allowlist with few false positives.\n- Several anomalies need no baseline at all (unsigned/revoked drivers, user-writable paths, LOLDrivers hits, vendor/signer mismatch) and should fire immediately, giving fast wins while the baseline matures.\n- The baseline directly enables paired Flames hunt [[H194]] (service-install -> driver-load chain) and complements [[H195]] (signature status), turning a noisy raw event stream into a high-signal deviation feed before EDR is blinded.",
+    "references": "- [MITRE ATT&CK T1543.003 — Create or Modify System Process: Windows Service](https://attack.mitre.org/techniques/T1543/003/)\n- [source report — ESET: Killing me gently — Inside Gentlemen's EDR killer framework](https://www.welivesecurity.com/en/eset-research/killing-me-gently-inside-gentlemens-edr-killer-framework/)\n- [LOLDrivers.io — Living Off The Land Drivers (allowlist/blocklist source: hashes, signers, Sysmon config)](https://www.loldrivers.io/)\n- [LOLDrivers — Sysmon config of vulnerable hashes (baseline enrichment)](https://github.com/magicsword-io/LOLDrivers/blob/main/detections/sysmon/sysmon_config_vulnerable_hashes.xml)\n- [TrustedSec — Sysmon Community Guide: Driver Loading (EID 6 fields, CheckRevocation)](https://github.com/trustedsec/SysmonCommunityGuide/blob/master/chapters/driver-loading.md)\n- [Splunk — These Are The Drivers You Are Looking For: Detect and Prevent Malicious Drivers](https://www.splunk.com/en_us/blog/security/these-are-the-drivers-you-are-looking-for-detect-and-prevent-malicious-drivers.html)",
+    "file_path": "Embers/B026.md"
+  },
+  {
     "id": "H-2026-001",
     "category": "Flames",
     "title": "Threat actors are using DLL side-loading to force legitimate signed VirtualBox executables (DbgView.exe) to load malicious DLLs (vboxrt.dll) that download additional malicious code from attacker-controlled servers to evade security monitoring and achieve privileged code execution.",
@@ -6274,6 +6336,180 @@
     "file_path": "Flames/H193.md"
   },
   {
+    "id": "H194",
+    "category": "Flames",
+    "title": "A BYOVD EDR-killer (Gentlemen / GentleKiller) installs a vulnerable or malicious kernel driver as a Windows service and loads it to terminate security processes; hunt the service-install -> driver-load chain.",
+    "tactic": "Defense Evasion",
+    "notes": "Endpoint: pivot on Windows Security EID 7045 (service install) and 4697 where `ServiceType`/`Service Type` = `kernel mode driver` (0x1) and `ImagePath` points outside `%SystemRoot%\\System32\\drivers` (e.g. `%TEMP%`, `%PROGRAMDATA%`, `%PUBLIC%`, user dirs) or carries a short/random service name. Correlate with Sysmon EID 6 (DriverLoad) for the same `ImageLoaded` minutes later, and Sysmon EID 13 (registry) writes to `HKLM\\SYSTEM\\CurrentControlSet\\Services\\<svc>\\ImagePath` + `\\Type`=1 + `\\Start`. Process lineage (Sysmon EID 1 / 4688): a console-based, recently-dropped EXE (GentleKiller is interactive) -> `sc.exe create … type= kernel binPath= …` / `sc.exe start` OR direct `CreateService`/`NtLoadDriver` without `sc.exe`. KQL Defender: `DeviceEvents",
+    "tags": [
+      "T1562.001"
+    ],
+    "techniques": [
+      "T1562.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "#defense_evasion #T1543_003 #T1562_001 #byovd #vulnerable_driver #edr_killer #gentlemen #windows",
+      "link": ""
+    },
+    "why": "- Every GentleKiller variant (8+ documented, plus integrated HexKiller/ThrottleBlood/HavocKiller) converges on the same kernel-mode primitive: register a driver as a service and load it. Hunting the service-install -> driver-load chain catches the technique even as operators swap the underlying driver to dodge hash/name blocklists.\n- A kernel-mode service (`Type`=1) whose `ImagePath` is a freshly dropped file outside `System32\\drivers` is rare in healthy environments and is exactly what BYOVD requires — high-signal, low-volume.\n- The events are reliably logged: 7045 in the System log, 4697 with audit policy, and Sysmon EID 6 is low-volume and high-value, so a standing hunt is cheap to run and hard for the adversary to avoid emitting.\n- BYOVD is the enabling step before mass security-process termination (400+ processes here), so detecting the load gives defenders a window before EDR blinding completes.",
+    "references": "- [MITRE ATT&CK T1543.003 — Create or Modify System Process: Windows Service](https://attack.mitre.org/techniques/T1543/003/)\n- [source report — ESET: Killing me gently — Inside Gentlemen's EDR killer framework](https://www.welivesecurity.com/en/eset-research/killing-me-gently-inside-gentlemens-edr-killer-framework/)\n- [Splunk — Detection: Windows Vulnerable Driver Installed (EventCode 7045)](https://research.splunk.com/endpoint/1dda7586-57be-4a1b-8de1-a9ad802b9a7f/)\n- [Splunk — These Are The Drivers You Are Looking For: Detect and Prevent Malicious Drivers](https://www.splunk.com/en_us/blog/security/these-are-the-drivers-you-are-looking-for-detect-and-prevent-malicious-drivers.html)\n- [Atomic Red Team — T1543.003 Windows Service (sc.exe service creation tests)](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1543.003/T1543.003.md)\n- [LOLDrivers.io — Living Off The Land Drivers (vulnerable/malicious driver list, hashes, Sigma/Sysmon)](https://www.loldrivers.io/)\n- [TrustedSec — Sysmon Community Guide: Driver Loading (EID 6)](https://github.com/trustedsec/SysmonCommunityGuide/blob/master/chapters/driver-loading.md)",
+    "file_path": "Flames/H194.md"
+  },
+  {
+    "id": "H195",
+    "category": "Flames",
+    "title": "A BYOVD EDR-killer loads a kernel driver whose code signature is invalid/unsigned/expired, or whose signing cert is revoked/abused, while masquerading as a legitimate vendor driver; hunt driver loads by signature status.",
+    "tactic": "Defense Evasion",
+    "notes": "Endpoint: pivot on Sysmon EID 6 (DriverLoad) fields `Signature`, `Signed`, `SignatureStatus` — flag `Signed=false`, `SignatureStatus != Valid` (Unsigned/Expired/Revoked/`Error`), or a `Signature` (signer) string that does not match the impersonated vendor in the file's version info / `OriginalFileName`. Enable Sysmon `<CheckRevocation/>` so `SignatureStatus=Revoked` is populated for drivers signed with stolen/abused certs (e.g. revoked anti-cheat / Zemana / IObit certs). Cross-reference loaded driver SHA256/Authentihash against LOLDrivers known-vulnerable + known-malicious lists. KQL Defender: `DeviceEvents",
+    "tags": [
+      "T1562.001"
+    ],
+    "techniques": [
+      "T1562.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "#defense_evasion #T1036_001 #T1562_001 #byovd #invalid_signature #revoked_certificate #vulnerable_driver #loldrivers #windows",
+      "link": ""
+    },
+    "why": "- ESET explicitly ties Gentlemen to T1036.001 (invalid signatures copied from legitimate executables) and to BYOVD; signature status is therefore a direct, behavior-anchored pivot rather than a guess.\n- Kernel drivers are one of the few file classes where Windows still loads improperly-signed or revoked-cert images under certain conditions, so an Invalid/Revoked `SignatureStatus` on a loaded driver is both rare and high-fidelity.\n- Sysmon EID 6 with `<CheckRevocation/>` catches the common BYOVD pattern of a once-valid cert that has since been revoked — the exact lifecycle of abused anti-cheat and utility-driver certs in this campaign.\n- Cross-referencing the loaded driver hash against LOLDrivers turns this into a maintainable, hash-rotating-resistant hunt that fires on the kernel foothold before EDR is blinded.",
+    "references": "- [MITRE ATT&CK T1036.001 — Masquerading: Invalid Code Signature](https://attack.mitre.org/techniques/T1036/001/)\n- [source report — ESET: Killing me gently — Inside Gentlemen's EDR killer framework](https://www.welivesecurity.com/en/eset-research/killing-me-gently-inside-gentlemens-edr-killer-framework/)\n- [LOLDrivers.io — Living Off The Land Drivers (vulnerable/malicious driver hashes, certs, Sigma/Yara/Sysmon)](https://www.loldrivers.io/)\n- [Splunk — Detection: Windows Vulnerable Driver Loaded (Sysmon EID 6 hash cross-reference)](https://research.splunk.com/endpoint/a2b1f1ef-221f-4187-b2a4-d4b08ec745f4/)\n- [TrustedSec — Sysmon Community Guide: Driver Loading (Signature / SignatureStatus / CheckRevocation)](https://github.com/trustedsec/SysmonCommunityGuide/blob/master/chapters/driver-loading.md)\n- [MagicSword — LOLDrivers: Tracking Malicious and Vulnerable Drivers](https://www.magicsword.io/blog/loldrivers-malicious-drivers)\n- [Cisco Talos — Exploring vulnerable Windows drivers (BYOVD signing/abuse)](https://blog.talosintelligence.com/exploring-vulnerable-windows-drivers/)",
+    "file_path": "Flames/H195.md"
+  },
+  {
+    "id": "H196",
+    "category": "Flames",
+    "title": "An adversary establishes persistence/defense-evasion by writing a `Debugger`, `GlobalFlag`, or SilentProcessExit value under Image File Execution Options so attacker code runs when a legitimate auto-started binary (e.g., `vds.exe`) launches or exits.",
+    "tactic": "Persistence",
+    "notes": "Endpoint: Sysmon EID 13 (registry value set) and Security 4657 on `HKLM\\SOFTWARE\\{Wow6432Node\\}Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\*` for `Debugger` and `GlobalFlag` values, and on `HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\SilentProcessExit\\*` for `MonitorProcess`/`ReportingMode` (GlobalFlag=0x200 enables SilentProcessExit). Flag `Debugger`/`MonitorProcess` values whose data points outside `%SystemRoot%\\System32` (FishMonger used `%SystemRoot%\\Fonts\\ApphostRagistreationVerifier.exe` set as debugger for `vds.exe`). KQL: `DeviceRegistryEvents | where RegistryKey has \"Image File Execution Options\" or RegistryKey has \"SilentProcessExit\" | where RegistryValueName in~ (\"Debugger\",\"GlobalFlag\",\"MonitorProcess\",\"ReportingMode\")`. Correlate the IFEO key with a child process spawned from a non-standard parent (`vds.exe` -> debugger binary). Note: the RawWNPF driver hides this key via `CmRegisterCallbackEx`, so trust the registry-write telemetry (EDR/Sysmon) over live registry enumeration. Cross-ref T1574 (Hijack Execution Flow) when the debugger target is a security/accessibility binary.",
+    "tags": [
+      "persistence",
+      "ifeo",
+      "registry",
+      "fishmonger",
+      "sprysocks",
+      "china_nexus",
+      "T1574",
+      "T1546.012"
+    ],
+    "techniques": [
+      "T1574",
+      "T1546.012"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- ESET attributes this to FishMonger (I-SOON), a state-aligned China-nexus actor whose SprySOCKS Windows port is freshly observed, so this is live, high-value tradecraft worth a standing hunt.\n- The persistence write is the durable signal: the target image (`vds.exe`) and debugger path can change, but a `Debugger`/`MonitorProcess` value pointing at a binary outside `System32` is rare and low-noise in most environments.\n- The actor deploys a kernel driver specifically to hide this IFEO key from registry enumeration, which means point-in-time registry scans will miss it — write-time telemetry (Sysmon EID 13 / 4657 / DeviceRegistryEvents) is the only reliable detector.\n- IFEO injection is dual-use (persistence + privilege escalation) and broadly abused beyond this campaign, so the hunt generalizes well across actors and accessibility-binary hijacks.",
+    "references": "- [MITRE ATT&CK T1546.012 — Event Triggered Execution: Image File Execution Options Injection](https://attack.mitre.org/techniques/T1546/012/)\n- [source report — ESET: FishMonger SprySOCKS for Windows](https://www.welivesecurity.com/en/eset-research/fishmongers-arsenal-upgraded-sprysocks-windows/)\n- [Elastic — Image File Execution Options Injection (prebuilt detection rule)](https://www.elastic.co/docs/reference/security/prebuilt-rules/rules/windows/persistence_evasion_registry_ifeo_injection)\n- [Splunk Security Content — Windows Event Triggered Image File Execution Options Injection](https://research.splunk.com/endpoint/f7abfab9-12ea-44e8-8745-475f9ca6e0a4/)\n- [Detection.FYI — Image File Execution Options Injection (Sigma, Sysmon EID 13)](https://detection.fyi/elastic/detection-rules/windows/persistence_evasion_registry_ifeo_injection/)\n- [Atomic Red Team — T1546.012 Image File Execution Options Injection](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1546.012/T1546.012.md)",
+    "file_path": "Flames/H196.md"
+  },
+  {
+    "id": "H197",
+    "category": "Flames",
+    "title": "An adversary persists by registering a malicious print processor (`Driver` value under `Control\\Print\\Environments\\*\\Print Processors\\*`) so `spoolsv.exe` loads an attacker DLL with SYSTEM privileges at boot.",
+    "tactic": "Persistence",
+    "notes": "Endpoint: Sysmon EID 13 (registry value set) / Security 4657 on `HKLM\\SYSTEM\\{CurrentControlSet|ControlSet001\\}\\Control\\Print\\Environments\\*\\Print Processors\\*\\Driver` — alert on any new print processor key or `Driver` value (FishMonger used processor `VSPMsg`, `Driver=VSPMsg.dll`). Pair with Sysmon EID 7 (image load) where `spoolsv.exe` loads a DLL from `C:\\Windows\\System32\\spool\\prtprocs\\x64\\` that is non-standard/unsigned (legit baseline DLLs only). KQL: `DeviceImageLoadEvents | where InitiatingProcessFileName =~ \"spoolsv.exe\" | where FolderPath has \"\\\\spool\\\\prtprocs\\\\\" and not(FileName in~ (\"winprint.dll\"))`. Also watch Security 7045/4697 for spooler service-restart-driven reloads and Sysmon EID 11 (file create) of new DLLs in `\\spool\\prtprocs\\` and staging files under `\\spool\\drivers\\color\\` (e.g., `config.dat`). Loader gates on parent `spoolsv.exe`, so SYSTEM-context children of `spoolsv.exe` (e.g., spawning `svchost.exe`) are a strong correlate. Cross-ref T1547.012 paired with masquerading (legit-sounding processor/DLL names) and T1547.010 (Port Monitors) which share the spooler load surface.",
+    "tags": [
+      "persistence",
+      "print_processor",
+      "spoolsv",
+      "fishmonger",
+      "sprysocks",
+      "masquerading",
+      "T1547.012",
+      "T1547.010"
+    ],
+    "techniques": [
+      "T1547.012",
+      "T1547.010"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- ESET ties this to FishMonger (I-SOON) SprySOCKS for Windows — a fresh, state-aligned China-nexus capability — making print-processor persistence current, attributed tradecraft.\n- Print processors execute inside `spoolsv.exe` at SYSTEM, so this is both stealthy persistence and an effective privilege/context anchor; benign additions to the Print Processors key are rare, giving a clean registry-write signal.\n- The two-event correlation (registry `Driver` write + `spoolsv.exe` loading a non-baseline DLL from `\\spool\\prtprocs\\`) is durable: the processor name `VSPMsg` and DLL can rotate, but the load surface and directory do not.\n- The loader's \"only run under `spoolsv.exe`\" gate is a deliberate sandbox-evasion choice that also defines the lineage defenders should hunt, making SYSTEM-context spooler children a high-fidelity pivot.",
+    "references": "- [MITRE ATT&CK T1547.012 — Boot or Logon Autostart Execution: Print Processors](https://attack.mitre.org/techniques/T1547/012/)\n- [source report — ESET: FishMonger SprySOCKS for Windows](https://www.welivesecurity.com/en/eset-research/fishmongers-arsenal-upgraded-sprysocks-windows/)\n- [MITRE ATT&CK Detection Strategy DET0026 — T1547.012 Print Processor DLL Persistence](https://attack.mitre.org/detectionstrategies/DET0026/)\n- [Detection.FYI — Windows Spooler Service Suspicious Binary Load (Sigma, spoolsv.exe image load)](https://detection.fyi/sigmahq/sigma/windows/image_load/image_load_spoolsv_dll_load/)\n- [Atomic Red Team — T1547.012 Print Processors](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1547.012/T1547.012.md)\n- [stmxcsr — Persistence and Privilege Escalation on Windows via Print Processors](https://stmxcsr.com/persistence/print-processor.html)\n- [Picus — T1547.012 Print Processors in MITRE ATT&CK Explained](https://www.picussecurity.com/resource/blog/t1547-012-print-processors)",
+    "file_path": "Flames/H197.md"
+  },
+  {
+    "id": "H198",
+    "category": "Flames",
+    "title": "An adversary steals/duplicates a token (e.g., from `spoolsv.exe`) and spawns a process under it via `CreateProcessAsUserW`/`CreateProcessWithTokenW` so the new process (e.g., `svchost.exe`) runs in a different/elevated security context than its real parent.",
+    "tactic": "Privilege Escalation",
+    "notes": "Endpoint: Security 4688 + Sysmon EID 1 for process creation where the child's user/LogonId/integrity differs from the parent, with anomalous lineage (`spoolsv.exe` -> `svchost.exe`; FishMonger obtained a token from `spoolsv.exe` and called `CreateProcessAsUserW` to start `svchost.exe`, then injected shellcode). Correlate with Security 4624 Logon Type 9 (NewCredentials) immediately followed by SYSTEM-context activity from a non-SYSTEM/odd parent, 4672 (special privileges: `SeDebugPrivilege`, `SeImpersonatePrivilege`, `SeAssignPrimaryTokenPrivilege`), and 4674. API patterns to hunt: `OpenProcess`->`OpenProcessToken`->`DuplicateTokenEx`->`CreateProcessWithTokenW`/`CreateProcessAsUserW`. KQL: `DeviceProcessEvents | where InitiatingProcessFileName =~ \"spoolsv.exe\" and FileName =~ \"svchost.exe\"` then widen to any process whose ProcessIntegrityLevel/account differs from the initiating process. Flag `svchost.exe` not spawned by `services.exe` and/or with no/odd `-k` service group as injection-host masquerading. Cross-ref T1134.001 (Token Impersonation/Theft) and T1055 (Process Injection), which this chain combines.",
+    "tags": [
+      "privilege_escalation",
+      "access_token",
+      "token_theft",
+      "fishmonger",
+      "sprysocks",
+      "svchost",
+      "T1134.001",
+      "T1055",
+      "T1134.002"
+    ],
+    "techniques": [
+      "T1134.001",
+      "T1055",
+      "T1134.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- ESET documents this as live FishMonger (I-SOON) SprySOCKS Windows behavior: a token taken from `spoolsv.exe` and used with `CreateProcessAsUserW` to launch and inject into `svchost.exe` — concrete, attributed tradecraft to hunt now.\n- The technique combines token theft with masquerading and injection, so the cross-context signal (child running under a different LogonId/SID/integrity than its true parent) is more durable than any single binary or hash.\n- `svchost.exe` not parented by `services.exe` (or lacking a valid `-k` service group) is an uncommon, high-fidelity anomaly that pairs cleanly with the token-theft chain to cut false positives.\n- Correlating 4624 Type 9 + 4672 (`SeImpersonatePrivilege`/`SeDebugPrivilege`) + process creation gives a reliable detection signature for `make_token`/`DuplicateTokenEx` abuse that generalizes across actors beyond this campaign.",
+    "references": "- [MITRE ATT&CK T1134.002 — Access Token Manipulation: Create Process with Token](https://attack.mitre.org/techniques/T1134/002/)\n- [source report — ESET: FishMonger SprySOCKS for Windows](https://www.welivesecurity.com/en/eset-research/fishmongers-arsenal-upgraded-sprysocks-windows/)\n- [Elastic — How attackers abuse Access Token Manipulation (ATT&CK T1134)](https://www.elastic.co/blog/how-attackers-abuse-access-token-manipulation)\n- [Detection.FYI — First Time Seen NewCredentials Logon Process (Sigma, 4624 Type 9)](https://detection.fyi/elastic/detection-rules/windows/privilege_escalation_newcreds_logon_rare_process/)\n- [ManageEngine — Access token manipulation: Create Process with Token (4672/4674 detection)](https://www.manageengine.com/log-management/cyber-security/create-process-with-token.html)\n- [Atomic Red Team — T1134.002 Create Process with Token](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1134.002/T1134.002.md)",
+    "file_path": "Flames/H198.md"
+  },
+  {
+    "id": "H199",
+    "category": "Flames",
+    "title": "A poisoned npm package's postinstall lifecycle script (e.g., `easy-day-js`/`setup.cjs`) executes during `npm install` on a developer or CI host, spawning shells/child processes, beaconing to non-registry hosts, and dropping payloads.",
+    "tactic": "Initial Access",
+    "notes": "Process lineage (Sysmon EID 1 / Security 4688 / DeviceProcessEvents): `node.exe`/`npm.exe`/`npx.cmd`/`yarn`/`pnpm` spawning `powershell.exe`/`pwsh.exe`/`cmd.exe`/`curl`/`wget`/child `node.exe` during install. Microsoft KQL (postinstall dropper): `DeviceProcessEvents | where Timestamp > ago(7d) | where FileName in (\"node\",\"node.exe\") | where ProcessCommandLine has \"setup.cjs\" or ProcessCommandLine has \"easy-day-js\" | where ProcessCommandLine has \"--no-warnings\" | project Timestamp, DeviceName, AccountName, ProcessCommandLine, FolderPath, InitiatingProcessFileName`. Generalized lineage: `DeviceProcessEvents | where InitiatingProcessFileName in~ (\"node.exe\",\"npm.cmd\",\"npx.cmd\",\"npm.exe\",\"node\") and FileName in~ (\"powershell.exe\",\"pwsh.exe\",\"cmd.exe\",\"curl.exe\",\"wget.exe\")`. C2/network (Sysmon EID 3 / DeviceNetworkEvents): `node.exe` egress to non-registry hosts during install — Microsoft KQL: `DeviceNetworkEvents | where RemoteIP in (\"23.254.164.92\",\"23.254.164.123\") | project Timestamp, DeviceName, RemoteIP, RemotePort, RemoteUrl, InitiatingProcessFileName, InitiatingProcessCommandLine`. File creation (Sysmon EID 11): executables/scripts written outside `node_modules` during install, e.g. `C:\\ProgramData\\system.bat`, `C:\\ProgramData\\NodePackages\\`, `%TEMP%\\{guid}.ps1`, and `.pkg_history`/`.pkg_logs` in TEMP. Also hunt `NODE_TLS_REJECT_UNAUTHORIZED=0` in command lines and new `HKCU\\...\\CurrentVersion\\Run` values referencing node/ProgramData. IOCs (rotate): pkgs `easy-day-js` 1.11.21/1.11.22, `mastra@1.13.1`, `@mastra/*`, acct `ehindero`; IPs `23.254.164.92`,`23.254.164.123`; domains `teams.onweblive.org`,`maskasd.com`; SHA-256 setup.cjs `B122A9873BEDF145AE2A7FD024B5F309007DBB025149F4DC4AC3F7E4F32A36A4`. Cross-ref T1059.001 (PowerShell) / T1059.007 (JavaScript) for the lifecycle-script execution chain.",
+    "tags": [
+      "initial_access",
+      "supply_chain",
+      "npm",
+      "postinstall",
+      "sapphire_sleet",
+      "mastra",
+      "T1059.001",
+      "T1059.007",
+      "T1195.002"
+    ],
+    "techniques": [
+      "T1059.001",
+      "T1059.007",
+      "T1195.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Attributed, current tradecraft: Microsoft documents Sapphire Sleet (DPRK-aligned) abusing the npm postinstall hook in 140+ live `mastra`/`@mastra` packages, so the install-time process/network/file behavior is concrete and worth hunting now across any host that ran `npm install`.\n- The durable signal is the lifecycle-script behavior, not the IOCs: package names, C2 IPs/domains, and hashes rotate, but `node.exe`/`npm.exe` spawning a shell or beaconing to a non-registry host during install is a high-fidelity anomaly that generalizes across npm supply-chain campaigns (Axios/UNC1069, PhantomRaven, etc.).\n- T1195.002 (Compromise Software Supply Chain) is the most accurate primary because the root behavior is initial access via a tampered software distribution; the actual on-host execution rides T1059 (Command and Scripting Interpreter) via JavaScript (`setup.cjs`) and PowerShell, which is the cross-reference.\n- Developer and CI/build hosts are high-value, often under-instrumented, and execute installs with network access and credentials/tokens present — making install-time process lineage and egress (Sysmon EID 1/3/11, 4688, Defender DeviceProcessEvents/DeviceNetworkEvents) a strong, low-noise hunt surface.",
+    "references": "- [MITRE ATT&CK T1195.002 — Supply Chain Compromise: Compromise Software Supply Chain](https://attack.mitre.org/techniques/T1195/002/)\n- [MITRE ATT&CK T1059 — Command and Scripting Interpreter](https://attack.mitre.org/techniques/T1059/)\n- [source report — Microsoft: Mastra npm supply chain compromise (Sapphire Sleet)](https://www.microsoft.com/en-us/security/blog/2026/06/17/postinstall-payload-inside-mastra-npm-supply-chain-compromise/)\n- [Splunk — Defending Against npm Supply Chain Attacks: Detection, Emulation, and Analysis (SPL for npm lifecycle script abuse)](https://www.splunk.com/en_us/blog/security/npm-supply-chain-attack-detection-analysis.html)\n- [Undercode Testing — Hunt Down Malicious npm Packages: a KQL Masterclass (node/npm lineage + lifecycle hooks)](https://undercodetesting.com/unmask-the-invisible-hunt-down-malicious-npm-packages-with-this-kql-masterclass/)\n- [Microsoft — Mitigating the Axios npm supply chain compromise (postinstall dropper, %PROGRAMDATA% LOLBin staging)](https://www.microsoft.com/en-us/security/blog/2026/04/01/mitigating-the-axios-npm-supply-chain-compromise/)\n- [NVISO — The Axios npm supply chain incident: fake dependency, real backdoor (install-time behavioral detection)](https://blog.nviso.eu/2026/04/03/the-axios-npm-supply-chain-incident-fake-dependency-real-backdoor/)",
+    "file_path": "Flames/H199.md"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
@@ -6687,5 +6923,72 @@
     "why": "- The campaigns hinge on brand-token domains and multi-hop redirects (e.g., `legendarytrendsbay[.]shop/ChatGPT/`, `servicing.pureplantcravings[.]com`), so a similarity-plus-freshness model generalizes across the rotating infrastructure better than any blocklist.\n- Static IOC lists go stale within hours (DeepSeek campaign went from setup to first victim in ~4 hours); an analytic that scores newly-seen domains catches the next iteration on day zero.\n- Combining string similarity with newly-registered-domain and first-seen signals separates malicious lookalikes from the surge of legitimate AI-tool adoption, keeping the analytic precise.\n- This is the network/email companion to the endpoint execution hunt ([[H193]]): together they cover the lure-delivery and the payload-execution halves of the same intrusion chain.",
     "references": "- [MITRE ATT&CK T1583.001 — Acquire Infrastructure: Domains](https://attack.mitre.org/techniques/T1583/001/)\n- [source report — Microsoft: AI brands as bait](https://www.microsoft.com/en-us/security/blog/2026/06/08/ai-brands-as-bait-how-threat-actors-are-using-the-ai-hype-in-social-engineering/)\n- [dnstwist — domain permutation engine for homograph/typosquat/brand-impersonation detection](https://github.com/elceef/dnstwist)\n- [Zscaler ThreatLabz — Phishing, Typosquatting, and Brand Impersonation Trends and Tactics](https://www.zscaler.com/blogs/security-research/phishing-typosquatting-and-brand-impersonation-trends-and-tactics)\n- [Valimail — Domain Lookalike Finder / detecting typosquatting & spoofing risk](https://www.valimail.com/domain-lookalike-finder/)\n- [Breachsense — Typosquatting: Detect Lookalike Domains Before Attacks](https://www.breachsense.com/typosquatting/)",
     "file_path": "Alchemy/M020.md"
+  },
+  {
+    "id": "M021",
+    "category": "Alchemy",
+    "title": "A crypto-clipper/worm exfiltrates stolen wallet seed phrases, private keys, and screenshots over an asymmetrically-encrypted Tor onion-routed channel that is separate from any normal HTTPS C2 path, blending with rare-but-legitimate Tor use. By modeling anomalous encrypted-tunnel egress — a new or rare process initiating outbound TLS to known Tor entry/relay nodes, connections to Tor ports (9001/9030/9050/9150), low-jitter beaconing regularity, and per-host encrypted-egress volume against a 30-day baseline — anomalous Tor exfil can be surfaced even as static onion addresses and IP IOCs rotate.",
+    "tactic": "Exfiltration",
+    "notes": "ALCHEMY ANALYTIC — anomaly/volumetric model of Tor-tunneled egress, NOT a static IOC/onion-address match (those rotate within hours). Modeling features: (1) NEW or RARE process initiating outbound TLS — esp. curl.exe with --socks5-hostname/localhost:9050, or a renamed/portable Tor binary (article: tor.exe renamed to ugate.exe, launched hidden, ~60s bootstrap) — relative to a 30-day per-host process+netflow baseline; (2) outbound connections to public Tor entry/relay nodes — enrich RemoteIP against the live Tor relay/exit list (dan.me.uk torlist, Tor onionoo/collector, FireHOL) AND to Tor ports 9001/9030/9050/9150; (3) beaconing regularity — low coefficient-of-variation on inter-connection intervals (article: clipboard poll ~500ms, C2 heartbeat loop, SEED/PKEY/REPL exfil events); (4) per-host encrypted-egress BYTE volume vs baseline (seed-phrase + 5 screenshots uploaded async = volumetric spike on an otherwise quiet host); (5) JA3/JA4 TLS fingerprint match to Tor client (known Tor JA3 e7d705a3286e19ea42f587b344ee6865 / JA3S a95ca7eab4d47d051a5cd4fb7b6005dc) — note modern Tor randomizes extensions so prefer JA4 and treat FP as supporting signal, not sole gate. Data: DeviceNetworkEvents (RemoteIP/RemotePort/RemoteUrl/InitiatingProcessFileName/InitiatingProcessCommandLine/ActionType), DeviceProcessEvents, Sysmon EID 3 (network connect) + EID 1 (process create) where MDE is absent; NetFlow/Zeek conn+ssl logs for the volumetric+JA3/JA4 layer. KQL starting points (article-confirmed): DeviceNetworkEvents | where ActionType==\"ConnectionSuccess\" | where InitiatingProcessCommandLine has_all (\"curl\",\"socks5-hostname\",\".onion\") ;; DeviceProcessEvents | where FileName=~\"curl.exe\" | where ProcessCommandLine has_all (\"--socks5-hostname\",\"localhost:9050\"). IOC starting points (WILL rotate — use as seeds, not the detection): onion C2 cgky6bn6ux5wvlybtmm3z255igt52ljml2ngnc5qp3cnw5jlglamisad.onion, endpoints /route.php (beacon) /recvf.php (file upload) /stub.php (payload), staging path C:\\Users\\Public\\Documents\\[5-char]\\, schtasks XML persistence. Why a static rule is too noisy / Alchemy fits: a flat \"block port 9050\" or onion-string match misses renamed binaries, rotated onions, and any host where Tor is legit (privacy tools, researchers) while flagging that legit use; modeling NEW-process + Tor-node egress + low-jitter beacon + volumetric anomaly isolates the malicious exfil from the rare-legitimate background. Tune: baseline 30 days of per-host egress + process inventory first; allowlist sanctioned Tor/privacy users and known curl automation; require >=2 features (e.g., Tor-node egress AND new-process OR volumetric spike) before alerting; refresh the Tor relay list daily.",
+    "tags": [
+      "exfiltration",
+      "tor",
+      "encrypted_channel",
+      "onion_routing",
+      "beaconing",
+      "crypto_clipper",
+      "ja3_ja4",
+      "anomaly_detection",
+      "T1048.002"
+    ],
+    "techniques": [
+      "T1048.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- The malware bundles a renamed portable Tor binary (`ugate.exe`) and pushes stolen BIP39 seed phrases, Ethereum/Bitcoin-WIF private keys, and screenshots out over an onion-routed (layered asymmetric-encrypted) channel via `curl --socks5-hostname localhost:9050`, separate from a normal HTTPS C2 — the defining shape of T1048.002 exfiltration over an asymmetric-encrypted non-C2 protocol.\n- Static defenses fail here: onion C2 addresses (`...jlglamisad.onion`) and sample hashes rotate, and DNS resolves *inside* Tor so destination domains are invisible at the resolver — only a behavioral/volumetric model of the encrypted egress generalizes across infrastructure churn.\n- Tor egress blends with rare-but-legitimate use, so a flat block/match is both noisy and lossy; scoring NEW-or-rare process + egress to live Tor entry/relay nodes + low-jitter beaconing (article: ~500ms clipboard loop, continuous C2 poll) + per-host byte-volume anomaly isolates malicious exfil from the legitimate Tor background.\n- This pairs with the endpoint/persistence side of the same intrusion (USB `.lnk` worm propagation, two indefinite `schtasks` XML tasks, `C:\\Users\\Public\\Documents\\[5-char]\\` staging) — the analytic catches the data leaving even when the dropper variant or onion address is brand new.",
+    "references": "- [MITRE ATT&CK T1048.002 — Exfiltration Over Asymmetric Encrypted Non-C2 Protocol](https://attack.mitre.org/techniques/T1048/002/)\n- [source report — Microsoft: Crypto Clipper uses Tor and worm-like propagation for persistence and control](https://www.microsoft.com/en-us/security/blog/2026/06/17/crypto-clipper-uses-tor-worm-like-propagation-for-persistence-control/)\n- [MITRE ATT&CK T1090.003 — Proxy: Multi-hop Proxy (the Tor onion-routing transport; cross-reference)](https://attack.mitre.org/techniques/T1090/003/)\n- [MITRE ATT&CK T1572 — Protocol Tunneling (HTTP-over-Tor encapsulation; cross-reference)](https://attack.mitre.org/techniques/T1572/)\n- [Splunk Lantern — Detecting TOR traffic (firewall/Network_Traffic data-model hunting)](https://lantern.splunk.com/Security/UCE/Guided_Insights/Threat_hunting/Detecting_TOR_traffic)\n- [SigmaHQ — Tor Client/Browser Execution detection rule](https://detection.fyi/sigmahq/sigma/windows/process_creation/proc_creation_win_browsers_tor_execution/)\n- [Hunt.io — JA4 Fingerprinting for modern threat hunting (TLS fingerprint enrichment for Tor/encrypted egress)](https://hunt.io/glossary/ja4-fingerprinting)\n- [Salesforce Engineering — TLS Fingerprinting with JA3 and JA3S (known Tor JA3/JA3S signatures)](https://engineering.salesforce.com/tls-fingerprinting-with-ja3-and-ja3s-247362855967/)\n- [NetEnrich — Detecting Beaconing Attacks by Advanced Threat Hunting (timing/jitter anomaly modeling)](https://netenrich.com/blog/advanced-threat-hunting-by-detecting-beaconing-attacks)",
+    "file_path": "Alchemy/M021.md"
+  },
+  {
+    "id": "M022",
+    "category": "Alchemy",
+    "title": "After gaining a foothold, adversaries abuse the Microsoft Graph / legacy Azure AD Graph API to mass-enumerate the directory (users, groups, service principals, directory roles, applications), generating an anomalous spike in the volume and diversity of read/list calls from a single identity. Because some first-party apps and service principals legitimately call Graph heavily, a static call-count threshold is noisy; by fitting a per-identity (user or service principal) baseline over a rolling 30-day window and flagging anomalous enumeration breadth (distinct directory endpoints hit per hour) and burst volume, AzureHound/ROADrecon/AADInternals-style directory recon can be surfaced while legitimate heavy-Graph callers are tuned out.",
+    "tactic": "Discovery",
+    "notes": "ALCHEMY ANALYTIC — per-identity baseline, not a static rule. Data source: Azure AD Graph Activity Logs / MicrosoftGraphActivityLogs table (Sentinel) or Elastic ingestion (ECS-mapped azure.aadgraphactivitylogs.*). Key fields: RequestUri/url.path, RequestMethod/http.request.method, ResponseStatusCode/http.response.status_code, ServicePrincipalId, UserId/user.id, IPAddress/source.ip, AppId (azure.aadgraphactivitylogs.properties.app_id), UserAgent/user_agent.original, api_version. Modeling features per identity (user OR servicePrincipalId) per hour: (1) count of DISTINCT directory endpoints hit across /users,/groups,/servicePrincipals,/directoryRoles,/applications,/devices,/policies,/organization,/tenantDetails — enumeration breadth; (2) total GET/list request volume vs that identity's 30-day baseline (mean+stddev or MAD; flag z-score outliers / sudden 500+ request bursts — ROADrecon emits ~2,000 AAD Graph calls in ~1 min); (3) read/list-to-write ratio (recon is almost all GET, near-zero PATCH/POST/DELETE); (4) new identity suddenly enumerating — new_terms style: (calling OAuth client app_id, signed-in user) pair unseen in prior 14 days; (5) high 4xx error ratio from one caller (permission-probing); (6) suspicious UserAgents (python-requests, aiohttp, curl, Go-http-client, axios, AzureHound, BloodHound, AADInternals, roadrecon) — corroborating, not sole signal. ES|QL/KQL starting point on MicrosoftGraphActivityLogs: summarize dcount(RequestUri-resource) , count(), countif(ResponseStatusCode>=400) by UserId/ServicePrincipalId, AppId, bin(TimeGenerated,1h); join to a per-identity baseline table and emit rows where breadth or volume exceeds the identity's own historical envelope. Article-confirmed enumeration patterns: ROADrecon gather walks every interesting object type (~2,000 calls/min via aiohttp); AADInternals dozens of cmdlets wrapping AAD Graph; AzureHound/BloodHound by user-agent; device-code sign-in to legacy graph.windows.net audience followed by directory enumeration within 5 min. Tuning: legitimate AAD Graph traffic is dominated by a small recognizable set of first-party callers (Microsoft.OData.Client, Microsoft Azure Graph Client Library, Microsoft ADO.NET Data Services, empty UA from first-party AppIds) — suppress/allowlist these known heavy-Graph apps and seed per-SP baselines so sync/provisioning service principals do not generate false positives.",
+    "tags": [
+      "discovery",
+      "cloud",
+      "entra_id",
+      "azure_ad",
+      "graph_api",
+      "service_principal",
+      "directory_enumeration",
+      "azurehound",
+      "roadtools",
+      "anomaly_detection",
+      "t1087_004",
+      "t1069_003",
+      "t1526",
+      "T1087.004"
+    ],
+    "techniques": [
+      "T1087.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- The legacy Azure AD Graph Activity Logs (MicrosoftGraphActivityLogs) closed a decade-long blind spot: per-request telemetry (RequestUri, method, status, identity, app_id, IP, user-agent) finally makes mass directory enumeration observable, but the signal is buried in heavy legitimate first-party Graph traffic — exactly the conditions an analytic, not a static rule, is built for.\n- Recon tooling is volumetric and broad by nature: ROADrecon's `gather` walks every interesting object type (users, groups, service principals, roles, apps) and emits ~2,000 AAD Graph calls in ~1 minute. The discriminating features are enumeration *breadth* (distinct endpoints) and a *burst* relative to that identity's own history — both of which a static org-wide threshold either misses (busy SPs) or false-alarms on (the legit sync app).\n- A per-identity 30-day baseline separates a CRM sync service principal that always reads /users in bulk from a user account or new OAuth client that has never touched /servicePrincipals and /directoryRoles before suddenly sweeping the whole directory — the read/list-to-write ratio and (app_id, user) new-pairing features sharpen this further.\n- User-agent strings (AzureHound, aiohttp, AADInternals) are high-fidelity but trivially spoofable, so they are used as corroborating evidence and ROADrecon-fingerprint boosters rather than the primary detection — the behavioral anomaly model survives user-agent customization, which is an explicit ROADtools evasion feature.",
+    "references": "- [MITRE ATT&CK T1087.004 — Account Discovery: Cloud Account](https://attack.mitre.org/techniques/T1087/004/)\n- [source report — Elastic: Azure AD Graph Activity Logs](https://www.elastic.co/security-labs/aad-graph-activity-logs-threat-detection)\n- [MITRE ATT&CK T1069.003 — Permission Groups Discovery: Cloud Groups (cross-ref)](https://attack.mitre.org/techniques/T1069/003/)\n- [MITRE ATT&CK T1526 — Cloud Service Discovery (cross-ref)](https://attack.mitre.org/techniques/T1526/)\n- [Microsoft Security Experts — Threat hunting with Microsoft Graph activity logs (KQL recon thresholds on /users, /groups, /serviceprincipals, /rolemanagement)](https://techcommunity.microsoft.com/blog/microsoftsecurityexperts/cloud-forensics-why-enabling-microsoft-azure-graph-activity-logs-matters/4234632)\n- [Cloudbrothers — Detect threats using Microsoft Graph activity logs (Part 1)](https://cloudbrothers.info/en/detect-threats-microsoft-graph-logs-part-1/)\n- [Azure-Sentinel — Microsoft Graph Activity Logs reconnaissance detection pack (PR #10643)](https://github.com/Azure/Azure-Sentinel/pull/10643)\n- [Unit 42 — Cloud Discovery with AzureHound: threat actor misuse](https://unit42.paloaltonetworks.com/threat-actor-misuse-of-azurehound/)\n- [dirkjanm — Introducing ROADtools / ROADrecon, the Azure AD exploration framework](https://dirkjanm.io/introducing-roadtools-and-roadrecon-azure-ad-exploration-framework/)\n- [Splunk Security Content — Azure AD Service Principal Enumeration detection](https://research.splunk.com/cloud/3f0647ce-add5-4436-8039-cbd1abe74563/)",
+    "file_path": "Alchemy/M022.md"
   }
 ]
