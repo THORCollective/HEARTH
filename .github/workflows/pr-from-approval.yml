@@ -16,8 +16,30 @@ jobs:
       - name: "Checkout draft branch"
         uses: actions/checkout@v4
         with:
-          ref: ${{ steps.get_branch.outputs.branch_name }}
+          ref: draft/issue-${{ github.event.issue.number }}
           fetch-depth: 0
+
+      - name: "Set up Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: "Fetch main"
+        run: git fetch origin main
+
+      - name: "Reassign hunt ID if it collides with main"
+        id: reassign
+        run: python scripts/reassign_hunt_id.py
+
+      - name: "Commit and push reassigned hunt ID"
+        if: steps.reassign.outputs.changed == 'true'
+        run: |
+          git config --global user.name 'hearthbot'
+          git config --global user.email 'hearthbot@users.noreply.github.com'
+          git add -A
+          git commit -m "fix(draft): reassign hunt id to ${{ steps.reassign.outputs.hunt_id }} (issue #${{ github.event.issue.number }})"
+          git remote set-url origin https://x-access-token:${{ secrets.HEARTH_TOKEN }}@github.com/${{ github.repository }}
+          git push origin HEAD:draft/issue-${{ github.event.issue.number }}
 
       - name: "Remove 'needs-triage' label"
         if: success()
@@ -48,7 +70,7 @@ jobs:
           script: |
             const issueNumber = context.issue.number;
             const branchName = `draft/issue-${issueNumber}`;
-            
+
             try {
               // Get the full issue details to ensure we have the user object
               const { data: issue } = await github.rest.issues.get({
@@ -112,4 +134,4 @@ jobs:
           issue-number: ${{ github.event.issue.number }}
           body: |
             🚀 Your submission has been approved and a pull request has been created. Thank you!
-            🔗 **View PR**: #${{ steps.create_pr.outputs.pull-request-number }} 
+            🔗 **View PR**: #${{ steps.create_pr.outputs.pull-request-number }}
