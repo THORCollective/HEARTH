@@ -22,18 +22,21 @@ Everyone listed below has submitted ideas that have been added to HEARTH. This l
 | 14 | Alan G | 2 |
 | 15 | Ryan Fetterman | 2 |
 | 16 | Badger | 1 |
-| 17 | hu983r | 1 |
-| 18 | Cody Lunday | 1 |
-| 19 | wikijm | 1 |
-| 20 | Apramey "Apps" S | 1 |
-| 21 | Shaimon Weslley | 1 |
-| 22 | Duc Viet Hoang | 1 |
-| 23 | samuel-lucas6 | 1 |
-| 24 | tsof-smoky | 1 |
-| 25 | odanh | 1 |
-| 26 | smossmos | 1 |
-| 27 | Omer M | 1 |
-| 28 | asteinbr | 1 |
-| 29 | Claire Stromboe | 1 |
-| 30 | Jon Perez | 1 |
-| 31 | Collin McClaine | 1 |
+| 17 | T3chn3 | 1 |
+| 18 | Shilpa Merlin Joy | 1 |
+| 19 | young6x7 | 1 |
+| 20 | hu983r | 1 |
+| 21 | Cody Lunday | 1 |
+| 22 | wikijm | 1 |
+| 23 | Apramey "Apps" S | 1 |
+| 24 | Shaimon Weslley | 1 |
+| 25 | Duc Viet Hoang | 1 |
+| 26 | samuel-lucas6 | 1 |
+| 27 | tsof-smoky | 1 |
+| 28 | odanh | 1 |
+| 29 | smossmos | 1 |
+| 30 | Omer M | 1 |
+| 31 | asteinbr | 1 |
+| 32 | Claire Stromboe | 1 |
+| 33 | Jon Perez | 1 |
+| 34 | Collin McClaine | 1 |
