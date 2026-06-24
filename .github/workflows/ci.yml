@@ -1,0 +1,44 @@
+name: CI
+
+# Build/test guard for pull requests. Runs the same install + build the Pages
+# deploy runs, so a broken build, failing tests, type errors, or a
+# platform-incomplete package-lock.json fail HERE (before merge) instead of on
+# the production deploy after merge.
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      # Strict install — fails fast if package-lock.json is out of sync or is
+      # missing the linux-x64 native binaries the runner needs (npm/cli#4828).
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check
+        run: npm run type-check
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
