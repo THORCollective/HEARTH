@@ -111,9 +111,6 @@ export function buildActorIndex(
     techniqueTacticLookup ?? [],
   );
   const actorTechniques = new Map<string, Set<string>>();
-  // Actors whose set came from a full MITRE profile — excluded from the EMPLOYS
-  // fallback so we don't mix the two sources.
-  const hasFullProfile = new Set<string>();
 
   for (const node of graph.nodes) {
     if (node.type === "threat_actor" && node.id && node.label) {
@@ -128,10 +125,9 @@ export function buildActorIndex(
       actors.push(actor);
       actorById.set(actor.id, actor);
 
-      // Prefer the full MITRE profile; fall back to EMPLOYS edges below if absent.
+      // Seed from the full MITRE profile when present.
       if (node.mitre_techniques?.length) {
         actorTechniques.set(node.id, new Set(node.mitre_techniques));
-        hasFullProfile.add(node.id);
       }
     }
     if (node.type === "technique" && node.id) {
@@ -142,14 +138,12 @@ export function buildActorIndex(
     }
   }
 
-  // Fallback: derive technique sets from EMPLOYS edges for any actor missing a
-  // full profile (e.g. an un-regenerated graph). Accumulates every edge.
+  // Union EMPLOYS edges in for every actor — these are HEARTH-scoped techniques
+  // that may not appear in a (separately-sourced) MITRE profile, and are the sole
+  // source for actors without one. actorTechniques is therefore the union of the
+  // actor's full MITRE profile and its EMPLOYS-mapped techniques.
   for (const edge of graph.edges) {
-    if (
-      edge.type === "EMPLOYS" &&
-      actorById.has(edge.source) &&
-      !hasFullProfile.has(edge.source)
-    ) {
+    if (edge.type === "EMPLOYS" && actorById.has(edge.source)) {
       let set = actorTechniques.get(edge.source);
       if (!set) {
         set = new Set();
@@ -436,6 +430,33 @@ export function topMatchedActors(
 }
 
 /**
+ * Shared ranking for the coverage boards: filter to actors with a substantial
+ * profile, sort by coverage % in `direction`, apply a per-board tiebreak, slice.
+ * Centralizing the filter + primary sort keeps the two boards from drifting apart.
+ */
+function rankByCoverage(
+  rows: ActorLeaderRow[],
+  opts: {
+    direction: "desc" | "asc";
+    limit: number;
+    minTechniqueCount: number;
+    requireGap?: boolean;
+    tiebreak: (a: ActorLeaderRow, b: ActorLeaderRow) => number;
+  },
+): ActorLeaderRow[] {
+  const dir = opts.direction === "desc" ? 1 : -1;
+  return rows
+    .filter((r) => r.coverage.actorTechniqueCount >= opts.minTechniqueCount)
+    .filter((r) => !opts.requireGap || r.coverage.gapTechniqueCount > 0)
+    .sort(
+      (a, b) =>
+        dir * (b.coverage.coveragePercent - a.coverage.coveragePercent) ||
+        opts.tiebreak(a, b),
+    )
+    .slice(0, opts.limit);
+}
+
+/**
  * Most-covered actors: highest coverage % first — "where HEARTH's detection is
  * deepest." Measured against each actor's full MITRE profile (see
  * buildActorIndex). Restricted to actors with a substantial profile so a tiny
@@ -447,38 +468,59 @@ export function mostCoveredActors(
   limit = 5,
   minTechniqueCount = MIN_LEADERBOARD_TECHNIQUES,
 ): ActorLeaderRow[] {
-  return rows
-    .filter((r) => r.coverage.actorTechniqueCount >= minTechniqueCount)
-    .sort(
-      (a, b) =>
-        b.coverage.coveragePercent - a.coverage.coveragePercent ||
-        b.coverage.actorTechniqueCount - a.coverage.actorTechniqueCount ||
-        b.coverage.matchedHuntCount - a.coverage.matchedHuntCount,
-    )
-    .slice(0, limit);
+  return rankByCoverage(rows, {
+    direction: "desc",
+    limit,
+    minTechniqueCount,
+    // Tie: broader profile, then more hunts.
+    tiebreak: (a, b) =>
+      b.coverage.actorTechniqueCount - a.coverage.actorTechniqueCount ||
+      b.coverage.matchedHuntCount - a.coverage.matchedHuntCount,
+  });
 }
 
 /**
  * Least-covered actors: lowest coverage % first — "where a new hunt would help
- * most." Same population and metric as mostCoveredActors, opposite direction, so
- * an actor lands on one board or neither — never both. Requires a non-zero gap
- * (a fully-covered actor is not a gap).
+ * most." Same population and metric as mostCoveredActors, opposite direction.
+ * Requires a non-zero gap (a fully-covered actor is not a gap). Use
+ * `coverageBoards` rather than calling this alongside mostCoveredActors directly,
+ * so the two boards are guaranteed disjoint regardless of population size.
  */
 export function biggestGapActors(
   rows: ActorLeaderRow[],
   limit = 5,
   minTechniqueCount = MIN_LEADERBOARD_TECHNIQUES,
 ): ActorLeaderRow[] {
-  return rows
-    .filter((r) => r.coverage.actorTechniqueCount >= minTechniqueCount)
-    .filter((r) => r.coverage.gapTechniqueCount > 0)
-    .sort(
-      (a, b) =>
-        a.coverage.coveragePercent - b.coverage.coveragePercent ||
-        b.coverage.gapTechniqueCount - a.coverage.gapTechniqueCount ||
-        a.coverage.matchedHuntCount - b.coverage.matchedHuntCount,
-    )
-    .slice(0, limit);
+  return rankByCoverage(rows, {
+    direction: "asc",
+    limit,
+    minTechniqueCount,
+    requireGap: true,
+    // Tie: bigger absolute gap, then fewer hunts.
+    tiebreak: (a, b) =>
+      b.coverage.gapTechniqueCount - a.coverage.gapTechniqueCount ||
+      a.coverage.matchedHuntCount - b.coverage.matchedHuntCount,
+  });
+}
+
+/**
+ * The two coverage boards as one disjoint pair. mostCovered is taken first; the
+ * least-covered board then excludes anyone already on it, so an actor can never
+ * appear on both even when the qualifying population is smaller than 2×limit.
+ */
+export function coverageBoards(
+  rows: ActorLeaderRow[],
+  limit = 5,
+  minTechniqueCount = MIN_LEADERBOARD_TECHNIQUES,
+): { mostCovered: ActorLeaderRow[]; leastCovered: ActorLeaderRow[] } {
+  const mostCovered = mostCoveredActors(rows, limit, minTechniqueCount);
+  const taken = new Set(mostCovered.map((r) => r.actor.id));
+  const leastCovered = biggestGapActors(
+    rows.filter((r) => !taken.has(r.actor.id)),
+    limit,
+    minTechniqueCount,
+  );
+  return { mostCovered, leastCovered };
 }
 
 /* ─────────────────────────────────────────────
@@ -501,4 +543,30 @@ export function analyzeActor(
     tacticCoverage: computeTacticCoverage(actorId, matchedHunts, index),
     gap: computeGap(actorId, matchedHunts, index),
   };
+}
+
+/* ─────────────────────────────────────────────
+   Data loading (shared by actors.ts and home.ts)
+   ───────────────────────────────────────────── */
+
+/** Fetch + parse JSON, throwing on a non-OK response so 404s don't parse as data. */
+export async function fetchJson<T>(url: string): Promise<T> {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
+  return res.json() as Promise<T>;
+}
+
+/**
+ * Build the actor index and full coverage table from raw inputs. Single source
+ * of truth for the index/coverage pipeline so the two pages can't drift (e.g.
+ * forgetting to wire the MITRE matrix into buildActorIndex).
+ */
+export function buildCoverage(
+  graph: ContextGraphData,
+  hunts: Hunt[],
+  mentions: ActorMentionsData,
+  matrix: MitreMatrixData,
+): { index: ActorIndex; coverage: ActorLeaderRow[] } {
+  const index = buildActorIndex(graph, buildTechniqueTactics(matrix));
+  return { index, coverage: computeAllCoverage(hunts, mentions, index) };
 }

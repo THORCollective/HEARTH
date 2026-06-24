@@ -2,11 +2,9 @@ import type { Hunt } from "./types/Hunt";
 import type { Actor } from "./types/Actor";
 import {
   analyzeActor,
-  biggestGapActors,
-  buildActorIndex,
-  buildTechniqueTactics,
-  computeAllCoverage,
-  mostCoveredActors,
+  buildCoverage,
+  coverageBoards,
+  fetchJson,
   resolveActor,
   type ActorIndex,
   type ActorLeaderRow,
@@ -81,14 +79,20 @@ interface LoadedData {
 interface PageState {
   data: LoadedData;
   index: ActorIndex;
+  coverage: ActorLeaderRow[];
 }
 
 async function init() {
   const data = await loadAll();
   if (!data) return;
 
-  const index = buildActorIndex(data.graph, buildTechniqueTactics(data.matrix));
-  const state: PageState = { data, index };
+  const { index, coverage } = buildCoverage(
+    data.graph,
+    data.hunts,
+    data.mentions,
+    data.matrix,
+  );
+  const state: PageState = { data, index, coverage };
   (window as unknown as { __state: PageState }).__state = state;
 
   renderTopbarPill(state);
@@ -152,12 +156,6 @@ async function loadAll(): Promise<LoadedData | null> {
     showError("Could not load actor data — try refreshing.");
     return null;
   }
-}
-
-async function fetchJson<T>(url: string): Promise<T> {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
-  return res.json() as Promise<T>;
 }
 
 function pickPlaceholderExamples(index: ActorIndex): string[] {
@@ -226,13 +224,10 @@ function renderMetaStrip(state: PageState) {
 function renderShowcase(state: PageState) {
   const root = document.getElementById("showcase");
   if (!root) return;
-  const allCoverage = computeAllCoverage(
-    state.data.hunts,
-    state.data.mentions,
-    state.index,
+  const { mostCovered: best, leastCovered: gaps } = coverageBoards(
+    state.coverage,
+    5,
   );
-  const best = mostCoveredActors(allCoverage, 5);
-  const gaps = biggestGapActors(allCoverage, 5);
   if (best.length === 0 && gaps.length === 0) return;
 
   const bestEl = document.getElementById("board-best");

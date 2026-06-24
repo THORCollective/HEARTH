@@ -1,9 +1,8 @@
 import type { Hunt } from "./types/Hunt";
 import {
   analyzeActor,
-  buildActorIndex,
-  buildTechniqueTactics,
-  computeAllCoverage,
+  buildCoverage,
+  fetchJson,
   topMatchedActors,
   type ActorMentionsData,
   type ContextGraphData,
@@ -23,19 +22,17 @@ async function renderActorPreview(): Promise<void> {
   if (!pane || !body || !ti) return;
 
   const [graph, mentions, matrix] = await Promise.all([
-    fetch("/context-graph-data.json").then(
-      (r) => r.json() as Promise<ContextGraphData>,
-    ),
-    fetch("/actor-mentions.json").then(
-      (r) => r.json() as Promise<ActorMentionsData>,
-    ),
-    fetch("/mitre-matrix.json").then(
-      (r) => r.json() as Promise<MitreMatrixData>,
-    ),
+    fetchJson<ContextGraphData>("/context-graph-data.json"),
+    fetchJson<ActorMentionsData>("/actor-mentions.json"),
+    fetchJson<MitreMatrixData>("/mitre-matrix.json"),
   ]);
 
-  const index = buildActorIndex(graph, buildTechniqueTactics(matrix));
-  const allCoverage = computeAllCoverage(allHunts, mentions, index);
+  const { index, coverage: allCoverage } = buildCoverage(
+    graph,
+    allHunts,
+    mentions,
+    matrix,
+  );
 
   // Pick a featured actor from the most-hunted list — these are the
   // recognizable big-name APTs — then show that actor's coverage. Bias toward
@@ -80,8 +77,7 @@ async function renderActorPreview(): Promise<void> {
     })
     .join("");
 
-  const coveredTechs =
-    result.coverage.actorTechniqueCount - result.coverage.gapTechniqueCount;
+  const coveredTechs = result.coverage.techniquesCovered;
 
   body.innerHTML = `
     <div class="h-id">live · ${escapeHtml(groupId)} · sampled from ${top.length} most-hunted actors</div>

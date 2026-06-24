@@ -17,6 +17,7 @@ const https = require('https');
 const ROOT = path.resolve(__dirname, '..');
 const DATA_PATH = path.join(ROOT, 'public', 'context-graph-data.json');
 const ATTACK_URL = 'https://raw.githubusercontent.com/mitre/cti/master/enterprise-attack/enterprise-attack.json';
+const LOCAL_STIX = path.join(ROOT, 'data', 'enterprise-attack.json');
 
 // ─── Fetch JSON from URL ───
 function fetchJSON(url) {
@@ -60,6 +61,17 @@ function fetchJSON(url) {
 
     request(url);
   });
+}
+
+// Prefer a locally-downloaded STIX bundle (e.g. fetched once by CI into
+// data/enterprise-attack.json) to avoid a redundant ~45MB download and a second
+// network failure point; fall back to the live URL when it's absent.
+async function loadStix() {
+  if (fs.existsSync(LOCAL_STIX)) {
+    console.log(`Using local ATT&CK STIX bundle:\n  ${LOCAL_STIX}\n`);
+    return JSON.parse(fs.readFileSync(LOCAL_STIX, 'utf-8'));
+  }
+  return fetchJSON(ATTACK_URL);
 }
 
 // ─── Extract first sentence from description ───
@@ -119,7 +131,7 @@ async function main() {
   });
 
   // Fetch ATT&CK STIX bundle
-  const stix = await fetchJSON(ATTACK_URL);
+  const stix = await loadStix();
   const objects = stix.objects || [];
   console.log(`STIX bundle: ${objects.length} objects\n`);
 
@@ -236,9 +248,11 @@ async function main() {
 
     if (existingNodeIds.has(nodeId)) {
       // Merge skips existing actors — backfill the full MITRE profile onto them so
-      // their coverage denominator isn't left HEARTH-scoped. Additive only.
+      // their coverage denominator isn't left HEARTH-scoped. Only write when this
+      // run actually found techniques, so a transient/partial STIX bundle can never
+      // wipe a previously-populated profile to [].
       const existing = nodeById.get(nodeId);
-      if (existing && existing.type === 'threat_actor') {
+      if (existing && existing.type === 'threat_actor' && allTechsUsed.length) {
         existing.mitre_techniques = allTechsUsed;
         existing.mitre_technique_count = allTechsUsed.length;
       }

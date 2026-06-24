@@ -5,6 +5,7 @@ import {
   buildActorIndex,
   buildTechniqueTactics,
   computeAllCoverage,
+  coverageBoards,
   mostCoveredActors,
   topMatchedActors,
   type ActorMentionsData,
@@ -62,6 +63,18 @@ describe("buildActorIndex", () => {
     };
     const index = buildActorIndex(graph);
     expect(index.actorTechniques.get("actor:B")?.size).toBe(3);
+  });
+
+  it("unions EMPLOYS edges with the full profile (never drops a HEARTH technique)", () => {
+    // Actor has a full profile AND an EMPLOYS edge for a technique not in it.
+    const graph: ContextGraphData = {
+      nodes: [actorNode("actor:C", ["T1", "T2"])],
+      edges: [{ source: "actor:C", target: "T9", type: "EMPLOYS" }],
+    };
+    const index = buildActorIndex(graph);
+    const set = index.actorTechniques.get("actor:C");
+    expect(set?.size).toBe(3);
+    expect(set?.has("T9")).toBe(true); // EMPLOYS technique not dropped
   });
 });
 
@@ -159,6 +172,15 @@ describe("most/least covered boards are opposite ends of one metric", () => {
     // actor:Lo has 4 techniques; a floor of 10 drops it everywhere.
     expect(mostCoveredActors(rows, 5, 10)).toEqual([]);
     expect(biggestGapActors(rows, 5, 10)).toEqual([]);
+  });
+
+  it("coverageBoards guarantees disjoint boards even when slices would overlap", () => {
+    // 3 actors, limit 5: raw top-5 and bottom-5 would both contain all three.
+    // coverageBoards must still yield zero overlap.
+    const { mostCovered, leastCovered } = coverageBoards(rows, 5, 1);
+    const mostIds = mostCovered.map((r) => r.actor.id);
+    const leastIds = leastCovered.map((r) => r.actor.id);
+    expect(mostIds.filter((id) => leastIds.includes(id))).toEqual([]);
   });
 });
 
