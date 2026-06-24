@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-03-10T14:20:37.677Z",
+  "generated_at": "2026-06-24T19:29:24.516Z",
   "stats": {
-    "totalNodes": 503,
-    "totalEdges": 3751,
+    "totalNodes": 509,
+    "totalEdges": 3868,
     "hypotheses": 121,
     "techniques": 101,
     "dataSources": 29,
@@ -13,8 +13,8 @@
       "newest": "2026-03-10T12:04:11.000Z"
     },
     "averageHypothesisAgeDays": 255,
-    "threat_actors": 159,
-    "campaigns": 49,
+    "threat_actors": 2,
+    "campaigns": 4,
     "hottest_technique": "T1105",
     "hottest_technique_score": 1,
     "intel_sources": 23
@@ -3802,8 +3802,8 @@
       "tactics": [
         "Credential Access"
       ],
-      "prevalence_score": 0.125,
-      "actor_count": 14,
+      "prevalence_score": 0.129,
+      "actor_count": 15,
       "campaign_count": 2
     },
     {
@@ -3813,9 +3813,9 @@
       "tactics": [
         "Command and Control"
       ],
-      "prevalence_score": 0.104,
-      "actor_count": 13,
-      "campaign_count": 1
+      "prevalence_score": 0.109,
+      "actor_count": 12,
+      "campaign_count": 2
     },
     {
       "id": "T1030",
@@ -3824,7 +3824,7 @@
       "tactics": [
         "Exfiltration"
       ],
-      "prevalence_score": 0.069,
+      "prevalence_score": 0.068,
       "actor_count": 5,
       "campaign_count": 2
     },
@@ -3835,9 +3835,9 @@
       "tactics": [
         "Collection"
       ],
-      "prevalence_score": 0.41,
-      "actor_count": 37,
-      "campaign_count": 10
+      "prevalence_score": 0.435,
+      "actor_count": 39,
+      "campaign_count": 11
     },
     {
       "id": "T1197",
@@ -3846,7 +3846,7 @@
       "tactics": [
         "Defense Evasion"
       ],
-      "prevalence_score": 0.035,
+      "prevalence_score": 0.034,
       "actor_count": 5,
       "campaign_count": 0
     },
@@ -3858,7 +3858,7 @@
         "Persistence",
         "Privilege Escalation"
       ],
-      "prevalence_score": 0.028,
+      "prevalence_score": 0.027,
       "actor_count": 1,
       "campaign_count": 1
     },
@@ -3869,7 +3869,7 @@
       "tactics": [
         "Lateral Movement"
       ],
-      "prevalence_score": 0.021,
+      "prevalence_score": 0.02,
       "actor_count": 3,
       "campaign_count": 0
     },
@@ -3880,7 +3880,7 @@
       "tactics": [
         "Execution"
       ],
-      "prevalence_score": 0.188,
+      "prevalence_score": 0.177,
       "actor_count": 17,
       "campaign_count": 4
     },
@@ -3889,7 +3889,7 @@
       "type": "technique",
       "label": "T1136.002",
       "tactics": [],
-      "prevalence_score": 0.063,
+      "prevalence_score": 0.061,
       "actor_count": 5,
       "campaign_count": 2
     },
@@ -3900,7 +3900,7 @@
       "tactics": [
         "Defense Evasion"
       ],
-      "prevalence_score": 0.146,
+      "prevalence_score": 0.143,
       "actor_count": 17,
       "campaign_count": 2
     },
@@ -3933,7 +3933,7 @@
       "tactics": [
         "Command and Control"
       ],
-      "prevalence_score": 0.097,
+      "prevalence_score": 0.095,
       "actor_count": 11,
       "campaign_count": 1
     },
@@ -3944,16 +3944,16 @@
       "tactics": [
         "Execution"
       ],
-      "prevalence_score": 0.819,
-      "actor_count": 83,
-      "campaign_count": 16
+      "prevalence_score": 0.83,
+      "actor_count": 85,
+      "campaign_count": 17
     },
     {
       "id": "T1559",
       "type": "technique",
       "label": "T1559",
       "tactics": [],
-      "prevalence_score": 0.042,
+      "prevalence_score": 0.034,
       "actor_count": 0,
       "campaign_count": 2
     },
@@ -3964,18 +3964,18 @@
       "tactics": [
         "Command and Control"
       ],
-      "prevalence_score": 0.264,
-      "actor_count": 17,
-      "campaign_count": 9
+      "prevalence_score": 0.286,
+      "actor_count": 19,
+      "campaign_count": 10
     },
     {
       "id": "T1562.001",
       "type": "technique",
       "label": "T1562.001",
       "tactics": [],
-      "prevalence_score": 0.354,
-      "actor_count": 30,
-      "campaign_count": 9
+      "prevalence_score": 0,
+      "actor_count": 0,
+      "campaign_count": 0
     },
     {
       "id": "T1112",
@@ -3984,7 +3984,7 @@
       "tactics": [
         "Defense Evasion"
       ],
-      "prevalence_score": 0.292,
+      "prevalence_score": 0.286,
       "actor_count": 29,
       "campaign_count": 5
     },
@@ -3995,16 +3995,16 @@
       "tactics": [
         "Initial Access"
       ],
-      "prevalence_score": 0.458,
-      "actor_count": 44,
-      "campaign_count": 10
+      "prevalence_score": 0.476,
+      "actor_count": 45,
+      "campaign_count": 11
     },
     {
       "id": "T1068",
       "type": "technique",
       "label": "T1068",
       "tactics": [],
-      "prevalence_score": 0.188,
+      "prevalence_score": 0.184,
       "actor_count": 22,
       "campaign_count": 2
     },
@@ -4013,8 +4013,8 @@
       "type": "technique",
       "label": "T1098",
       "tactics": [],
-      "prevalence_score": 0.035,
-      "actor_count": 3,
+      "prevalence_score": 0.041,
+      "actor_count": 4,
       "campaign_count": 1
     },
     {
@@ -4024,7 +4024,7 @@
       "tactics": [
         "Execution"
       ],
-      "prevalence_score": 0.035,
+      "prevalence_score": 0.034,
       "actor_count": 2,
       "campaign_count": 1
     },
@@ -4035,9 +4035,9 @@
       "tactics": [
         "Execution"
       ],
-      "prevalence_score": 0.444,
-      "actor_count": 39,
-      "campaign_count": 11
+      "prevalence_score": 0.469,
+      "actor_count": 42,
+      "campaign_count": 12
     },
     {
       "id": "T1564",
@@ -4057,9 +4057,9 @@
       "tactics": [
         "Initial Access"
       ],
-      "prevalence_score": 0.674,
-      "actor_count": 77,
-      "campaign_count": 9
+      "prevalence_score": 0.68,
+      "actor_count": 78,
+      "campaign_count": 10
     },
     {
       "id": "T1204.002",
@@ -4068,9 +4068,9 @@
       "tactics": [
         "Execution"
       ],
-      "prevalence_score": 0.75,
-      "actor_count": 84,
-      "campaign_count": 11
+      "prevalence_score": 0.762,
+      "actor_count": 86,
+      "campaign_count": 12
     },
     {
       "id": "T1059.006",
@@ -4079,8 +4079,8 @@
       "tactics": [
         "Execution"
       ],
-      "prevalence_score": 0.194,
-      "actor_count": 17,
+      "prevalence_score": 0.197,
+      "actor_count": 18,
       "campaign_count": 4
     },
     {
@@ -4088,9 +4088,9 @@
       "type": "technique",
       "label": "T1070.004",
       "tactics": [],
-      "prevalence_score": 0.486,
-      "actor_count": 46,
-      "campaign_count": 11
+      "prevalence_score": 0.51,
+      "actor_count": 47,
+      "campaign_count": 13
     },
     {
       "id": "T1566.002",
@@ -4099,9 +4099,9 @@
       "tactics": [
         "Initial Access"
       ],
-      "prevalence_score": 0.424,
-      "actor_count": 43,
-      "campaign_count": 8
+      "prevalence_score": 0.449,
+      "actor_count": 46,
+      "campaign_count": 9
     },
     {
       "id": "T1497.003",
@@ -4122,7 +4122,7 @@
       "tactics": [
         "Privilege Escalation"
       ],
-      "prevalence_score": 0.215,
+      "prevalence_score": 0.211,
       "actor_count": 15,
       "campaign_count": 7
     },
@@ -4133,7 +4133,7 @@
       "tactics": [
         "Persistence"
       ],
-      "prevalence_score": 0.021,
+      "prevalence_score": 0.02,
       "actor_count": 0,
       "campaign_count": 1
     },
@@ -4144,9 +4144,9 @@
       "tactics": [
         "Collection"
       ],
-      "prevalence_score": 0.514,
-      "actor_count": 43,
-      "campaign_count": 14
+      "prevalence_score": 0.531,
+      "actor_count": 45,
+      "campaign_count": 15
     },
     {
       "id": "T1059.002",
@@ -4167,7 +4167,7 @@
         "Persistence",
         "Privilege Escalation"
       ],
-      "prevalence_score": 0.021,
+      "prevalence_score": 0.02,
       "actor_count": 0,
       "campaign_count": 1
     },
@@ -4179,7 +4179,7 @@
         "Initial Access",
         "Lateral Movement"
       ],
-      "prevalence_score": 0.056,
+      "prevalence_score": 0.054,
       "actor_count": 8,
       "campaign_count": 0
     },
@@ -4201,7 +4201,7 @@
       "tactics": [
         "Command and Control"
       ],
-      "prevalence_score": 0.118,
+      "prevalence_score": 0.116,
       "actor_count": 9,
       "campaign_count": 3
     },
@@ -4212,7 +4212,7 @@
       "tactics": [
         "Defense Evasion"
       ],
-      "prevalence_score": 0.188,
+      "prevalence_score": 0.184,
       "actor_count": 18,
       "campaign_count": 4
     },
@@ -4223,7 +4223,7 @@
       "tactics": [
         "Collection"
       ],
-      "prevalence_score": 0.09,
+      "prevalence_score": 0.088,
       "actor_count": 13,
       "campaign_count": 0
     },
@@ -4234,9 +4234,9 @@
       "tactics": [
         "Reconnaissance"
       ],
-      "prevalence_score": 0.014,
+      "prevalence_score": 0.048,
       "actor_count": 2,
-      "campaign_count": 0
+      "campaign_count": 1
     },
     {
       "id": "T1110.003",
@@ -4245,7 +4245,7 @@
       "tactics": [
         "Credential Access"
       ],
-      "prevalence_score": 0.125,
+      "prevalence_score": 0.122,
       "actor_count": 11,
       "campaign_count": 2
     },
@@ -4256,9 +4256,9 @@
       "tactics": [
         "Defense Evasion"
       ],
-      "prevalence_score": 0.465,
+      "prevalence_score": 0.469,
       "actor_count": 38,
-      "campaign_count": 13
+      "campaign_count": 14
     },
     {
       "id": "T1572",
@@ -4267,8 +4267,8 @@
       "tactics": [
         "Command and Control"
       ],
-      "prevalence_score": 0.201,
-      "actor_count": 14,
+      "prevalence_score": 0.204,
+      "actor_count": 15,
       "campaign_count": 6
     },
     {
@@ -4277,8 +4277,8 @@
       "label": "T1105",
       "tactics": [],
       "prevalence_score": 1,
-      "actor_count": 85,
-      "campaign_count": 28
+      "actor_count": 86,
+      "campaign_count": 29
     },
     {
       "id": "T1036",
@@ -4287,7 +4287,7 @@
       "tactics": [
         "Defense Evasion"
       ],
-      "prevalence_score": 0.257,
+      "prevalence_score": 0.252,
       "actor_count": 20,
       "campaign_count": 7
     },
@@ -4320,7 +4320,7 @@
       "tactics": [
         "Collection"
       ],
-      "prevalence_score": 0.028,
+      "prevalence_score": 0.027,
       "actor_count": 4,
       "campaign_count": 0
     },
@@ -4331,7 +4331,7 @@
       "tactics": [
         "Credential Access"
       ],
-      "prevalence_score": 0.076,
+      "prevalence_score": 0.075,
       "actor_count": 4,
       "campaign_count": 3
     },
@@ -4353,16 +4353,16 @@
       "tactics": [
         "Discovery"
       ],
-      "prevalence_score": 0.569,
-      "actor_count": 55,
-      "campaign_count": 12
+      "prevalence_score": 0.599,
+      "actor_count": 57,
+      "campaign_count": 14
     },
     {
       "id": "T1550.001",
       "type": "technique",
       "label": "T1550.001",
       "tactics": [],
-      "prevalence_score": 0.028,
+      "prevalence_score": 0.027,
       "actor_count": 2,
       "campaign_count": 1
     },
@@ -4373,7 +4373,7 @@
       "tactics": [
         "Discovery"
       ],
-      "prevalence_score": 0.174,
+      "prevalence_score": 0.17,
       "actor_count": 16,
       "campaign_count": 4
     },
@@ -4384,18 +4384,18 @@
       "tactics": [
         "Exfiltration"
       ],
-      "prevalence_score": 0.09,
+      "prevalence_score": 0.102,
       "actor_count": 4,
-      "campaign_count": 3
+      "campaign_count": 4
     },
     {
       "id": "T1562.004",
       "type": "technique",
       "label": "T1562.004",
       "tactics": [],
-      "prevalence_score": 0.188,
-      "actor_count": 17,
-      "campaign_count": 4
+      "prevalence_score": 0,
+      "actor_count": 0,
+      "campaign_count": 0
     },
     {
       "id": "T1036.005",
@@ -4404,9 +4404,9 @@
       "tactics": [
         "Defense Evasion"
       ],
-      "prevalence_score": 0.604,
-      "actor_count": 59,
-      "campaign_count": 13
+      "prevalence_score": 0.639,
+      "actor_count": 61,
+      "campaign_count": 15
     },
     {
       "id": "T1564.006",
@@ -4426,7 +4426,7 @@
       "tactics": [
         "Credential Access"
       ],
-      "prevalence_score": 0.035,
+      "prevalence_score": 0.034,
       "actor_count": 2,
       "campaign_count": 1
     },
@@ -4446,7 +4446,7 @@
       "tactics": [
         "Initial Access"
       ],
-      "prevalence_score": 0.097,
+      "prevalence_score": 0.095,
       "actor_count": 9,
       "campaign_count": 2
     },
@@ -4457,7 +4457,7 @@
       "tactics": [
         "Defense Evasion"
       ],
-      "prevalence_score": 0.042,
+      "prevalence_score": 0.041,
       "actor_count": 6,
       "campaign_count": 0
     },
@@ -4468,9 +4468,9 @@
       "tactics": [
         "Command and Control"
       ],
-      "prevalence_score": 0.125,
+      "prevalence_score": 0.156,
       "actor_count": 16,
-      "campaign_count": 1
+      "campaign_count": 2
     },
     {
       "id": "T1203",
@@ -4479,7 +4479,7 @@
       "tactics": [
         "Execution"
       ],
-      "prevalence_score": 0.368,
+      "prevalence_score": 0.361,
       "actor_count": 41,
       "campaign_count": 5
     },
@@ -4491,7 +4491,7 @@
         "Defense Evasion",
         "Discovery"
       ],
-      "prevalence_score": 0.035,
+      "prevalence_score": 0.034,
       "actor_count": 3,
       "campaign_count": 1
     },
@@ -4522,7 +4522,7 @@
       "type": "technique",
       "label": "T1599",
       "tactics": [],
-      "prevalence_score": 0.028,
+      "prevalence_score": 0.02,
       "actor_count": 1,
       "campaign_count": 1
     },
@@ -4533,9 +4533,9 @@
       "tactics": [
         "Discovery"
       ],
-      "prevalence_score": 0.271,
+      "prevalence_score": 0.306,
       "actor_count": 32,
-      "campaign_count": 3
+      "campaign_count": 5
     },
     {
       "id": "T1059.005",
@@ -4544,9 +4544,9 @@
       "tactics": [
         "Execution"
       ],
-      "prevalence_score": 0.528,
-      "actor_count": 45,
-      "campaign_count": 15
+      "prevalence_score": 0.537,
+      "actor_count": 46,
+      "campaign_count": 16
     },
     {
       "id": "T1546.015",
@@ -4567,8 +4567,8 @@
       "tactics": [
         "Command and Control"
       ],
-      "prevalence_score": 0.167,
-      "actor_count": 14,
+      "prevalence_score": 0.163,
+      "actor_count": 15,
       "campaign_count": 4
     },
     {
@@ -4578,18 +4578,18 @@
       "tactics": [
         "Privilege Escalation"
       ],
-      "prevalence_score": 0.076,
-      "actor_count": 4,
-      "campaign_count": 2
+      "prevalence_score": 0.095,
+      "actor_count": 5,
+      "campaign_count": 3
     },
     {
       "id": "T1106",
       "type": "technique",
       "label": "T1106",
       "tactics": [],
-      "prevalence_score": 0.181,
-      "actor_count": 18,
-      "campaign_count": 4
+      "prevalence_score": 0.211,
+      "actor_count": 20,
+      "campaign_count": 5
     },
     {
       "id": "T1555",
@@ -4598,9 +4598,9 @@
       "tactics": [
         "Credential Access"
       ],
-      "prevalence_score": 0.097,
+      "prevalence_score": 0.129,
       "actor_count": 12,
-      "campaign_count": 1
+      "campaign_count": 2
     },
     {
       "id": "T1119",
@@ -4609,9 +4609,9 @@
       "tactics": [
         "Collection"
       ],
-      "prevalence_score": 0.229,
-      "actor_count": 20,
-      "campaign_count": 5
+      "prevalence_score": 0.245,
+      "actor_count": 21,
+      "campaign_count": 6
     },
     {
       "id": "T1195.001",
@@ -4631,9 +4631,9 @@
       "tactics": [
         "Execution"
       ],
-      "prevalence_score": 0.16,
+      "prevalence_score": 0.17,
       "actor_count": 10,
-      "campaign_count": 5
+      "campaign_count": 6
     },
     {
       "id": "T1553.005",
@@ -4642,7 +4642,7 @@
       "tactics": [
         "Defense Evasion"
       ],
-      "prevalence_score": 0.021,
+      "prevalence_score": 0.02,
       "actor_count": 3,
       "campaign_count": 0
     },
@@ -4662,9 +4662,9 @@
       "tactics": [
         "Credential Access"
       ],
-      "prevalence_score": 0.146,
+      "prevalence_score": 0.156,
       "actor_count": 14,
-      "campaign_count": 2
+      "campaign_count": 3
     },
     {
       "id": "T1027.004",
@@ -4673,7 +4673,7 @@
       "tactics": [
         "Defense Evasion"
       ],
-      "prevalence_score": 0.028,
+      "prevalence_score": 0.027,
       "actor_count": 4,
       "campaign_count": 0
     },
@@ -4684,8 +4684,8 @@
       "tactics": [
         "Command and Control"
       ],
-      "prevalence_score": 0.701,
-      "actor_count": 56,
+      "prevalence_score": 0.694,
+      "actor_count": 57,
       "campaign_count": 21
     },
     {
@@ -4695,8 +4695,8 @@
       "tactics": [
         "Exfiltration"
       ],
-      "prevalence_score": 0.333,
-      "actor_count": 25,
+      "prevalence_score": 0.34,
+      "actor_count": 27,
       "campaign_count": 10
     },
     {
@@ -4707,8 +4707,8 @@
         "Persistence",
         "Privilege Escalation"
       ],
-      "prevalence_score": 0.438,
-      "actor_count": 55,
+      "prevalence_score": 0.435,
+      "actor_count": 56,
       "campaign_count": 3
     },
     {
@@ -4716,7 +4716,7 @@
       "type": "technique",
       "label": "T1136",
       "tactics": [],
-      "prevalence_score": 0.035,
+      "prevalence_score": 0.034,
       "actor_count": 3,
       "campaign_count": 1
     },
@@ -4727,7 +4727,7 @@
       "tactics": [
         "Defense Evasion"
       ],
-      "prevalence_score": 0.299,
+      "prevalence_score": 0.293,
       "actor_count": 26,
       "campaign_count": 8
     },
@@ -4747,7 +4747,7 @@
       "tactics": [
         "Collection"
       ],
-      "prevalence_score": 0.035,
+      "prevalence_score": 0.034,
       "actor_count": 5,
       "campaign_count": 0
     },
@@ -4758,8 +4758,8 @@
       "tactics": [
         "Exfiltration"
       ],
-      "prevalence_score": 0.104,
-      "actor_count": 6,
+      "prevalence_score": 0.109,
+      "actor_count": 7,
       "campaign_count": 3
     },
     {
@@ -4789,9 +4789,9 @@
       "tactics": [
         "Initial Access"
       ],
-      "prevalence_score": 0.097,
-      "actor_count": 9,
-      "campaign_count": 2
+      "prevalence_score": 0.129,
+      "actor_count": 10,
+      "campaign_count": 3
     },
     {
       "id": "T1053.005",
@@ -4802,7 +4802,7 @@
         "Persistence",
         "Privilege Escalation"
       ],
-      "prevalence_score": 0.563,
+      "prevalence_score": 0.551,
       "actor_count": 54,
       "campaign_count": 12
     },
@@ -4813,7 +4813,7 @@
       "tactics": [
         "Initial Access"
       ],
-      "prevalence_score": 0.049,
+      "prevalence_score": 0.048,
       "actor_count": 4,
       "campaign_count": 1
     },
@@ -4824,7 +4824,7 @@
       "tactics": [
         "Resource Development"
       ],
-      "prevalence_score": 0.083,
+      "prevalence_score": 0.075,
       "actor_count": 4,
       "campaign_count": 3
     },
@@ -4857,8 +4857,8 @@
       "tactics": [
         "Resource Development"
       ],
-      "prevalence_score": 0.507,
-      "actor_count": 40,
+      "prevalence_score": 0.524,
+      "actor_count": 44,
       "campaign_count": 15
     },
     {
@@ -4868,9 +4868,9 @@
       "tactics": [
         "Resource Development"
       ],
-      "prevalence_score": 0.104,
+      "prevalence_score": 0.129,
       "actor_count": 6,
-      "campaign_count": 4
+      "campaign_count": 5
     },
     {
       "id": "T1534",
@@ -4879,8 +4879,8 @@
       "tactics": [
         "Lateral Movement"
       ],
-      "prevalence_score": 0.042,
-      "actor_count": 4,
+      "prevalence_score": 0.054,
+      "actor_count": 6,
       "campaign_count": 1
     },
     {
@@ -5375,7 +5375,36 @@
           "source": "Kaspersky WIRTE November 2021",
           "url": "https://securelist.com/wirtes-campaign-in-the-middle-east-living-off-the-land-since-at-least-2019/105044"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1059.001",
+        "T1571",
+        "T1059.005",
+        "T1114.001",
+        "T1204.002",
+        "T1608.001",
+        "T1140",
+        "T1566.001",
+        "T1059.003",
+        "T1204.001",
+        "T1036.005",
+        "T1074.001",
+        "T1588.002",
+        "T1586.002",
+        "T1041",
+        "T1583.001",
+        "T1071.001",
+        "T1574.001",
+        "T1497.001",
+        "T1566.002",
+        "T1684.001",
+        "T1106",
+        "T1218.010",
+        "T1105",
+        "T1027.015",
+        "T1027.010"
+      ],
+      "mitre_technique_count": 26
     },
     {
       "id": "actor:G0035",
@@ -5408,7 +5437,66 @@
           "source": "DOJ Russia Targeting Critical Infrastructure March 2022",
           "url": "https://www.justice.gov/opa/pr/four-russian-government-employees-charged-two-historical-hacking-campaigns-targeting-critical"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1560",
+        "T1113",
+        "T1564.002",
+        "T1505.003",
+        "T1204.002",
+        "T1591.002",
+        "T1078",
+        "T1016",
+        "T1584.004",
+        "T1083",
+        "T1136.001",
+        "T1221",
+        "T1203",
+        "T1110.002",
+        "T1608.004",
+        "T1012",
+        "T1566.001",
+        "T1189",
+        "T1583.001",
+        "T1003.002",
+        "T1598.002",
+        "T1005",
+        "T1070.004",
+        "T1059",
+        "T1685.005",
+        "T1686",
+        "T1112",
+        "T1588.002",
+        "T1195.002",
+        "T1036.010",
+        "T1003.003",
+        "T1098.007",
+        "T1583.003",
+        "T1059.003",
+        "T1071.002",
+        "T1598.003",
+        "T1053.005",
+        "T1069.002",
+        "T1114.002",
+        "T1595.002",
+        "T1547.001",
+        "T1105",
+        "T1133",
+        "T1003.004",
+        "T1190",
+        "T1135",
+        "T1110",
+        "T1021.001",
+        "T1187",
+        "T1033",
+        "T1074.001",
+        "T1059.001",
+        "T1210",
+        "T1059.006",
+        "T1018",
+        "T1087.002"
+      ],
+      "mitre_technique_count": 56
     },
     {
       "id": "actor:G0117",
@@ -5437,7 +5525,51 @@
           "source": "ClearSky Pay2Kitten December 2020",
           "url": "https://www.clearskysec.com/wp-content/uploads/2020/12/Pay2Kitten.pdf"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1105",
+        "T1059",
+        "T1530",
+        "T1018",
+        "T1110",
+        "T1210",
+        "T1136.001",
+        "T1560.001",
+        "T1027.010",
+        "T1005",
+        "T1585",
+        "T1021.005",
+        "T1552.001",
+        "T1217",
+        "T1059.003",
+        "T1027.013",
+        "T1213.005",
+        "T1021.002",
+        "T1190",
+        "T1555.005",
+        "T1003.003",
+        "T1087.001",
+        "T1087.002",
+        "T1021.004",
+        "T1505.003",
+        "T1053.005",
+        "T1036.004",
+        "T1003.001",
+        "T1090",
+        "T1012",
+        "T1572",
+        "T1021.001",
+        "T1102",
+        "T1039",
+        "T1078",
+        "T1046",
+        "T1546.008",
+        "T1585.001",
+        "T1036.005",
+        "T1059.001",
+        "T1083"
+      ],
+      "mitre_technique_count": 41
     },
     {
       "id": "actor:G0098",
@@ -5462,7 +5594,24 @@
           "source": "IronNet BlackTech Oct 2021",
           "url": "https://www.ironnet.com/blog/china-cyber-attacks-the-current-threat-landscape"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1566.002",
+        "T1204.001",
+        "T1588.003",
+        "T1046",
+        "T1588.002",
+        "T1190",
+        "T1021.004",
+        "T1106",
+        "T1203",
+        "T1566.001",
+        "T1036.002",
+        "T1574.001",
+        "T1204.002",
+        "T1588.004"
+      ],
+      "mitre_technique_count": 14
     },
     {
       "id": "actor:G1044",
@@ -5485,7 +5634,42 @@
           "source": "Mandiant APT42-untangling",
           "url": "https://cloud.google.com/blog/topics/threat-intelligence/untangling-iran-apt42-operations"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1059.001",
+        "T1518.001",
+        "T1036.005",
+        "T1070",
+        "T1056",
+        "T1583.001",
+        "T1132.001",
+        "T1530",
+        "T1059.005",
+        "T1113",
+        "T1684.001",
+        "T1016",
+        "T1087.001",
+        "T1585.002",
+        "T1053.005",
+        "T1682",
+        "T1070.008",
+        "T1056.001",
+        "T1102",
+        "T1082",
+        "T1071.001",
+        "T1583.003",
+        "T1573.002",
+        "T1047",
+        "T1539",
+        "T1608.001",
+        "T1588.002",
+        "T1111",
+        "T1547",
+        "T1112",
+        "T1566.002",
+        "T1555.003"
+      ],
+      "mitre_technique_count": 32
     },
     {
       "id": "actor:G1026",
@@ -5504,7 +5688,22 @@
           "source": "SCILabs Malteiro 2021",
           "url": "https://blog.scilabs.mx/en/cyber-threat-profile-malteiro/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1204.002",
+        "T1555.003",
+        "T1055.001",
+        "T1657",
+        "T1082",
+        "T1059.005",
+        "T1027.013",
+        "T1518.001",
+        "T1566.001",
+        "T1555",
+        "T1140",
+        "T1614.001"
+      ],
+      "mitre_technique_count": 12
     },
     {
       "id": "actor:G1040",
@@ -5527,7 +5726,36 @@
           "source": "Trend Micro Ransomware Spotlight Play July 2023",
           "url": "https://www.trendmicro.com/vinfo/us/security/news/ransomware-spotlight/ransomware-spotlight-play"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1030",
+        "T1016",
+        "T1048",
+        "T1070.004",
+        "T1059.003",
+        "T1059.001",
+        "T1560.001",
+        "T1018",
+        "T1057",
+        "T1027.010",
+        "T1587.001",
+        "T1078.003",
+        "T1021.002",
+        "T1685.005",
+        "T1078",
+        "T1105",
+        "T1078.002",
+        "T1082",
+        "T1083",
+        "T1518.001",
+        "T1133",
+        "T1588.002",
+        "T1190",
+        "T1003.001",
+        "T1657",
+        "T1685"
+      ],
+      "mitre_technique_count": 26
     },
     {
       "id": "actor:G0040",
@@ -5556,7 +5784,51 @@
           "source": "Operation Hangover May 2013",
           "url": "https://web.archive.org/web/20140424084220/http://enterprise-manage.norman.c.bitbit.net/resources/files/Unveiling_an_Indian_Cyberattack_Infrastructure.pdf"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1059.005",
+        "T1560",
+        "T1083",
+        "T1553.002",
+        "T1574.001",
+        "T1112",
+        "T1197",
+        "T1027.005",
+        "T1555.003",
+        "T1053.005",
+        "T1132.001",
+        "T1055.012",
+        "T1021.001",
+        "T1547.001",
+        "T1074.001",
+        "T1036.005",
+        "T1566.001",
+        "T1027.010",
+        "T1588.002",
+        "T1189",
+        "T1204.001",
+        "T1518.001",
+        "T1203",
+        "T1027.002",
+        "T1033",
+        "T1005",
+        "T1204.002",
+        "T1587.002",
+        "T1070.004",
+        "T1119",
+        "T1102.001",
+        "T1680",
+        "T1059.003",
+        "T1027.001",
+        "T1548.002",
+        "T1059.001",
+        "T1598.003",
+        "T1105",
+        "T1566.002",
+        "T1082",
+        "T1559.002"
+      ],
+      "mitre_technique_count": 41
     },
     {
       "id": "actor:G1021",
@@ -5583,7 +5855,29 @@
           "source": "SecureWorks BRONZE STARLIGHT Ransomware Operations June 2022",
           "url": "https://www.secureworks.com/research/bronze-starlight-ransomware-operations-use-hui-loader"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1047",
+        "T1574.001",
+        "T1105",
+        "T1484.001",
+        "T1567.002",
+        "T1588.002",
+        "T1078",
+        "T1657",
+        "T1090",
+        "T1078.002",
+        "T1190",
+        "T1059.006",
+        "T1140",
+        "T1021.002",
+        "T1572",
+        "T1080",
+        "T1543.003",
+        "T1059.001",
+        "T1059.003"
+      ],
+      "mitre_technique_count": 19
     },
     {
       "id": "actor:G1051",
@@ -5606,7 +5900,67 @@
           "source": "Intel471 Medusa Ransomware May 2025",
           "url": "https://www.intel471.com/blog/threat-hunting-case-study-medusa-ransomware"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1490",
+        "T1047",
+        "T1570",
+        "T1543.003",
+        "T1489",
+        "T1106",
+        "T1583.006",
+        "T1608.002",
+        "T1027.010",
+        "T1083",
+        "T1112",
+        "T1588.002",
+        "T1087.001",
+        "T1585.001",
+        "T1567.002",
+        "T1070.003",
+        "T1650",
+        "T1071.001",
+        "T1686",
+        "T1564.003",
+        "T1135",
+        "T1090.003",
+        "T1190",
+        "T1218.014",
+        "T1585.002",
+        "T1078",
+        "T1105",
+        "T1057",
+        "T1559.001",
+        "T1219",
+        "T1003.003",
+        "T1018",
+        "T1569.002",
+        "T1003.001",
+        "T1573.002",
+        "T1486",
+        "T1059.001",
+        "T1136.002",
+        "T1657",
+        "T1652",
+        "T1690",
+        "T1027.002",
+        "T1070.004",
+        "T1059.003",
+        "T1069.002",
+        "T1553.002",
+        "T1505.003",
+        "T1529",
+        "T1518.001",
+        "T1016",
+        "T1685",
+        "T1046",
+        "T1033",
+        "T1082",
+        "T1021.001",
+        "T1072",
+        "T1548.002"
+      ],
+      "mitre_technique_count": 57
     },
     {
       "id": "actor:G0080",
@@ -5633,7 +5987,44 @@
           "source": "Secureworks GOLD KINGSWOOD September 2018",
           "url": "https://www.secureworks.com/blog/cybercriminals-increasingly-trying-to-ensnare-the-big-financial-fish"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1566.001",
+        "T1105",
+        "T1027.010",
+        "T1053.005",
+        "T1218.008",
+        "T1195.002",
+        "T1518.001",
+        "T1559.002",
+        "T1204.002",
+        "T1068",
+        "T1218.003",
+        "T1218.010",
+        "T1055",
+        "T1059.001",
+        "T1588.002",
+        "T1021.001",
+        "T1059.005",
+        "T1203",
+        "T1070.004",
+        "T1548.002",
+        "T1220",
+        "T1071.004",
+        "T1059.007",
+        "T1566.002",
+        "T1204.001",
+        "T1059.003",
+        "T1071.001",
+        "T1547.001",
+        "T1572",
+        "T1573.002",
+        "T1543.003",
+        "T1219",
+        "T1046",
+        "T1037.001"
+      ],
+      "mitre_technique_count": 34
     },
     {
       "id": "actor:G0143",
@@ -5652,7 +6043,45 @@
           "source": "CrowdStrike AQUATIC PANDA December 2021",
           "url": "https://www.crowdstrike.com/blog/overwatch-exposes-aquatic-panda-in-possession-of-log-4-shell-exploit-tools/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1027.010",
+        "T1087",
+        "T1070.004",
+        "T1059.004",
+        "T1021.002",
+        "T1036.004",
+        "T1574.006",
+        "T1070.003",
+        "T1543.003",
+        "T1550.002",
+        "T1574.001",
+        "T1021.001",
+        "T1005",
+        "T1105",
+        "T1007",
+        "T1654",
+        "T1021.004",
+        "T1112",
+        "T1036.005",
+        "T1588.001",
+        "T1518.001",
+        "T1059.003",
+        "T1685",
+        "T1033",
+        "T1047",
+        "T1588.002",
+        "T1595.002",
+        "T1003.001",
+        "T1021",
+        "T1082",
+        "T1218.011",
+        "T1685.005",
+        "T1078.002",
+        "T1560.001",
+        "T1059.001"
+      ],
+      "mitre_technique_count": 35
     },
     {
       "id": "actor:G0069",
@@ -5683,7 +6112,78 @@
           "source": "ClearSky MuddyWater June 2019",
           "url": "https://www.clearskysec.com/wp-content/uploads/2019/06/Clearsky-Iranian-APT-group-%E2%80%98MuddyWater%E2%80%99-Adds-Exploits-to-Their-Arsenal.pdf"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1566.002",
+        "T1137.001",
+        "T1574.001",
+        "T1588.002",
+        "T1218.005",
+        "T1204.004",
+        "T1047",
+        "T1534",
+        "T1003.004",
+        "T1566.001",
+        "T1583.001",
+        "T1590.004",
+        "T1559.001",
+        "T1571",
+        "T1059.003",
+        "T1588.001",
+        "T1218.003",
+        "T1036.005",
+        "T1087.002",
+        "T1059.007",
+        "T1583.006",
+        "T1059.005",
+        "T1016",
+        "T1547.001",
+        "T1140",
+        "T1559.002",
+        "T1027.010",
+        "T1027.004",
+        "T1518.001",
+        "T1074.001",
+        "T1113",
+        "T1071.001",
+        "T1685",
+        "T1518",
+        "T1083",
+        "T1548.002",
+        "T1105",
+        "T1573.001",
+        "T1567.002",
+        "T1555.003",
+        "T1566",
+        "T1560.001",
+        "T1684.001",
+        "T1059.006",
+        "T1049",
+        "T1082",
+        "T1555",
+        "T1057",
+        "T1132.001",
+        "T1104",
+        "T1090",
+        "T1204.001",
+        "T1027.003",
+        "T1003.001",
+        "T1053.005",
+        "T1090.002",
+        "T1204.002",
+        "T1033",
+        "T1219.002",
+        "T1041",
+        "T1059.001",
+        "T1102.002",
+        "T1218.011",
+        "T1552.001",
+        "T1190",
+        "T1210",
+        "T1203",
+        "T1003.005"
+      ],
+      "mitre_technique_count": 68
     },
     {
       "id": "actor:G0082",
@@ -5713,7 +6213,66 @@
           "source": "DOJ North Korea Indictment Feb 2021",
           "url": "https://www.justice.gov/opa/pr/three-north-korean-military-hackers-indicted-wide-ranging-scheme-commit-cyberattacks-and"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1486",
+        "T1055",
+        "T1033",
+        "T1112",
+        "T1049",
+        "T1070.004",
+        "T1036.006",
+        "T1056.001",
+        "T1518.001",
+        "T1543.003",
+        "T1548.002",
+        "T1189",
+        "T1083",
+        "T1059.003",
+        "T1140",
+        "T1059.005",
+        "T1529",
+        "T1204.001",
+        "T1071.001",
+        "T1105",
+        "T1685",
+        "T1027.002",
+        "T1217",
+        "T1685.005",
+        "T1218.005",
+        "T1070.006",
+        "T1686",
+        "T1485",
+        "T1110",
+        "T1135",
+        "T1553.005",
+        "T1082",
+        "T1565.002",
+        "T1686.002",
+        "T1561.002",
+        "T1036.003",
+        "T1690",
+        "T1053.005",
+        "T1588.002",
+        "T1505.003",
+        "T1115",
+        "T1218.011",
+        "T1565.003",
+        "T1583.001",
+        "T1106",
+        "T1218.001",
+        "T1204.002",
+        "T1565.001",
+        "T1005",
+        "T1059.001",
+        "T1053.003",
+        "T1566.001",
+        "T1218.007",
+        "T1569.002",
+        "T1480.002",
+        "T1057"
+      ],
+      "mitre_technique_count": 56
     },
     {
       "id": "actor:G0060",
@@ -5739,7 +6298,50 @@
           "source": "Secureworks BRONZE BUTLER Oct 2017",
           "url": "https://www.secureworks.com/research/bronze-butler-targets-japanese-businesses"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1140",
+        "T1005",
+        "T1007",
+        "T1070.004",
+        "T1059.006",
+        "T1566.001",
+        "T1036.005",
+        "T1113",
+        "T1036",
+        "T1588.002",
+        "T1548.002",
+        "T1059.005",
+        "T1132.001",
+        "T1518",
+        "T1071.001",
+        "T1039",
+        "T1685",
+        "T1124",
+        "T1189",
+        "T1574.001",
+        "T1003.001",
+        "T1203",
+        "T1018",
+        "T1560.001",
+        "T1053.002",
+        "T1102.001",
+        "T1053.005",
+        "T1080",
+        "T1204.002",
+        "T1027.001",
+        "T1547.001",
+        "T1059.001",
+        "T1059.003",
+        "T1105",
+        "T1550.003",
+        "T1573.001",
+        "T1027.003",
+        "T1087.002",
+        "T1083",
+        "T1036.002"
+      ],
+      "mitre_technique_count": 40
     },
     {
       "id": "actor:G1023",
@@ -5768,7 +6370,39 @@
           "source": "Mandiant Advanced Persistent Threats",
           "url": "https://www.mandiant.com/resources/insights/apt-groups"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1059.001",
+        "T1136.001",
+        "T1070.006",
+        "T1021.001",
+        "T1654",
+        "T1685",
+        "T1583.005",
+        "T1074.001",
+        "T1554",
+        "T1056.001",
+        "T1078.004",
+        "T1560.001",
+        "T1003.001",
+        "T1003.002",
+        "T1070.004",
+        "T1098.007",
+        "T1057",
+        "T1070",
+        "T1053.003",
+        "T1059.003",
+        "T1021.004",
+        "T1055",
+        "T1505.003",
+        "T1049",
+        "T1078.002",
+        "T1036.005",
+        "T1070.003",
+        "T1083",
+        "T1190"
+      ],
+      "mitre_technique_count": 29
     },
     {
       "id": "actor:G0135",
@@ -5787,7 +6421,25 @@
           "source": "ESET BackdoorDiplomacy Jun 2021",
           "url": "https://www.welivesecurity.com/2021/06/10/backdoordiplomacy-upgrading-quarian-turian/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1027",
+        "T1505.003",
+        "T1190",
+        "T1588.002",
+        "T1036.005",
+        "T1055.001",
+        "T1105",
+        "T1074.001",
+        "T1046",
+        "T1049",
+        "T1120",
+        "T1095",
+        "T1574.001",
+        "T1588.001",
+        "T1036.004"
+      ],
+      "mitre_technique_count": 15
     },
     {
       "id": "actor:G0139",
@@ -5810,7 +6462,66 @@
           "source": "Cado Security TeamTNT Worm August 2020",
           "url": "https://www.cadosecurity.com/team-tnt-the-first-crypto-mining-worm-to-steal-aws-credentials/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1680",
+        "T1686",
+        "T1133",
+        "T1219",
+        "T1569.003",
+        "T1036.005",
+        "T1222.002",
+        "T1070.004",
+        "T1609",
+        "T1059.004",
+        "T1547.001",
+        "T1543.002",
+        "T1136.001",
+        "T1007",
+        "T1049",
+        "T1543.003",
+        "T1608.001",
+        "T1059.003",
+        "T1610",
+        "T1613",
+        "T1048",
+        "T1057",
+        "T1059.001",
+        "T1552.005",
+        "T1070.003",
+        "T1074.001",
+        "T1595.002",
+        "T1059.013",
+        "T1027.002",
+        "T1204.003",
+        "T1014",
+        "T1552.004",
+        "T1611",
+        "T1595.001",
+        "T1105",
+        "T1518.001",
+        "T1496.001",
+        "T1083",
+        "T1021.004",
+        "T1036",
+        "T1140",
+        "T1082",
+        "T1027.013",
+        "T1016",
+        "T1046",
+        "T1120",
+        "T1685",
+        "T1071",
+        "T1098.004",
+        "T1583.001",
+        "T1059.009",
+        "T1071.001",
+        "T1552.001",
+        "T1685.006",
+        "T1587.001",
+        "T1102"
+      ],
+      "mitre_technique_count": 56
     },
     {
       "id": "actor:G0094",
@@ -5841,7 +6552,140 @@
           "source": "EST Kimsuky April 2019",
           "url": "https://blog.alyac.co.kr/2234"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1678",
+        "T1005",
+        "T1587.001",
+        "T1583",
+        "T1021.001",
+        "T1585.002",
+        "T1566",
+        "T1685",
+        "T1204.002",
+        "T1040",
+        "T1566.002",
+        "T1056.003",
+        "T1539",
+        "T1588.002",
+        "T1078.003",
+        "T1020",
+        "T1140",
+        "T1204.004",
+        "T1027.010",
+        "T1608.001",
+        "T1105",
+        "T1587",
+        "T1567.002",
+        "T1598",
+        "T1684.001",
+        "T1553.002",
+        "T1036.004",
+        "T1115",
+        "T1559.001",
+        "T1102.002",
+        "T1489",
+        "T1217",
+        "T1204.001",
+        "T1534",
+        "T1190",
+        "T1593.001",
+        "T1027.007",
+        "T1027.013",
+        "T1585",
+        "T1589.003",
+        "T1218.011",
+        "T1564.002",
+        "T1176.001",
+        "T1070.004",
+        "T1219.002",
+        "T1583.004",
+        "T1552.004",
+        "T1620",
+        "T1111",
+        "T1594",
+        "T1059.003",
+        "T1583.001",
+        "T1012",
+        "T1591",
+        "T1071.001",
+        "T1585.001",
+        "T1657",
+        "T1136.001",
+        "T1007",
+        "T1568",
+        "T1027.001",
+        "T1586.002",
+        "T1560.003",
+        "T1070.006",
+        "T1598.003",
+        "T1027.012",
+        "T1596",
+        "T1027.016",
+        "T1550.002",
+        "T1557",
+        "T1518.001",
+        "T1218.005",
+        "T1041",
+        "T1185",
+        "T1564.011",
+        "T1686",
+        "T1133",
+        "T1082",
+        "T1106",
+        "T1584.001",
+        "T1589.002",
+        "T1059.007",
+        "T1497.001",
+        "T1027",
+        "T1074.001",
+        "T1071.003",
+        "T1056.001",
+        "T1027.002",
+        "T1552.001",
+        "T1102.001",
+        "T1560.001",
+        "T1016",
+        "T1555.003",
+        "T1055.001",
+        "T1546.001",
+        "T1566.001",
+        "T1057",
+        "T1055",
+        "T1113",
+        "T1112",
+        "T1059.001",
+        "T1588.005",
+        "T1218.010",
+        "T1547.001",
+        "T1543.003",
+        "T1583.006",
+        "T1682",
+        "T1083",
+        "T1564.003",
+        "T1027.015",
+        "T1053.005",
+        "T1033",
+        "T1480.002",
+        "T1036.005",
+        "T1132.002",
+        "T1593.002",
+        "T1036.007",
+        "T1055.012",
+        "T1588.003",
+        "T1114.003",
+        "T1071.002",
+        "T1003.001",
+        "T1205",
+        "T1059.005",
+        "T1098.007",
+        "T1059.006",
+        "T1505.003",
+        "T1680",
+        "T1114.002",
+        "T1124"
+      ],
+      "mitre_technique_count": 130
     },
     {
       "id": "actor:G1014",
@@ -5864,7 +6708,38 @@
           "source": "Kaspersky LuminousMoth July 2021",
           "url": "https://securelist.com/apt-luminousmoth/103332/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1539",
+        "T1567.002",
+        "T1566.002",
+        "T1588.001",
+        "T1030",
+        "T1564.001",
+        "T1608.001",
+        "T1091",
+        "T1041",
+        "T1608.004",
+        "T1608.005",
+        "T1587.001",
+        "T1071.001",
+        "T1105",
+        "T1557.002",
+        "T1588.002",
+        "T1005",
+        "T1204.001",
+        "T1574.001",
+        "T1547.001",
+        "T1083",
+        "T1033",
+        "T1560",
+        "T1036.005",
+        "T1112",
+        "T1053.005",
+        "T1588.004",
+        "T1553.002"
+      ],
+      "mitre_technique_count": 28
     },
     {
       "id": "actor:G1002",
@@ -5889,7 +6764,26 @@
           "source": "Cisco Talos Bitter Bangladesh May 2022",
           "url": "https://blog.talosintelligence.com/2022/05/bitter-apt-adds-bangladesh-to-their.html"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1105",
+        "T1071.001",
+        "T1588.002",
+        "T1568",
+        "T1566.001",
+        "T1204.002",
+        "T1027.013",
+        "T1573",
+        "T1068",
+        "T1036.004",
+        "T1608.001",
+        "T1559.002",
+        "T1203",
+        "T1583.001",
+        "T1053.005",
+        "T1095"
+      ],
+      "mitre_technique_count": 16
     },
     {
       "id": "actor:G0045",
@@ -5921,7 +6815,56 @@
           "source": "SecureWorks BRONZE STARLIGHT Ransomware Operations June 2022",
           "url": "https://www.secureworks.com/research/bronze-starlight-ransomware-operations-use-hui-loader"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1018",
+        "T1047",
+        "T1036",
+        "T1070.004",
+        "T1046",
+        "T1049",
+        "T1560.001",
+        "T1566.001",
+        "T1105",
+        "T1588.002",
+        "T1204.002",
+        "T1090.002",
+        "T1078",
+        "T1016",
+        "T1568.001",
+        "T1036.003",
+        "T1056.001",
+        "T1087.002",
+        "T1003.003",
+        "T1218.004",
+        "T1106",
+        "T1003.002",
+        "T1027.013",
+        "T1199",
+        "T1190",
+        "T1074.002",
+        "T1070.003",
+        "T1140",
+        "T1553.002",
+        "T1053.005",
+        "T1055.012",
+        "T1074.001",
+        "T1021.001",
+        "T1039",
+        "T1003.004",
+        "T1083",
+        "T1036.005",
+        "T1560",
+        "T1059.003",
+        "T1005",
+        "T1059.001",
+        "T1210",
+        "T1021.004",
+        "T1119",
+        "T1583.001",
+        "T1574.001"
+      ],
+      "mitre_technique_count": 46
     },
     {
       "id": "actor:G0059",
@@ -5953,7 +6896,88 @@
           "source": "Microsoft Phosphorus Oct 2020",
           "url": "https://blogs.microsoft.com/on-the-issues/2020/10/28/cyberattacks-phosphorus-t20-munich-security-conference/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1056.001",
+        "T1567",
+        "T1589.001",
+        "T1547.001",
+        "T1059.001",
+        "T1016.002",
+        "T1588.002",
+        "T1584.001",
+        "T1059.003",
+        "T1572",
+        "T1585.002",
+        "T1591.001",
+        "T1071",
+        "T1071.001",
+        "T1486",
+        "T1016.001",
+        "T1586.002",
+        "T1053.005",
+        "T1592.002",
+        "T1021.001",
+        "T1087.003",
+        "T1105",
+        "T1190",
+        "T1204.002",
+        "T1218.011",
+        "T1027.010",
+        "T1046",
+        "T1590.005",
+        "T1113",
+        "T1573",
+        "T1059.005",
+        "T1685.001",
+        "T1595.002",
+        "T1036.010",
+        "T1589.002",
+        "T1204.001",
+        "T1102.002",
+        "T1033",
+        "T1098.002",
+        "T1070.004",
+        "T1027.013",
+        "T1566.002",
+        "T1078.001",
+        "T1083",
+        "T1016",
+        "T1036.005",
+        "T1098.007",
+        "T1598.003",
+        "T1049",
+        "T1114",
+        "T1003.001",
+        "T1570",
+        "T1136.001",
+        "T1057",
+        "T1114.002",
+        "T1571",
+        "T1686.003",
+        "T1070.003",
+        "T1082",
+        "T1114.001",
+        "T1505.003",
+        "T1090",
+        "T1036.004",
+        "T1583.001",
+        "T1018",
+        "T1112",
+        "T1482",
+        "T1589",
+        "T1078.002",
+        "T1566.003",
+        "T1560.001",
+        "T1585.001",
+        "T1564.003",
+        "T1005",
+        "T1047",
+        "T1583.006",
+        "T1685",
+        "T1189"
+      ],
+      "mitre_technique_count": 78
     },
     {
       "id": "actor:G0073",
@@ -5981,7 +7005,31 @@
           "source": "Dark Reading Codoso Feb 2015",
           "url": "https://www.darkreading.com/attacks-breaches/chinese-hacking-group-codoso-team-uses-forbescom-as-watering-hole-/d/d-id/1319059"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1547.001",
+        "T1059.001",
+        "T1564.003",
+        "T1016",
+        "T1033",
+        "T1218.011",
+        "T1112",
+        "T1189",
+        "T1543.003",
+        "T1071.001",
+        "T1059",
+        "T1027.013",
+        "T1566.001",
+        "T1204.002",
+        "T1082",
+        "T1132.001",
+        "T1588.002",
+        "T1574.001",
+        "T1218.010",
+        "T1140",
+        "T1027.010"
+      ],
+      "mitre_technique_count": 21
     },
     {
       "id": "actor:G0105",
@@ -6000,7 +7048,20 @@
           "source": "Securelist DarkVishnya Dec 2018",
           "url": "https://securelist.com/darkvishnya/89169/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1200",
+        "T1588.002",
+        "T1543.003",
+        "T1046",
+        "T1135",
+        "T1110",
+        "T1219",
+        "T1059.001",
+        "T1040",
+        "T1571"
+      ],
+      "mitre_technique_count": 10
     },
     {
       "id": "actor:G0067",
@@ -6030,7 +7091,39 @@
           "source": "CrowdStrike Richochet Chollima September 2021",
           "url": "https://www.crowdstrike.com/adversaries/ricochet-chollima/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1547.001",
+        "T1120",
+        "T1059.006",
+        "T1105",
+        "T1071.001",
+        "T1027.003",
+        "T1102.002",
+        "T1082",
+        "T1204.002",
+        "T1036.001",
+        "T1548.002",
+        "T1033",
+        "T1555.003",
+        "T1529",
+        "T1005",
+        "T1559.002",
+        "T1106",
+        "T1203",
+        "T1055",
+        "T1027",
+        "T1189",
+        "T1057",
+        "T1059",
+        "T1059.003",
+        "T1566.001",
+        "T1123",
+        "T1059.005",
+        "T1053.005",
+        "T1561.002"
+      ],
+      "mitre_technique_count": 29
     },
     {
       "id": "actor:G0125",
@@ -6056,7 +7149,54 @@
           "source": "Microsoft Threat Actor Naming July 2023",
           "url": "https://learn.microsoft.com/en-us/microsoft-365/security/intelligence/microsoft-threat-actor-naming?view=o365-worldwide"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1592.004",
+        "T1110.003",
+        "T1105",
+        "T1583.006",
+        "T1560.001",
+        "T1005",
+        "T1583.005",
+        "T1033",
+        "T1213.002",
+        "T1068",
+        "T1584.005",
+        "T1059.003",
+        "T1057",
+        "T1003.001",
+        "T1530",
+        "T1119",
+        "T1590",
+        "T1505.003",
+        "T1589.002",
+        "T1555.006",
+        "T1593.003",
+        "T1567.002",
+        "T1114.002",
+        "T1218.011",
+        "T1078.003",
+        "T1059.001",
+        "T1564.001",
+        "T1016.001",
+        "T1016",
+        "T1590.005",
+        "T1199",
+        "T1078.004",
+        "T1083",
+        "T1003.003",
+        "T1098",
+        "T1136.002",
+        "T1071.001",
+        "T1018",
+        "T1550.001",
+        "T1685.005",
+        "T1190",
+        "T1095",
+        "T1132.001",
+        "T1583.003"
+      ],
+      "mitre_technique_count": 44
     },
     {
       "id": "actor:G0096",
@@ -6083,7 +7223,92 @@
           "source": "FireEye APT41 2019",
           "url": "https://www.mandiant.com/sites/default/files/2022-02/rt-apt41-dual-operation.pdf"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1078",
+        "T1082",
+        "T1195.002",
+        "T1069",
+        "T1595.003",
+        "T1059.001",
+        "T1014",
+        "T1087.002",
+        "T1555.003",
+        "T1036.005",
+        "T1543.003",
+        "T1071.002",
+        "T1018",
+        "T1027.002",
+        "T1553.002",
+        "T1596.005",
+        "T1588.002",
+        "T1098.007",
+        "T1021.002",
+        "T1037",
+        "T1136.001",
+        "T1542.003",
+        "T1685.005",
+        "T1087.001",
+        "T1071.001",
+        "T1135",
+        "T1599",
+        "T1480.001",
+        "T1484.001",
+        "T1595.002",
+        "T1005",
+        "T1133",
+        "T1070.004",
+        "T1566.001",
+        "T1685",
+        "T1053.005",
+        "T1547.001",
+        "T1546.008",
+        "T1110",
+        "T1550.002",
+        "T1574.006",
+        "T1059.003",
+        "T1003.002",
+        "T1568.002",
+        "T1569.002",
+        "T1071.004",
+        "T1046",
+        "T1560.001",
+        "T1218.011",
+        "T1102.001",
+        "T1008",
+        "T1555",
+        "T1496.001",
+        "T1003.003",
+        "T1049",
+        "T1059.004",
+        "T1486",
+        "T1016",
+        "T1033",
+        "T1105",
+        "T1203",
+        "T1218.001",
+        "T1112",
+        "T1090",
+        "T1003.001",
+        "T1684.001",
+        "T1213.003",
+        "T1197",
+        "T1012",
+        "T1083",
+        "T1055",
+        "T1021.001",
+        "T1190",
+        "T1570",
+        "T1027",
+        "T1104",
+        "T1030",
+        "T1047",
+        "T1056.001",
+        "T1070.003",
+        "T1036.004",
+        "T1574.001"
+      ],
+      "mitre_technique_count": 82
     },
     {
       "id": "actor:G0010",
@@ -6116,7 +7341,78 @@
           "source": "Talos TinyTurla September 2021",
           "url": "https://blog.talosintelligence.com/2021/09/tinyturla.html"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1584.006",
+        "T1112",
+        "T1069.001",
+        "T1140",
+        "T1588.002",
+        "T1059.007",
+        "T1134.002",
+        "T1059.005",
+        "T1546.013",
+        "T1583.006",
+        "T1055.001",
+        "T1105",
+        "T1555.004",
+        "T1090",
+        "T1068",
+        "T1615",
+        "T1049",
+        "T1106",
+        "T1071.003",
+        "T1021.002",
+        "T1547.001",
+        "T1005",
+        "T1012",
+        "T1007",
+        "T1110",
+        "T1570",
+        "T1189",
+        "T1584.004",
+        "T1087.002",
+        "T1685",
+        "T1564.012",
+        "T1120",
+        "T1567.002",
+        "T1102.002",
+        "T1071.001",
+        "T1124",
+        "T1087.001",
+        "T1204.001",
+        "T1090.001",
+        "T1546.003",
+        "T1560.001",
+        "T1059.003",
+        "T1057",
+        "T1016",
+        "T1587.001",
+        "T1025",
+        "T1518.001",
+        "T1059.001",
+        "T1027.010",
+        "T1059.006",
+        "T1213.006",
+        "T1018",
+        "T1588.001",
+        "T1069.002",
+        "T1027.011",
+        "T1547.004",
+        "T1553.006",
+        "T1566.002",
+        "T1016.001",
+        "T1102",
+        "T1082",
+        "T1584.003",
+        "T1036.005",
+        "T1055",
+        "T1078.003",
+        "T1201",
+        "T1083",
+        "T1027.005"
+      ],
+      "mitre_technique_count": 68
     },
     {
       "id": "actor:G1001",
@@ -6143,7 +7439,46 @@
           "source": "ClearSky Siamesekitten August 2021",
           "url": "https://www.clearskysec.com/siamesekitten/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1016",
+        "T1555",
+        "T1027.010",
+        "T1589",
+        "T1082",
+        "T1583.001",
+        "T1110",
+        "T1053.005",
+        "T1204.002",
+        "T1567.002",
+        "T1585.001",
+        "T1016.001",
+        "T1546.003",
+        "T1069.001",
+        "T1018",
+        "T1021.001",
+        "T1586.002",
+        "T1110.003",
+        "T1102.002",
+        "T1588.002",
+        "T1555.003",
+        "T1059.001",
+        "T1608.001",
+        "T1589.002",
+        "T1585.002",
+        "T1033",
+        "T1105",
+        "T1049",
+        "T1057",
+        "T1056.001",
+        "T1518",
+        "T1059.005",
+        "T1010",
+        "T1591.004",
+        "T1583.002",
+        "T1534"
+      ],
+      "mitre_technique_count": 36
     },
     {
       "id": "actor:G0087",
@@ -6170,7 +7505,63 @@
           "source": "Dept. of Treasury Iran Sanctions September 2020",
           "url": "https://home.treasury.gov/news/press-releases/sm1127"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1046",
+        "T1547.001",
+        "T1090.002",
+        "T1140",
+        "T1056.001",
+        "T1005",
+        "T1059.001",
+        "T1115",
+        "T1003",
+        "T1553.006",
+        "T1546.010",
+        "T1547.009",
+        "T1135",
+        "T1569.002",
+        "T1027.013",
+        "T1588.002",
+        "T1021.001",
+        "T1033",
+        "T1027.002",
+        "T1041",
+        "T1204.002",
+        "T1053.005",
+        "T1070.004",
+        "T1102.002",
+        "T1560.001",
+        "T1505.003",
+        "T1105",
+        "T1059.010",
+        "T1204.001",
+        "T1555",
+        "T1113",
+        "T1003.001",
+        "T1018",
+        "T1071.004",
+        "T1059",
+        "T1074.001",
+        "T1083",
+        "T1012",
+        "T1110",
+        "T1197",
+        "T1136.001",
+        "T1059.006",
+        "T1036.005",
+        "T1071.001",
+        "T1090.001",
+        "T1078",
+        "T1056",
+        "T1566.002",
+        "T1566.001",
+        "T1021.002",
+        "T1190",
+        "T1059.005",
+        "T1021.004"
+      ],
+      "mitre_technique_count": 53
     },
     {
       "id": "actor:G0051",
@@ -6189,7 +7580,21 @@
           "source": "FireEye FIN10 June 2017",
           "url": "https://services.google.com/fh/files/misc/rpt-fin-10-anatomy-of-a-cyber-en.pdf"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1070.004",
+        "T1570",
+        "T1033",
+        "T1059.003",
+        "T1078.003",
+        "T1547.001",
+        "T1053.005",
+        "T1588.002",
+        "T1021.001",
+        "T1059.001",
+        "T1078"
+      ],
+      "mitre_technique_count": 11
     },
     {
       "id": "actor:G0061",
@@ -6214,7 +7619,46 @@
           "source": "Bitdefender Sardonic Aug 2021",
           "url": "https://www.bitdefender.com/files/News/CaseStudies/study/401/Bitdefender-PR-Whitepaper-FIN8-creat5619-en-EN.pdf"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1078",
+        "T1048.003",
+        "T1033",
+        "T1518.001",
+        "T1021.001",
+        "T1003.001",
+        "T1588.002",
+        "T1204.002",
+        "T1588.003",
+        "T1068",
+        "T1546.003",
+        "T1566.002",
+        "T1053.005",
+        "T1204.001",
+        "T1102",
+        "T1027.010",
+        "T1070.004",
+        "T1566.001",
+        "T1071.001",
+        "T1021.002",
+        "T1685.005",
+        "T1560.001",
+        "T1074.002",
+        "T1105",
+        "T1082",
+        "T1059.001",
+        "T1059.003",
+        "T1573.002",
+        "T1055.004",
+        "T1018",
+        "T1486",
+        "T1482",
+        "T1112",
+        "T1134.001",
+        "T1016.001",
+        "T1047"
+      ],
+      "mitre_technique_count": 36
     },
     {
       "id": "actor:G0032",
@@ -6244,7 +7688,103 @@
           "source": "Mandiant DPRK Groups 2023",
           "url": "https://cloud.google.com/blog/topics/threat-intelligence/north-korea-cyber-structure-alignment-2023"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1059.003",
+        "T1566.001",
+        "T1202",
+        "T1048.003",
+        "T1001.003",
+        "T1584.004",
+        "T1105",
+        "T1218.005",
+        "T1010",
+        "T1587.001",
+        "T1134.002",
+        "T1021.004",
+        "T1098",
+        "T1564.001",
+        "T1485",
+        "T1591",
+        "T1106",
+        "T1078",
+        "T1027.009",
+        "T1012",
+        "T1090.002",
+        "T1027.013",
+        "T1104",
+        "T1046",
+        "T1005",
+        "T1489",
+        "T1016",
+        "T1588.004",
+        "T1573.001",
+        "T1082",
+        "T1033",
+        "T1620",
+        "T1041",
+        "T1102.002",
+        "T1560",
+        "T1203",
+        "T1059.001",
+        "T1566.002",
+        "T1074.001",
+        "T1036.003",
+        "T1047",
+        "T1071.001",
+        "T1557.001",
+        "T1057",
+        "T1547.001",
+        "T1685",
+        "T1589.002",
+        "T1561.001",
+        "T1491.001",
+        "T1588.002",
+        "T1547.009",
+        "T1059.005",
+        "T1542.003",
+        "T1218.011",
+        "T1583.006",
+        "T1056.001",
+        "T1571",
+        "T1132.001",
+        "T1189",
+        "T1110.003",
+        "T1204.002",
+        "T1553.002",
+        "T1218",
+        "T1560.002",
+        "T1027.007",
+        "T1070.004",
+        "T1090.001",
+        "T1008",
+        "T1140",
+        "T1680",
+        "T1561.002",
+        "T1583.001",
+        "T1053.005",
+        "T1566.003",
+        "T1036.005",
+        "T1070",
+        "T1083",
+        "T1574.013",
+        "T1055.001",
+        "T1585.001",
+        "T1021.001",
+        "T1529",
+        "T1124",
+        "T1036.004",
+        "T1070.006",
+        "T1070.003",
+        "T1574.001",
+        "T1686.003",
+        "T1543.003",
+        "T1021.002",
+        "T1585.002",
+        "T1049",
+        "T1560.003"
+      ],
+      "mitre_technique_count": 93
     },
     {
       "id": "actor:G1031",
@@ -6272,7 +7812,28 @@
           "source": "Palo Alto Unit 42 OutSteel SaintBot February 2022 ",
           "url": "https://unit42.paloaltonetworks.com/ukraine-targeted-outsteel-saintbot/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1566.001",
+        "T1203",
+        "T1059.007",
+        "T1589.002",
+        "T1497",
+        "T1059.003",
+        "T1553.002",
+        "T1204.001",
+        "T1027.013",
+        "T1685",
+        "T1684.001",
+        "T1059.001",
+        "T1204.002",
+        "T1059",
+        "T1583.006",
+        "T1608.001",
+        "T1027.002",
+        "T1112"
+      ],
+      "mitre_technique_count": 18
     },
     {
       "id": "actor:G0124",
@@ -6295,7 +7856,17 @@
           "source": "CERN Windigo June 2019",
           "url": "https://security.web.cern.ch/advisories/windigo/windigo.shtml"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1082",
+        "T1005",
+        "T1518",
+        "T1090",
+        "T1059",
+        "T1083",
+        "T1189"
+      ],
+      "mitre_technique_count": 7
     },
     {
       "id": "actor:G0108",
@@ -6314,7 +7885,32 @@
           "source": "RedCanary Mockingbird May 2020",
           "url": "https://redcanary.com/blog/blue-mockingbird-cryptominer/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1059.001",
+        "T1574.012",
+        "T1546.003",
+        "T1082",
+        "T1543.003",
+        "T1053.005",
+        "T1090",
+        "T1047",
+        "T1059.003",
+        "T1003.001",
+        "T1218.011",
+        "T1134",
+        "T1496.001",
+        "T1027.013",
+        "T1112",
+        "T1569.002",
+        "T1190",
+        "T1021.001",
+        "T1218.010",
+        "T1021.002",
+        "T1036.005",
+        "T1588.002"
+      ],
+      "mitre_technique_count": 22
     },
     {
       "id": "actor:G1039",
@@ -6337,7 +7933,51 @@
           "source": "group-ib_redcurl2",
           "url": "https://www.group-ib.com/resources/research-hub/red-curl-2/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1027",
+        "T1564.001",
+        "T1102",
+        "T1114.001",
+        "T1039",
+        "T1080",
+        "T1204.002",
+        "T1005",
+        "T1119",
+        "T1083",
+        "T1059.003",
+        "T1059.001",
+        "T1036.005",
+        "T1566.001",
+        "T1059.005",
+        "T1560.001",
+        "T1573.001",
+        "T1071.001",
+        "T1087.003",
+        "T1587.001",
+        "T1087.001",
+        "T1056.002",
+        "T1082",
+        "T1204.001",
+        "T1573.002",
+        "T1053.005",
+        "T1020",
+        "T1199",
+        "T1537",
+        "T1202",
+        "T1552.001",
+        "T1218.011",
+        "T1087.002",
+        "T1566.002",
+        "T1552.002",
+        "T1070.004",
+        "T1547.001",
+        "T1555.003",
+        "T1059.006",
+        "T1003.001",
+        "T1046"
+      ],
+      "mitre_technique_count": 41
     },
     {
       "id": "actor:G0085",
@@ -6360,7 +8000,22 @@
           "source": "FireEye Hacking FIN4 Video Dec 2014",
           "url": "https://www2.fireeye.com/WBNR-14Q4NAMFIN4.html"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1078",
+        "T1059.005",
+        "T1090.003",
+        "T1204.002",
+        "T1564.008",
+        "T1204.001",
+        "T1056.001",
+        "T1056.002",
+        "T1566.002",
+        "T1566.001",
+        "T1071.001",
+        "T1114.002"
+      ],
+      "mitre_technique_count": 12
     },
     {
       "id": "actor:G1032",
@@ -6385,7 +8040,35 @@
           "source": "Cybereason INC Ransomware November 2023",
           "url": "https://www.cybereason.com/hubfs/dam/collateral/reports/threat-alert-inc-ransomware.pdf"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1486",
+        "T1021.001",
+        "T1657",
+        "T1047",
+        "T1566",
+        "T1059.003",
+        "T1537",
+        "T1087.002",
+        "T1074",
+        "T1071",
+        "T1046",
+        "T1569.002",
+        "T1219",
+        "T1685",
+        "T1588.002",
+        "T1036.005",
+        "T1570",
+        "T1069.002",
+        "T1135",
+        "T1190",
+        "T1070.004",
+        "T1078",
+        "T1105",
+        "T1560.001",
+        "T1049"
+      ],
+      "mitre_technique_count": 25
     },
     {
       "id": "actor:G1018",
@@ -6408,7 +8091,38 @@
           "source": "Cisco Operation Layover September 2021",
           "url": "https://blog.talosintelligence.com/operation-layover-how-we-tracked-attack/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1608.001",
+        "T1547.001",
+        "T1573.002",
+        "T1105",
+        "T1568",
+        "T1036.005",
+        "T1518.001",
+        "T1053.005",
+        "T1027.002",
+        "T1082",
+        "T1685",
+        "T1588.001",
+        "T1218.005",
+        "T1588.002",
+        "T1204.001",
+        "T1583.001",
+        "T1055",
+        "T1059.001",
+        "T1027.013",
+        "T1016.001",
+        "T1055.012",
+        "T1047",
+        "T1204.002",
+        "T1059.005",
+        "T1566.002",
+        "T1027.015",
+        "T1566.001",
+        "T1583.006"
+      ],
+      "mitre_technique_count": 28
     },
     {
       "id": "actor:G1048",
@@ -6431,7 +8145,59 @@
           "source": "Mandiant Fortinet Zero Day",
           "url": "https://www.mandiant.com/resources/blog/fortinet-malware-ecosystem"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1027.005",
+        "T1681",
+        "T1059.012",
+        "T1083",
+        "T1078.001",
+        "T1554",
+        "T1068",
+        "T1673",
+        "T1564.011",
+        "T1587.001",
+        "T1212",
+        "T1675",
+        "T1218.011",
+        "T1074.001",
+        "T1070.007",
+        "T1059.006",
+        "T1548",
+        "T1070.006",
+        "T1690",
+        "T1560.003",
+        "T1203",
+        "T1037.004",
+        "T1685",
+        "T1070.004",
+        "T1588.004",
+        "T1555.005",
+        "T1587.004",
+        "T1505.006",
+        "T1560.001",
+        "T1003.001",
+        "T1057",
+        "T1570",
+        "T1588.001",
+        "T1059.003",
+        "T1036.004",
+        "T1037",
+        "T1014",
+        "T1059.001",
+        "T1040",
+        "T1124",
+        "T1078",
+        "T1205.001",
+        "T1190",
+        "T1095",
+        "T1686",
+        "T1059.004",
+        "T1205",
+        "T1021.004",
+        "T1008"
+      ],
+      "mitre_technique_count": 49
     },
     {
       "id": "actor:G0121",
@@ -6457,7 +8223,40 @@
           "source": "Securelist APT Trends April 2018",
           "url": "https://securelist.com/apt-trends-report-q1-2018/85280/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1203",
+        "T1518.001",
+        "T1218.005",
+        "T1598.003",
+        "T1124",
+        "T1566.002",
+        "T1074.001",
+        "T1057",
+        "T1059.007",
+        "T1027.013",
+        "T1020",
+        "T1105",
+        "T1547.001",
+        "T1071.001",
+        "T1559.002",
+        "T1083",
+        "T1016",
+        "T1598.002",
+        "T1027.010",
+        "T1059.001",
+        "T1518",
+        "T1059.005",
+        "T1082",
+        "T1119",
+        "T1566.001",
+        "T1036.005",
+        "T1204.001",
+        "T1204.002",
+        "T1033",
+        "T1574.001"
+      ],
+      "mitre_technique_count": 30
     },
     {
       "id": "actor:G0126",
@@ -6480,7 +8279,38 @@
           "source": "PTSecurity Higaisa 2020",
           "url": "https://www.ptsecurity.com/ww-en/analytics/pt-esc-threat-intelligence/covid-19-and-new-year-greetings-the-higaisa-group/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1059.005",
+        "T1106",
+        "T1041",
+        "T1574.001",
+        "T1124",
+        "T1090.001",
+        "T1204.002",
+        "T1027.013",
+        "T1053.005",
+        "T1082",
+        "T1566.001",
+        "T1071.001",
+        "T1001.003",
+        "T1203",
+        "T1029",
+        "T1059.007",
+        "T1027.001",
+        "T1027.015",
+        "T1220",
+        "T1564.003",
+        "T1573.001",
+        "T1680",
+        "T1547.001",
+        "T1057",
+        "T1036.004",
+        "T1016",
+        "T1059.003",
+        "T1140"
+      ],
+      "mitre_technique_count": 28
     },
     {
       "id": "actor:G0046",
@@ -6509,7 +8339,77 @@
           "source": "FireEye CARBANAK June 2017",
           "url": "https://www.fireeye.com/blog/threat-research/2017/06/behind-the-carbanak-backdoor.html"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1204.001",
+        "T1553.002",
+        "T1078",
+        "T1059",
+        "T1021.004",
+        "T1190",
+        "T1027.016",
+        "T1608.005",
+        "T1033",
+        "T1053.005",
+        "T1021.005",
+        "T1036.005",
+        "T1564.003",
+        "T1566.002",
+        "T1036.004",
+        "T1218.011",
+        "T1047",
+        "T1620",
+        "T1059.005",
+        "T1219",
+        "T1564.001",
+        "T1059.001",
+        "T1572",
+        "T1546.011",
+        "T1559.002",
+        "T1069.002",
+        "T1021.001",
+        "T1674",
+        "T1486",
+        "T1588.002",
+        "T1591",
+        "T1569.002",
+        "T1583.006",
+        "T1497.002",
+        "T1059.007",
+        "T1547.001",
+        "T1608.004",
+        "T1686",
+        "T1082",
+        "T1125",
+        "T1571",
+        "T1140",
+        "T1027.010",
+        "T1087.002",
+        "T1204.002",
+        "T1057",
+        "T1218.005",
+        "T1102.002",
+        "T1105",
+        "T1078.003",
+        "T1591.004",
+        "T1124",
+        "T1583.001",
+        "T1005",
+        "T1543.003",
+        "T1091",
+        "T1071.004",
+        "T1059.003",
+        "T1566.001",
+        "T1608.001",
+        "T1008",
+        "T1558.003",
+        "T1195.002",
+        "T1113",
+        "T1567.002",
+        "T1210",
+        "T1587.001"
+      ],
+      "mitre_technique_count": 67
     },
     {
       "id": "actor:G0142",
@@ -6534,7 +8434,29 @@
           "source": "TrendMicro Confucius APT Aug 2021",
           "url": "https://www.trendmicro.com/en_us/research/21/h/confucius-uses-pegasus-spyware-related-lures-to-target-pakistani.html"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1566.002",
+        "T1204.001",
+        "T1567.002",
+        "T1221",
+        "T1059.005",
+        "T1566.001",
+        "T1203",
+        "T1680",
+        "T1105",
+        "T1119",
+        "T1583.006",
+        "T1071.001",
+        "T1041",
+        "T1218.005",
+        "T1083",
+        "T1547.001",
+        "T1053.005",
+        "T1204.002",
+        "T1059.001"
+      ],
+      "mitre_technique_count": 19
     },
     {
       "id": "actor:G0048",
@@ -6553,7 +8475,17 @@
           "source": "ESET RTM Feb 2017",
           "url": "https://www.welivesecurity.com/wp-content/uploads/2017/02/Read-The-Manual.pdf"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1189",
+        "T1547.001",
+        "T1574.001",
+        "T1204.002",
+        "T1566.001",
+        "T1219.002",
+        "T1102.001"
+      ],
+      "mitre_technique_count": 7
     },
     {
       "id": "actor:G1043",
@@ -6578,7 +8510,58 @@
           "source": "Cisco BlackByte 2024",
           "url": "https://blog.talosintelligence.com/blackbyte-blends-tried-and-true-tradecraft-with-newly-disclosed-vulnerabilities-to-support-ongoing-attacks/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1082",
+        "T1016",
+        "T1046",
+        "T1105",
+        "T1482",
+        "T1686",
+        "T1036.008",
+        "T1053.005",
+        "T1134.003",
+        "T1070.004",
+        "T1543.003",
+        "T1021.001",
+        "T1685",
+        "T1614.001",
+        "T1560",
+        "T1059.003",
+        "T1136.002",
+        "T1112",
+        "T1055.012",
+        "T1491.001",
+        "T1071.001",
+        "T1087.002",
+        "T1570",
+        "T1583.003",
+        "T1190",
+        "T1608.001",
+        "T1490",
+        "T1012",
+        "T1059.001",
+        "T1041",
+        "T1003",
+        "T1569.002",
+        "T1135",
+        "T1140",
+        "T1068",
+        "T1505.003",
+        "T1078",
+        "T1567",
+        "T1055",
+        "T1021.002",
+        "T1078.002",
+        "T1547.001",
+        "T1480",
+        "T1486",
+        "T1518.001",
+        "T1219",
+        "T1047",
+        "T1018"
+      ],
+      "mitre_technique_count": 48
     },
     {
       "id": "actor:G0027",
@@ -6610,7 +8593,67 @@
           "source": "Dell TG-3390",
           "url": "https://www.secureworks.com/research/threat-group-3390-targets-organizations-for-cyberespionage"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1068",
+        "T1030",
+        "T1190",
+        "T1046",
+        "T1053.002",
+        "T1055.012",
+        "T1074.001",
+        "T1203",
+        "T1567.002",
+        "T1003.001",
+        "T1059.003",
+        "T1555.005",
+        "T1566.001",
+        "T1012",
+        "T1003.004",
+        "T1027.015",
+        "T1204.002",
+        "T1033",
+        "T1608.001",
+        "T1505.003",
+        "T1547.001",
+        "T1027.013",
+        "T1543.003",
+        "T1199",
+        "T1016",
+        "T1105",
+        "T1056.001",
+        "T1059.001",
+        "T1078",
+        "T1608.004",
+        "T1588.002",
+        "T1018",
+        "T1583.001",
+        "T1189",
+        "T1140",
+        "T1003.002",
+        "T1133",
+        "T1005",
+        "T1087.001",
+        "T1195.002",
+        "T1548.002",
+        "T1119",
+        "T1560.002",
+        "T1027.002",
+        "T1588.003",
+        "T1047",
+        "T1071.001",
+        "T1070.005",
+        "T1021.006",
+        "T1574.001",
+        "T1070.004",
+        "T1685.001",
+        "T1608.002",
+        "T1112",
+        "T1210",
+        "T1074.002",
+        "T1049"
+      ],
+      "mitre_technique_count": 57
     },
     {
       "id": "actor:G0131",
@@ -6638,7 +8681,25 @@
           "source": "CrowdStrike Manufacturing Threat July 2020",
           "url": "https://www.crowdstrike.com/blog/adversaries-targeting-the-manufacturing-industry/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1135",
+        "T1574.001",
+        "T1090.002",
+        "T1059.006",
+        "T1069.001",
+        "T1056.001",
+        "T1003",
+        "T1505.003",
+        "T1203",
+        "T1204.002",
+        "T1566.001",
+        "T1210",
+        "T1059.001",
+        "T1068",
+        "T1105"
+      ],
+      "mitre_technique_count": 15
     },
     {
       "id": "actor:G0081",
@@ -6664,7 +8725,50 @@
           "source": "TrendMicro Tropic Trooper May 2020",
           "url": "https://documents.trendmicro.com/assets/Tech-Brief-Tropic-Trooper-s-Back-USBferry-Attack-Targets-Air-gapped-Environments.pdf"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1543.003",
+        "T1070.004",
+        "T1566.001",
+        "T1105",
+        "T1057",
+        "T1204.002",
+        "T1573",
+        "T1071.001",
+        "T1564.001",
+        "T1221",
+        "T1033",
+        "T1046",
+        "T1016",
+        "T1052.001",
+        "T1547.001",
+        "T1505.003",
+        "T1573.002",
+        "T1059.003",
+        "T1106",
+        "T1574.001",
+        "T1083",
+        "T1027.013",
+        "T1036.005",
+        "T1132.001",
+        "T1078.003",
+        "T1680",
+        "T1547.004",
+        "T1203",
+        "T1071.004",
+        "T1119",
+        "T1055.001",
+        "T1020",
+        "T1135",
+        "T1082",
+        "T1518.001",
+        "T1140",
+        "T1049",
+        "T1027.003",
+        "T1518",
+        "T1091"
+      ],
+      "mitre_technique_count": 40
     },
     {
       "id": "actor:G0075",
@@ -6683,7 +8787,19 @@
           "source": "Rancor Unit42 June 2018",
           "url": "https://researchcenter.paloaltonetworks.com/2018/06/unit42-rancor-targeted-attacks-south-east-asia-using-plaintee-ddkong-malware-families/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1071.001",
+        "T1059.005",
+        "T1204.002",
+        "T1053.005",
+        "T1105",
+        "T1218.007",
+        "T1546.003",
+        "T1059.003",
+        "T1566.001"
+      ],
+      "mitre_technique_count": 9
     },
     {
       "id": "actor:G1016",
@@ -6708,7 +8824,63 @@
           "source": "Mandiant FIN13 Aug 2022",
           "url": "https://www.mandiant.com/resources/blog/fin13-cybercriminal-mexico"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1587.001",
+        "T1078.001",
+        "T1572",
+        "T1021.006",
+        "T1133",
+        "T1087.002",
+        "T1046",
+        "T1505.003",
+        "T1082",
+        "T1016",
+        "T1090.001",
+        "T1565",
+        "T1059.001",
+        "T1053.005",
+        "T1136.001",
+        "T1003.002",
+        "T1003.003",
+        "T1190",
+        "T1589",
+        "T1036.004",
+        "T1021.002",
+        "T1003.001",
+        "T1564.001",
+        "T1552.001",
+        "T1657",
+        "T1588.002",
+        "T1134.003",
+        "T1105",
+        "T1071.001",
+        "T1550.002",
+        "T1059.003",
+        "T1547.001",
+        "T1016.001",
+        "T1036",
+        "T1059.005",
+        "T1098.007",
+        "T1574.001",
+        "T1021.001",
+        "T1590.004",
+        "T1135",
+        "T1560.001",
+        "T1140",
+        "T1556",
+        "T1047",
+        "T1021.004",
+        "T1074.001",
+        "T1056.001",
+        "T1036.005",
+        "T1049",
+        "T1083",
+        "T1005",
+        "T1069",
+        "T1087"
+      ],
+      "mitre_technique_count": 53
     },
     {
       "id": "actor:G1004",
@@ -6734,7 +8906,53 @@
           "source": "Microsoft Threat Actor Naming July 2023",
           "url": "https://learn.microsoft.com/en-us/microsoft-365/security/intelligence/microsoft-threat-actor-naming?view=o365-worldwide"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1589",
+        "T1005",
+        "T1069.002",
+        "T1213.001",
+        "T1588.002",
+        "T1485",
+        "T1213.003",
+        "T1213.002",
+        "T1583.003",
+        "T1591.004",
+        "T1090",
+        "T1087.002",
+        "T1133",
+        "T1078",
+        "T1588.001",
+        "T1598.004",
+        "T1204",
+        "T1552.008",
+        "T1489",
+        "T1593.003",
+        "T1136.003",
+        "T1114.003",
+        "T1591.002",
+        "T1578.003",
+        "T1555.003",
+        "T1531",
+        "T1589.001",
+        "T1068",
+        "T1621",
+        "T1098.003",
+        "T1003.006",
+        "T1586.002",
+        "T1213.005",
+        "T1589.002",
+        "T1584.002",
+        "T1684.001",
+        "T1003.003",
+        "T1555.005",
+        "T1199",
+        "T1597.002",
+        "T1578.002",
+        "T1078.004",
+        "T1111"
+      ],
+      "mitre_technique_count": 43
     },
     {
       "id": "actor:G0049",
@@ -6768,7 +8986,86 @@
           "source": "ClearSky OilRig Jan 2017",
           "url": "http://www.clearskysec.com/oilrig/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1588.003",
+        "T1555.004",
+        "T1082",
+        "T1003.001",
+        "T1008",
+        "T1071.001",
+        "T1005",
+        "T1686.003",
+        "T1059.003",
+        "T1021.001",
+        "T1505.003",
+        "T1587.001",
+        "T1608.001",
+        "T1036",
+        "T1219",
+        "T1218.001",
+        "T1046",
+        "T1087.001",
+        "T1137.004",
+        "T1069.002",
+        "T1113",
+        "T1025",
+        "T1007",
+        "T1556.002",
+        "T1059.001",
+        "T1070.004",
+        "T1588.002",
+        "T1204.002",
+        "T1133",
+        "T1078.002",
+        "T1201",
+        "T1586.002",
+        "T1087.002",
+        "T1003.004",
+        "T1140",
+        "T1553.002",
+        "T1048.003",
+        "T1110",
+        "T1059.005",
+        "T1566.002",
+        "T1112",
+        "T1120",
+        "T1071.004",
+        "T1105",
+        "T1049",
+        "T1543.003",
+        "T1195",
+        "T1204.001",
+        "T1078",
+        "T1573.002",
+        "T1566.001",
+        "T1053.005",
+        "T1119",
+        "T1583.001",
+        "T1056.001",
+        "T1036.005",
+        "T1033",
+        "T1566.003",
+        "T1572",
+        "T1047",
+        "T1021.004",
+        "T1555",
+        "T1115",
+        "T1003.005",
+        "T1027.013",
+        "T1069.001",
+        "T1552.001",
+        "T1057",
+        "T1555.003",
+        "T1016",
+        "T1203",
+        "T1012",
+        "T1059",
+        "T1497.001",
+        "T1068",
+        "T1027.005"
+      ],
+      "mitre_technique_count": 76
     },
     {
       "id": "actor:G0005",
@@ -6796,7 +9093,15 @@
           "source": "Moran 2014",
           "url": "https://www.fireeye.com/blog/threat-research/2014/09/darwins-favorite-apt-group-2.html"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1204.002",
+        "T1102.002",
+        "T1568.003",
+        "T1203",
+        "T1566.001"
+      ],
+      "mitre_technique_count": 5
     },
     {
       "id": "actor:G0022",
@@ -6826,7 +9131,54 @@
           "source": "Recorded Future APT3 May 2017",
           "url": "https://www.recordedfuture.com/research/chinese-mss-behind-apt3"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1053.005",
+        "T1104",
+        "T1110.002",
+        "T1564.003",
+        "T1555.003",
+        "T1059.003",
+        "T1016",
+        "T1049",
+        "T1090.002",
+        "T1218.011",
+        "T1027",
+        "T1566.002",
+        "T1098.007",
+        "T1204.001",
+        "T1041",
+        "T1552.001",
+        "T1074.001",
+        "T1078.002",
+        "T1005",
+        "T1203",
+        "T1021.002",
+        "T1574.001",
+        "T1087.001",
+        "T1070.004",
+        "T1083",
+        "T1546.008",
+        "T1560.001",
+        "T1082",
+        "T1059.001",
+        "T1543.003",
+        "T1003.001",
+        "T1547.001",
+        "T1021.001",
+        "T1057",
+        "T1095",
+        "T1069",
+        "T1018",
+        "T1056.001",
+        "T1036.010",
+        "T1027.002",
+        "T1136.001",
+        "T1105",
+        "T1033",
+        "T1027.005"
+      ],
+      "mitre_technique_count": 44
     },
     {
       "id": "actor:G1013",
@@ -6845,7 +9197,19 @@
           "source": "SentinelLabs Metador Sept 2022",
           "url": "https://assets.sentinelone.com/sentinellabs22/metador#page=1"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1071.001",
+        "T1059.003",
+        "T1588.001",
+        "T1546.003",
+        "T1027.013",
+        "T1070.004",
+        "T1095",
+        "T1588.002",
+        "T1105"
+      ],
+      "mitre_technique_count": 9
     },
     {
       "id": "actor:G0007",
@@ -6879,7 +9243,103 @@
           "source": "Crowdstrike DNC June 2016",
           "url": "https://www.crowdstrike.com/blog/bears-midst-intrusion-democratic-national-committee/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1003.003",
+        "T1589.001",
+        "T1591",
+        "T1564.001",
+        "T1583.003",
+        "T1596",
+        "T1583.001",
+        "T1070.006",
+        "T1090.002",
+        "T1566.001",
+        "T1059.001",
+        "T1048.002",
+        "T1547.001",
+        "T1027.013",
+        "T1203",
+        "T1586.002",
+        "T1114.002",
+        "T1505.003",
+        "T1584.008",
+        "T1550.002",
+        "T1037.001",
+        "T1588.002",
+        "T1564.003",
+        "T1090.003",
+        "T1567",
+        "T1056.001",
+        "T1083",
+        "T1190",
+        "T1669",
+        "T1039",
+        "T1113",
+        "T1110.001",
+        "T1583.006",
+        "T1057",
+        "T1189",
+        "T1595.002",
+        "T1546.015",
+        "T1199",
+        "T1120",
+        "T1059.003",
+        "T1557.004",
+        "T1498",
+        "T1070.004",
+        "T1560",
+        "T1105",
+        "T1598",
+        "T1559.002",
+        "T1036.005",
+        "T1119",
+        "T1078.004",
+        "T1221",
+        "T1005",
+        "T1213.002",
+        "T1078",
+        "T1025",
+        "T1071.001",
+        "T1213",
+        "T1218.011",
+        "T1560.001",
+        "T1140",
+        "T1598.003",
+        "T1542.003",
+        "T1071.003",
+        "T1036",
+        "T1210",
+        "T1014",
+        "T1204.002",
+        "T1550.001",
+        "T1030",
+        "T1134.001",
+        "T1074.002",
+        "T1092",
+        "T1098.002",
+        "T1003",
+        "T1040",
+        "T1068",
+        "T1137.002",
+        "T1528",
+        "T1110.003",
+        "T1204.001",
+        "T1133",
+        "T1102.002",
+        "T1001.001",
+        "T1685.005",
+        "T1211",
+        "T1003.001",
+        "T1573.001",
+        "T1074.001",
+        "T1091",
+        "T1588.007",
+        "T1110",
+        "T1684.001",
+        "T1021.002"
+      ],
+      "mitre_technique_count": 93
     },
     {
       "id": "actor:G1047",
@@ -6902,7 +9362,32 @@
           "source": "Sygnia VelvetAnt 2024A",
           "url": "https://www.sygnia.co/blog/china-nexus-threat-group-velvet-ant/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1090.001",
+        "T1574.001",
+        "T1132",
+        "T1047",
+        "T1059.004",
+        "T1571",
+        "T1133",
+        "T1570",
+        "T1040",
+        "T1083",
+        "T1686",
+        "T1573.002",
+        "T1569.002",
+        "T1049",
+        "T1037.004",
+        "T1685",
+        "T1055",
+        "T1071",
+        "T1211",
+        "T1078.003",
+        "T1036.005",
+        "T1021.002"
+      ],
+      "mitre_technique_count": 22
     },
     {
       "id": "actor:G0038",
@@ -6921,7 +9406,26 @@
           "source": "Citizen Lab Stealth Falcon May 2016",
           "url": "https://citizenlab.org/2016/05/stealth-falcon/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1555.004",
+        "T1059",
+        "T1555.003",
+        "T1555",
+        "T1057",
+        "T1016",
+        "T1573.001",
+        "T1012",
+        "T1071.001",
+        "T1033",
+        "T1047",
+        "T1005",
+        "T1041",
+        "T1059.001",
+        "T1053.005",
+        "T1082"
+      ],
+      "mitre_technique_count": 16
     },
     {
       "id": "actor:G0050",
@@ -6950,7 +9454,88 @@
           "source": "FireEye APT32 May 2017",
           "url": "https://www.fireeye.com/blog/threat-research/2017/05/cyber-espionage-apt32.html"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1550.002",
+        "T1036",
+        "T1059.007",
+        "T1047",
+        "T1072",
+        "T1570",
+        "T1564.004",
+        "T1552.002",
+        "T1055",
+        "T1216.001",
+        "T1566.001",
+        "T1135",
+        "T1033",
+        "T1571",
+        "T1082",
+        "T1583.001",
+        "T1012",
+        "T1027.010",
+        "T1059.003",
+        "T1048.003",
+        "T1574.001",
+        "T1566.002",
+        "T1598.003",
+        "T1087.001",
+        "T1059.001",
+        "T1003.001",
+        "T1046",
+        "T1608.004",
+        "T1041",
+        "T1036.004",
+        "T1003",
+        "T1078.003",
+        "T1589",
+        "T1070.006",
+        "T1189",
+        "T1218.011",
+        "T1059",
+        "T1112",
+        "T1071.003",
+        "T1560",
+        "T1204.001",
+        "T1071.001",
+        "T1036.005",
+        "T1070.004",
+        "T1027.011",
+        "T1105",
+        "T1053.005",
+        "T1036.003",
+        "T1543.003",
+        "T1608.001",
+        "T1222.002",
+        "T1569.002",
+        "T1018",
+        "T1218.005",
+        "T1083",
+        "T1685.005",
+        "T1059.005",
+        "T1588.002",
+        "T1021.002",
+        "T1550.003",
+        "T1583.006",
+        "T1505.003",
+        "T1564.001",
+        "T1016",
+        "T1027.016",
+        "T1049",
+        "T1564.003",
+        "T1027.013",
+        "T1056.001",
+        "T1589.002",
+        "T1218.010",
+        "T1068",
+        "T1585.001",
+        "T1137",
+        "T1203",
+        "T1204.002",
+        "T1547.001",
+        "T1102"
+      ],
+      "mitre_technique_count": 78
     },
     {
       "id": "actor:G0092",
@@ -6977,7 +9562,44 @@
           "source": "IBM TA505 April 2020",
           "url": "https://securityintelligence.com/posts/ta505-continues-to-infect-networks-with-sdbbot-rat/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1087.003",
+        "T1583.001",
+        "T1553.005",
+        "T1218.007",
+        "T1112",
+        "T1588.002",
+        "T1204.002",
+        "T1568.001",
+        "T1027.013",
+        "T1027.002",
+        "T1552.001",
+        "T1059.005",
+        "T1059.007",
+        "T1204.001",
+        "T1608.001",
+        "T1218.011",
+        "T1140",
+        "T1555.003",
+        "T1027.010",
+        "T1069",
+        "T1105",
+        "T1588.001",
+        "T1078.002",
+        "T1553.002",
+        "T1486",
+        "T1059.001",
+        "T1566.001",
+        "T1106",
+        "T1566.002",
+        "T1685",
+        "T1559.002",
+        "T1055.001",
+        "T1071.001",
+        "T1059.003"
+      ],
+      "mitre_technique_count": 34
     },
     {
       "id": "actor:G1042",
@@ -7000,7 +9622,15 @@
           "source": "RecordedFuture RedEcho 2022",
           "url": "https://go.recordedfuture.com/hubfs/reports/ta-2022-0406.pdf"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1568",
+        "T1071.001",
+        "T1571",
+        "T1573.002",
+        "T1583.001"
+      ],
+      "mitre_technique_count": 5
     },
     {
       "id": "actor:G0128",
@@ -7026,7 +9656,39 @@
           "source": "Check Point APT31 February 2021",
           "url": "https://research.checkpoint.com/2021/the-story-of-jian/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1082",
+        "T1598",
+        "T1012",
+        "T1665",
+        "T1059.003",
+        "T1583.006",
+        "T1584.008",
+        "T1555.003",
+        "T1059.006",
+        "T1547.001",
+        "T1573.001",
+        "T1124",
+        "T1140",
+        "T1598.003",
+        "T1566.002",
+        "T1583.001",
+        "T1033",
+        "T1090.003",
+        "T1041",
+        "T1036",
+        "T1567.002",
+        "T1027.002",
+        "T1204.001",
+        "T1036.004",
+        "T1068",
+        "T1218.007",
+        "T1105",
+        "T1016",
+        "T1102.002"
+      ],
+      "mitre_technique_count": 29
     },
     {
       "id": "actor:G0037",
@@ -7055,7 +9717,50 @@
           "source": "FireEye FIN6 April 2016",
           "url": "https://web.archive.org/web/20190807112824/https://www2.fireeye.com/rs/848-DID-242/images/rpt-fin6.pdf"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1560.003",
+        "T1566.001",
+        "T1685",
+        "T1087.002",
+        "T1059",
+        "T1572",
+        "T1213.006",
+        "T1027.010",
+        "T1059.007",
+        "T1102",
+        "T1005",
+        "T1547.001",
+        "T1059.003",
+        "T1588.002",
+        "T1070.004",
+        "T1003.003",
+        "T1134",
+        "T1068",
+        "T1204.002",
+        "T1036.004",
+        "T1566.003",
+        "T1059.001",
+        "T1560",
+        "T1553.002",
+        "T1021.001",
+        "T1119",
+        "T1018",
+        "T1053.005",
+        "T1569.002",
+        "T1046",
+        "T1048.003",
+        "T1047",
+        "T1110.002",
+        "T1555",
+        "T1095",
+        "T1078",
+        "T1573.002",
+        "T1003.001",
+        "T1555.003",
+        "T1074.002"
+      ],
+      "mitre_technique_count": 40
     },
     {
       "id": "actor:G1046",
@@ -7078,7 +9783,41 @@
           "source": "RedCanary Storm-1811 2024",
           "url": "https://redcanary.com/blog/threat-intelligence/storm-1811-black-basta/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1585.003",
+        "T1074.001",
+        "T1667",
+        "T1547.001",
+        "T1583.001",
+        "T1036.005",
+        "T1588.002",
+        "T1219.002",
+        "T1059.001",
+        "T1059.003",
+        "T1140",
+        "T1036.010",
+        "T1056",
+        "T1574.001",
+        "T1204.002",
+        "T1566.004",
+        "T1027.013",
+        "T1684.001",
+        "T1105",
+        "T1570",
+        "T1021.004",
+        "T1486",
+        "T1036",
+        "T1482",
+        "T1566.003",
+        "T1566.002",
+        "T1087.002",
+        "T1033",
+        "T1048.002",
+        "T1222.001",
+        "T1021.002"
+      ],
+      "mitre_technique_count": 31
     },
     {
       "id": "actor:G0103",
@@ -7097,7 +9836,16 @@
           "source": "FOX-IT May 2016 Mofang",
           "url": "https://foxitsecurity.files.wordpress.com/2016/06/fox-it_mofang_threatreport_tlp-white.pdf"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1566.002",
+        "T1204.001",
+        "T1566.001",
+        "T1027.013",
+        "T1204.002",
+        "T1027.015"
+      ],
+      "mitre_technique_count": 6
     },
     {
       "id": "actor:G0095",
@@ -7123,7 +9871,21 @@
           "source": "Securelist Machete Aug 2014",
           "url": "https://securelist.com/el-machete/66108/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1204.002",
+        "T1566.002",
+        "T1059.003",
+        "T1059.005",
+        "T1059.006",
+        "T1053.005",
+        "T1036.005",
+        "T1204.001",
+        "T1189",
+        "T1566.001",
+        "T1218.007"
+      ],
+      "mitre_technique_count": 11
     },
     {
       "id": "actor:G1015",
@@ -7151,7 +9913,74 @@
           "source": "CrowdStrike Scattered Spider BYOVD January 2023",
           "url": "https://www.crowdstrike.com/blog/scattered-spider-attempts-to-avoid-detection-with-bring-your-own-vulnerable-driver-tactic/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1598",
+        "T1685",
+        "T1553.002",
+        "T1556.009",
+        "T1580",
+        "T1105",
+        "T1114.003",
+        "T1598.003",
+        "T1078",
+        "T1003.003",
+        "T1041",
+        "T1087.002",
+        "T1484.002",
+        "T1087",
+        "T1564.008",
+        "T1585.001",
+        "T1539",
+        "T1588.002",
+        "T1552.004",
+        "T1589",
+        "T1538",
+        "T1486",
+        "T1059.004",
+        "T1133",
+        "T1021.004",
+        "T1204",
+        "T1556.006",
+        "T1684.001",
+        "T1583.001",
+        "T1016",
+        "T1083",
+        "T1543.002",
+        "T1219.002",
+        "T1657",
+        "T1213.003",
+        "T1098.003",
+        "T1069",
+        "T1621",
+        "T1082",
+        "T1021.001",
+        "T1098",
+        "T1213.005",
+        "T1068",
+        "T1090",
+        "T1530",
+        "T1217",
+        "T1006",
+        "T1136",
+        "T1490",
+        "T1018",
+        "T1069.002",
+        "T1059.001",
+        "T1555.005",
+        "T1567.002",
+        "T1598.004",
+        "T1074",
+        "T1078.004",
+        "T1070.008",
+        "T1021.007",
+        "T1572",
+        "T1578.002",
+        "T1552.001",
+        "T1114",
+        "T1588.001"
+      ],
+      "mitre_technique_count": 64
     },
     {
       "id": "actor:G0047",
@@ -7182,7 +10011,80 @@
           "source": "TrendMicro Gamaredon April 2020",
           "url": "https://blog.trendmicro.com/trendlabs-security-intelligence/gamaredon-apt-group-use-covid-19-lure-in-campaigns/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1491.001",
+        "T1583.003",
+        "T1001",
+        "T1534",
+        "T1047",
+        "T1095",
+        "T1083",
+        "T1091",
+        "T1119",
+        "T1036.005",
+        "T1027.004",
+        "T1105",
+        "T1021.005",
+        "T1027.016",
+        "T1218.011",
+        "T1566.001",
+        "T1082",
+        "T1059.005",
+        "T1113",
+        "T1518.001",
+        "T1005",
+        "T1039",
+        "T1608.001",
+        "T1027.015",
+        "T1102.003",
+        "T1112",
+        "T1016.001",
+        "T1620",
+        "T1559.001",
+        "T1012",
+        "T1025",
+        "T1221",
+        "T1685",
+        "T1140",
+        "T1204.001",
+        "T1080",
+        "T1106",
+        "T1583.006",
+        "T1561.001",
+        "T1033",
+        "T1587.003",
+        "T1564.003",
+        "T1027.012",
+        "T1070.004",
+        "T1059.001",
+        "T1571",
+        "T1588.002",
+        "T1020",
+        "T1071.001",
+        "T1583.001",
+        "T1568.001",
+        "T1055",
+        "T1120",
+        "T1041",
+        "T1090.003",
+        "T1053.005",
+        "T1027",
+        "T1057",
+        "T1027.010",
+        "T1204.002",
+        "T1568",
+        "T1090",
+        "T1547.001",
+        "T1480",
+        "T1102.002",
+        "T1059.003",
+        "T1218.005",
+        "T1137",
+        "T1102",
+        "T1497.001"
+      ],
+      "mitre_technique_count": 70
     },
     {
       "id": "actor:G1036",
@@ -7203,7 +10105,40 @@
           "source": "Microsoft Moonstone Sleet 2024",
           "url": "https://www.microsoft.com/en-us/security/blog/2024/05/28/moonstone-sleet-emerges-as-new-north-korean-threat-actor-with-new-bag-of-tricks/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1587.001",
+        "T1033",
+        "T1071.001",
+        "T1585.002",
+        "T1589.002",
+        "T1140",
+        "T1591",
+        "T1053.005",
+        "T1547.001",
+        "T1204.002",
+        "T1566.001",
+        "T1027",
+        "T1583.003",
+        "T1105",
+        "T1016",
+        "T1598.003",
+        "T1003.001",
+        "T1608.001",
+        "T1598",
+        "T1195.002",
+        "T1569.002",
+        "T1583.001",
+        "T1217",
+        "T1566.003",
+        "T1486",
+        "T1585.001",
+        "T1587",
+        "T1082",
+        "T1027.013",
+        "T1027.009"
+      ],
+      "mitre_technique_count": 30
     },
     {
       "id": "actor:G0112",
@@ -7228,7 +10163,29 @@
           "source": "objective-see windtail1 dec 2018",
           "url": "https://objective-see.com/blog/blog_0x3B.html"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1057",
+        "T1189",
+        "T1059.005",
+        "T1518.001",
+        "T1566.001",
+        "T1204.001",
+        "T1566.003",
+        "T1547.001",
+        "T1518",
+        "T1566.002",
+        "T1036.001",
+        "T1027",
+        "T1071.001",
+        "T1036",
+        "T1105",
+        "T1047",
+        "T1033",
+        "T1082",
+        "T1204.002"
+      ],
+      "mitre_technique_count": 19
     },
     {
       "id": "actor:G1035",
@@ -7254,7 +10211,37 @@
           "source": "DomainTools WinterVivern 2021",
           "url": "https://www.domaintools.com/resources/blog/winter-vivern-a-look-at-re-crafted-government-maldocs/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1059",
+        "T1071.001",
+        "T1056.003",
+        "T1033",
+        "T1583.003",
+        "T1059.007",
+        "T1566.001",
+        "T1036.004",
+        "T1113",
+        "T1189",
+        "T1119",
+        "T1140",
+        "T1020",
+        "T1105",
+        "T1190",
+        "T1595.002",
+        "T1041",
+        "T1053.005",
+        "T1584.006",
+        "T1036",
+        "T1583.001",
+        "T1082",
+        "T1059.003",
+        "T1204.001",
+        "T1083",
+        "T1114.001",
+        "T1059.001"
+      ],
+      "mitre_technique_count": 27
     },
     {
       "id": "actor:G0100",
@@ -7280,7 +10267,32 @@
           "source": "Unit 42 Inception November 2018",
           "url": "https://unit42.paloaltonetworks.com/unit42-inception-attackers-target-europe-year-old-office-vulnerability/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1027.013",
+        "T1588.002",
+        "T1547.001",
+        "T1102",
+        "T1090.003",
+        "T1518",
+        "T1083",
+        "T1566.001",
+        "T1082",
+        "T1059.001",
+        "T1204.002",
+        "T1071.001",
+        "T1005",
+        "T1218.005",
+        "T1555.003",
+        "T1203",
+        "T1069.002",
+        "T1059.005",
+        "T1221",
+        "T1218.010",
+        "T1573.001",
+        "T1057"
+      ],
+      "mitre_technique_count": 22
     },
     {
       "id": "actor:G0068",
@@ -7299,7 +10311,21 @@
           "source": "Microsoft PLATINUM April 2016",
           "url": "https://download.microsoft.com/download/2/2/5/225BFE3E-E1DE-4F5B-A77B-71200928D209/Platinum%20feature%20article%20-%20Targeted%20attacks%20in%20South%20and%20Southeast%20Asia%20April%202016.pdf"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1189",
+        "T1105",
+        "T1204.002",
+        "T1068",
+        "T1056.004",
+        "T1056.001",
+        "T1003.001",
+        "T1095",
+        "T1055",
+        "T1566.001",
+        "T1036"
+      ],
+      "mitre_technique_count": 11
     },
     {
       "id": "actor:G0066",
@@ -7326,7 +10352,19 @@
           "source": "Symantec Elderwood Sept 2012",
           "url": "https://web.archive.org/web/20190717233006/http:/www.symantec.com/content/en/us/enterprise/media/security_response/whitepapers/the-elderwood-project.pdf"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1027.013",
+        "T1204.002",
+        "T1566.002",
+        "T1566.001",
+        "T1204.001",
+        "T1189",
+        "T1203",
+        "T1105",
+        "T1027.002"
+      ],
+      "mitre_technique_count": 9
     },
     {
       "id": "actor:G0134",
@@ -7354,7 +10392,24 @@
           "source": "Kaspersky Transparent Tribe August 2020",
           "url": "https://securelist.com/transparent-tribe-part-1/98127/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1189",
+        "T1608.004",
+        "T1204.002",
+        "T1027.013",
+        "T1568",
+        "T1584.001",
+        "T1059.005",
+        "T1566.002",
+        "T1036.005",
+        "T1583.001",
+        "T1564.001",
+        "T1203",
+        "T1566.001",
+        "T1204.001"
+      ],
+      "mitre_technique_count": 14
     },
     {
       "id": "actor:G1006",
@@ -7382,7 +10437,54 @@
           "source": "Recorded Future TAG-22 July 2021",
           "url": "https://www.recordedfuture.com/research/chinese-group-tag-22-targets-nepal-philippines-taiwan"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1583.006",
+        "T1027.003",
+        "T1608.001",
+        "T1098.004",
+        "T1003.006",
+        "T1059.005",
+        "T1189",
+        "T1018",
+        "T1584.006",
+        "T1059.007",
+        "T1210",
+        "T1036.005",
+        "T1140",
+        "T1583.001",
+        "T1033",
+        "T1547.012",
+        "T1059.001",
+        "T1059.006",
+        "T1057",
+        "T1053.005",
+        "T1574.001",
+        "T1112",
+        "T1047",
+        "T1003.001",
+        "T1218.005",
+        "T1482",
+        "T1567.002",
+        "T1548.002",
+        "T1588.002",
+        "T1007",
+        "T1204.002",
+        "T1190",
+        "T1090",
+        "T1027",
+        "T1543.003",
+        "T1566.002",
+        "T1560.001",
+        "T1583.004",
+        "T1049",
+        "T1595.002",
+        "T1016",
+        "T1588.001",
+        "T1584.004",
+        "T1204.001"
+      ],
+      "mitre_technique_count": 44
     },
     {
       "id": "actor:G0119",
@@ -7410,7 +10512,43 @@
           "source": "Mandiant_UNC2165",
           "url": "https://cloud.google.com/blog/topics/threat-intelligence/unc2165-shifts-to-evade-sanctions/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1003.001",
+        "T1587.001",
+        "T1136",
+        "T1112",
+        "T1036.005",
+        "T1007",
+        "T1583",
+        "T1685",
+        "T1074.001",
+        "T1021.001",
+        "T1555.005",
+        "T1590",
+        "T1059.001",
+        "T1078.002",
+        "T1552.001",
+        "T1567.002",
+        "T1059.003",
+        "T1484.001",
+        "T1047",
+        "T1078",
+        "T1486",
+        "T1685.005",
+        "T1136.001",
+        "T1018",
+        "T1059.007",
+        "T1585.002",
+        "T1105",
+        "T1489",
+        "T1012",
+        "T1558.003",
+        "T1204.002",
+        "T1021.004",
+        "T1584.004"
+      ],
+      "mitre_technique_count": 33
     },
     {
       "id": "actor:G0004",
@@ -7442,7 +10580,56 @@
           "source": "Microsoft NICKEL December 2021",
           "url": "https://www.microsoft.com/security/blog/2021/12/06/nickel-targeting-government-organizations-across-latin-america-and-europe"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1114.002",
+        "T1105",
+        "T1087.001",
+        "T1033",
+        "T1614.001",
+        "T1087.002",
+        "T1140",
+        "T1558.001",
+        "T1021.002",
+        "T1041",
+        "T1119",
+        "T1083",
+        "T1133",
+        "T1018",
+        "T1003.002",
+        "T1016",
+        "T1588.002",
+        "T1020",
+        "T1007",
+        "T1543.003",
+        "T1190",
+        "T1036.005",
+        "T1569.002",
+        "T1005",
+        "T1071.004",
+        "T1213.002",
+        "T1027",
+        "T1059",
+        "T1036.002",
+        "T1560",
+        "T1069.002",
+        "T1560.001",
+        "T1003.003",
+        "T1057",
+        "T1003.001",
+        "T1587.001",
+        "T1071.001",
+        "T1059.003",
+        "T1078",
+        "T1583.005",
+        "T1547.001",
+        "T1049",
+        "T1056.001",
+        "T1003.004",
+        "T1078.004",
+        "T1082"
+      ],
+      "mitre_technique_count": 46
     },
     {
       "id": "actor:G1017",
@@ -7472,7 +10659,91 @@
           "source": "Secureworks BRONZE SILHOUETTE May 2023",
           "url": "https://www.secureworks.com/blog/chinese-cyberespionage-group-bronze-silhouette-targets-us-government-and-defense-organizations"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1046",
+        "T1083",
+        "T1591.004",
+        "T1057",
+        "T1021.001",
+        "T1584.004",
+        "T1090",
+        "T1518",
+        "T1078",
+        "T1584.008",
+        "T1056.001",
+        "T1036.005",
+        "T1036.008",
+        "T1059.003",
+        "T1190",
+        "T1555",
+        "T1074",
+        "T1590",
+        "T1560.001",
+        "T1124",
+        "T1069.002",
+        "T1016",
+        "T1018",
+        "T1047",
+        "T1133",
+        "T1140",
+        "T1570",
+        "T1593",
+        "T1680",
+        "T1589.002",
+        "T1497.001",
+        "T1003.003",
+        "T1027.002",
+        "T1573.001",
+        "T1003.001",
+        "T1685.005",
+        "T1584.005",
+        "T1592",
+        "T1049",
+        "T1087.001",
+        "T1217",
+        "T1059.001",
+        "T1654",
+        "T1068",
+        "T1113",
+        "T1090.001",
+        "T1587.004",
+        "T1090.003",
+        "T1594",
+        "T1033",
+        "T1112",
+        "T1505.003",
+        "T1218",
+        "T1059.004",
+        "T1007",
+        "T1069",
+        "T1584.003",
+        "T1555.003",
+        "T1591",
+        "T1590.004",
+        "T1010",
+        "T1069.001",
+        "T1120",
+        "T1070.004",
+        "T1588.006",
+        "T1105",
+        "T1552",
+        "T1078.002",
+        "T1005",
+        "T1006",
+        "T1012",
+        "T1589",
+        "T1588.002",
+        "T1596.005",
+        "T1087.002",
+        "T1614",
+        "T1070.007",
+        "T1016.001",
+        "T1552.004",
+        "T1074.001",
+        "T1590.006"
+      ],
+      "mitre_technique_count": 81
     },
     {
       "id": "actor:G0001",
@@ -7497,7 +10768,26 @@
           "source": "Kaspersky Winnti April 2013",
           "url": "https://securelist.com/winnti-more-than-just-a-game/37029/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1001.002",
+        "T1005",
+        "T1560",
+        "T1584.005",
+        "T1189",
+        "T1553",
+        "T1021.001",
+        "T1583.002",
+        "T1203",
+        "T1078",
+        "T1583.003",
+        "T1563.002",
+        "T1546.008",
+        "T1566",
+        "T1190",
+        "T1003"
+      ],
+      "mitre_technique_count": 16
     },
     {
       "id": "actor:G1003",
@@ -7527,7 +10817,57 @@
           "source": "Cadet Blizzard emerges as novel threat actor",
           "url": "https://www.microsoft.com/en-us/security/blog/2023/06/14/cadet-blizzard-emerges-as-a-novel-and-distinct-russian-threat-actor/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1018",
+        "T1003",
+        "T1090.003",
+        "T1114",
+        "T1583",
+        "T1560",
+        "T1036",
+        "T1595.002",
+        "T1583.003",
+        "T1654",
+        "T1190",
+        "T1133",
+        "T1119",
+        "T1571",
+        "T1070.004",
+        "T1570",
+        "T1095",
+        "T1125",
+        "T1572",
+        "T1110",
+        "T1588.001",
+        "T1110.003",
+        "T1595.001",
+        "T1505.003",
+        "T1585",
+        "T1491.002",
+        "T1053.005",
+        "T1210",
+        "T1059.001",
+        "T1112",
+        "T1071.004",
+        "T1550.002",
+        "T1567.002",
+        "T1588.005",
+        "T1195",
+        "T1005",
+        "T1561.002",
+        "T1203",
+        "T1036.005",
+        "T1552.001",
+        "T1003.001",
+        "T1047",
+        "T1021",
+        "T1003.004",
+        "T1003.002",
+        "T1078.001",
+        "T1046"
+      ],
+      "mitre_technique_count": 47
     },
     {
       "id": "actor:G0064",
@@ -7554,7 +10894,41 @@
           "source": "Microsoft Threat Actor Naming July 2023",
           "url": "https://learn.microsoft.com/en-us/microsoft-365/security/intelligence/microsoft-threat-actor-naming?view=o365-worldwide"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1552.001",
+        "T1003.005",
+        "T1560.001",
+        "T1555.003",
+        "T1552.006",
+        "T1027.013",
+        "T1566.001",
+        "T1003.001",
+        "T1566.002",
+        "T1110.003",
+        "T1003.004",
+        "T1053.005",
+        "T1555",
+        "T1546.003",
+        "T1105",
+        "T1048.003",
+        "T1588.002",
+        "T1040",
+        "T1071.001",
+        "T1059.001",
+        "T1547.001",
+        "T1078",
+        "T1573.001",
+        "T1059.005",
+        "T1132.001",
+        "T1571",
+        "T1078.004",
+        "T1203",
+        "T1204.002",
+        "T1204.001",
+        "T1068"
+      ],
+      "mitre_technique_count": 31
     },
     {
       "id": "actor:G1008",
@@ -7573,7 +10947,26 @@
           "source": "MalwareBytes SideCopy Dec 2021",
           "url": "https://www.malwarebytes.com/blog/news/2021/12/sidecopy-apt-connecting-lures-to-victims-payloads-to-infrastructure"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1614",
+        "T1518.001",
+        "T1584.001",
+        "T1105",
+        "T1016",
+        "T1608.001",
+        "T1106",
+        "T1059.005",
+        "T1518",
+        "T1566.001",
+        "T1574.001",
+        "T1204.002",
+        "T1082",
+        "T1598.002",
+        "T1036.005",
+        "T1218.005"
+      ],
+      "mitre_technique_count": 16
     },
     {
       "id": "actor:G0102",
@@ -7605,7 +10998,74 @@
           "source": "FireEye Ryuk and Trickbot January 2019",
           "url": "https://www.fireeye.com/blog/threat-research/2019/01/a-nasty-trick-from-credential-theft-malware-to-business-disruption.html"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1136.001",
+        "T1588.003",
+        "T1210",
+        "T1560.001",
+        "T1059.003",
+        "T1047",
+        "T1588.002",
+        "T1543.003",
+        "T1021.002",
+        "T1074",
+        "T1078.002",
+        "T1055",
+        "T1021",
+        "T1021.001",
+        "T1550.002",
+        "T1222.001",
+        "T1570",
+        "T1204.002",
+        "T1053.005",
+        "T1027.010",
+        "T1070.004",
+        "T1552.006",
+        "T1048.003",
+        "T1685",
+        "T1518.001",
+        "T1218.011",
+        "T1558.003",
+        "T1059.001",
+        "T1567.002",
+        "T1112",
+        "T1490",
+        "T1133",
+        "T1547.004",
+        "T1036.004",
+        "T1087.002",
+        "T1518.002",
+        "T1071.001",
+        "T1553.002",
+        "T1136.002",
+        "T1074.001",
+        "T1557.001",
+        "T1105",
+        "T1003.003",
+        "T1016",
+        "T1585.002",
+        "T1033",
+        "T1078",
+        "T1204.001",
+        "T1003.001",
+        "T1041",
+        "T1566.001",
+        "T1003.002",
+        "T1489",
+        "T1566.002",
+        "T1018",
+        "T1005",
+        "T1082",
+        "T1555.004",
+        "T1135",
+        "T1569.002",
+        "T1547.001",
+        "T1021.006",
+        "T1055.001",
+        "T1197"
+      ],
+      "mitre_technique_count": 64
     },
     {
       "id": "actor:G0107",
@@ -7624,7 +11084,19 @@
           "source": "Symantec Whitefly March 2019",
           "url": "https://symantec-enterprise-blogs.security.com/blogs/threat-intelligence/whitefly-espionage-singapore"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1105",
+        "T1574.001",
+        "T1003.001",
+        "T1068",
+        "T1588.002",
+        "T1059",
+        "T1027.013",
+        "T1204.002",
+        "T1036.005"
+      ],
+      "mitre_technique_count": 9
     },
     {
       "id": "actor:G1052",
@@ -7654,7 +11126,64 @@
           "source": "Validin Contagious Interview North Korea ClickFix January 2025",
           "url": "https://www.validin.com/blog/inoculating_contagious_interview_with_validin/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1555.001",
+        "T1585",
+        "T1083",
+        "T1583.006",
+        "T1571",
+        "T1204.005",
+        "T1219.002",
+        "T1036",
+        "T1204.002",
+        "T1497",
+        "T1567",
+        "T1059.004",
+        "T1587.001",
+        "T1593.003",
+        "T1583.001",
+        "T1566.003",
+        "T1546.004",
+        "T1683.001",
+        "T1685",
+        "T1681",
+        "T1059.003",
+        "T1657",
+        "T1048.003",
+        "T1059.007",
+        "T1547.013",
+        "T1587",
+        "T1070.004",
+        "T1588.002",
+        "T1543.001",
+        "T1041",
+        "T1593.001",
+        "T1583",
+        "T1027.013",
+        "T1567.002",
+        "T1684.001",
+        "T1204.004",
+        "T1059.006",
+        "T1589",
+        "T1583.003",
+        "T1588.007",
+        "T1090",
+        "T1573.001",
+        "T1204.001",
+        "T1071.003",
+        "T1082",
+        "T1593",
+        "T1027.010",
+        "T1608.001",
+        "T1059.005",
+        "T1480",
+        "T1585.001",
+        "T1547.001",
+        "T1585.002",
+        "T1683.002"
+      ],
+      "mitre_technique_count": 54
     },
     {
       "id": "actor:G0129",
@@ -7688,7 +11217,95 @@
           "source": "Anomali MUSTANG PANDA October 2019",
           "url": "https://www.anomali.com/blog/china-based-apt-mustang-panda-targets-minority-groups-public-and-private-sector-organizations"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1016",
+        "T1608.001",
+        "T1583.006",
+        "T1047",
+        "T1573.001",
+        "T1593",
+        "T1204.001",
+        "T1046",
+        "T1140",
+        "T1049",
+        "T1059.005",
+        "T1219.001",
+        "T1567.002",
+        "T1053.005",
+        "T1087.002",
+        "T1598.003",
+        "T1678",
+        "T1564.001",
+        "T1218.005",
+        "T1027.007",
+        "T1585.002",
+        "T1219.002",
+        "T1003",
+        "T1003.006",
+        "T1218.004",
+        "T1586.002",
+        "T1560.001",
+        "T1070",
+        "T1071.001",
+        "T1018",
+        "T1069.002",
+        "T1001.003",
+        "T1048.003",
+        "T1566.002",
+        "T1041",
+        "T1072",
+        "T1557",
+        "T1505.003",
+        "T1176.002",
+        "T1588.003",
+        "T1091",
+        "T1059.003",
+        "T1052.001",
+        "T1003.001",
+        "T1588.002",
+        "T1588.004",
+        "T1560.003",
+        "T1070.004",
+        "T1129",
+        "T1057",
+        "T1082",
+        "T1095",
+        "T1203",
+        "T1574.005",
+        "T1608",
+        "T1622",
+        "T1566.001",
+        "T1654",
+        "T1083",
+        "T1518",
+        "T1583.001",
+        "T1574.001",
+        "T1546.003",
+        "T1106",
+        "T1003.003",
+        "T1059",
+        "T1553.002",
+        "T1027",
+        "T1547.001",
+        "T1119",
+        "T1105",
+        "T1074.001",
+        "T1059.007",
+        "T1059.001",
+        "T1027.016",
+        "T1070.006",
+        "T1204.002",
+        "T1572",
+        "T1036.008",
+        "T1036.007",
+        "T1102",
+        "T1205",
+        "T1036.005",
+        "T1587.001",
+        "T1027.012"
+      ],
+      "mitre_technique_count": 85
     },
     {
       "id": "actor:G0018",
@@ -7707,7 +11324,22 @@
           "source": "FireEye admin@338",
           "url": "https://www.fireeye.com/blog/threat-research/2015/11/china-based-threat.html"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1566.001",
+        "T1016",
+        "T1036.005",
+        "T1083",
+        "T1069.001",
+        "T1049",
+        "T1087.001",
+        "T1203",
+        "T1007",
+        "T1204.002",
+        "T1082",
+        "T1059.003"
+      ],
+      "mitre_technique_count": 12
     },
     {
       "id": "actor:G0093",
@@ -7732,7 +11364,41 @@
           "source": "Microsoft Threat Actor Naming July 2023",
           "url": "https://learn.microsoft.com/en-us/microsoft-365/security/intelligence/microsoft-threat-actor-naming?view=o365-worldwide"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1059.003",
+        "T1003.002",
+        "T1078",
+        "T1053.005",
+        "T1027",
+        "T1553.002",
+        "T1041",
+        "T1005",
+        "T1574.001",
+        "T1588.002",
+        "T1047",
+        "T1136.002",
+        "T1583.004",
+        "T1133",
+        "T1027.002",
+        "T1505.003",
+        "T1003.001",
+        "T1560.001",
+        "T1059.001",
+        "T1570",
+        "T1027.005",
+        "T1090.002",
+        "T1049",
+        "T1074.001",
+        "T1033",
+        "T1190",
+        "T1016",
+        "T1105",
+        "T1018",
+        "T1550.002",
+        "T1036.003"
+      ],
+      "mitre_technique_count": 31
     },
     {
       "id": "actor:G0026",
@@ -7759,7 +11425,22 @@
           "source": "Anomali Evasive Maneuvers July 2015",
           "url": "https://www.anomali.com/blog/evasive-maneuvers-the-wekby-group-attempts-to-evade-analysis-via-custom-rop"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1078",
+        "T1027.013",
+        "T1133",
+        "T1070.004",
+        "T1053.002",
+        "T1105",
+        "T1071.004",
+        "T1082",
+        "T1071.001",
+        "T1083",
+        "T1059.003",
+        "T1547.001"
+      ],
+      "mitre_technique_count": 12
     },
     {
       "id": "actor:G0053",
@@ -7782,7 +11463,21 @@
           "source": "Mandiant FIN5 GrrCON Oct 2016",
           "url": "https://www.youtube.com/watch?v=fevGZs0EQu8"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1090.002",
+        "T1070.004",
+        "T1074.001",
+        "T1059",
+        "T1018",
+        "T1119",
+        "T1110",
+        "T1685.005",
+        "T1588.002",
+        "T1133",
+        "T1078"
+      ],
+      "mitre_technique_count": 11
     },
     {
       "id": "actor:G0008",
@@ -7807,7 +11502,19 @@
           "source": "FireEye FIN7 April 2017",
           "url": "https://www.fireeye.com/blog/threat-research/2017/04/fin7-phishing-lnk.html"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1036.004",
+        "T1218.011",
+        "T1078",
+        "T1102.002",
+        "T1543.003",
+        "T1219",
+        "T1036.005",
+        "T1686",
+        "T1588.002"
+      ],
+      "mitre_technique_count": 9
     },
     {
       "id": "actor:G0078",
@@ -7826,7 +11533,26 @@
           "source": "Unit 42 Gorgon Group Aug 2018",
           "url": "https://researchcenter.paloaltonetworks.com/2018/08/unit42-gorgon-group-slithering-nation-state-cybercrime/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1055.012",
+        "T1685",
+        "T1140",
+        "T1106",
+        "T1547.001",
+        "T1059.001",
+        "T1059.003",
+        "T1105",
+        "T1566.001",
+        "T1564.003",
+        "T1055.002",
+        "T1112",
+        "T1547.009",
+        "T1204.002",
+        "T1588.002",
+        "T1059.005"
+      ],
+      "mitre_technique_count": 16
     },
     {
       "id": "actor:G1007",
@@ -7845,7 +11571,19 @@
           "source": "SentinelOne Aoqin Dragon June 2022",
           "url": "https://www.sentinelone.com/labs/aoqin-dragon-newly-discovered-chinese-linked-apt-has-been-quietly-spying-on-organizations-for-10-years/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1204.002",
+        "T1570",
+        "T1091",
+        "T1027.002",
+        "T1587.001",
+        "T1083",
+        "T1036",
+        "T1588.002",
+        "T1203"
+      ],
+      "mitre_technique_count": 9
     },
     {
       "id": "actor:G0091",
@@ -7870,7 +11608,38 @@
           "source": "SecureList Silence Nov 2017",
           "url": "https://securelist.com/the-silence/83009/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1571",
+        "T1053.005",
+        "T1055",
+        "T1547.001",
+        "T1059.005",
+        "T1112",
+        "T1021.001",
+        "T1125",
+        "T1059.007",
+        "T1218.001",
+        "T1072",
+        "T1113",
+        "T1027.010",
+        "T1569.002",
+        "T1090.002",
+        "T1553.002",
+        "T1105",
+        "T1078",
+        "T1018",
+        "T1003.001",
+        "T1059.001",
+        "T1588.002",
+        "T1070.004",
+        "T1566.001",
+        "T1036.005",
+        "T1204.002",
+        "T1059.003",
+        "T1106"
+      ],
+      "mitre_technique_count": 28
     },
     {
       "id": "actor:G0034",
@@ -7904,7 +11673,89 @@
           "source": "US District Court Indictment GRU Oct 2018",
           "url": "https://www.justice.gov/opa/page/file/1098481/download"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1608.001",
+        "T1588.006",
+        "T1040",
+        "T1027.010",
+        "T1595.002",
+        "T1585.001",
+        "T1586.001",
+        "T1132.001",
+        "T1213.006",
+        "T1539",
+        "T1059.001",
+        "T1090",
+        "T1203",
+        "T1041",
+        "T1053.005",
+        "T1190",
+        "T1078.002",
+        "T1003.003",
+        "T1036",
+        "T1598.003",
+        "T1133",
+        "T1587.001",
+        "T1072",
+        "T1584.005",
+        "T1566.002",
+        "T1018",
+        "T1589.003",
+        "T1078",
+        "T1566.001",
+        "T1204.002",
+        "T1106",
+        "T1588.002",
+        "T1583.004",
+        "T1590.001",
+        "T1083",
+        "T1049",
+        "T1555.003",
+        "T1489",
+        "T1571",
+        "T1070.004",
+        "T1047",
+        "T1087.003",
+        "T1021.002",
+        "T1204.001",
+        "T1505.003",
+        "T1218.011",
+        "T1499",
+        "T1195.002",
+        "T1199",
+        "T1056.001",
+        "T1561.002",
+        "T1486",
+        "T1592.002",
+        "T1491.002",
+        "T1583",
+        "T1219",
+        "T1584.004",
+        "T1003.001",
+        "T1594",
+        "T1570",
+        "T1027",
+        "T1591.002",
+        "T1585.002",
+        "T1102.002",
+        "T1490",
+        "T1583.001",
+        "T1140",
+        "T1485",
+        "T1059.005",
+        "T1105",
+        "T1033",
+        "T1589.002",
+        "T1071.001",
+        "T1087.002",
+        "T1082",
+        "T1005",
+        "T1195",
+        "T1593",
+        "T1036.005"
+      ],
+      "mitre_technique_count": 79
     },
     {
       "id": "actor:G0071",
@@ -7927,7 +11778,12 @@
           "source": "Symantec Orangeworm April 2018",
           "url": "https://www.symantec.com/blogs/threat-intelligence/orangeworm-targets-healthcare-us-europe-asia"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1071.001",
+        "T1021.002"
+      ],
+      "mitre_technique_count": 2
     },
     {
       "id": "actor:G0114",
@@ -7950,7 +11806,69 @@
           "source": "NCC Group Chimera January 2021",
           "url": "https://web.archive.org/web/20230218064220/https://research.nccgroup.com/2021/01/12/abusing-cloud-services-to-fly-under-the-radar/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1574.001",
+        "T1074.002",
+        "T1053.005",
+        "T1569.002",
+        "T1041",
+        "T1078",
+        "T1550.002",
+        "T1071.001",
+        "T1106",
+        "T1556.001",
+        "T1071.004",
+        "T1482",
+        "T1560.001",
+        "T1021.006",
+        "T1083",
+        "T1087.002",
+        "T1057",
+        "T1021.002",
+        "T1059.001",
+        "T1003.003",
+        "T1074.001",
+        "T1213.002",
+        "T1135",
+        "T1036.005",
+        "T1570",
+        "T1007",
+        "T1027.010",
+        "T1685.005",
+        "T1016",
+        "T1046",
+        "T1033",
+        "T1087.001",
+        "T1572",
+        "T1078.002",
+        "T1069.001",
+        "T1124",
+        "T1201",
+        "T1049",
+        "T1059.003",
+        "T1070.004",
+        "T1110.003",
+        "T1114.001",
+        "T1039",
+        "T1119",
+        "T1133",
+        "T1110.004",
+        "T1680",
+        "T1114.002",
+        "T1012",
+        "T1588.002",
+        "T1567.002",
+        "T1070.006",
+        "T1018",
+        "T1589.001",
+        "T1047",
+        "T1021.001",
+        "T1111",
+        "T1217",
+        "T1105"
+      ],
+      "mitre_technique_count": 59
     },
     {
       "id": "actor:G1034",
@@ -7976,7 +11894,27 @@
           "source": "ESET EvasivePanda 2023",
           "url": "https://www.welivesecurity.com/2023/04/26/evasive-panda-apt-group-malware-updates-popular-chinese-software/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1003.002",
+        "T1587.002",
+        "T1053.005",
+        "T1071.001",
+        "T1059.001",
+        "T1036.003",
+        "T1204.001",
+        "T1105",
+        "T1082",
+        "T1195.002",
+        "T1574.001",
+        "T1218.011",
+        "T1584.004",
+        "T1136.001",
+        "T1553.002",
+        "T1012",
+        "T1189"
+      ],
+      "mitre_technique_count": 17
     },
     {
       "id": "actor:G1045",
@@ -7999,7 +11937,24 @@
           "source": "US Dept. of Treasury Salt Typhoon JAN 2025",
           "url": "https://home.treasury.gov/news/press-releases/jy2792"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1685.006",
+        "T1590.004",
+        "T1572",
+        "T1587.001",
+        "T1048.003",
+        "T1098.004",
+        "T1040",
+        "T1602.002",
+        "T1110.002",
+        "T1021.004",
+        "T1686",
+        "T1588.002",
+        "T1136",
+        "T1190"
+      ],
+      "mitre_technique_count": 14
     },
     {
       "id": "actor:G0099",
@@ -8020,7 +11975,48 @@
           "source": "QiAnXin APT-C-36 Feb2019",
           "url": "https://web.archive.org/web/20190625182633if_/https://ti.360.net/blog/articles/apt-c-36-continuous-attacks-targeting-colombian-government-institutions-and-corporations-en/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1583.001",
+        "T1204.002",
+        "T1683.001",
+        "T1027.016",
+        "T1047",
+        "T1059.007",
+        "T1684.001",
+        "T1588.001",
+        "T1584.005",
+        "T1583.006",
+        "T1036.004",
+        "T1027.013",
+        "T1588.002",
+        "T1587.001",
+        "T1027",
+        "T1036.005",
+        "T1534",
+        "T1204.001",
+        "T1683.002",
+        "T1586.002",
+        "T1053.005",
+        "T1480",
+        "T1566.002",
+        "T1133",
+        "T1583.003",
+        "T1105",
+        "T1608.001",
+        "T1027.003",
+        "T1059.005",
+        "T1568",
+        "T1564.003",
+        "T1571",
+        "T1586.003",
+        "T1593",
+        "T1566.001",
+        "T1055.012",
+        "T1059.001",
+        "T1574.001"
+      ],
+      "mitre_technique_count": 38
     },
     {
       "id": "actor:G1022",
@@ -8043,7 +12039,35 @@
           "source": "Kaspersky ToddyCat Check Logs October 2023",
           "url": "https://securelist.com/toddycat-keep-calm-and-check-logs/110696/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1686",
+        "T1005",
+        "T1069.002",
+        "T1053.005",
+        "T1566.003",
+        "T1087.002",
+        "T1095",
+        "T1078.002",
+        "T1106",
+        "T1057",
+        "T1018",
+        "T1049",
+        "T1021.002",
+        "T1059.003",
+        "T1190",
+        "T1567.002",
+        "T1518.001",
+        "T1059.001",
+        "T1564.003",
+        "T1083",
+        "T1074.002",
+        "T1047",
+        "T1036.005",
+        "T1680",
+        "T1560.001"
+      ],
+      "mitre_technique_count": 25
     },
     {
       "id": "actor:G0033",
@@ -8062,7 +12086,18 @@
           "source": "Kaspersky Poseidon Group",
           "url": "https://securelist.com/poseidon-group-a-targeted-attack-boutique-specializing-in-global-cyber-espionage/73673/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1049",
+        "T1003",
+        "T1007",
+        "T1087.002",
+        "T1087.001",
+        "T1057",
+        "T1036.005",
+        "T1059.001"
+      ],
+      "mitre_technique_count": 8
     },
     {
       "id": "actor:G0070",
@@ -8081,7 +12116,22 @@
           "source": "Lookout Dark Caracal Jan 2018",
           "url": "https://info.lookout.com/rs/051-ESQ-475/images/Lookout_Dark-Caracal_srr_20180118_us_v.1.0.pdf"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1027.013",
+        "T1059.003",
+        "T1071.001",
+        "T1204.002",
+        "T1027.002",
+        "T1218.001",
+        "T1189",
+        "T1547.001",
+        "T1083",
+        "T1566.003",
+        "T1005",
+        "T1113"
+      ],
+      "mitre_technique_count": 12
     },
     {
       "id": "actor:G0065",
@@ -8113,7 +12163,60 @@
           "source": "Crowdstrike KRYPTONITE PANDA August 2018",
           "url": "https://www.crowdstrike.com/blog/two-birds-one-stone-panda/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1567.002",
+        "T1595.002",
+        "T1102.003",
+        "T1047",
+        "T1021.004",
+        "T1105",
+        "T1547.001",
+        "T1027.013",
+        "T1589.001",
+        "T1003.001",
+        "T1586.001",
+        "T1090.003",
+        "T1027.001",
+        "T1583.001",
+        "T1585.002",
+        "T1566.002",
+        "T1189",
+        "T1546.003",
+        "T1027.003",
+        "T1585.001",
+        "T1059.001",
+        "T1547.009",
+        "T1055.001",
+        "T1566.001",
+        "T1584.004",
+        "T1203",
+        "T1059.005",
+        "T1078",
+        "T1553.002",
+        "T1559.002",
+        "T1587.004",
+        "T1197",
+        "T1074.001",
+        "T1204.002",
+        "T1140",
+        "T1074.002",
+        "T1534",
+        "T1190",
+        "T1218.010",
+        "T1041",
+        "T1505.003",
+        "T1021.001",
+        "T1584.008",
+        "T1027.015",
+        "T1560",
+        "T1572",
+        "T1204.001",
+        "T1133",
+        "T1003",
+        "T1586.002"
+      ],
+      "mitre_technique_count": 50
     },
     {
       "id": "actor:G1012",
@@ -8141,7 +12244,29 @@
           "source": "Proofpoint TA456 Defense Contractor July 2021",
           "url": "https://www.proofpoint.com/us/blog/threat-insight/i-knew-you-were-trouble-ta456-targets-defense-contractor-alluring-social-media"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1566.003",
+        "T1505.003",
+        "T1204.002",
+        "T1584.006",
+        "T1583.003",
+        "T1082",
+        "T1608.004",
+        "T1048.002",
+        "T1005",
+        "T1585.001",
+        "T1585.002",
+        "T1124",
+        "T1598.003",
+        "T1189",
+        "T1566.001",
+        "T1059.001",
+        "T1583.001",
+        "T1041",
+        "T1583.004"
+      ],
+      "mitre_technique_count": 19
     },
     {
       "id": "actor:G0084",
@@ -8160,7 +12285,16 @@
           "source": "Symantec Gallmaker Oct 2018",
           "url": "https://www.symantec.com/blogs/threat-intelligence/gallmaker-attack-group"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1204.002",
+        "T1027",
+        "T1560.001",
+        "T1559.002",
+        "T1059.001",
+        "T1566.001"
+      ],
+      "mitre_technique_count": 6
     },
     {
       "id": "actor:G1053",
@@ -8183,7 +12317,52 @@
           "source": "Microsoft Storm-501 Sabbath Ransomware Embargo September 2024",
           "url": "https://www.microsoft.com/en-us/security/blog/2024/09/26/storm-0501-ransomware-attacks-expanding-to-hybrid-cloud-environments/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1219.002",
+        "T1537",
+        "T1490",
+        "T1484.001",
+        "T1530",
+        "T1059.001",
+        "T1485",
+        "T1053.005",
+        "T1087.004",
+        "T1003.006",
+        "T1526",
+        "T1567.002",
+        "T1059.009",
+        "T1021.007",
+        "T1021.006",
+        "T1190",
+        "T1057",
+        "T1518.001",
+        "T1486",
+        "T1657",
+        "T1078.004",
+        "T1218.010",
+        "T1555.006",
+        "T1555.005",
+        "T1484.002",
+        "T1580",
+        "T1482",
+        "T1578.003",
+        "T1082",
+        "T1027.002",
+        "T1614.001",
+        "T1552.004",
+        "T1036.004",
+        "T1098.003",
+        "T1087.002",
+        "T1218.011",
+        "T1587.003",
+        "T1588.006",
+        "T1556.009",
+        "T1003",
+        "T1110",
+        "T1098.001"
+      ],
+      "mitre_technique_count": 42
     },
     {
       "id": "actor:G1019",
@@ -8202,7 +12381,18 @@
           "source": "MoustachedBouncer ESET August 2023",
           "url": "https://www.welivesecurity.com/en/eset-research/moustachedbouncer-espionage-against-foreign-diplomats-in-belarus/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1059.001",
+        "T1059.007",
+        "T1027.002",
+        "T1113",
+        "T1090",
+        "T1068",
+        "T1074.002",
+        "T1659"
+      ],
+      "mitre_technique_count": 8
     },
     {
       "id": "actor:G0106",
@@ -8221,7 +12411,46 @@
           "source": "Talos Rocke August 2018",
           "url": "https://blog.talosintelligence.com/2018/08/rocke-champion-of-monero-miners.html"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1190",
+        "T1014",
+        "T1027",
+        "T1102",
+        "T1059.004",
+        "T1082",
+        "T1071",
+        "T1105",
+        "T1496.001",
+        "T1027.004",
+        "T1574.006",
+        "T1564.001",
+        "T1053.003",
+        "T1059.006",
+        "T1046",
+        "T1055.002",
+        "T1102.001",
+        "T1037",
+        "T1027.002",
+        "T1547.001",
+        "T1222.002",
+        "T1057",
+        "T1543.002",
+        "T1018",
+        "T1686",
+        "T1140",
+        "T1685.006",
+        "T1552.004",
+        "T1070.004",
+        "T1071.001",
+        "T1685",
+        "T1571",
+        "T1021.004",
+        "T1070.006",
+        "T1036.005",
+        "T1518.001"
+      ],
+      "mitre_technique_count": 36
     },
     {
       "id": "actor:G0016",
@@ -8255,7 +12484,76 @@
           "source": "Volexity SolarWinds",
           "url": "https://www.volexity.com/blog/2020/12/14/dark-halo-leverages-solarwinds-compromise-to-breach-organizations/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1621",
+        "T1003.002",
+        "T1588.002",
+        "T1090.004",
+        "T1528",
+        "T1568",
+        "T1068",
+        "T1546.003",
+        "T1547.001",
+        "T1136.003",
+        "T1098.005",
+        "T1587.003",
+        "T1005",
+        "T1105",
+        "T1651",
+        "T1566.001",
+        "T1078.004",
+        "T1053.005",
+        "T1016.001",
+        "T1587.001",
+        "T1583.006",
+        "T1090.003",
+        "T1037",
+        "T1027.006",
+        "T1070.004",
+        "T1203",
+        "T1550.003",
+        "T1204.001",
+        "T1036.005",
+        "T1110.003",
+        "T1114.002",
+        "T1027.001",
+        "T1556.007",
+        "T1059.001",
+        "T1133",
+        "T1037.004",
+        "T1021.007",
+        "T1595.002",
+        "T1566.002",
+        "T1070.006",
+        "T1586.003",
+        "T1090.002",
+        "T1573",
+        "T1047",
+        "T1110.001",
+        "T1199",
+        "T1566.003",
+        "T1078",
+        "T1505.003",
+        "T1059.006",
+        "T1665",
+        "T1218.005",
+        "T1003.004",
+        "T1190",
+        "T1553.005",
+        "T1649",
+        "T1087.004",
+        "T1098.002",
+        "T1078.003",
+        "T1546.008",
+        "T1059.009",
+        "T1586.002",
+        "T1204.002",
+        "T1685.002",
+        "T1548.002",
+        "T1027.002"
+      ],
+      "mitre_technique_count": 66
     },
     {
       "id": "actor:G0019",
@@ -8278,7 +12576,24 @@
           "source": "Baumgartner Naikon 2015",
           "url": "https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2018/03/07205555/TheNaikonAPT-MsnMM1.pdf"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1078.002",
+        "T1018",
+        "T1547.001",
+        "T1518.001",
+        "T1046",
+        "T1047",
+        "T1137.006",
+        "T1016",
+        "T1036.005",
+        "T1566.001",
+        "T1036.004",
+        "T1053.005",
+        "T1204.002",
+        "T1574.001"
+      ],
+      "mitre_technique_count": 14
     },
     {
       "id": "actor:G0079",
@@ -8301,7 +12616,17 @@
           "source": "Unit 42 Playbook Dec 2017",
           "url": "https://pan-unit42.github.io/playbook_viewer/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1204.002",
+        "T1187",
+        "T1564.003",
+        "T1059.001",
+        "T1566.001",
+        "T1221",
+        "T1588.002"
+      ],
+      "mitre_technique_count": 7
     },
     {
       "id": "actor:G0138",
@@ -8328,7 +12653,22 @@
           "source": "TrendMicro New Andariel Tactics July 2018",
           "url": "https://www.trendmicro.com/en_us/research/18/g/new-andariel-reconnaissance-tactics-hint-at-next-targets.html"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1049",
+        "T1203",
+        "T1005",
+        "T1590.005",
+        "T1189",
+        "T1057",
+        "T1592.002",
+        "T1588.001",
+        "T1204.002",
+        "T1566.001",
+        "T1027.003",
+        "T1105"
+      ],
+      "mitre_technique_count": 12
     },
     {
       "id": "actor:G0012",
@@ -8354,7 +12694,34 @@
           "source": "Kaspersky Darkhotel",
           "url": "https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2018/03/08070903/darkhotel_kl_07.11.pdf"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1518.001",
+        "T1497.002",
+        "T1027.013",
+        "T1573.001",
+        "T1080",
+        "T1082",
+        "T1056.001",
+        "T1566.001",
+        "T1057",
+        "T1140",
+        "T1189",
+        "T1091",
+        "T1497",
+        "T1497.001",
+        "T1124",
+        "T1553.002",
+        "T1016",
+        "T1083",
+        "T1059.003",
+        "T1036.005",
+        "T1105",
+        "T1547.001",
+        "T1203",
+        "T1204.002"
+      ],
+      "mitre_technique_count": 24
     },
     {
       "id": "actor:G1033",
@@ -8382,7 +12749,30 @@
           "source": "Microsoft Star Blizzard August 2022",
           "url": "https://www.microsoft.com/en-us/security/blog/2022/08/15/disrupting-seaborgiums-ongoing-phishing-operations/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1684.001",
+        "T1583.001",
+        "T1114.002",
+        "T1550.004",
+        "T1204.002",
+        "T1608.001",
+        "T1539",
+        "T1589",
+        "T1585.002",
+        "T1566.001",
+        "T1598.002",
+        "T1598.003",
+        "T1588.002",
+        "T1583",
+        "T1114.003",
+        "T1585.001",
+        "T1078",
+        "T1586.002",
+        "T1059.007",
+        "T1593"
+      ],
+      "mitre_technique_count": 20
     },
     {
       "id": "actor:G0052",
@@ -8405,7 +12795,18 @@
           "source": "ClearSky CopyKittens March 2017",
           "url": "http://www.clearskysec.com/copykitten-jpost/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1560.003",
+        "T1560.001",
+        "T1059.001",
+        "T1090",
+        "T1218.011",
+        "T1564.003",
+        "T1588.002",
+        "T1553.002"
+      ],
+      "mitre_technique_count": 8
     },
     {
       "id": "actor:G0021",
@@ -8431,7 +12832,26 @@
           "source": "DustySky",
           "url": "https://www.clearskysec.com/wp-content/uploads/2016/01/Operation%20DustySky_TLP_WHITE.pdf"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1218.007",
+        "T1204.001",
+        "T1105",
+        "T1553.002",
+        "T1027.015",
+        "T1053.005",
+        "T1140",
+        "T1566.001",
+        "T1057",
+        "T1566.002",
+        "T1555.003",
+        "T1547.001",
+        "T1059.001",
+        "T1059.005",
+        "T1059.007",
+        "T1204.002"
+      ],
+      "mitre_technique_count": 16
     },
     {
       "id": "actor:G1005",
@@ -8456,7 +12876,17 @@
           "source": "Microsoft POLONIUM June 2022",
           "url": "https://www.microsoft.com/security/blog/2022/06/02/exposing-polonium-activity-and-infrastructure-targeting-israeli-organizations/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1567.002",
+        "T1102.002",
+        "T1090",
+        "T1588.002",
+        "T1199",
+        "T1583.006",
+        "T1078"
+      ],
+      "mitre_technique_count": 7
     },
     {
       "id": "actor:G1030",
@@ -8484,7 +12914,32 @@
           "source": "CheckPoint Agrius 2023",
           "url": "https://research.checkpoint.com/2023/agrius-deploys-moneybird-in-targeted-attacks-against-israeli-organizations/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1018",
+        "T1685",
+        "T1046",
+        "T1078.002",
+        "T1140",
+        "T1505.003",
+        "T1005",
+        "T1583",
+        "T1074.001",
+        "T1110.003",
+        "T1119",
+        "T1003.002",
+        "T1560.001",
+        "T1036",
+        "T1003.001",
+        "T1021.001",
+        "T1190",
+        "T1110",
+        "T1059.003",
+        "T1543.003",
+        "T1041",
+        "T1570"
+      ],
+      "mitre_technique_count": 22
     },
     {
       "id": "actor:G0076",
@@ -8503,7 +12958,14 @@
           "source": "Symantec Thrip June 2018",
           "url": "https://www.symantec.com/blogs/threat-intelligence/thrip-hits-satellite-telecoms-defense-targets"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1059.001",
+        "T1048.003",
+        "T1219.002",
+        "T1588.002"
+      ],
+      "mitre_technique_count": 4
     },
     {
       "id": "actor:G0127",
@@ -8529,7 +12991,24 @@
           "source": "Unit 42 TA551 Jan 2021",
           "url": "https://unit42.paloaltonetworks.com/ta551-shathak-icedid/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1218.010",
+        "T1589.002",
+        "T1204.002",
+        "T1218.011",
+        "T1027.003",
+        "T1566.001",
+        "T1132.001",
+        "T1568.002",
+        "T1027.010",
+        "T1071.001",
+        "T1105",
+        "T1218.005",
+        "T1059.003",
+        "T1036"
+      ],
+      "mitre_technique_count": 14
     },
     {
       "id": "actor:G0140",
@@ -8548,7 +13027,30 @@
           "source": "MalwareBytes LazyScripter Feb 2021",
           "url": "https://web.archive.org/web/20211003035156/https://www.malwarebytes.com/resources/files/2021/02/lazyscripter.pdf"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1204.001",
+        "T1218.005",
+        "T1608.001",
+        "T1204.002",
+        "T1102",
+        "T1059.007",
+        "T1583.001",
+        "T1059.005",
+        "T1071.004",
+        "T1588.001",
+        "T1105",
+        "T1036",
+        "T1566.001",
+        "T1059.001",
+        "T1059.003",
+        "T1027.010",
+        "T1547.001",
+        "T1218.011",
+        "T1566.002",
+        "T1583.006"
+      ],
+      "mitre_technique_count": 20
     },
     {
       "id": "actor:G1020",
@@ -8576,7 +13078,22 @@
           "source": "Microsoft Threat Actor Naming July 2023",
           "url": "https://learn.microsoft.com/en-us/microsoft-365/security/intelligence/microsoft-threat-actor-naming?view=o365-worldwide"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1583.008",
+        "T1608.001",
+        "T1036.005",
+        "T1566.002",
+        "T1584.001",
+        "T1608.006",
+        "T1608.004",
+        "T1189",
+        "T1204.001",
+        "T1082",
+        "T1583.004",
+        "T1105"
+      ],
+      "mitre_technique_count": 12
     },
     {
       "id": "actor:G0006",
@@ -8603,7 +13120,33 @@
           "source": "CrowdStrike Putter Panda",
           "url": "http://cdn0.vox-cdn.com/assets/4589853/crowdstrike-intelligence-report-putter-panda.original.pdf"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1003.001",
+        "T1057",
+        "T1005",
+        "T1550.002",
+        "T1583.001",
+        "T1560.001",
+        "T1119",
+        "T1114.002",
+        "T1566.002",
+        "T1016",
+        "T1114.001",
+        "T1588.001",
+        "T1049",
+        "T1585.002",
+        "T1584.001",
+        "T1036.005",
+        "T1087.001",
+        "T1566.001",
+        "T1135",
+        "T1059.003",
+        "T1588.002",
+        "T1007",
+        "T1021.001"
+      ],
+      "mitre_technique_count": 23
     },
     {
       "id": "actor:G0133",
@@ -8628,7 +13171,17 @@
           "source": "Securelist Octopus Oct 2018",
           "url": "https://securelist.com/octopus-infested-seas-of-central-asia/88200/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1059.003",
+        "T1036",
+        "T1566.001",
+        "T1204.002",
+        "T1105",
+        "T1564.003",
+        "T1059.001"
+      ],
+      "mitre_technique_count": 7
     },
     {
       "id": "actor:G0077",
@@ -8653,7 +13206,27 @@
           "source": "Symantec Leafminer July 2018",
           "url": "https://www.symantec.com/blogs/threat-intelligence/leafminer-espionage-middle-east"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1027.010",
+        "T1588.002",
+        "T1003.001",
+        "T1555",
+        "T1046",
+        "T1003.005",
+        "T1555.003",
+        "T1552.001",
+        "T1003.004",
+        "T1055.013",
+        "T1189",
+        "T1018",
+        "T1110.003",
+        "T1136.001",
+        "T1059.007",
+        "T1114.002",
+        "T1083"
+      ],
+      "mitre_technique_count": 17
     },
     {
       "id": "actor:G0122",
@@ -8679,7 +13252,23 @@
           "source": "Phish Labs Silent Librarian",
           "url": "https://info.phishlabs.com/blog/silent-librarian-more-to-the-story-of-the-iranian-mabna-institute-indictment"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1588.004",
+        "T1594",
+        "T1114",
+        "T1598.003",
+        "T1589.003",
+        "T1114.003",
+        "T1585.002",
+        "T1589.002",
+        "T1608.005",
+        "T1110.003",
+        "T1583.001",
+        "T1588.002",
+        "T1078"
+      ],
+      "mitre_technique_count": 13
     },
     {
       "id": "actor:G0137",
@@ -8698,7 +13287,16 @@
           "source": "Kaspersky Ferocious Kitten Jun 2021",
           "url": "https://securelist.com/ferocious-kitten-6-years-of-covert-surveillance-in-iran/102806/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1204.002",
+        "T1036.002",
+        "T1036.005",
+        "T1566.001",
+        "T1588.002",
+        "T1583.001"
+      ],
+      "mitre_technique_count": 6
     },
     {
       "id": "actor:G0120",
@@ -8717,7 +13315,21 @@
           "source": "ESET EvilNum July 2020",
           "url": "https://www.welivesecurity.com/2020/07/09/more-evil-deep-look-evilnum-toolset/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1497.001",
+        "T1219.002",
+        "T1539",
+        "T1566.002",
+        "T1548.002",
+        "T1070.004",
+        "T1574.001",
+        "T1204.001",
+        "T1555",
+        "T1105",
+        "T1059.007"
+      ],
+      "mitre_technique_count": 11
     },
     {
       "id": "actor:G0089",
@@ -8736,7 +13348,17 @@
           "source": "Cylance Shaheen Nov 2018",
           "url": "https://www.cylance.com/content/dam/cylance-web/en-us/resources/knowledge-center/resource-library/reports/WhiteCompanyOperationShaheenReport.pdf?_ga=2.161661948.1943296560.1555683782-1066572390.1555511517"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1027.002",
+        "T1518.001",
+        "T1203",
+        "T1070.004",
+        "T1566.001",
+        "T1204.002",
+        "T1124"
+      ],
+      "mitre_technique_count": 7
     },
     {
       "id": "actor:G0056",
@@ -8761,7 +13383,21 @@
           "source": "Talos Promethium June 2020",
           "url": "https://blog.talosintelligence.com/2020/06/promethium-extends-with-strongpity3.html"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1204.002",
+        "T1587.002",
+        "T1078.003",
+        "T1587.003",
+        "T1547.001",
+        "T1543.003",
+        "T1036.005",
+        "T1036.004",
+        "T1553.002",
+        "T1205.001",
+        "T1189"
+      ],
+      "mitre_technique_count": 11
     },
     {
       "id": "actor:G0063",
@@ -8784,7 +13420,11 @@
           "source": "Securelist APT Trends Q2 2017",
           "url": "https://securelist.com/apt-trends-report-q2-2017/79332/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1027"
+      ],
+      "mitre_technique_count": 1
     },
     {
       "id": "actor:G1011",
@@ -8803,7 +13443,25 @@
           "source": "Google EXOTIC LILY March 2022",
           "url": "https://blog.google/threat-analysis-group/exposing-initial-access-broker-ties-conti/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1566.003",
+        "T1585.001",
+        "T1566.001",
+        "T1203",
+        "T1566.002",
+        "T1204.002",
+        "T1585.002",
+        "T1102",
+        "T1594",
+        "T1204.001",
+        "T1597",
+        "T1583.001",
+        "T1593.001",
+        "T1589.002",
+        "T1608.001"
+      ],
+      "mitre_technique_count": 15
     },
     {
       "id": "actor:G0130",
@@ -8832,7 +13490,16 @@
           "source": "Check Point Rocket Kitten",
           "url": "https://blog.checkpoint.com/wp-content/uploads/2015/11/rocket-kitten-report.pdf"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1056.001",
+        "T1566.003",
+        "T1566.001",
+        "T1204.002",
+        "T1555.003",
+        "T1105"
+      ],
+      "mitre_technique_count": 6
     },
     {
       "id": "actor:G0136",
@@ -8855,7 +13522,17 @@
           "source": "Checkpoint IndigoZebra July 2021",
           "url": "https://research.checkpoint.com/2021/indigozebra-apt-continues-to-attack-central-asia-with-evolving-tools/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1583.001",
+        "T1588.002",
+        "T1583.006",
+        "T1586.002",
+        "T1566.001",
+        "T1204.002",
+        "T1105"
+      ],
+      "mitre_technique_count": 7
     },
     {
       "id": "actor:G1024",
@@ -8882,7 +13559,27 @@
           "source": "CrowdStrike PUNK SPIDER",
           "url": "https://www.crowdstrike.com/adversaries/punk-spider/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1567.002",
+        "T1213.002",
+        "T1531",
+        "T1482",
+        "T1036.005",
+        "T1078",
+        "T1558",
+        "T1018",
+        "T1021.001",
+        "T1059.001",
+        "T1657",
+        "T1486",
+        "T1133",
+        "T1027.001",
+        "T1685",
+        "T1219",
+        "T1560.001"
+      ],
+      "mitre_technique_count": 17
     },
     {
       "id": "actor:G1009",
@@ -8908,7 +13605,22 @@
           "source": "Cybereason StrifeWater Feb 2022",
           "url": "https://www.cybereason.com/blog/research/strifewater-rat-iranian-apt-moses-staff-adds-new-trojan-to-ransomware-operations"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1021.002",
+        "T1016",
+        "T1087.001",
+        "T1686.003",
+        "T1082",
+        "T1588.002",
+        "T1505.003",
+        "T1587.001",
+        "T1553.002",
+        "T1027.013",
+        "T1105",
+        "T1190"
+      ],
+      "mitre_technique_count": 12
     },
     {
       "id": "actor:G0024",
@@ -8934,7 +13646,14 @@
           "source": "Cylance Putter Panda",
           "url": "https://blogs.blackberry.com/en/2016/01/puttering-into-the-future"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1547.001",
+        "T1685",
+        "T1055.001",
+        "T1027.013"
+      ],
+      "mitre_technique_count": 4
     },
     {
       "id": "actor:G1041",
@@ -8962,7 +13681,37 @@
           "source": "Hunt Sea Turtle 2024",
           "url": "https://www.huntandhackett.com/blog/turkish-espionage-campaigns"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1583",
+        "T1074.002",
+        "T1114.001",
+        "T1583.002",
+        "T1608.003",
+        "T1690",
+        "T1584.002",
+        "T1583.003",
+        "T1588.004",
+        "T1560.001",
+        "T1564.011",
+        "T1588.002",
+        "T1190",
+        "T1078.003",
+        "T1203",
+        "T1566",
+        "T1133",
+        "T1213.006",
+        "T1583.001",
+        "T1027.004",
+        "T1685.006",
+        "T1059.004",
+        "T1505.003",
+        "T1078",
+        "T1071.001",
+        "T1199",
+        "T1557"
+      ],
+      "mitre_technique_count": 27
     },
     {
       "id": "actor:G0115",
@@ -8987,7 +13736,19 @@
           "source": "CrowdStrike Evolution of Pinchy Spider July 2021",
           "url": "https://www.crowdstrike.com/blog/the-evolution-of-revil-ransomware-and-pinchy-spider/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1199",
+        "T1190",
+        "T1113",
+        "T1219",
+        "T1195.002",
+        "T1027.010",
+        "T1133",
+        "T1059.001",
+        "T1566"
+      ],
+      "mitre_technique_count": 9
     },
     {
       "id": "actor:G0030",
@@ -9017,7 +13778,31 @@
           "source": "Spring Dragon Jun 2015",
           "url": "https://securelist.com/the-spring-dragon-apt/70726/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1016",
+        "T1543.003",
+        "T1087.002",
+        "T1074.001",
+        "T1134",
+        "T1087.001",
+        "T1090.001",
+        "T1539",
+        "T1112",
+        "T1049",
+        "T1047",
+        "T1482",
+        "T1016.001",
+        "T1090.003",
+        "T1588.002",
+        "T1018",
+        "T1083",
+        "T1560.003",
+        "T1560.001",
+        "T1046",
+        "T1012"
+      ],
+      "mitre_technique_count": 21
     },
     {
       "id": "actor:G0041",
@@ -9042,7 +13827,13 @@
           "source": "Kaspersky ProjectSauron Blog",
           "url": "https://securelist.com/faq-the-projectsauron-apt/75533/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1090.001",
+        "T1556.002",
+        "T1564.005"
+      ],
+      "mitre_technique_count": 3
     },
     {
       "id": "actor:G0009",
@@ -9071,7 +13862,20 @@
           "source": "Symantec Black Vine",
           "url": "https://web.archive.org/web/20170823094836/http:/www.symantec.com/content/en/us/enterprise/media/security_response/whitepapers/the-black-vine-cyberespionage-group.pdf"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1057",
+        "T1018",
+        "T1505.003",
+        "T1027.005",
+        "T1218.010",
+        "T1564.003",
+        "T1059.001",
+        "T1546.008",
+        "T1047",
+        "T1021.002"
+      ],
+      "mitre_technique_count": 10
     },
     {
       "id": "actor:G0062",
@@ -9090,7 +13894,15 @@
           "source": "Proofpoint TA459 April 2017",
           "url": "https://www.proofpoint.com/us/threat-insight/post/apt-targets-financial-analysts"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1566.001",
+        "T1203",
+        "T1059.005",
+        "T1204.002",
+        "T1059.001"
+      ],
+      "mitre_technique_count": 5
     },
     {
       "id": "actor:G0039",
@@ -9113,7 +13925,15 @@
           "source": "Symantec Suckfly May 2016",
           "url": "http://www.symantec.com/connect/blogs/indian-organizations-targeted-suckfly-attacks"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1059.003",
+        "T1078",
+        "T1046",
+        "T1003",
+        "T1553.002"
+      ],
+      "mitre_technique_count": 5
     },
     {
       "id": "actor:G0013",
@@ -9136,7 +13956,12 @@
           "source": "FireEye APT30",
           "url": "https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2015/05/20081935/rpt-apt30.pdf"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1566.001",
+        "T1204.002"
+      ],
+      "mitre_technique_count": 2
     },
     {
       "id": "actor:G0083",
@@ -9159,7 +13984,14 @@
           "source": "Unit42 SilverTerrier 2018",
           "url": "https://www.paloaltonetworks.com/apps/pan/public/downloadResource?pagePath=/content/pan/en_US/resources/whitepapers/unit42-silverterrier-rise-of-nigerian-business-email-compromise"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1071.003",
+        "T1071.001",
+        "T1071.002",
+        "T1657"
+      ],
+      "mitre_technique_count": 4
     },
     {
       "id": "actor:G0011",
@@ -9182,7 +14014,12 @@
           "source": "Villeneuve 2014",
           "url": "https://www.fireeye.com/blog/threat-research/2014/07/spy-of-the-tiger.html"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1588.002",
+        "T1078"
+      ],
+      "mitre_technique_count": 2
     },
     {
       "id": "actor:G0054",
@@ -9201,7 +14038,19 @@
           "source": "Symantec Sowbug Nov 2017",
           "url": "https://www.symantec.com/connect/blogs/sowbug-cyber-espionage-group-targets-south-american-and-southeast-asian-governments"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1083",
+        "T1039",
+        "T1560.001",
+        "T1059.003",
+        "T1056.001",
+        "T1135",
+        "T1036.005",
+        "T1003",
+        "T1082"
+      ],
+      "mitre_technique_count": 9
     },
     {
       "id": "actor:G0043",
@@ -9220,7 +14069,14 @@
           "source": "Citizen Lab Group5",
           "url": "https://citizenlab.ca/2016/08/group5-syria/"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1056.001",
+        "T1113",
+        "T1070.004",
+        "T1027.013"
+      ],
+      "mitre_technique_count": 4
     },
     {
       "id": "actor:G0123",
@@ -9245,7 +14101,15 @@
           "source": "CheckPoint Volatile Cedar March 2015",
           "url": "https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2015/03/20082004/volatile-cedar-technical-report.pdf"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1595.002",
+        "T1595.003",
+        "T1505.003",
+        "T1105",
+        "T1190"
+      ],
+      "mitre_technique_count": 5
     },
     {
       "id": "actor:G0044",
@@ -9270,7 +14134,16 @@
           "source": "401 TRG Winnti Umbrella May 2018",
           "url": "https://401trg.github.io/pages/burning-umbrella.html"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1014",
+        "T1105",
+        "T1083",
+        "T1583.001",
+        "T1057",
+        "T1553.002"
+      ],
+      "mitre_technique_count": 6
     },
     {
       "id": "actor:G1037",
@@ -9289,7 +14162,16 @@
           "source": "Latrodectus APR 2024",
           "url": "https://www.proofpoint.com/us/blog/threat-insight/latrodectus-spider-bytes-ice"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1059.007",
+        "T1059.003",
+        "T1027.009",
+        "T1586.002",
+        "T1204.001",
+        "T1566.002"
+      ],
+      "mitre_technique_count": 6
     },
     {
       "id": "actor:G0088",
@@ -9314,7 +14196,9 @@
           "source": "FireEye TEMP.Veles 2018",
           "url": "https://www.fireeye.com/blog/threat-research/2018/10/triton-attribution-russian-government-owned-lab-most-likely-built-tools.html"
         }
-      ]
+      ],
+      "mitre_techniques": [],
+      "mitre_technique_count": 0
     },
     {
       "id": "actor:G1049",
@@ -9342,7 +14226,12 @@
           "source": "dtex DPRK 2025 structure ITworkers",
           "url": "https://reports.dtexsystems.com/DTEX-Exposing+DPRK+Cyber+Syndicate+and+Hidden+IT+Workforce.pdf"
         }
-      ]
+      ],
+      "mitre_techniques": [
+        "T1657",
+        "T1566"
+      ],
+      "mitre_technique_count": 2
     },
     {
       "id": "campaign:C0027",
@@ -9994,6 +14883,214 @@
       "subtype": "advisory",
       "label": "Mandiant Advisory",
       "url": "https://www.mandiant.com/sites/default/files/2021-09/rpt-apt38-2018-web_v5-1.pdf"
+    },
+    {
+      "id": "actor:G1054",
+      "type": "threat_actor",
+      "label": "MirrorFace",
+      "aliases": [
+        "Earth Kasha"
+      ],
+      "description": "[MirrorFace](https://attack.mitre.org/groups/G1054) is a People's Republic of China (PRC)-aligned cyberespionage actor believed to be a subgroup under the [menuPass](https://attack.mitre.org/groups/G0045) umbrella based on targeting, tools, and infrastructure overlaps.",
+      "technique_count": 10,
+      "mitre_techniques": [
+        "T1566.002",
+        "T1057",
+        "T1686.003",
+        "T1074.002",
+        "T1685",
+        "T1087.002",
+        "T1614.001",
+        "T1591",
+        "T1090",
+        "T1685.005",
+        "T1021.001",
+        "T1587.001",
+        "T1070.004",
+        "T1003.002",
+        "T1083",
+        "T1482",
+        "T1684.001",
+        "T1588.002",
+        "T1003.001",
+        "T1204.002",
+        "T1018",
+        "T1016",
+        "T1553.002",
+        "T1005",
+        "T1059.003",
+        "T1566.001",
+        "T1059.005",
+        "T1007",
+        "T1082",
+        "T1048.002",
+        "T1574.001",
+        "T1021.002",
+        "T1071.002",
+        "T1190",
+        "T1036.008",
+        "T1003.003",
+        "T1560.001",
+        "T1221",
+        "T1556.002",
+        "T1047",
+        "T1114.001",
+        "T1027.013",
+        "T1033"
+      ],
+      "mitre_technique_count": 43,
+      "stix_id": "intrusion-set--8cf6e33b-b6ef-4a1f-a77c-0ecdde93161f",
+      "external_references": [
+        {
+          "source": "mitre-attack",
+          "url": "https://attack.mitre.org/groups/G1054"
+        },
+        {
+          "source": "ESET MirrorFace DEC 2022",
+          "url": "https://www.welivesecurity.com/2022/12/14/unmasking-mirrorface-operation-liberalface-targeting-japanese-political-entities/"
+        },
+        {
+          "source": "Trend Micro Earth Kasha Updates APR 2025",
+          "url": "https://www.trendmicro.com/en_us/research/25/d/earth-kasha-updates-ttps.html"
+        }
+      ]
+    },
+    {
+      "id": "actor:G1055",
+      "type": "threat_actor",
+      "label": "VOID MANTICORE",
+      "aliases": [
+        "COBALT MYSTIQUE",
+        "Handala Hack",
+        "Homeland Justice",
+        "Karma",
+        "Karmabelow80",
+        "BANISHED KITTEN",
+        "Red Sandstorm"
+      ],
+      "description": "[VOID MANTICORE](https://attack.mitre.org/groups/G1055) is a threat group assessed to operate on behalf of Iran’s Ministry of Intelligence and Security (MOIS).(Citation: Check Point VOID MANTICORE Handala Hack March 2026) Active since at least mid-2022, VOID MANTICORE has targeted government entitie",
+      "technique_count": 21,
+      "mitre_techniques": [
+        "T1113",
+        "T1110.001",
+        "T1119",
+        "T1561.001",
+        "T1486",
+        "T1566",
+        "T1589",
+        "T1657",
+        "T1102",
+        "T1059.001",
+        "T1047",
+        "T1484.001",
+        "T1564.003",
+        "T1583.001",
+        "T1123",
+        "T1190",
+        "T1114.002",
+        "T1074",
+        "T1078.002",
+        "T1027.015",
+        "T1684.001",
+        "T1036.005",
+        "T1679",
+        "T1087.002",
+        "T1588.001",
+        "T1490",
+        "T1072",
+        "T1003.001",
+        "T1651",
+        "T1583.003",
+        "T1583.006",
+        "T1686.003",
+        "T1552.002",
+        "T1213.002",
+        "T1219.002",
+        "T1595.002",
+        "T1561.002",
+        "T1583.004",
+        "T1105",
+        "T1082",
+        "T1078.004",
+        "T1133",
+        "T1588.002",
+        "T1547.001",
+        "T1204.002",
+        "T1005",
+        "T1098",
+        "T1125",
+        "T1572",
+        "T1587.001",
+        "T1585.002",
+        "T1071.001",
+        "T1199",
+        "T1110.004",
+        "T1585.001",
+        "T1485",
+        "T1078",
+        "T1110",
+        "T1036.004",
+        "T1059.006",
+        "T1560.001",
+        "T1041",
+        "T1021.001"
+      ],
+      "mitre_technique_count": 63,
+      "stix_id": "intrusion-set--ebd7ce77-c9ba-4fba-bb28-58296ac66559",
+      "external_references": [
+        {
+          "source": "mitre-attack",
+          "url": "https://attack.mitre.org/groups/G1055"
+        },
+        {
+          "source": "Check Point VOID MANTICORE Handala Hack March 2026",
+          "url": "https://research.checkpoint.com/2026/handala-hack-unveiling-groups-modus-operandi/"
+        },
+        {
+          "source": "DOJ FBI Handala Hack March 2026",
+          "url": "https://www.justice.gov/opa/media/1431956/dl?inline"
+        }
+      ]
+    },
+    {
+      "id": "campaign:C0060",
+      "type": "campaign",
+      "label": "Operation AkaiRyū",
+      "description": "[Operation AkaiRyū](https://attack.mitre.org/campaigns/C0060) (Japanese for RedDragon) was a cyberespionage spearphishing campaign conducted by [MirrorFace](https://attack.mitre.org/groups/G1054) between June and September 2024 against entities in Japan and Central Europe.",
+      "first_seen": "2004-06-01T04:00:00.000Z",
+      "last_seen": "2004-09-01T04:00:00.000Z",
+      "technique_count": 9,
+      "stix_id": "campaign--8a7c55ea-f363-4a03-b4c5-fa3fdb132d8f"
+    },
+    {
+      "id": "campaign:C0063",
+      "type": "campaign",
+      "label": "2025 Poland Wiper Attacks",
+      "description": "[2025 Poland Wiper Attacks](https://attack.mitre.org/campaigns/C0063) is a Russian state-sponsored campaign that conducted destructive cyberattacks against Polish energy infrastructure in December 2025.",
+      "first_seen": "2025-03-01T05:00:00.000Z",
+      "last_seen": "2025-12-01T05:00:00.000Z",
+      "technique_count": 12,
+      "stix_id": "campaign--a6aba167-5ada-4812-9da1-912c0e73335d"
+    },
+    {
+      "id": "campaign:C0062",
+      "type": "campaign",
+      "label": "Anthropic AI-orchestrated Campaign",
+      "description": "The [Anthropic AI-orchestrated Campaign](https://attack.mitre.org/campaigns/C0062) was conducted in September 2025 by a likely China nexus espionage actor identified as GTG-1002.",
+      "first_seen": "2025-09-01T04:00:00.000Z",
+      "last_seen": "2025-09-01T04:00:00.000Z",
+      "technique_count": 8,
+      "stix_id": "campaign--590cd5b0-2421-4158-84a2-db13b5db02a3"
+    },
+    {
+      "id": "campaign:C0061",
+      "type": "campaign",
+      "label": "Operation Digital Eye",
+      "description": "[Operation Digital Eye](https://attack.mitre.org/campaigns/C0061) was conducted in June and July of 2024 by suspected People's Republic of China (PRC)-nexus threat actors targeting business-to-business IT service providers in Southern Europe.",
+      "first_seen": "2024-06-01T04:00:00.000Z",
+      "last_seen": "2024-07-01T04:00:00.000Z",
+      "technique_count": 3,
+      "stix_id": "campaign--75ea699b-bff5-4541-b9b7-df4996c9db3c"
     }
   ],
   "edges": [
@@ -28930,7 +34027,592 @@
       "source": "M004",
       "target": "intel:aHR0cHM6Ly93d3cubWFuZGlhbnQuY29tL3NpdGVz",
       "type": "INSPIRED_BY"
+    },
+    {
+      "source": "actor:G1054",
+      "target": "T1566.002",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1054",
+      "target": "T1090",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1054",
+      "target": "T1070.004",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1054",
+      "target": "T1204.002",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1054",
+      "target": "T1005",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1054",
+      "target": "T1566.001",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1054",
+      "target": "T1059.005",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1054",
+      "target": "T1082",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1054",
+      "target": "T1560.001",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1054",
+      "target": "T1047",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1055",
+      "target": "T1119",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1055",
+      "target": "T1102",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1055",
+      "target": "T1059.001",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1055",
+      "target": "T1047",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1055",
+      "target": "T1484.001",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1055",
+      "target": "T1583.001",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1055",
+      "target": "T1036.005",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1055",
+      "target": "T1105",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1055",
+      "target": "T1082",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1055",
+      "target": "T1078.004",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1055",
+      "target": "T1547.001",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1055",
+      "target": "T1204.002",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1055",
+      "target": "T1005",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1055",
+      "target": "T1098",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1055",
+      "target": "T1572",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1055",
+      "target": "T1071.001",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1055",
+      "target": "T1078",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1055",
+      "target": "T1110",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1055",
+      "target": "T1059.006",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1055",
+      "target": "T1560.001",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1055",
+      "target": "T1041",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0060",
+      "target": "T1059.005",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0060",
+      "target": "T1082",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0060",
+      "target": "T1204.002",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0060",
+      "target": "T1070.004",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0060",
+      "target": "T1566.001",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0060",
+      "target": "T1219",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0060",
+      "target": "T1566.002",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0060",
+      "target": "T1047",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0060",
+      "target": "T1059.001",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0060",
+      "target": "actor:G1054",
+      "type": "ATTRIBUTED_TO"
+    },
+    {
+      "source": "campaign:C0063",
+      "target": "T1484.001",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0063",
+      "target": "T1584.001",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0063",
+      "target": "T1049",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0063",
+      "target": "T1140",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0063",
+      "target": "T1560.001",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0063",
+      "target": "T1090",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0063",
+      "target": "T1555",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0063",
+      "target": "T1102.002",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0063",
+      "target": "T1105",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0063",
+      "target": "T1059.004",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0063",
+      "target": "T1078.004",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0063",
+      "target": "T1036.005",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0062",
+      "target": "T1078",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0062",
+      "target": "T1552.001",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0062",
+      "target": "T1567",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0062",
+      "target": "T1595.001",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0062",
+      "target": "T1119",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0062",
+      "target": "T1005",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0062",
+      "target": "T1082",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0062",
+      "target": "T1049",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0061",
+      "target": "T1106",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0061",
+      "target": "T1070.004",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "campaign:C0061",
+      "target": "T1036.005",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "H002",
+      "target": "campaign:C0060",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H003",
+      "target": "campaign:C0063",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H013",
+      "target": "campaign:C0060",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H014",
+      "target": "campaign:C0063",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H016",
+      "target": "campaign:C0062",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H020",
+      "target": "campaign:C0060",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H024",
+      "target": "campaign:C0060",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H025",
+      "target": "campaign:C0060",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H026",
+      "target": "campaign:C0060",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H026",
+      "target": "campaign:C0061",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H027",
+      "target": "campaign:C0060",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H031",
+      "target": "campaign:C0062",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H033",
+      "target": "campaign:C0060",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H039",
+      "target": "campaign:C0062",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H042",
+      "target": "campaign:C0063",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H044",
+      "target": "campaign:C0060",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H047",
+      "target": "campaign:C0063",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H048",
+      "target": "campaign:C0063",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H051",
+      "target": "campaign:C0060",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H052",
+      "target": "campaign:C0060",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H055",
+      "target": "campaign:C0060",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H055",
+      "target": "campaign:C0062",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H059",
+      "target": "campaign:C0062",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H064",
+      "target": "campaign:C0063",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H064",
+      "target": "campaign:C0061",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H069",
+      "target": "campaign:C0063",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H073",
+      "target": "campaign:C0063",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H077",
+      "target": "campaign:C0063",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H077",
+      "target": "campaign:C0062",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H078",
+      "target": "campaign:C0060",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H079",
+      "target": "campaign:C0063",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H079",
+      "target": "campaign:C0061",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H080",
+      "target": "campaign:C0060",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H081",
+      "target": "campaign:C0063",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H081",
+      "target": "campaign:C0062",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H082",
+      "target": "campaign:C0063",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H083",
+      "target": "campaign:C0060",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H084",
+      "target": "campaign:C0063",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H084",
+      "target": "campaign:C0061",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H085",
+      "target": "campaign:C0063",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H087",
+      "target": "campaign:C0062",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H088",
+      "target": "campaign:C0060",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H089",
+      "target": "campaign:C0060",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "H089",
+      "target": "campaign:C0063",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "B002",
+      "target": "campaign:C0060",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "B006",
+      "target": "campaign:C0062",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "B012",
+      "target": "campaign:C0063",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "B015",
+      "target": "campaign:C0060",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "M009",
+      "target": "campaign:C0062",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "M012",
+      "target": "campaign:C0063",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "M013",
+      "target": "campaign:C0060",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "M014",
+      "target": "campaign:C0063",
+      "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "M014",
+      "target": "campaign:C0062",
+      "type": "MOTIVATED_BY"
     }
   ],
-  "phase2a_enriched_at": "2026-03-10T14:20:37.677Z"
+  "phase2a_enriched_at": "2026-06-24T19:29:24.516Z"
 }
