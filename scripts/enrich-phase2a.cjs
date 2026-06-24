@@ -128,16 +128,25 @@ async function main() {
   objects.forEach(obj => { stixById[obj.id] = obj; });
 
   // ─── Build STIX attack-pattern ID → our technique ID mapping ───
+  // stixIdToTechId: HEARTH-scoped (only techniques our graph already has) — drives
+  //   EMPLOYS edges + technique_count, kept for the context-graph visualization.
+  // stixIdToAttackIdAll: unfiltered — every live attack-pattern → its ATT&CK ID.
+  //   Drives each actor's FULL MITRE profile (mitre_techniques), the honest
+  //   denominator for coverage %, independent of what HEARTH currently touches.
   const stixIdToTechId = {};
+  const stixIdToAttackIdAll = {};
   objects.forEach(obj => {
     if (obj.type === 'attack-pattern' && !obj.revoked && !obj.x_mitre_deprecated) {
       const attackId = normalizeAttackPatternId(obj);
-      if (attackId && existingTechIds.has(attackId)) {
+      if (!attackId) return;
+      stixIdToAttackIdAll[obj.id] = attackId;
+      if (existingTechIds.has(attackId)) {
         stixIdToTechId[obj.id] = attackId;
       }
     }
   });
   console.log(`Matched ${Object.keys(stixIdToTechId).length} STIX attack-patterns to our techniques`);
+  console.log(`Total live STIX attack-patterns (full profiles): ${Object.keys(stixIdToAttackIdAll).length}`);
 
   // ─── Extract relationships ───
   const relationships = objects.filter(obj =>
@@ -146,7 +155,8 @@ async function main() {
   console.log(`Total STIX relationships: ${relationships.length}`);
 
   // actor (intrusion-set) → techniques they use
-  const actorTechMap = {};   // stix actor id → Set of our technique IDs
+  const actorTechMap = {};   // stix actor id → Set of our (HEARTH-scoped) technique IDs
+  const actorAllTechMap = {}; // stix actor id → Set of ALL their ATT&CK technique IDs (full profile)
   // campaign → techniques they use
   const campaignTechMap = {}; // stix campaign id → Set of our technique IDs
   // campaign → actor attribution
@@ -164,6 +174,12 @@ async function main() {
         if (techId) {
           if (!actorTechMap[rel.source_ref]) actorTechMap[rel.source_ref] = new Set();
           actorTechMap[rel.source_ref].add(techId);
+        }
+        // Full MITRE profile (unfiltered) — the honest coverage denominator.
+        const allTechId = stixIdToAttackIdAll[rel.target_ref];
+        if (allTechId) {
+          if (!actorAllTechMap[rel.source_ref]) actorAllTechMap[rel.source_ref] = new Set();
+          actorAllTechMap[rel.source_ref].add(allTechId);
         }
       }
       // campaign uses attack-pattern
@@ -206,6 +222,7 @@ async function main() {
   const newNodes = [];
   const newEdges = [];
   const existingNodeIds = new Set(graphData.nodes.map(n => n.id));
+  const nodeById = new Map(graphData.nodes.map(n => [n.id, n]));
 
   // Threat Actor nodes
   const actorNodes = [];
@@ -215,8 +232,18 @@ async function main() {
 
     const attackId = getAttackId(obj);
     const nodeId = `actor:${attackId || obj.name.replace(/\s+/g, '_')}`;
+    const allTechsUsed = actorAllTechMap[stixId] ? [...actorAllTechMap[stixId]] : [];
 
-    if (existingNodeIds.has(nodeId)) return;
+    if (existingNodeIds.has(nodeId)) {
+      // Merge skips existing actors — backfill the full MITRE profile onto them so
+      // their coverage denominator isn't left HEARTH-scoped. Additive only.
+      const existing = nodeById.get(nodeId);
+      if (existing && existing.type === 'threat_actor') {
+        existing.mitre_techniques = allTechsUsed;
+        existing.mitre_technique_count = allTechsUsed.length;
+      }
+      return;
+    }
     existingNodeIds.add(nodeId);
 
     const aliases = (obj.aliases || []).filter(a => a !== obj.name);
@@ -229,6 +256,9 @@ async function main() {
       aliases: aliases.slice(0, 10),
       description: firstSentence(obj.description),
       technique_count: techsUsed.length,
+      // Full MITRE ATT&CK profile — coverage's honest denominator (≥ technique_count).
+      mitre_techniques: allTechsUsed,
+      mitre_technique_count: allTechsUsed.length,
       stix_id: stixId,
       external_references: (obj.external_references || [])
         .filter(r => r.url)

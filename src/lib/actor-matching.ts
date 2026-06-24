@@ -1,4 +1,4 @@
-import type { Hunt } from '../types/Hunt';
+import type { Hunt } from "../types/Hunt";
 import type {
   Actor,
   ActorMatchResult,
@@ -6,7 +6,7 @@ import type {
   GapTechnique,
   MatchedHunt,
   TacticCoverage,
-} from '../types/Actor';
+} from "../types/Actor";
 
 /* ─────────────────────────────────────────────
    Inputs (mirrors public/context-graph-data.json)
@@ -18,7 +18,9 @@ interface ContextGraphNode {
   label?: string;
   aliases?: string[];
   description?: string;
-  technique_count?: number;
+  technique_count?: number; // HEARTH-scoped count (drives EMPLOYS edges / graph viz)
+  mitre_techniques?: string[]; // full MITRE ATT&CK profile (coverage denominator)
+  mitre_technique_count?: number;
   external_references?: { source: string; url: string }[];
   tactics?: string[];
 }
@@ -35,7 +37,7 @@ export interface ContextGraphData {
 }
 
 export interface ActorMentionsData {
-  mentions: Record<string, string[]>;   // actor_id -> [hunt_id, ...]
+  mentions: Record<string, string[]>; // actor_id -> [hunt_id, ...]
 }
 
 /* ─────────────────────────────────────────────
@@ -43,20 +45,20 @@ export interface ActorMentionsData {
    ───────────────────────────────────────────── */
 
 export const KILL_CHAIN_TACTICS: readonly string[] = [
-  'Reconnaissance',
-  'Resource Development',
-  'Initial Access',
-  'Execution',
-  'Persistence',
-  'Privilege Escalation',
-  'Defense Evasion',
-  'Credential Access',
-  'Discovery',
-  'Lateral Movement',
-  'Collection',
-  'Command and Control',
-  'Exfiltration',
-  'Impact',
+  "Reconnaissance",
+  "Resource Development",
+  "Initial Access",
+  "Execution",
+  "Persistence",
+  "Privilege Escalation",
+  "Defense Evasion",
+  "Credential Access",
+  "Discovery",
+  "Lateral Movement",
+  "Collection",
+  "Command and Control",
+  "Exfiltration",
+  "Impact",
 ];
 
 /* ─────────────────────────────────────────────
@@ -66,17 +68,55 @@ export const KILL_CHAIN_TACTICS: readonly string[] = [
 export interface ActorIndex {
   actors: Actor[];
   actorById: Map<string, Actor>;
-  actorTechniques: Map<string, Set<string>>;   // actor_id -> set of technique IDs
-  techniqueTactics: Map<string, string[]>;     // technique_id -> tactic names
+  actorTechniques: Map<string, Set<string>>; // actor_id -> set of technique IDs
+  techniqueTactics: Map<string, string[]>; // technique_id -> tactic names
 }
 
-export function buildActorIndex(graph: ContextGraphData): ActorIndex {
+/* ─────────────────────────────────────────────
+   MITRE matrix → technique tactic lookup
+   (mirrors public/mitre-matrix.json — supplies tactics for techniques
+   outside HEARTH's universe so the expanded coverage profile stays honest)
+   ───────────────────────────────────────────── */
+
+export interface MitreMatrixData {
+  tactics?: { id: string; shortname: string; name: string }[];
+  techniques?: { id: string; tactic_shortnames?: string[] }[];
+}
+
+export function buildTechniqueTactics(
+  matrix: MitreMatrixData,
+): Map<string, string[]> {
+  const shortToName = new Map<string, string>();
+  for (const t of matrix.tactics ?? []) shortToName.set(t.shortname, t.name);
+
+  const map = new Map<string, string[]>();
+  for (const tech of matrix.techniques ?? []) {
+    const names = (tech.tactic_shortnames ?? [])
+      .map((s) => shortToName.get(s))
+      .filter((n): n is string => Boolean(n));
+    if (names.length) map.set(tech.id, names);
+  }
+  return map;
+}
+
+export function buildActorIndex(
+  graph: ContextGraphData,
+  techniqueTacticLookup?: Map<string, string[]>,
+): ActorIndex {
   const actors: Actor[] = [];
   const actorById = new Map<string, Actor>();
-  const techniqueTactics = new Map<string, string[]>();
+  // Seed from the full MITRE matrix; graph technique nodes override below when they
+  // carry their own (HEARTH-authoritative) tactics.
+  const techniqueTactics = new Map<string, string[]>(
+    techniqueTacticLookup ?? [],
+  );
+  const actorTechniques = new Map<string, Set<string>>();
+  // Actors whose set came from a full MITRE profile — excluded from the EMPLOYS
+  // fallback so we don't mix the two sources.
+  const hasFullProfile = new Set<string>();
 
   for (const node of graph.nodes) {
-    if (node.type === 'threat_actor' && node.id && node.label) {
+    if (node.type === "threat_actor" && node.id && node.label) {
       const actor: Actor = {
         id: node.id,
         label: node.label,
@@ -87,15 +127,29 @@ export function buildActorIndex(graph: ContextGraphData): ActorIndex {
       };
       actors.push(actor);
       actorById.set(actor.id, actor);
+
+      // Prefer the full MITRE profile; fall back to EMPLOYS edges below if absent.
+      if (node.mitre_techniques?.length) {
+        actorTechniques.set(node.id, new Set(node.mitre_techniques));
+        hasFullProfile.add(node.id);
+      }
     }
-    if (node.type === 'technique' && node.id) {
-      techniqueTactics.set(node.id, node.tactics ?? []);
+    if (node.type === "technique" && node.id) {
+      const tactics = node.tactics ?? [];
+      if (tactics.length || !techniqueTactics.has(node.id)) {
+        techniqueTactics.set(node.id, tactics);
+      }
     }
   }
 
-  const actorTechniques = new Map<string, Set<string>>();
+  // Fallback: derive technique sets from EMPLOYS edges for any actor missing a
+  // full profile (e.g. an un-regenerated graph). Accumulates every edge.
   for (const edge of graph.edges) {
-    if (edge.type === 'EMPLOYS' && actorById.has(edge.source)) {
+    if (
+      edge.type === "EMPLOYS" &&
+      actorById.has(edge.source) &&
+      !hasFullProfile.has(edge.source)
+    ) {
       let set = actorTechniques.get(edge.source);
       if (!set) {
         set = new Set();
@@ -114,7 +168,7 @@ export function buildActorIndex(graph: ContextGraphData): ActorIndex {
 
 export interface ResolvedActor {
   actor: Actor;
-  matchType: 'id' | 'exact' | 'alias' | 'prefix' | 'alias-prefix' | 'fuzzy';
+  matchType: "id" | "exact" | "alias" | "prefix" | "alias-prefix" | "fuzzy";
 }
 
 /**
@@ -137,10 +191,10 @@ export function resolveActor(
   const seen = new Set<string>();
 
   // 1. Exact ID match — accept either "actor:G0016" or "G0016"
-  const idKey = q.startsWith('actor:') ? q : `actor:${q.toUpperCase()}`;
+  const idKey = q.startsWith("actor:") ? q : `actor:${q.toUpperCase()}`;
   const byId = index.actorById.get(idKey);
   if (byId) {
-    results.push({ actor: byId, matchType: 'id' });
+    results.push({ actor: byId, matchType: "id" });
     seen.add(byId.id);
   }
 
@@ -150,7 +204,7 @@ export function resolveActor(
   for (const a of index.actors) {
     if (seen.has(a.id)) continue;
     if (a.label.toLowerCase() === qLower) {
-      results.push({ actor: a, matchType: 'exact' });
+      results.push({ actor: a, matchType: "exact" });
       seen.add(a.id);
     }
   }
@@ -159,12 +213,12 @@ export function resolveActor(
   for (const a of index.actors) {
     if (seen.has(a.id)) continue;
     if (a.aliases.some((al) => al.toLowerCase() === qLower)) {
-      results.push({ actor: a, matchType: 'alias' });
+      results.push({ actor: a, matchType: "alias" });
       seen.add(a.id);
     }
   }
 
-  const push = (a: Actor, t: ResolvedActor['matchType']) => {
+  const push = (a: Actor, t: ResolvedActor["matchType"]) => {
     if (seen.has(a.id)) return;
     seen.add(a.id);
     results.push({ actor: a, matchType: t });
@@ -175,13 +229,13 @@ export function resolveActor(
   const labelPrefixes = index.actors
     .filter((a) => !seen.has(a.id) && a.label.toLowerCase().startsWith(qLower))
     .sort((a, b) => a.label.length - b.label.length);
-  for (const a of labelPrefixes) push(a, 'prefix');
+  for (const a of labelPrefixes) push(a, "prefix");
 
   // 5. Alias prefix match.
   for (const a of index.actors) {
     if (seen.has(a.id)) continue;
     if (a.aliases.some((al) => al.toLowerCase().startsWith(qLower))) {
-      push(a, 'alias-prefix');
+      push(a, "alias-prefix");
     }
   }
 
@@ -192,8 +246,8 @@ export function resolveActor(
     for (const a of index.actors) {
       if (results.length >= limit) break;
       if (seen.has(a.id)) continue;
-      const hay = [a.label, ...a.aliases].join('  ').toLowerCase();
-      if (hay.includes(qLower)) push(a, 'fuzzy');
+      const hay = [a.label, ...a.aliases].join("  ").toLowerCase();
+      if (hay.includes(qLower)) push(a, "fuzzy");
     }
   }
 
@@ -220,17 +274,17 @@ export function matchHuntsForActor(
     const hasMention = mentionHuntIds.has(hunt.id);
     if (shared.length === 0 && !hasMention) continue;
 
-    const reasons: MatchedHunt['reasons'] = [];
-    if (shared.length > 0) reasons.push('TECH');
-    if (hasMention) reasons.push('MENTION');
+    const reasons: MatchedHunt["reasons"] = [];
+    if (shared.length > 0) reasons.push("TECH");
+    if (hasMention) reasons.push("MENTION");
 
     matches.push({ hunt, reasons, sharedTechniques: shared });
   }
 
   // Sort: TECH matches first (by # shared desc), then MENTION-only (alpha by title)
   matches.sort((a, b) => {
-    const aHasTech = a.reasons.includes('TECH');
-    const bHasTech = b.reasons.includes('TECH');
+    const aHasTech = a.reasons.includes("TECH");
+    const bHasTech = b.reasons.includes("TECH");
     if (aHasTech !== bHasTech) return aHasTech ? -1 : 1;
     if (aHasTech) {
       return b.sharedTechniques.length - a.sharedTechniques.length;
@@ -323,7 +377,7 @@ export function computeGap(
   for (const tech of actorTechs) {
     if (coveredTechs.has(tech)) continue;
     const tactics = index.techniqueTactics.get(tech) ?? [];
-    gaps.push({ id: tech, tactic: tactics[0] ?? 'Unknown' });
+    gaps.push({ id: tech, tactic: tactics[0] ?? "Unknown" });
   }
   gaps.sort((a, b) => a.id.localeCompare(b.id));
   return gaps;
@@ -358,10 +412,18 @@ export function computeAllCoverage(
 }
 
 /**
- * Actors with the most HEARTH hunts in their corner. Sorted by raw matched-hunt
- * count rather than coverage % because the context graph only maps techniques
- * HEARTH already touches — so any percentage trends artificially toward 100%
- * and would mislead the reader. Match count is honest data either way.
+ * Minimum MITRE profile size for an actor to appear on the most/least-covered
+ * leaderboards. Filters out small-profile actors whose coverage % is a
+ * small-denominator artifact (e.g. 10/11 techniques = 91%, not a meaningful
+ * "best covered"). Shared by both boards so they rank the same population.
+ */
+export const MIN_LEADERBOARD_TECHNIQUES = 20;
+
+/**
+ * Most-hunted actors: most HEARTH hunts in their corner, sorted by raw hunt
+ * count. Hunt volume tracks notoriety — the big-name APTs get hunted most — so
+ * this is the home page's pool for featuring a *recognizable* actor (it then
+ * displays that actor's coverage %). Not a coverage ranking; see the boards below.
  */
 export function topMatchedActors(
   rows: ActorLeaderRow[],
@@ -374,20 +436,48 @@ export function topMatchedActors(
 }
 
 /**
- * Actors with the largest absolute gap, restricted to actors HEARTH already
- * has *some* coverage of — surfaces partially-covered groups worth filling in,
- * not random untouched ones nobody on the team has hunted yet.
+ * Most-covered actors: highest coverage % first — "where HEARTH's detection is
+ * deepest." Measured against each actor's full MITRE profile (see
+ * buildActorIndex). Restricted to actors with a substantial profile so a tiny
+ * fully-hunted actor doesn't outrank a broadly-covered major one. The exact
+ * opposite end of biggestGapActors over the same population.
+ */
+export function mostCoveredActors(
+  rows: ActorLeaderRow[],
+  limit = 5,
+  minTechniqueCount = MIN_LEADERBOARD_TECHNIQUES,
+): ActorLeaderRow[] {
+  return rows
+    .filter((r) => r.coverage.actorTechniqueCount >= minTechniqueCount)
+    .sort(
+      (a, b) =>
+        b.coverage.coveragePercent - a.coverage.coveragePercent ||
+        b.coverage.actorTechniqueCount - a.coverage.actorTechniqueCount ||
+        b.coverage.matchedHuntCount - a.coverage.matchedHuntCount,
+    )
+    .slice(0, limit);
+}
+
+/**
+ * Least-covered actors: lowest coverage % first — "where a new hunt would help
+ * most." Same population and metric as mostCoveredActors, opposite direction, so
+ * an actor lands on one board or neither — never both. Requires a non-zero gap
+ * (a fully-covered actor is not a gap).
  */
 export function biggestGapActors(
   rows: ActorLeaderRow[],
   limit = 5,
-  minTechniqueCount = 10,
+  minTechniqueCount = MIN_LEADERBOARD_TECHNIQUES,
 ): ActorLeaderRow[] {
   return rows
     .filter((r) => r.coverage.actorTechniqueCount >= minTechniqueCount)
-    .filter((r) => r.coverage.techniquesCovered > 0)
     .filter((r) => r.coverage.gapTechniqueCount > 0)
-    .sort((a, b) => b.coverage.gapTechniqueCount - a.coverage.gapTechniqueCount)
+    .sort(
+      (a, b) =>
+        a.coverage.coveragePercent - b.coverage.coveragePercent ||
+        b.coverage.gapTechniqueCount - a.coverage.gapTechniqueCount ||
+        a.coverage.matchedHuntCount - b.coverage.matchedHuntCount,
+    )
     .slice(0, limit);
 }
 
