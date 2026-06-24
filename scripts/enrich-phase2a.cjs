@@ -17,6 +17,7 @@ const https = require('https');
 const ROOT = path.resolve(__dirname, '..');
 const DATA_PATH = path.join(ROOT, 'public', 'context-graph-data.json');
 const ATTACK_URL = 'https://raw.githubusercontent.com/mitre/cti/master/enterprise-attack/enterprise-attack.json';
+const LOCAL_STIX = path.join(ROOT, 'data', 'enterprise-attack.json');
 
 // ─── Fetch JSON from URL ───
 function fetchJSON(url) {
@@ -60,6 +61,17 @@ function fetchJSON(url) {
 
     request(url);
   });
+}
+
+// Prefer a locally-downloaded STIX bundle (e.g. fetched once by CI into
+// data/enterprise-attack.json) to avoid a redundant ~45MB download and a second
+// network failure point; fall back to the live URL when it's absent.
+async function loadStix() {
+  if (fs.existsSync(LOCAL_STIX)) {
+    console.log(`Using local ATT&CK STIX bundle:\n  ${LOCAL_STIX}\n`);
+    return JSON.parse(fs.readFileSync(LOCAL_STIX, 'utf-8'));
+  }
+  return fetchJSON(ATTACK_URL);
 }
 
 // ─── Extract first sentence from description ───
@@ -119,7 +131,7 @@ async function main() {
   });
 
   // Fetch ATT&CK STIX bundle
-  const stix = await fetchJSON(ATTACK_URL);
+  const stix = await loadStix();
   const objects = stix.objects || [];
   console.log(`STIX bundle: ${objects.length} objects\n`);
 
@@ -128,16 +140,25 @@ async function main() {
   objects.forEach(obj => { stixById[obj.id] = obj; });
 
   // ─── Build STIX attack-pattern ID → our technique ID mapping ───
+  // stixIdToTechId: HEARTH-scoped (only techniques our graph already has) — drives
+  //   EMPLOYS edges + technique_count, kept for the context-graph visualization.
+  // stixIdToAttackIdAll: unfiltered — every live attack-pattern → its ATT&CK ID.
+  //   Drives each actor's FULL MITRE profile (mitre_techniques), the honest
+  //   denominator for coverage %, independent of what HEARTH currently touches.
   const stixIdToTechId = {};
+  const stixIdToAttackIdAll = {};
   objects.forEach(obj => {
     if (obj.type === 'attack-pattern' && !obj.revoked && !obj.x_mitre_deprecated) {
       const attackId = normalizeAttackPatternId(obj);
-      if (attackId && existingTechIds.has(attackId)) {
+      if (!attackId) return;
+      stixIdToAttackIdAll[obj.id] = attackId;
+      if (existingTechIds.has(attackId)) {
         stixIdToTechId[obj.id] = attackId;
       }
     }
   });
   console.log(`Matched ${Object.keys(stixIdToTechId).length} STIX attack-patterns to our techniques`);
+  console.log(`Total live STIX attack-patterns (full profiles): ${Object.keys(stixIdToAttackIdAll).length}`);
 
   // ─── Extract relationships ───
   const relationships = objects.filter(obj =>
@@ -146,7 +167,8 @@ async function main() {
   console.log(`Total STIX relationships: ${relationships.length}`);
 
   // actor (intrusion-set) → techniques they use
-  const actorTechMap = {};   // stix actor id → Set of our technique IDs
+  const actorTechMap = {};   // stix actor id → Set of our (HEARTH-scoped) technique IDs
+  const actorAllTechMap = {}; // stix actor id → Set of ALL their ATT&CK technique IDs (full profile)
   // campaign → techniques they use
   const campaignTechMap = {}; // stix campaign id → Set of our technique IDs
   // campaign → actor attribution
@@ -164,6 +186,12 @@ async function main() {
         if (techId) {
           if (!actorTechMap[rel.source_ref]) actorTechMap[rel.source_ref] = new Set();
           actorTechMap[rel.source_ref].add(techId);
+        }
+        // Full MITRE profile (unfiltered) — the honest coverage denominator.
+        const allTechId = stixIdToAttackIdAll[rel.target_ref];
+        if (allTechId) {
+          if (!actorAllTechMap[rel.source_ref]) actorAllTechMap[rel.source_ref] = new Set();
+          actorAllTechMap[rel.source_ref].add(allTechId);
         }
       }
       // campaign uses attack-pattern
@@ -206,6 +234,7 @@ async function main() {
   const newNodes = [];
   const newEdges = [];
   const existingNodeIds = new Set(graphData.nodes.map(n => n.id));
+  const nodeById = new Map(graphData.nodes.map(n => [n.id, n]));
 
   // Threat Actor nodes
   const actorNodes = [];
@@ -215,8 +244,20 @@ async function main() {
 
     const attackId = getAttackId(obj);
     const nodeId = `actor:${attackId || obj.name.replace(/\s+/g, '_')}`;
+    const allTechsUsed = actorAllTechMap[stixId] ? [...actorAllTechMap[stixId]] : [];
 
-    if (existingNodeIds.has(nodeId)) return;
+    if (existingNodeIds.has(nodeId)) {
+      // Merge skips existing actors — backfill the full MITRE profile onto them so
+      // their coverage denominator isn't left HEARTH-scoped. Only write when this
+      // run actually found techniques, so a transient/partial STIX bundle can never
+      // wipe a previously-populated profile to [].
+      const existing = nodeById.get(nodeId);
+      if (existing && existing.type === 'threat_actor' && allTechsUsed.length) {
+        existing.mitre_techniques = allTechsUsed;
+        existing.mitre_technique_count = allTechsUsed.length;
+      }
+      return;
+    }
     existingNodeIds.add(nodeId);
 
     const aliases = (obj.aliases || []).filter(a => a !== obj.name);
@@ -229,6 +270,9 @@ async function main() {
       aliases: aliases.slice(0, 10),
       description: firstSentence(obj.description),
       technique_count: techsUsed.length,
+      // Full MITRE ATT&CK profile — coverage's honest denominator (≥ technique_count).
+      mitre_techniques: allTechsUsed,
+      mitre_technique_count: allTechsUsed.length,
       stix_id: stixId,
       external_references: (obj.external_references || [])
         .filter(r => r.url)
