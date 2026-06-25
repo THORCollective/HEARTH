@@ -549,9 +549,15 @@ export function analyzeActor(
    Data loading (shared by actors.ts and home.ts)
    ───────────────────────────────────────────── */
 
-/** Fetch + parse JSON, throwing on a non-OK response so 404s don't parse as data. */
+/**
+ * Fetch + parse JSON, throwing on a non-OK response so 404s don't parse as data.
+ * Uses cache: "no-cache" to force revalidation — these data files live at fixed,
+ * un-hashed paths (e.g. /context-graph-data.json), so without it a browser can
+ * serve a stale copy after a deploy until a hard refresh. Revalidation is a cheap
+ * 304 when unchanged and always picks up a fresh file after the monthly refresh.
+ */
 export async function fetchJson<T>(url: string): Promise<T> {
-  const res = await fetch(url);
+  const res = await fetch(url, { cache: "no-cache" });
   if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
   return res.json() as Promise<T>;
 }

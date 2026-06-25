@@ -1,4 +1,4 @@
-import type { Hunt } from '../types/Hunt';
+import type { Hunt } from "../types/Hunt";
 
 /* ────────────────────────────────────────────────────────
    Context Graph types (mirrors public/context-graph-data.json)
@@ -6,7 +6,14 @@ import type { Hunt } from '../types/Hunt';
 
 interface GraphNode {
   id: string;
-  type: 'hypothesis' | 'technique' | 'tactic' | 'datasource' | 'contributor' | 'threat_actor' | 'campaign';
+  type:
+    | "hypothesis"
+    | "technique"
+    | "tactic"
+    | "datasource"
+    | "contributor"
+    | "threat_actor"
+    | "campaign";
   label: string;
   // technique-specific
   prevalence_score?: number;
@@ -20,7 +27,13 @@ interface GraphNode {
 interface GraphEdge {
   source: string;
   target: string;
-  type: 'TARGETS' | 'EMPLOYS' | 'OBSERVES' | 'BELONGS_TO' | 'SUBMITTED_BY' | 'INSPIRED_BY';
+  type:
+    | "TARGETS"
+    | "EMPLOYS"
+    | "OBSERVES"
+    | "BELONGS_TO"
+    | "SUBMITTED_BY"
+    | "INSPIRED_BY";
 }
 
 interface ContextGraphData {
@@ -35,8 +48,8 @@ interface ContextGraphData {
 
 export interface RankedHunt {
   hunt: Hunt;
-  score: number;               // 0-1 composite
-  scoreDisplay: number;        // 0-100 rounded
+  score: number; // 0-1 composite
+  scoreDisplay: number; // 0-100 rounded
   subscores: {
     prevalence: number;
     actorCoverage: number;
@@ -45,23 +58,23 @@ export interface RankedHunt {
     coverageUniqueness: number;
   };
   // Reasoning fields for top-N display
-  topActors: string[];         // up to 3 actor labels
+  topActors: string[]; // up to 3 actor labels
   actorCount: number;
-  activeCampaigns: string[];   // campaign labels with last_seen within 2 years
-  techniques: string[];        // technique IDs this hunt targets
-  prevalenceLevel: 'hot' | 'warm' | 'cold';
+  activeCampaigns: string[]; // campaign labels with last_seen within 2 years
+  techniques: string[]; // technique IDs this hunt targets
+  prevalenceLevel: "hot" | "warm" | "cold";
 }
 
 export interface CoverageGap {
   categoryName: string;
   categoryIcon: string;
-  techniques: string[];        // techniques covered by category but with 0 hunts
+  techniques: string[]; // techniques covered by category but with 0 hunts
 }
 
 export interface RankingResult {
   ranked: RankedHunt[];
   gaps: CoverageGap[];
-  topThreat: string | null;         // technique label with highest prevalence
+  topThreat: string | null; // technique label with highest prevalence
   topThreatScore: number;
   averageScore: number;
 }
@@ -115,12 +128,17 @@ export class HuntRanker {
 
   private async _fetch(): Promise<void> {
     try {
-      const resp = await fetch('/context-graph-data.json');
+      const resp = await fetch("/context-graph-data.json", {
+        cache: "no-cache",
+      });
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-      this.graphData = await resp.json() as ContextGraphData;
+      this.graphData = (await resp.json()) as ContextGraphData;
       this.buildLookups();
     } catch (err) {
-      console.warn('[HuntRanker] Failed to load context graph — falling back to unranked', err);
+      console.warn(
+        "[HuntRanker] Failed to load context graph — falling back to unranked",
+        err,
+      );
       this.graphData = null;
     }
   }
@@ -130,30 +148,30 @@ export class HuntRanker {
 
     for (const node of this.graphData.nodes) {
       switch (node.type) {
-        case 'technique':
+        case "technique":
           this.techniqueNodes.set(node.id, node);
           break;
-        case 'threat_actor':
+        case "threat_actor":
           this.actorNodes.set(node.id, node);
           break;
-        case 'campaign':
+        case "campaign":
           this.campaignNodes.set(node.id, node);
           break;
       }
     }
 
     for (const edge of this.graphData.edges) {
-      if (edge.type === 'TARGETS') {
+      if (edge.type === "TARGETS") {
         // hypothesis → technique
         const arr = this.techniqueHunts.get(edge.target) || [];
         arr.push(edge.source);
         this.techniqueHunts.set(edge.target, arr);
-      } else if (edge.type === 'EMPLOYS') {
-        if (edge.source.startsWith('actor:')) {
+      } else if (edge.type === "EMPLOYS") {
+        if (edge.source.startsWith("actor:")) {
           const arr = this.techniqueActors.get(edge.target) || [];
           arr.push(edge.source);
           this.techniqueActors.set(edge.target, arr);
-        } else if (edge.source.startsWith('campaign:')) {
+        } else if (edge.source.startsWith("campaign:")) {
           const arr = this.techniqueCampaigns.get(edge.target) || [];
           arr.push(edge.source);
           this.techniqueCampaigns.set(edge.target, arr);
@@ -188,12 +206,15 @@ export class HuntRanker {
     allHunts: Hunt[],
     coveredTechs: Set<string>,
     selectedCategories: Set<string>,
-    categoryMap: Map<string, { name: string; icon: string; techniques: string[] }>,
+    categoryMap: Map<
+      string,
+      { name: string; icon: string; techniques: string[] }
+    >,
   ): RankingResult {
     if (!this.graphData) {
       // Graceful degradation: return unranked with neutral scores
       return {
-        ranked: hunts.map(h => this.neutralScore(h)),
+        ranked: hunts.map((h) => this.neutralScore(h)),
         gaps: [],
         topThreat: null,
         topThreatScore: 0,
@@ -209,23 +230,29 @@ export class HuntRanker {
     for (const h of allHunts) {
       for (const tag of h.tags) {
         if (/^T\d{4}/.test(tag)) {
-          huntCountPerTechnique.set(tag, (huntCountPerTechnique.get(tag) || 0) + 1);
+          huntCountPerTechnique.set(
+            tag,
+            (huntCountPerTechnique.get(tag) || 0) + 1,
+          );
         }
       }
     }
     const maxHuntsPerTech = Math.max(1, ...huntCountPerTechnique.values());
 
-    const ranked: RankedHunt[] = hunts.map(hunt => {
-      const techTags = hunt.tags.filter(t => /^T\d{4}/.test(t));
+    const ranked: RankedHunt[] = hunts.map((hunt) => {
+      const techTags = hunt.tags.filter((t) => /^T\d{4}/.test(t));
 
       // Normalize technique IDs: hunt tags use T1059_001, graph uses T1059.001
-      const normalizedTechs = techTags.map(t => this.normalizeTechId(t));
+      const normalizedTechs = techTags.map((t) => this.normalizeTechId(t));
 
       // ── Prevalence (0.4) ──
       let maxPrevalence = 0;
       for (const tid of normalizedTechs) {
         const node = this.techniqueNodes.get(tid);
-        if (node?.prevalence_score != null && node.prevalence_score > maxPrevalence) {
+        if (
+          node?.prevalence_score != null &&
+          node.prevalence_score > maxPrevalence
+        ) {
           maxPrevalence = node.prevalence_score;
         }
       }
@@ -233,7 +260,7 @@ export class HuntRanker {
       // ── Actor coverage (0.2) ──
       const actorSet = new Set<string>();
       for (const tid of normalizedTechs) {
-        for (const a of (this.techniqueActors.get(tid) || [])) {
+        for (const a of this.techniqueActors.get(tid) || []) {
           actorSet.add(a);
         }
       }
@@ -251,12 +278,14 @@ export class HuntRanker {
       const campaignSet = new Set<string>();
       const activeCampaigns: string[] = [];
       for (const tid of normalizedTechs) {
-        for (const cId of (this.techniqueCampaigns.get(tid) || [])) {
+        for (const cId of this.techniqueCampaigns.get(tid) || []) {
           if (campaignSet.has(cId)) continue;
           campaignSet.add(cId);
           const cNode = this.campaignNodes.get(cId);
           if (cNode) {
-            const lastSeen = cNode.last_seen ? new Date(cNode.last_seen).getTime() : 0;
+            const lastSeen = cNode.last_seen
+              ? new Date(cNode.last_seen).getTime()
+              : 0;
             if (now - lastSeen < twoYearsMs) {
               activeCampaigns.push(cNode.label);
             }
@@ -279,16 +308,18 @@ export class HuntRanker {
         // Also try normalized form
         else if (coveredTechs.has(this.normalizeTechId(tag))) matchedCount++;
       }
-      const dataSourceMatch = techTags.length > 0 ? matchedCount / techTags.length : 0;
+      const dataSourceMatch =
+        techTags.length > 0 ? matchedCount / techTags.length : 0;
 
       // ── Coverage uniqueness (0.1) ──
       // Rare coverage = more valuable. Inverse of how many hunts cover the same technique.
       let uniquenessSum = 0;
       for (const tag of techTags) {
         const count = huntCountPerTechnique.get(tag) || 1;
-        uniquenessSum += 1 - (count / maxHuntsPerTech);
+        uniquenessSum += 1 - count / maxHuntsPerTech;
       }
-      const coverageUniqueness = techTags.length > 0 ? uniquenessSum / techTags.length : 0;
+      const coverageUniqueness =
+        techTags.length > 0 ? uniquenessSum / techTags.length : 0;
 
       // ── Composite score ──
       const score =
@@ -298,9 +329,8 @@ export class HuntRanker {
         WEIGHTS.dataSourceMatch * dataSourceMatch +
         WEIGHTS.coverageUniqueness * coverageUniqueness;
 
-      const prevalenceLevel: 'hot' | 'warm' | 'cold' =
-        maxPrevalence >= 0.6 ? 'hot' :
-        maxPrevalence >= 0.2 ? 'warm' : 'cold';
+      const prevalenceLevel: "hot" | "warm" | "cold" =
+        maxPrevalence >= 0.6 ? "hot" : maxPrevalence >= 0.2 ? "warm" : "cold";
 
       return {
         hunt,
@@ -331,8 +361,9 @@ export class HuntRanker {
       const uncoveredTechs: string[] = [];
       for (const tid of cat.techniques) {
         const normalized = this.normalizeTechId(tid);
-        const huntCount = (this.techniqueHunts.get(tid)?.length || 0) +
-                          (this.techniqueHunts.get(normalized)?.length || 0);
+        const huntCount =
+          (this.techniqueHunts.get(tid)?.length || 0) +
+          (this.techniqueHunts.get(normalized)?.length || 0);
         if (huntCount === 0) {
           uncoveredTechs.push(normalized);
         }
@@ -351,16 +382,21 @@ export class HuntRanker {
     let topThreatScore = 0;
     for (const tid of coveredTechs) {
       const norm = this.normalizeTechId(tid);
-      const node = this.techniqueNodes.get(tid) || this.techniqueNodes.get(norm);
-      if (node?.prevalence_score != null && node.prevalence_score > topThreatScore) {
+      const node =
+        this.techniqueNodes.get(tid) || this.techniqueNodes.get(norm);
+      if (
+        node?.prevalence_score != null &&
+        node.prevalence_score > topThreatScore
+      ) {
         topThreatScore = node.prevalence_score;
         topThreat = node.label;
       }
     }
 
-    const averageScore = ranked.length > 0
-      ? ranked.reduce((sum, r) => sum + r.score, 0) / ranked.length
-      : 0;
+    const averageScore =
+      ranked.length > 0
+        ? ranked.reduce((sum, r) => sum + r.score, 0) / ranked.length
+        : 0;
 
     return { ranked, gaps, topThreat, topThreatScore, averageScore };
   }
@@ -372,33 +408,40 @@ export class HuntRanker {
     const parts: string[] = [];
 
     if (rh.actorCount > 0) {
-      const actorStr = rh.topActors.length > 0
-        ? rh.topActors.join(', ')
-        : `${rh.actorCount} actors`;
-      const techStr = rh.techniques.join(', ');
-      parts.push(`${rh.actorCount} threat actor${rh.actorCount > 1 ? 's' : ''} use ${techStr} including ${actorStr}`);
+      const actorStr =
+        rh.topActors.length > 0
+          ? rh.topActors.join(", ")
+          : `${rh.actorCount} actors`;
+      const techStr = rh.techniques.join(", ");
+      parts.push(
+        `${rh.actorCount} threat actor${rh.actorCount > 1 ? "s" : ""} use ${techStr} including ${actorStr}`,
+      );
     }
 
     if (rh.activeCampaigns.length > 0) {
-      parts.push(`Active campaign${rh.activeCampaigns.length > 1 ? 's' : ''}: ${rh.activeCampaigns.join(', ')}`);
+      parts.push(
+        `Active campaign${rh.activeCampaigns.length > 1 ? "s" : ""}: ${rh.activeCampaigns.join(", ")}`,
+      );
     }
 
     if (rh.subscores.dataSourceMatch >= 1) {
-      parts.push('Your data sources fully cover this hunt');
+      parts.push("Your data sources fully cover this hunt");
     } else if (rh.subscores.dataSourceMatch > 0) {
-      parts.push(`${Math.round(rh.subscores.dataSourceMatch * 100)}% data source match`);
+      parts.push(
+        `${Math.round(rh.subscores.dataSourceMatch * 100)}% data source match`,
+      );
     }
 
     if (rh.subscores.coverageUniqueness > 0.5) {
-      parts.push('Rare coverage — few other hunts target this technique');
+      parts.push("Rare coverage — few other hunts target this technique");
     }
 
-    return parts.join('. ') + (parts.length > 0 ? '.' : '');
+    return parts.join(". ") + (parts.length > 0 ? "." : "");
   }
 
   /** Normalize technique ID: T1059_001 → T1059.001 */
   private normalizeTechId(id: string): string {
-    return id.replace(/_/g, '.');
+    return id.replace(/_/g, ".");
   }
 
   /** Return a neutral / unranked score for graceful degradation */
@@ -417,8 +460,8 @@ export class HuntRanker {
       topActors: [],
       actorCount: 0,
       activeCampaigns: [],
-      techniques: hunt.tags.filter(t => /^T\d{4}/.test(t)),
-      prevalenceLevel: 'cold',
+      techniques: hunt.tags.filter((t) => /^T\d{4}/.test(t)),
+      prevalenceLevel: "cold",
     };
   }
 }
