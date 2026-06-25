@@ -1,21 +1,23 @@
-import { AppState } from './state/AppState';
-import { SearchBar } from './components/SearchBar';
-import { FilterPanel } from './components/FilterPanel';
-import { HuntGrid } from './components/HuntGrid';
-import { Pagination } from './components/Pagination';
-import { Modal } from './components/Modal';
-import { HuntFinder } from './components/HuntFinder';
-import type { Hunt } from './types/Hunt';
-import './styles/main.css';
+import { AppState } from "./state/AppState";
+import { SearchBar } from "./components/SearchBar";
+import { FilterPanel } from "./components/FilterPanel";
+import { HuntGrid } from "./components/HuntGrid";
+import { Pagination } from "./components/Pagination";
+import { Modal } from "./components/Modal";
+import { HuntFinder } from "./components/HuntFinder";
+import type { Hunt } from "./types/Hunt";
+import "./styles/main.css";
 
 /**
  * Load hunt data from JSON file
  */
 async function loadHunts(): Promise<Hunt[]> {
-  const response = await fetch('/hunts-data.json');
+  const response = await fetch("/hunts-data.json", { cache: "no-cache" });
 
   if (!response.ok) {
-    throw new Error(`Failed to load hunt data: HTTP ${response.status} ${response.statusText}`);
+    throw new Error(
+      `Failed to load hunt data: HTTP ${response.status} ${response.statusText}`,
+    );
   }
 
   const data: Hunt[] = await response.json();
@@ -26,9 +28,9 @@ async function loadHunts(): Promise<Hunt[]> {
  * Hide loading indicator
  */
 function hideLoading(): void {
-  const loading = document.getElementById('loading');
+  const loading = document.getElementById("loading");
   if (loading) {
-    loading.style.display = 'none';
+    loading.style.display = "none";
   }
 }
 
@@ -36,7 +38,7 @@ function hideLoading(): void {
  * Show error message to user
  */
 function showError(message: string): void {
-  const container = document.getElementById('huntsGrid');
+  const container = document.getElementById("huntsGrid");
   if (container) {
     container.innerHTML = `
       <div class="error-message">
@@ -54,14 +56,14 @@ function showError(message: string): void {
  */
 async function initApp(): Promise<void> {
   try {
-    console.log('HEARTH initializing...');
+    console.log("HEARTH initializing...");
 
     // Load hunt data
     const hunts = await loadHunts();
     console.log(`Loaded ${hunts.length} hunts`);
 
     if (hunts.length === 0) {
-      showError('No hunts found in database');
+      showError("No hunts found in database");
       return;
     }
 
@@ -85,22 +87,24 @@ async function initApp(): Promise<void> {
 
     // Initialize Hunt Finder (lazy - created on first tab switch)
     let huntFinderInit = false;
-    const finderView = document.getElementById('huntFinderView');
+    const finderView = document.getElementById("huntFinderView");
     const libraryElements = [
-      document.querySelector('.intro') as HTMLElement,
-      document.querySelector('.controls') as HTMLElement,
-      document.getElementById('huntsGrid') as HTMLElement,
+      document.querySelector(".intro") as HTMLElement,
+      document.querySelector(".controls") as HTMLElement,
+      document.getElementById("huntsGrid") as HTMLElement,
     ].filter(Boolean);
 
-    const navLibrary = document.getElementById('navLibrary');
-    const navFinder = document.getElementById('navFinder');
+    const navLibrary = document.getElementById("navLibrary");
+    const navFinder = document.getElementById("navFinder");
 
     function switchView(view: string) {
-      const isLibrary = view === 'library';
-      libraryElements.forEach(el => { if (el) el.style.display = isLibrary ? '' : 'none'; });
-      if (finderView) finderView.style.display = isLibrary ? 'none' : '';
-      navLibrary?.classList.toggle('nav-tab--active', isLibrary);
-      navFinder?.classList.toggle('nav-tab--active', !isLibrary);
+      const isLibrary = view === "library";
+      libraryElements.forEach((el) => {
+        if (el) el.style.display = isLibrary ? "" : "none";
+      });
+      if (finderView) finderView.style.display = isLibrary ? "none" : "";
+      navLibrary?.classList.toggle("nav-tab--active", isLibrary);
+      navFinder?.classList.toggle("nav-tab--active", !isLibrary);
 
       if (!isLibrary && !huntFinderInit && finderView) {
         huntFinderInit = true;
@@ -108,41 +112,42 @@ async function initApp(): Promise<void> {
       }
     }
 
-    navLibrary?.addEventListener('click', () => switchView('library'));
-    navFinder?.addEventListener('click', () => switchView('finder'));
+    navLibrary?.addEventListener("click", () => switchView("library"));
+    navFinder?.addEventListener("click", () => switchView("finder"));
 
     // Handle hash navigation
-    if (window.location.hash === '#finder') {
-      switchView('finder');
+    if (window.location.hash === "#finder") {
+      switchView("finder");
     }
 
-    console.log('HEARTH initialized successfully');
+    console.log("HEARTH initialized successfully");
     console.log(`- Total hunts: ${state.getTotalHuntCount()}`);
     console.log(`- Unique tactics: ${state.getUniqueTactics().size}`);
     console.log(`- Contributors: ${state.getUniqueContributors().size}`);
-
   } catch (error) {
-    console.error('Failed to initialize HEARTH:', error);
+    console.error("Failed to initialize HEARTH:", error);
 
-    if (error instanceof TypeError && error.message.includes('fetch')) {
-      showError('Failed to load hunt data. Please check your network connection.');
-    } else if (error instanceof Error && error.message.includes('404')) {
-      showError('Hunt data file not found. Please contact support.');
+    if (error instanceof TypeError && error.message.includes("fetch")) {
+      showError(
+        "Failed to load hunt data. Please check your network connection.",
+      );
+    } else if (error instanceof Error && error.message.includes("404")) {
+      showError("Hunt data file not found. Please contact support.");
     } else if (error instanceof Error) {
       showError(`Failed to load hunt data: ${error.message}`);
     } else {
-      showError('An unexpected error occurred. Please refresh the page.');
+      showError("An unexpected error occurred. Please refresh the page.");
     }
   }
 }
 
 // Global error handlers
-window.addEventListener('error', (event) => {
-  console.error('Unhandled error:', event.error);
+window.addEventListener("error", (event) => {
+  console.error("Unhandled error:", event.error);
 });
 
-window.addEventListener('unhandledrejection', (event) => {
-  console.error('Unhandled promise rejection:', event.reason);
+window.addEventListener("unhandledrejection", (event) => {
+  console.error("Unhandled promise rejection:", event.reason);
 });
 
 // Start the application

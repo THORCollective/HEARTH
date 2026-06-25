@@ -116,7 +116,7 @@ async function init() {
   setupChips();
 
   try {
-    const res = await fetch("/hunts-data.json");
+    const res = await fetch("/hunts-data.json", { cache: "no-cache" });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     allHunts = await res.json();
   } catch (err) {
