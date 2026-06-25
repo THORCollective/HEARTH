@@ -2,7 +2,7 @@
 """Reassign a draft hunt's ID if it collides with an ID already on ``main``.
 
 Run on a checked-out draft branch with ``origin/main`` fetched. For each hunt
-file the branch ADDS under ``Flames/`` whose ``H-YYYY-NNN`` number already
+file the branch ADDS under ``Flames/`` whose ``HNNN`` number already
 exists on main, rename it to the next free number (rewriting the heading and
 any populated Hunt# cell), and stage the rename.
 
@@ -76,9 +76,8 @@ def main() -> int:
             continue
         final_id = path.stem
         if num in main_nums:
-            year = int(path.stem.split("-")[1])
             new_num = next_free_number(claimed)
-            new_id = format_hunt_id(year, new_num)
+            new_id = format_hunt_id(new_num)
             new_path = rewrite_hunt_id(path, new_id)
             _git("add", "-A", "--", FLAMES)
             claimed.add(new_num)
