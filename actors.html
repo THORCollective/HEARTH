@@ -1085,6 +1085,11 @@
           oklch(0.18 0.022 300 / 0.55)
         );
         position: relative;
+        /* Column layout so the list fills the (equal-height) board and rows
+           distribute evenly — keeps both boards' 5 rows aligned even when one
+           side's subtitles wrap to two lines. */
+        display: flex;
+        flex-direction: column;
       }
       .board::before {
         content: "";
@@ -1130,6 +1135,9 @@
         padding: 0;
         counter-reset: rk;
         position: relative;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
       }
       .board-list li {
         counter-increment: rk;
@@ -1143,6 +1151,8 @@
         align-items: center;
         transition: background 0.18s ease;
         position: relative;
+        /* Rows share the board height equally so both boards line up row-for-row. */
+        flex: 1;
       }
       .board-list li:last-child {
         border-bottom: 0;
