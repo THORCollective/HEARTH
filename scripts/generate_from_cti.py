@@ -2,11 +2,11 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 from PyPDF2 import PdfReader
-from datetime import datetime
 
 # Add Anthropic (Claude) support
 try:
     import anthropic
+
     CLAUDE_AVAILABLE = True
 except ImportError:
     CLAUDE_AVAILABLE = False
@@ -14,6 +14,7 @@ except ImportError:
 # Import MITRE ATT&CK data
 try:
     from mitre_attack import get_mitre_attack
+
     MITRE_AVAILABLE = True
 except ImportError:
     print("⚠️ MITRE ATT&CK data not available. Using fallback tactic matching.")
@@ -22,6 +23,7 @@ except ImportError:
 # Import duplicate detection
 try:
     from duplicate_detection import check_duplicates_for_new_submission
+
     DUPLICATE_DETECTION_AVAILABLE = True
 except ImportError:
     DUPLICATE_DETECTION_AVAILABLE = False
@@ -36,17 +38,20 @@ CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-5-20250929")
 
 if AI_PROVIDER == "claude":
     if not CLAUDE_AVAILABLE:
-        raise ImportError("Anthropic (Claude) client not installed. Please install 'anthropic' Python package.")
+        raise ImportError(
+            "Anthropic (Claude) client not installed. Please install 'anthropic' Python package."
+        )
     ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
     if not ANTHROPIC_API_KEY:
         raise ValueError("ANTHROPIC_API_KEY not set in environment.")
     anthropic_client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 else:
     from openai import OpenAI
+
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 CTI_INPUT_DIR = Path(".hearth/intel-drops/")
-OUTPUT_DIR    = Path("Flames/")
+OUTPUT_DIR = Path("Flames/")
 PROCESSED_DIR = Path(".hearth/processed-intel-drops/")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
@@ -63,7 +68,7 @@ def extract_technique_and_tactic(content: str) -> tuple:
     import re
 
     # Try to extract technique ID from content
-    technique_pattern = r'T\d{4}(?:\.\d{3})?'
+    technique_pattern = r"T\d{4}(?:\.\d{3})?"
     techniques_found = re.findall(technique_pattern, content)
 
     if techniques_found and MITRE_AVAILABLE:
@@ -79,12 +84,14 @@ def extract_technique_and_tactic(content: str) -> tuple:
                     return (tech_id, tactic, 1.0)  # 100% confidence from MITRE
 
     # Fallback: Extract from table in generated content
-    lines = content.split('\n')
+    lines = content.split("\n")
     for line in lines:
-        if '|' in line:
-            parts = [p.strip() for p in line.split('|')]
+        if "|" in line:
+            parts = [p.strip() for p in line.split("|")]
             if len(parts) >= 4:
-                potential_tactic = parts[2].strip() if len(parts) > 2 and parts[2].strip() else None
+                potential_tactic = (
+                    parts[2].strip() if len(parts) > 2 and parts[2].strip() else None
+                )
                 if potential_tactic and potential_tactic.lower() != "tactic":
                     # Validate tactic name if MITRE available
                     if MITRE_AVAILABLE:
@@ -92,37 +99,59 @@ def extract_technique_and_tactic(content: str) -> tuple:
                         # Normalize tactic name
                         for mitre_tactic in mitre.tactics.keys():
                             if mitre_tactic.lower() == potential_tactic.lower():
-                                return (None, mitre_tactic, 0.8)  # 80% confidence from table
+                                return (
+                                    None,
+                                    mitre_tactic,
+                                    0.8,
+                                )  # 80% confidence from table
                     return (None, potential_tactic, 0.7)  # 70% confidence from table
 
     # Final fallback: Keyword-based inference (low confidence)
-    hypothesis = content.split('\n')[0].strip()
+    hypothesis = content.split("\n")[0].strip()
     hypothesis_lower = hypothesis.lower()
 
-    if any(word in hypothesis_lower for word in ['tunnel', 'proxy', 'socks', 'c2', 'command', 'control', 'communication']):
+    if any(
+        word in hypothesis_lower
+        for word in [
+            "tunnel",
+            "proxy",
+            "socks",
+            "c2",
+            "command",
+            "control",
+            "communication",
+        ]
+    ):
         return (None, "Command And Control", 0.3)
-    elif any(word in hypothesis_lower for word in ['download', 'execute', 'run', 'launch', 'powershell', 'cmd']):
+    elif any(
+        word in hypothesis_lower
+        for word in ["download", "execute", "run", "launch", "powershell", "cmd"]
+    ):
         return (None, "Execution", 0.3)
-    elif any(word in hypothesis_lower for word in ['persist', 'startup', 'service', 'registry', 'scheduled']):
+    elif any(
+        word in hypothesis_lower
+        for word in ["persist", "startup", "service", "registry", "scheduled"]
+    ):
         return (None, "Persistence", 0.3)
-    elif any(word in hypothesis_lower for word in ['credential', 'password', 'token', 'hash', 'mimikatz']):
+    elif any(
+        word in hypothesis_lower
+        for word in ["credential", "password", "token", "hash", "mimikatz"]
+    ):
         return (None, "Credential Access", 0.3)
     else:
         return (None, "Command And Control", 0.2)  # Default fallback
 
 
 def get_next_hunt_id():
-    """Scans the Flames/ directory to find the next available hunt ID."""
+    """Next Flames hunt number: max existing ``HNNN`` + 1."""
     flames_dir = Path("Flames/")
     flames_dir.mkdir(exist_ok=True)
     max_id = 0
-    hunt_pattern = re.compile(r"H-\d{4}-(\d{3,})\.md")
-    for f in flames_dir.glob("H-*.md"):
-        match = hunt_pattern.match(f.name)
+    hunt_pattern = re.compile(r"^H(\d+)$")
+    for f in flames_dir.glob("H*.md"):
+        match = hunt_pattern.match(f.stem)
         if match:
-            current_id = int(match.group(1))
-            if current_id > max_id:
-                max_id = current_id
+            max_id = max(max_id, int(match.group(1)))
     return max_id + 1
 
 
@@ -198,7 +227,7 @@ Your output should look like this:
 
 def summarize_cti_with_map_reduce(text, model="gpt-4", max_tokens=128000):
     """
-    Summarizes long text by splitting it into chunks, summarizing each, 
+    Summarizes long text by splitting it into chunks, summarizing each,
     and then creating a final summary of the summaries.
     This is a 'map-reduce' approach to handle large contexts.
     """
@@ -209,7 +238,9 @@ def summarize_cti_with_map_reduce(text, model="gpt-4", max_tokens=128000):
         print("✅ CTI content is within the context window. No summarization needed.")
         return text
 
-    print(f"⚠️ CTI content is too long ({int(text_token_count)} tokens). Starting map-reduce summarization.")
+    print(
+        f"⚠️ CTI content is too long ({int(text_token_count)} tokens). Starting map-reduce summarization."
+    )
 
     # 1. Map: Split the document into overlapping chunks
     chunk_size = int(max_tokens * 0.6)  # Use 60% of the model's context for each chunk
@@ -227,7 +258,7 @@ def summarize_cti_with_map_reduce(text, model="gpt-4", max_tokens=128000):
     # 2. Summarize each chunk
     chunk_summaries = []
     for i, chunk in enumerate(chunks):
-        print(f"Summarizing chunk {i +1}/{len(chunks)}...")
+        print(f"Summarizing chunk {i + 1}/{len(chunks)}...")
         try:
             if AI_PROVIDER == "claude":
                 # Claude prompt format: system prompt, then user content
@@ -236,33 +267,36 @@ def summarize_cti_with_map_reduce(text, model="gpt-4", max_tokens=128000):
                     "Extract the key actionable intelligence from this section. "
                     "Focus on specific tools, techniques, vulnerabilities, and adversary procedures. "
                     "Your output will be combined with others, so be concise and clear.\n\n"
-                    f"--- CHUNK {i +1}/{len(chunks)} ---\n\n{chunk}\n\nAssistant:"
+                    f"--- CHUNK {i + 1}/{len(chunks)} ---\n\n{chunk}\n\nAssistant:"
                 )
                 response = anthropic_client.messages.create(
                     model=CLAUDE_MODEL,
                     max_tokens=1024,
                     temperature=0.2,
-                    messages=[{"role": "user", "content": prompt}]
+                    messages=[{"role": "user", "content": prompt}],
                 )
                 summary = response.content[0].text.strip()
             else:
                 response = client.chat.completions.create(
                     model=model,
-                    messages=[{"role": "user", "content":
-                        "This is one part of a larger threat intelligence report. "
-                        "Extract the key actionable intelligence from this section. "
-                        "Focus on specific tools, techniques, vulnerabilities, and adversary procedures. "
-                        "Your output will be combined with others, so be concise and clear.\n\n"
-                        f"--- CHUNK {i +1}/{len(chunks)} ---\n\n{chunk}"
-                    }],
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": "This is one part of a larger threat intelligence report. "
+                            "Extract the key actionable intelligence from this section. "
+                            "Focus on specific tools, techniques, vulnerabilities, and adversary procedures. "
+                            "Your output will be combined with others, so be concise and clear.\n\n"
+                            f"--- CHUNK {i + 1}/{len(chunks)} ---\n\n{chunk}",
+                        }
+                    ],
                     temperature=0.2,
                 )
                 summary = response.choices[0].message.content.strip()
             chunk_summaries.append(summary)
         except Exception as e:
-            print(f"❌ Error summarizing chunk {i +1}: {e}")
+            print(f"❌ Error summarizing chunk {i + 1}: {e}")
             # If a chunk fails, we just add a note and continue
-            chunk_summaries.append(f"[Could not summarize chunk {i +1}]")
+            chunk_summaries.append(f"[Could not summarize chunk {i + 1}]")
 
     # 3. Reduce: Create a final summary from the individual summaries
     print("Creating final summary of all chunks...")
@@ -281,19 +315,22 @@ def summarize_cti_with_map_reduce(text, model="gpt-4", max_tokens=128000):
                 model=CLAUDE_MODEL,
                 max_tokens=2048,
                 temperature=0.2,
-                messages=[{"role": "user", "content": prompt}]
+                messages=[{"role": "user", "content": prompt}],
             )
             return final_response.content[0].text.strip()
         else:
             final_response = client.chat.completions.create(
                 model=model,
-                messages=[{"role": "user", "content":
-                    "The following are summaries of different parts of a long threat intelligence report. "
-                    "Synthesize them into a single, coherent, and actionable report. "
-                    "Remove redundancy and create a clear narrative of the adversary's actions. "
-                    "The final output should be a comprehensive summary that can be used to generate a threat hunt.\n\n"
-                    f"--- COMBINED SUMMARIES ---\n\n{combined_summary}"
-                }],
+                messages=[
+                    {
+                        "role": "user",
+                        "content": "The following are summaries of different parts of a long threat intelligence report. "
+                        "Synthesize them into a single, coherent, and actionable report. "
+                        "Remove redundancy and create a clear narrative of the adversary's actions. "
+                        "The final output should be a comprehensive summary that can be used to generate a threat hunt.\n\n"
+                        f"--- COMBINED SUMMARIES ---\n\n{combined_summary}",
+                    }
+                ],
                 temperature=0.2,
             )
             return final_response.choices[0].message.content.strip()
@@ -320,8 +357,14 @@ def cleanup_hunt_body(ai_content):
 
         # These are keywords we want to strip out if they appear before the hypothesis.
         is_unwanted_prefix = any(
-            stripped_line.lower().startswith(prefix) for prefix in
-            ['cti report:', 'hypothesis:', '---', 'instructions:', 'your output should']
+            stripped_line.lower().startswith(prefix)
+            for prefix in [
+                "cti report:",
+                "hypothesis:",
+                "---",
+                "instructions:",
+                "your output should",
+            ]
         )
 
         if not is_unwanted_prefix:
@@ -335,12 +378,18 @@ def cleanup_hunt_body(ai_content):
     # The hypothesis might have a "Hypothesis:" label. Let's remove that specifically.
     first_line = lines[first_content_index]
     if "hypothesis:" in first_line.lower():
-        lines[first_content_index] = first_line.split(':', 1)[-1].strip()
+        lines[first_content_index] = first_line.split(":", 1)[-1].strip()
 
     return "\n".join(lines[first_content_index:]).strip()
 
 
-def generate_hunt_content(cti_text, cti_source_url, submitter_credit, is_regeneration=False, user_feedback=None):
+def generate_hunt_content(
+    cti_text,
+    cti_source_url,
+    submitter_credit,
+    is_regeneration=False,
+    user_feedback=None,
+):
     """Generate hunt content from CTI text."""
     try:
         print("Starting CTI summarization...")
@@ -370,7 +419,7 @@ def generate_hunt_content(cti_text, cti_source_url, submitter_credit, is_regener
             regeneration_instruction=regeneration_instruction,
             cti_text=cti_text,
             cti_source_url=cti_source_url,
-            submitter_credit=submitter_credit
+            submitter_credit=submitter_credit,
         )
         if AI_PROVIDER == "claude":
             full_prompt = f"\n\nHuman: {SYSTEM_PROMPT}\n\n{prompt}\n\nAssistant:"
@@ -378,16 +427,18 @@ def generate_hunt_content(cti_text, cti_source_url, submitter_credit, is_regener
                 model=CLAUDE_MODEL,
                 max_tokens=1200,
                 temperature=temperature,
-                messages=[{"role": "user", "content": full_prompt}]
+                messages=[{"role": "user", "content": full_prompt}],
             )
             return response.content[0].text.strip()
         else:
             response = client.chat.completions.create(
                 model="gpt-4",
-                messages=[{"role": "system", "content": SYSTEM_PROMPT},
-                         {"role": "user", "content": prompt}],
+                messages=[
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": prompt},
+                ],
                 temperature=temperature,
-                max_tokens=800
+                max_tokens=800,
             )
             return response.choices[0].message.content.strip()
     except Exception as e:
@@ -397,7 +448,7 @@ def generate_hunt_content(cti_text, cti_source_url, submitter_credit, is_regener
 
 def read_file_content(file_path):
     """Read content from either PDF or text file."""
-    if file_path.suffix.lower() == '.pdf':
+    if file_path.suffix.lower() == ".pdf":
         try:
             reader = PdfReader(file_path)
             text = ""
@@ -424,25 +475,8 @@ if __name__ == "__main__":
         hunt_id = out_md_path.stem
         print(f"🔄 Regenerating hunt for {hunt_id} at {out_md_path}")
     else:
-        # Determine the next hunt number
-        hunt_files = list(Path(".").glob("Flames/H*.md"))
-        if hunt_files:
-            # Filter files that have the expected format and extract numbers
-            hunt_numbers = []
-            for f in hunt_files:
-                parts = f.stem.split('-')
-                if len(parts) >= 3 and parts[-1].isdigit():
-                    hunt_numbers.append(int(parts[-1]))
-
-            if hunt_numbers:
-                next_hunt_num = max(hunt_numbers) + 1
-            else:
-                next_hunt_num = 1
-        else:
-            next_hunt_num = 1
-
-        year = datetime.now().year
-        hunt_id = f"H-{year}-{next_hunt_num:03d}"
+        # Determine the next hunt number (HNNN, continuing the Flames sequence)
+        hunt_id = f"H{get_next_hunt_id():03d}"
         out_md_path = Path(f"Flames/{hunt_id}.md")
         print(f"🌱 Generating new hunt: {hunt_id}")
 
@@ -455,7 +489,9 @@ if __name__ == "__main__":
     # SECURELY get CTI content from the file prepared by the workflow
     cti_files = list(CTI_INPUT_DIR.glob("*"))
     if not cti_files:
-        raise FileNotFoundError(f"❌ No CTI file found in the input directory '{CTI_INPUT_DIR}'.")
+        raise FileNotFoundError(
+            f"❌ No CTI file found in the input directory '{CTI_INPUT_DIR}'."
+        )
 
     cti_file_path = cti_files[0]
     print(f"📄 Processing CTI file: {cti_file_path}")
@@ -479,7 +515,7 @@ if __name__ == "__main__":
             cti_source_url,
             submitter_credit,
             is_regeneration=is_regeneration,
-            user_feedback=user_feedback
+            user_feedback=user_feedback,
         )
 
         if hunt_body:
@@ -487,14 +523,16 @@ if __name__ == "__main__":
             cleaned_body = cleanup_hunt_body(hunt_body)
 
             # 3. Extract the hypothesis (first line of cleaned content)
-            hypothesis = cleaned_body.split('\n')[0].strip()
-            if hypothesis.startswith('#'):
+            hypothesis = cleaned_body.split("\n")[0].strip()
+            if hypothesis.startswith("#"):
                 # Remove markdown headers
-                hypothesis = hypothesis.lstrip('#').strip()
+                hypothesis = hypothesis.lstrip("#").strip()
 
             # 4. Construct the final markdown content
             final_content = f"# {hunt_id}\n\n"
-            final_content += cleaned_body.replace("| [Leave blank] |", f"| {hunt_id}    |")
+            final_content += cleaned_body.replace(
+                "| [Leave blank] |", f"| {hunt_id}    |"
+            )
 
             # 5. Save the hunt file
             with open(out_md_path, "w") as f:
@@ -502,24 +540,24 @@ if __name__ == "__main__":
             print(f"✅ Successfully wrote hunt to {out_md_path}")
 
             # 6. Set the output for the GitHub Action
-            if 'GITHUB_OUTPUT' in os.environ:
-                with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-                    print(f'HUNT_FILE_PATH={out_md_path}', file=f)
-                    print(f'HUNT_ID={hunt_id}', file=f)
-                    print('HYPOTHESIS<<EOF', file=f)
+            if "GITHUB_OUTPUT" in os.environ:
+                with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+                    print(f"HUNT_FILE_PATH={out_md_path}", file=f)
+                    print(f"HUNT_ID={hunt_id}", file=f)
+                    print("HYPOTHESIS<<EOF", file=f)
                     print(hypothesis, file=f)
-                    print('EOF', file=f)
+                    print("EOF", file=f)
 
             # 7. Run duplicate detection
             if DUPLICATE_DETECTION_AVAILABLE:
                 duplicate_analysis = check_duplicates_for_new_submission(
                     final_content, out_md_path.name
                 )
-                if 'GITHUB_OUTPUT' in os.environ:
-                    with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-                        print('DUPLICATE_ANALYSIS<<EOF', file=f)
+                if "GITHUB_OUTPUT" in os.environ:
+                    with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+                        print("DUPLICATE_ANALYSIS<<EOF", file=f)
                         print(duplicate_analysis, file=f)
-                        print('EOF', file=f)
+                        print("EOF", file=f)
 
         else:
             print("Could not generate hunt content. Skipping file creation.")
