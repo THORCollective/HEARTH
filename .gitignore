@@ -58,3 +58,6 @@ tools/scores.md
 
 # CTI pipeline script (lives in ~/.claude/scripts/)
 scripts/cti_pipeline.py
+
+# CI-generated at deploy time (home page Recent activity feed)
+public/activity.json

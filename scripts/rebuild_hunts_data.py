@@ -3,8 +3,9 @@
 Standalone script to rebuild hunts-data.js from markdown files.
 No external dependencies — pure stdlib.
 """
+
 import json
-import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -13,13 +14,47 @@ if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
 
 
+def git_created_date(file_path):
+    """Return the ISO 8601 date a hunt file first landed in git history.
+
+    Uses --follow so files that were moved/renamed (e.g. the Embers
+    reorganization) report their original creation date, not the move date.
+    Returns None when history is unavailable — a shallow clone (no
+    fetch-depth: 0) or an uncommitted file — so the frontend can degrade
+    gracefully rather than show a wrong time.
+    """
+    try:
+        out = subprocess.run(
+            [
+                "git",
+                "log",
+                "--follow",
+                "--diff-filter=A",
+                "--format=%aI",
+                "-1",
+                "--",
+                file_path,
+            ],
+            cwd=_REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        ).stdout.strip()
+    except OSError:
+        return None
+    return out or None
+
+
 # Canonical submitter names — coalesce duplicates and add links
 SUBMITTER_MAP = {
     # Jinx variants
     "Jinx (THOR Collective)": {"name": "Jinx (THOR Collective)", "link": ""},
     "Jinx (automated)": {"name": "Jinx (THOR Collective)", "link": ""},
     # Bot submissions
-    "hearth-auto-intel": {"name": "HEARTH Bot", "link": "https://github.com/THORCollective/HEARTH"},
+    "hearth-auto-intel": {
+        "name": "HEARTH Bot",
+        "link": "https://github.com/THORCollective/HEARTH",
+    },
     # p-o-s-t variants
     "p-o-s-t": {"name": "p-o-s-t", "link": "https://github.com/p-o-s-t"},
     "@p-o-s-t": {"name": "p-o-s-t", "link": "https://github.com/p-o-s-t"},
@@ -53,9 +88,9 @@ def parse_hunt_file(path, category):
         # Merge techniques into tags so HuntFinder's /^T\d{4}/ filter finds them.
         # Techniques live in a separate frontmatter field but the frontend only
         # checks hunt.tags, so we combine both here without duplicates.
-        "tags": list(dict.fromkeys(
-            parsed.get("tags", []) + parsed.get("techniques", [])
-        )),
+        "tags": list(
+            dict.fromkeys(parsed.get("tags", []) + parsed.get("techniques", []))
+        ),
         "techniques": parsed.get("techniques", []),
         "severity": parsed.get("severity"),
         "status": parsed.get("status", "current"),
@@ -64,6 +99,8 @@ def parse_hunt_file(path, category):
         "why": parsed["why"],
         "references": parsed["references"],
         "file_path": parsed["file_path"],
+        # Real creation timestamp from git, used by the home page activity feed.
+        "created": git_created_date(parsed["file_path"]),
     }
 
 
@@ -80,42 +117,38 @@ def parse_submitter_from_dict(submitter):
 
 def main():
     base = Path(__file__).parent.parent
-    categories = {
-        'Flames': 'Flames',
-        'Embers': 'Embers',
-        'Alchemy': 'Alchemy'
-    }
+    categories = {"Flames": "Flames", "Embers": "Embers", "Alchemy": "Alchemy"}
 
     all_hunts = []
     for dirname, cat_name in categories.items():
         cat_dir = base / dirname
         if not cat_dir.exists():
             continue
-        for md in sorted(cat_dir.glob('*.md')):
+        for md in sorted(cat_dir.glob("*.md")):
             hunt = parse_hunt_file(md, cat_name)
             if hunt:
                 all_hunts.append(hunt)
                 print(f"  Parsed {hunt['id']}")
 
-    all_hunts.sort(key=lambda x: x['id'])
+    all_hunts.sort(key=lambda x: x["id"])
 
     # Write JS version
-    js_path = base / 'hunts-data.js'
-    with open(js_path, 'w', encoding='utf-8') as f:
-        f.write('// Auto-generated hunt data from markdown files\n')
-        f.write('const HUNTS_DATA = ')
+    js_path = base / "hunts-data.js"
+    with open(js_path, "w", encoding="utf-8") as f:
+        f.write("// Auto-generated hunt data from markdown files\n")
+        f.write("const HUNTS_DATA = ")
         json.dump(all_hunts, f, indent=2, ensure_ascii=False)
-        f.write(';\n')
+        f.write(";\n")
 
     # Write JSON version
-    json_path = base / 'public' / 'hunts-data.json'
+    json_path = base / "public" / "hunts-data.json"
     json_path.parent.mkdir(exist_ok=True)
-    with open(json_path, 'w', encoding='utf-8') as f:
+    with open(json_path, "w", encoding="utf-8") as f:
         json.dump(all_hunts, f, indent=2, ensure_ascii=False)
 
     print(f"\nGenerated {len(all_hunts)} hunts")
     for cat in categories:
-        count = len([h for h in all_hunts if h['category'] == cat])
+        count = len([h for h in all_hunts if h["category"] == cat])
         print(f"  {cat}: {count}")
 
     # Refresh the actor-mentions index so the Actors page stays in sync with hunt prose.
@@ -123,6 +156,7 @@ def main():
     # mentions file is stale or missing.
     try:
         from scripts.build_actor_mentions import build as build_actor_mentions
+
         result = build_actor_mentions()
         print(f"  Refreshed actor-mentions.json ({len(result['mentions'])} actors)")
     except Exception as exc:  # noqa: BLE001 — non-fatal best-effort refresh

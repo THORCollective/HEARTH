@@ -1,756 +1,2255 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>HEARTH — Hunting Exchange and Research Threat Hub</title>
-<meta name="description" content="An open library of threat hunting hypotheses — drafted by hunters, refined by AI, and organized around the PEAK framework. Browse what works. Paste a CTI link, get a hunt. Contribute one back." />
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HEARTH — Hunting Exchange and Research Threat Hub</title>
+    <meta
+      name="description"
+      content="An open library of threat hunting hypotheses — drafted by hunters, refined by AI, and organized around the PEAK framework. Browse what works. Paste a CTI link, get a hunt. Contribute one back."
+    />
 
-<!-- Open Graph (Facebook, LinkedIn, Slack, iMessage, Discord) -->
-<meta property="og:type" content="website" />
-<meta property="og:site_name" content="HEARTH" />
-<meta property="og:title" content="HEARTH — Hunting Exchange and Research Threat Hub" />
-<meta property="og:description" content="An open library of threat hunting hypotheses — drafted by hunters, refined by AI, and organized around the PEAK framework." />
-<meta property="og:url" content="https://hearth.thorcollective.com/home.html" />
-<meta property="og:image" content="https://hearth.thorcollective.com/Assets/HEARTH-logo.png" />
+    <!-- Open Graph (Facebook, LinkedIn, Slack, iMessage, Discord) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="HEARTH" />
+    <meta
+      property="og:title"
+      content="HEARTH — Hunting Exchange and Research Threat Hub"
+    />
+    <meta
+      property="og:description"
+      content="An open library of threat hunting hypotheses — drafted by hunters, refined by AI, and organized around the PEAK framework."
+    />
+    <meta
+      property="og:url"
+      content="https://hearth.thorcollective.com/home.html"
+    />
+    <meta
+      property="og:image"
+      content="https://hearth.thorcollective.com/Assets/HEARTH-logo.png"
+    />
 
-<!-- Twitter -->
-<meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="HEARTH — Hunting Exchange and Research Threat Hub" />
-<meta name="twitter:description" content="An open library of threat hunting hypotheses, organized around the PEAK framework." />
-<meta name="twitter:image" content="https://hearth.thorcollective.com/Assets/HEARTH-logo.png" />
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary" />
+    <meta
+      name="twitter:title"
+      content="HEARTH — Hunting Exchange and Research Threat Hub"
+    />
+    <meta
+      name="twitter:description"
+      content="An open library of threat hunting hypotheses, organized around the PEAK framework."
+    />
+    <meta
+      name="twitter:image"
+      content="https://hearth.thorcollective.com/Assets/HEARTH-logo.png"
+    />
 
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-B4FE1Q174V"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-B4FE1Q174V');
-</script>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-<style>
-  :root{
-    --bg:        oklch(0.16 0.020 300);
-    --bg-2:      oklch(0.20 0.022 300);
-    --surface:   oklch(0.23 0.024 300);
-    --surface-2: oklch(0.27 0.028 300);
-    --line:      oklch(0.34 0.030 300);
-    --line-soft: oklch(0.29 0.026 300);
-    --fg:        oklch(0.965 0.012 300);
-    --fg-mute:   oklch(0.78 0.022 300);
-    --fg-dim:    oklch(0.60 0.030 300);
-    --ember:     oklch(0.66 0.220 300);
-    --ember-2:   oklch(0.80 0.150 310);
-    --coal:      oklch(0.32 0.060 295);
-    --serif: "Instrument Serif", "Times New Roman", serif;
-    --sans: "Geist", ui-sans-serif, system-ui, sans-serif;
-    --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-feature-settings:"ss01","cv11";-webkit-font-smoothing:antialiased}
-  a{color:inherit;text-decoration:none}
-  ::selection{background:var(--ember);color:var(--bg)}
-  body{
-    background:
-      radial-gradient(1100px 700px at 78% -10%, oklch(0.32 0.10 300 / 0.55), transparent 60%),
-      radial-gradient(900px 600px at -10% 30%, oklch(0.24 0.045 290 / 0.6), transparent 55%),
-      var(--bg);
-    overflow-x:hidden;
-  }
+    <!-- Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-B4FE1Q174V"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-B4FE1Q174V");
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: oklch(0.16 0.02 300);
+        --bg-2: oklch(0.2 0.022 300);
+        --surface: oklch(0.23 0.024 300);
+        --surface-2: oklch(0.27 0.028 300);
+        --line: oklch(0.34 0.03 300);
+        --line-soft: oklch(0.29 0.026 300);
+        --fg: oklch(0.965 0.012 300);
+        --fg-mute: oklch(0.78 0.022 300);
+        --fg-dim: oklch(0.6 0.03 300);
+        --ember: oklch(0.66 0.22 300);
+        --ember-2: oklch(0.8 0.15 310);
+        --coal: oklch(0.32 0.06 295);
+        --serif: "Instrument Serif", "Times New Roman", serif;
+        --sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+        --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: var(--sans);
+        font-feature-settings: "ss01", "cv11";
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      ::selection {
+        background: var(--ember);
+        color: var(--bg);
+      }
+      body {
+        background:
+          radial-gradient(
+            1100px 700px at 78% -10%,
+            oklch(0.32 0.1 300 / 0.55),
+            transparent 60%
+          ),
+          radial-gradient(
+            900px 600px at -10% 30%,
+            oklch(0.24 0.045 290 / 0.6),
+            transparent 55%
+          ),
+          var(--bg);
+        overflow-x: hidden;
+      }
 
-  /* ----- Layout ----- */
-  .wrap{max-width:1320px;margin:0 auto;padding:0 32px}
-  .row{display:flex;align-items:center;gap:16px}
-  .stack{display:flex;flex-direction:column}
-  .grow{flex:1}
-  .mono{font-family:var(--mono);font-feature-settings:"zero","ss01";letter-spacing:.02em}
-  .serif{font-family:var(--serif);font-weight:400}
-  .dim{color:var(--fg-dim)}
-  .mute{color:var(--fg-mute)}
-  .ember{color:var(--ember)}
-  .hr{height:1px;background:var(--line-soft);width:100%}
-  .vrule{width:1px;background:var(--line-soft);align-self:stretch}
+      /* ----- Layout ----- */
+      .wrap {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 0 32px;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .stack {
+        display: flex;
+        flex-direction: column;
+      }
+      .grow {
+        flex: 1;
+      }
+      .mono {
+        font-family: var(--mono);
+        font-feature-settings: "zero", "ss01";
+        letter-spacing: 0.02em;
+      }
+      .serif {
+        font-family: var(--serif);
+        font-weight: 400;
+      }
+      .dim {
+        color: var(--fg-dim);
+      }
+      .mute {
+        color: var(--fg-mute);
+      }
+      .ember {
+        color: var(--ember);
+      }
+      .hr {
+        height: 1px;
+        background: var(--line-soft);
+        width: 100%;
+      }
+      .vrule {
+        width: 1px;
+        background: var(--line-soft);
+        align-self: stretch;
+      }
 
-  /* ----- Top bar ----- */
-  .topbar{position:sticky;top:0;z-index:50;backdrop-filter:saturate(140%) blur(10px);background:oklch(0.16 0.020 300 / 0.78);border-bottom:1px solid var(--line-soft)}
-  .topbar-inner{display:flex;align-items:center;gap:28px;padding:14px 32px;max-width:1320px;margin:0 auto}
-  .mark{display:flex;align-items:baseline;gap:10px}
-  .mark .glyph{
-    width:22px;height:22px;border-radius:50%;
-    background:radial-gradient(circle at 50% 65%, var(--ember-2), var(--ember) 45%, oklch(0.38 0.16 295) 75%, transparent 78%);
-    box-shadow:0 0 14px oklch(0.66 0.22 300 / 0.55), inset 0 -3px 6px oklch(0.30 0.10 295 / .7);
-    position:relative;top:3px;
-  }
-  .mark .name{font-family:var(--serif);font-size:24px;letter-spacing:.01em}
-  .mark .sub{font-family:var(--mono);font-size:10px;color:var(--fg-dim);text-transform:uppercase;letter-spacing:.18em}
-  .nav{display:flex;gap:6px;margin-left:24px}
-  .nav a{font-size:13px;color:var(--fg-mute);padding:6px 10px;border-radius:999px;border:1px solid transparent;transition:.15s}
-  .nav a:hover{color:var(--fg);background:var(--surface);border-color:var(--line-soft)}
-  .nav a.on{color:var(--fg);background:var(--surface);border-color:var(--line-soft)}
-  .top-cta{display:flex;gap:8px;margin-left:auto;align-items:center}
-  .btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--sans);font-size:13px;font-weight:500;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--fg);cursor:pointer;transition:.15s}
-  .btn:hover{border-color:var(--fg-mute);background:var(--surface)}
-  .btn.primary{background:var(--ember);color:oklch(0.985 0.005 300);border-color:transparent;font-weight:600}
-  .btn.primary:hover{background:var(--ember-2);color:oklch(0.20 0.05 300)}
-  .btn .kbd{font-family:var(--mono);font-size:10.5px;padding:1px 5px;border:1px solid currentColor;border-radius:4px;opacity:.55}
-  .pill-mono{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-dim);padding:5px 10px;border:1px solid var(--line-soft);border-radius:999px}
+      /* ----- Top bar ----- */
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        backdrop-filter: saturate(140%) blur(10px);
+        background: oklch(0.16 0.02 300 / 0.78);
+        border-bottom: 1px solid var(--line-soft);
+      }
+      .topbar-inner {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        padding: 14px 32px;
+        max-width: 1320px;
+        margin: 0 auto;
+      }
+      .mark {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+      }
+      .mark .glyph {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 50% 65%,
+          var(--ember-2),
+          var(--ember) 45%,
+          oklch(0.38 0.16 295) 75%,
+          transparent 78%
+        );
+        box-shadow:
+          0 0 14px oklch(0.66 0.22 300 / 0.55),
+          inset 0 -3px 6px oklch(0.3 0.1 295 / 0.7);
+        position: relative;
+        top: 3px;
+      }
+      .mark .name {
+        font-family: var(--serif);
+        font-size: 24px;
+        letter-spacing: 0.01em;
+      }
+      .mark .sub {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--fg-dim);
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+      }
+      .nav {
+        display: flex;
+        gap: 6px;
+        margin-left: 24px;
+      }
+      .nav a {
+        font-size: 13px;
+        color: var(--fg-mute);
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid transparent;
+        transition: 0.15s;
+      }
+      .nav a:hover {
+        color: var(--fg);
+        background: var(--surface);
+        border-color: var(--line-soft);
+      }
+      .nav a.on {
+        color: var(--fg);
+        background: var(--surface);
+        border-color: var(--line-soft);
+      }
+      .top-cta {
+        display: flex;
+        gap: 8px;
+        margin-left: auto;
+        align-items: center;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-family: var(--sans);
+        font-size: 13px;
+        font-weight: 500;
+        padding: 9px 14px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: transparent;
+        color: var(--fg);
+        cursor: pointer;
+        transition: 0.15s;
+      }
+      .btn:hover {
+        border-color: var(--fg-mute);
+        background: var(--surface);
+      }
+      .btn.primary {
+        background: var(--ember);
+        color: oklch(0.985 0.005 300);
+        border-color: transparent;
+        font-weight: 600;
+      }
+      .btn.primary:hover {
+        background: var(--ember-2);
+        color: oklch(0.2 0.05 300);
+      }
+      .btn .kbd {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        padding: 1px 5px;
+        border: 1px solid currentColor;
+        border-radius: 4px;
+        opacity: 0.55;
+      }
+      .pill-mono {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--fg-dim);
+        padding: 5px 10px;
+        border: 1px solid var(--line-soft);
+        border-radius: 999px;
+      }
 
-  /* ----- Hero ----- */
-  .hero{padding:72px 0 56px;position:relative}
-  .hero-grid{display:grid;grid-template-columns:1.35fr .9fr;gap:64px;align-items:end}
-  .eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ember-2)}
-  .eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ember);box-shadow:0 0 12px var(--ember)}
-  h1.title{
-    font-family:var(--serif);
-    font-weight:400;
-    font-size:clamp(56px, 9vw, 132px);
-    line-height:.92;
-    letter-spacing:-0.025em;
-    margin:22px 0 18px;
-  }
-  h1.title em{font-style:italic;color:var(--ember-2)}
-  .lede{font-size:19px;line-height:1.5;color:var(--fg-mute);max-width:46ch}
-  .lede b{color:var(--fg);font-weight:500}
-  .hero-actions{display:flex;gap:10px;margin-top:32px;flex-wrap:wrap}
+      /* ----- Hero ----- */
+      .hero {
+        padding: 72px 0 56px;
+        position: relative;
+      }
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1.35fr 0.9fr;
+        gap: 64px;
+        align-items: end;
+      }
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ember-2);
+      }
+      .eyebrow::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--ember);
+        box-shadow: 0 0 12px var(--ember);
+      }
+      h1.title {
+        font-family: var(--serif);
+        font-weight: 400;
+        font-size: clamp(56px, 9vw, 132px);
+        line-height: 0.92;
+        letter-spacing: -0.025em;
+        margin: 22px 0 18px;
+      }
+      h1.title em {
+        font-style: italic;
+        color: var(--ember-2);
+      }
+      .lede {
+        font-size: 19px;
+        line-height: 1.5;
+        color: var(--fg-mute);
+        max-width: 46ch;
+      }
+      .lede b {
+        color: var(--fg);
+        font-weight: 500;
+      }
+      .hero-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 32px;
+        flex-wrap: wrap;
+      }
 
-  /* hero sidecar */
-  .sidecar{border:1px solid var(--line-soft);border-radius:18px;padding:22px;background:linear-gradient(180deg, oklch(0.22 0.022 300 / .8), oklch(0.18 0.020 300 / .6));backdrop-filter:blur(2px)}
-  .sidecar-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-  .sidecar h4{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-dim);margin:0;font-weight:500}
-  .live-dot{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10.5px;color:var(--ember-2);letter-spacing:.14em;text-transform:uppercase}
-  .live-dot::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ember);box-shadow:0 0 10px var(--ember);animation:pulse 1.6s ease-in-out infinite}
-  @keyframes pulse{50%{opacity:.35;transform:scale(.85)}}
+      /* hero sidecar */
+      .sidecar {
+        border: 1px solid var(--line-soft);
+        border-radius: 18px;
+        padding: 22px;
+        background: linear-gradient(
+          180deg,
+          oklch(0.22 0.022 300 / 0.8),
+          oklch(0.18 0.02 300 / 0.6)
+        );
+        backdrop-filter: blur(2px);
+      }
+      .sidecar-h {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+      }
+      .sidecar h4 {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--fg-dim);
+        margin: 0;
+        font-weight: 500;
+      }
+      .live-dot {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-family: var(--mono);
+        font-size: 10.5px;
+        color: var(--ember-2);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      .live-dot::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--ember);
+        box-shadow: 0 0 10px var(--ember);
+        animation: pulse 1.6s ease-in-out infinite;
+      }
+      @keyframes pulse {
+        50% {
+          opacity: 0.35;
+          transform: scale(0.85);
+        }
+      }
 
-  .feed{display:flex;flex-direction:column;gap:0}
-  .feed-item{display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:center;padding:12px 0;border-bottom:1px dashed var(--line-soft)}
-  .feed-item:last-child{border-bottom:0}
-  .feed-item .when{font-family:var(--mono);font-size:11px;color:var(--fg-dim)}
-  .feed-item .who{font-size:13.5px;color:var(--fg)}
-  .feed-item .who span{color:var(--fg-mute)}
-  .tag{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:3px 7px;border-radius:4px;border:1px solid var(--line)}
-  .tag.flame{color:oklch(0.80 0.16 330);border-color:oklch(0.55 0.18 330 / .6)}
-  .tag.ember{color:oklch(0.86 0.08 270);border-color:oklch(0.55 0.10 270 / .6)}
-  .tag.alch{color:oklch(0.82 0.16 300);border-color:oklch(0.55 0.18 300 / .6)}
+      .feed {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+      .feed-item {
+        display: grid;
+        grid-template-columns: 64px 1fr auto;
+        gap: 14px;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px dashed var(--line-soft);
+      }
+      .feed-item:last-child {
+        border-bottom: 0;
+      }
+      .feed-item .when {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--fg-dim);
+      }
+      .feed-item .who {
+        font-size: 13.5px;
+        color: var(--fg);
+      }
+      .feed-item .who span {
+        color: var(--fg-mute);
+      }
+      .feed-item .who a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .feed-item .who a:hover {
+        text-decoration: underline;
+      }
+      .tag {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 3px 7px;
+        border-radius: 4px;
+        border: 1px solid var(--line);
+      }
+      .tag.flame {
+        color: oklch(0.8 0.16 330);
+        border-color: oklch(0.55 0.18 330 / 0.6);
+      }
+      .tag.ember {
+        color: oklch(0.86 0.08 270);
+        border-color: oklch(0.55 0.1 270 / 0.6);
+      }
+      .tag.alch {
+        color: oklch(0.82 0.16 300);
+        border-color: oklch(0.55 0.18 300 / 0.6);
+      }
 
-  /* stat strip */
-  .stats{display:grid;grid-template-columns:repeat(4, 1fr);gap:0;margin-top:64px;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft)}
-  .stat{padding:22px 24px;border-right:1px solid var(--line-soft);display:flex;flex-direction:column;gap:6px}
-  .stat:last-child{border-right:0}
-  .stat .n{font-family:var(--serif);font-size:54px;line-height:1;letter-spacing:-.02em}
-  .stat .n em{font-style:italic;color:var(--ember-2)}
-  .stat .l{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-dim)}
+      /* stat strip */
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0;
+        margin-top: 64px;
+        border-top: 1px solid var(--line-soft);
+        border-bottom: 1px solid var(--line-soft);
+      }
+      .stat {
+        padding: 22px 24px;
+        border-right: 1px solid var(--line-soft);
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .stat:last-child {
+        border-right: 0;
+      }
+      .stat .n {
+        font-family: var(--serif);
+        font-size: 54px;
+        line-height: 1;
+        letter-spacing: -0.02em;
+      }
+      .stat .n em {
+        font-style: italic;
+        color: var(--ember-2);
+      }
+      .stat .l {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--fg-dim);
+      }
 
-  /* ticker */
-  .ticker{margin-top:18px;padding:14px 0;border-bottom:1px solid var(--line-soft);overflow:hidden;position:relative;mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
-  .ticker-track{display:flex;gap:48px;white-space:nowrap;animation:tk 60s linear infinite}
-  .ticker-track span{font-family:var(--mono);font-size:12px;color:var(--fg-mute);letter-spacing:.05em}
-  .ticker-track span b{color:var(--fg);font-weight:500;margin-right:8px}
-  .ticker-track .dot{color:var(--ember);margin-right:0}
-  @keyframes tk{to{transform:translateX(-50%)}}
+      /* ticker */
+      .ticker {
+        margin-top: 18px;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--line-soft);
+        overflow: hidden;
+        position: relative;
+        mask-image: linear-gradient(
+          90deg,
+          transparent,
+          #000 6%,
+          #000 94%,
+          transparent
+        );
+      }
+      .ticker-track {
+        display: flex;
+        gap: 48px;
+        white-space: nowrap;
+        animation: tk 60s linear infinite;
+      }
+      .ticker-track span {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--fg-mute);
+        letter-spacing: 0.05em;
+      }
+      .ticker-track span b {
+        color: var(--fg);
+        font-weight: 500;
+        margin-right: 8px;
+      }
+      .ticker-track .dot {
+        color: var(--ember);
+        margin-right: 0;
+      }
+      @keyframes tk {
+        to {
+          transform: translateX(-50%);
+        }
+      }
 
-  /* ----- Section header ----- */
-  .sec{padding:96px 0;position:relative}
-  .sec-head{display:grid;grid-template-columns:.6fr 1fr;gap:48px;align-items:end;margin-bottom:48px}
-  .sec-num{font-family:var(--mono);font-size:12px;color:var(--fg-dim);letter-spacing:.2em;text-transform:uppercase}
-  .sec-title{font-family:var(--serif);font-size:clamp(40px, 5.4vw, 80px);line-height:.95;letter-spacing:-.02em;margin:8px 0 0}
-  .sec-title em{font-style:italic;color:var(--ember-2)}
-  .sec-blurb{color:var(--fg-mute);font-size:17px;line-height:1.55;max-width:60ch}
+      /* ----- Section header ----- */
+      .sec {
+        padding: 96px 0;
+        position: relative;
+      }
+      .sec-head {
+        display: grid;
+        grid-template-columns: 0.6fr 1fr;
+        gap: 48px;
+        align-items: end;
+        margin-bottom: 48px;
+      }
+      .sec-num {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--fg-dim);
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+      }
+      .sec-title {
+        font-family: var(--serif);
+        font-size: clamp(40px, 5.4vw, 80px);
+        line-height: 0.95;
+        letter-spacing: -0.02em;
+        margin: 8px 0 0;
+      }
+      .sec-title em {
+        font-style: italic;
+        color: var(--ember-2);
+      }
+      .sec-blurb {
+        color: var(--fg-mute);
+        font-size: 17px;
+        line-height: 1.55;
+        max-width: 60ch;
+      }
 
-  /* ----- PEAK categories ----- */
-  .peak{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
-  .cat{
-    position:relative;
-    border:1px solid var(--line-soft);
-    border-radius:18px;
-    overflow:hidden;
-    background:linear-gradient(180deg, oklch(0.22 0.024 300 / .55), oklch(0.18 0.022 300 / .4));
-    min-height:520px;
-    display:flex;flex-direction:column;
-    transition:.25s;
-  }
-  .cat:hover{border-color:oklch(0.50 0.14 300);transform:translateY(-2px)}
-  .cat-top{padding:24px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
-  .cat-id{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-dim)}
-  .cat-count{font-family:var(--serif);font-size:36px;letter-spacing:-.02em}
-  .cat-art{
-    flex:1;position:relative;margin:0 24px;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);
-    background:repeating-linear-gradient(135deg, transparent 0 8px, oklch(0.22 0.024 300 / .35) 8px 9px);
-  }
-  /* glyphs drawn with pure CSS */
-  .glyph-flames .ring{position:absolute;inset:0;display:grid;place-items:center}
-  .glyph-flames .core{
-    width:62%;aspect-ratio:1;border-radius:50%;
-    background:radial-gradient(circle at 50% 60%, var(--ember-2), var(--ember) 38%, oklch(0.35 0.18 295) 72%, transparent 78%);
-    filter:blur(.4px);
-    box-shadow:0 0 80px oklch(0.66 0.22 300 / .35), inset 0 -10px 30px oklch(0.28 0.12 295 / .8);
-  }
-  .glyph-flames .halo{position:absolute;inset:14% ;border:1px solid oklch(0.55 0.18 300 / .35);border-radius:50%}
-  .glyph-flames .halo.b{inset:6%}
-  .glyph-flames .halo.c{inset:24%}
+      /* ----- PEAK categories ----- */
+      .peak {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 20px;
+      }
+      .cat {
+        position: relative;
+        border: 1px solid var(--line-soft);
+        border-radius: 18px;
+        overflow: hidden;
+        background: linear-gradient(
+          180deg,
+          oklch(0.22 0.024 300 / 0.55),
+          oklch(0.18 0.022 300 / 0.4)
+        );
+        min-height: 520px;
+        display: flex;
+        flex-direction: column;
+        transition: 0.25s;
+      }
+      .cat:hover {
+        border-color: oklch(0.5 0.14 300);
+        transform: translateY(-2px);
+      }
+      .cat-top {
+        padding: 24px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .cat-id {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--fg-dim);
+      }
+      .cat-count {
+        font-family: var(--serif);
+        font-size: 36px;
+        letter-spacing: -0.02em;
+      }
+      .cat-art {
+        flex: 1;
+        position: relative;
+        margin: 0 24px;
+        border-top: 1px solid var(--line-soft);
+        border-bottom: 1px solid var(--line-soft);
+        background: repeating-linear-gradient(
+          135deg,
+          transparent 0 8px,
+          oklch(0.22 0.024 300 / 0.35) 8px 9px
+        );
+      }
+      /* glyphs drawn with pure CSS */
+      .glyph-flames .ring {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+      }
+      .glyph-flames .core {
+        width: 62%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 50% 60%,
+          var(--ember-2),
+          var(--ember) 38%,
+          oklch(0.35 0.18 295) 72%,
+          transparent 78%
+        );
+        filter: blur(0.4px);
+        box-shadow:
+          0 0 80px oklch(0.66 0.22 300 / 0.35),
+          inset 0 -10px 30px oklch(0.28 0.12 295 / 0.8);
+      }
+      .glyph-flames .halo {
+        position: absolute;
+        inset: 14%;
+        border: 1px solid oklch(0.55 0.18 300 / 0.35);
+        border-radius: 50%;
+      }
+      .glyph-flames .halo.b {
+        inset: 6%;
+      }
+      .glyph-flames .halo.c {
+        inset: 24%;
+      }
 
-  .glyph-embers{display:grid;grid-template-columns:repeat(7,1fr);grid-template-rows:repeat(5,1fr);gap:8px;padding:14% 16%}
-  .glyph-embers i{display:block;border-radius:2px;background:oklch(0.28 0.022 300);transition:.4s}
-  .glyph-embers i.lit{background:var(--ember);box-shadow:0 0 10px var(--ember)}
-  .glyph-embers i.dim{background:oklch(0.48 0.12 295)}
+      .glyph-embers {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        grid-template-rows: repeat(5, 1fr);
+        gap: 8px;
+        padding: 14% 16%;
+      }
+      .glyph-embers i {
+        display: block;
+        border-radius: 2px;
+        background: oklch(0.28 0.022 300);
+        transition: 0.4s;
+      }
+      .glyph-embers i.lit {
+        background: var(--ember);
+        box-shadow: 0 0 10px var(--ember);
+      }
+      .glyph-embers i.dim {
+        background: oklch(0.48 0.12 295);
+      }
 
-  .glyph-alch{position:relative;display:grid;place-items:center}
-  .glyph-alch .grid{position:absolute;inset:8%;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr)}
-  .glyph-alch .grid::before,.glyph-alch .grid::after{content:"";grid-area:1/1/-1/-1;border:1px solid oklch(0.30 0.022 300)}
-  .glyph-alch .grid::before{background:
-    linear-gradient(to right, transparent 0 calc(100%/8 - 1px), oklch(0.27 0.022 300) calc(100%/8 - 1px) calc(100%/8)) 0 0/100% 100% repeat,
-    linear-gradient(to bottom, transparent 0 calc(100%/8 - 1px), oklch(0.27 0.022 300) calc(100%/8 - 1px) calc(100%/8)) 0 0/100% 100% repeat}
-  .glyph-alch svg{position:relative;width:62%;height:62%}
+      .glyph-alch {
+        position: relative;
+        display: grid;
+        place-items: center;
+      }
+      .glyph-alch .grid {
+        position: absolute;
+        inset: 8%;
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        grid-template-rows: repeat(8, 1fr);
+      }
+      .glyph-alch .grid::before,
+      .glyph-alch .grid::after {
+        content: "";
+        grid-area: 1/1/-1/-1;
+        border: 1px solid oklch(0.3 0.022 300);
+      }
+      .glyph-alch .grid::before {
+        background:
+          linear-gradient(
+              to right,
+              transparent 0 calc(100% / 8 - 1px),
+              oklch(0.27 0.022 300) calc(100% / 8 - 1px) calc(100% / 8)
+            )
+            0 0/100% 100% repeat,
+          linear-gradient(
+              to bottom,
+              transparent 0 calc(100% / 8 - 1px),
+              oklch(0.27 0.022 300) calc(100% / 8 - 1px) calc(100% / 8)
+            )
+            0 0/100% 100% repeat;
+      }
+      .glyph-alch svg {
+        position: relative;
+        width: 62%;
+        height: 62%;
+      }
 
-  .cat-body{padding:22px 24px 26px;display:flex;flex-direction:column;gap:14px}
-  .cat-name{font-family:var(--serif);font-size:40px;letter-spacing:-.02em;line-height:1}
-  .cat-name em{font-style:italic;color:var(--ember-2)}
-  .cat-desc{font-size:14.5px;line-height:1.55;color:var(--fg-mute)}
-  .cat-foot{display:flex;align-items:center;justify-content:space-between;font-family:var(--mono);font-size:11.5px;color:var(--fg-dim)}
-  .cat-foot .arrow{color:var(--fg);background:var(--surface-2);width:32px;height:32px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line)}
+      .cat-body {
+        padding: 22px 24px 26px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .cat-name {
+        font-family: var(--serif);
+        font-size: 40px;
+        letter-spacing: -0.02em;
+        line-height: 1;
+      }
+      .cat-name em {
+        font-style: italic;
+        color: var(--ember-2);
+      }
+      .cat-desc {
+        font-size: 14.5px;
+        line-height: 1.55;
+        color: var(--fg-mute);
+      }
+      .cat-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-family: var(--mono);
+        font-size: 11.5px;
+        color: var(--fg-dim);
+      }
+      .cat-foot .arrow {
+        color: var(--fg);
+        background: var(--surface-2);
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        border: 1px solid var(--line);
+      }
 
-  /* ----- AI demo block ----- */
-  .demo{display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:stretch}
-  .demo .pane{
-    border:1px solid var(--line-soft);border-radius:16px;background:oklch(0.18 0.022 300 / .85);
-    overflow:hidden;display:flex;flex-direction:column;
-  }
-  .pane-head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line-soft);background:oklch(0.21 0.024 300 / .85)}
-  .pane-head .dots{display:flex;gap:6px}
-  .pane-head .dots i{width:9px;height:9px;border-radius:50%;background:var(--line)}
-  .pane-head .ti{font-family:var(--mono);font-size:11px;color:var(--fg-dim);letter-spacing:.06em}
-  .pane-body{padding:18px;font-family:var(--mono);font-size:13px;line-height:1.7;color:var(--fg-mute);flex:1}
-  .pane-body .url{color:var(--ember-2);word-break:break-all}
-  .pane-body .ok{color:oklch(0.84 0.13 160)}
-  .pane-body .warn{color:oklch(0.82 0.14 50)}
-  .pane-body .cursor{display:inline-block;width:8px;height:14px;background:var(--ember);vertical-align:-2px;animation:blink 1s steps(2) infinite}
-  @keyframes blink{50%{opacity:0}}
-  .pane-body p{margin:0 0 6px}
-  .pane-body .indent{padding-left:16px;border-left:1px solid var(--line-soft);margin:6px 0}
+      /* ----- AI demo block ----- */
+      .demo {
+        display: grid;
+        grid-template-columns: 1.05fr 1fr;
+        gap: 48px;
+        align-items: stretch;
+      }
+      .demo .pane {
+        border: 1px solid var(--line-soft);
+        border-radius: 16px;
+        background: oklch(0.18 0.022 300 / 0.85);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .pane-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--line-soft);
+        background: oklch(0.21 0.024 300 / 0.85);
+      }
+      .pane-head .dots {
+        display: flex;
+        gap: 6px;
+      }
+      .pane-head .dots i {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--line);
+      }
+      .pane-head .ti {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--fg-dim);
+        letter-spacing: 0.06em;
+      }
+      .pane-body {
+        padding: 18px;
+        font-family: var(--mono);
+        font-size: 13px;
+        line-height: 1.7;
+        color: var(--fg-mute);
+        flex: 1;
+      }
+      .pane-body .url {
+        color: var(--ember-2);
+        word-break: break-all;
+      }
+      .pane-body .ok {
+        color: oklch(0.84 0.13 160);
+      }
+      .pane-body .warn {
+        color: oklch(0.82 0.14 50);
+      }
+      .pane-body .cursor {
+        display: inline-block;
+        width: 8px;
+        height: 14px;
+        background: var(--ember);
+        vertical-align: -2px;
+        animation: blink 1s steps(2) infinite;
+      }
+      @keyframes blink {
+        50% {
+          opacity: 0;
+        }
+      }
+      .pane-body p {
+        margin: 0 0 6px;
+      }
+      .pane-body .indent {
+        padding-left: 16px;
+        border-left: 1px solid var(--line-soft);
+        margin: 6px 0;
+      }
 
-  .hypothesis{padding:22px}
-  .hypothesis .meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
-  .h-id{font-family:var(--mono);font-size:11px;color:var(--fg-dim);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}
-  .h-title{font-family:var(--serif);font-size:30px;letter-spacing:-.01em;line-height:1.1;margin:0 0 14px}
-  .h-q{font-size:14.5px;line-height:1.55;color:var(--fg-mute)}
-  .h-q b{color:var(--fg);font-weight:500}
-  .h-attck{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:18px;font-family:var(--mono);font-size:11px}
-  .h-attck div{padding:8px 10px;border:1px solid var(--line-soft);border-radius:6px}
-  .h-attck div b{color:var(--fg);font-weight:500;display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-dim)}
-  .h-attck div span{color:var(--fg)}
+      .hypothesis {
+        padding: 22px;
+      }
+      .hypothesis .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 14px;
+      }
+      .h-id {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--fg-dim);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+      }
+      .h-title {
+        font-family: var(--serif);
+        font-size: 30px;
+        letter-spacing: -0.01em;
+        line-height: 1.1;
+        margin: 0 0 14px;
+      }
+      .h-q {
+        font-size: 14.5px;
+        line-height: 1.55;
+        color: var(--fg-mute);
+      }
+      .h-q b {
+        color: var(--fg);
+        font-weight: 500;
+      }
+      .h-attck {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-top: 18px;
+        font-family: var(--mono);
+        font-size: 11px;
+      }
+      .h-attck div {
+        padding: 8px 10px;
+        border: 1px solid var(--line-soft);
+        border-radius: 6px;
+      }
+      .h-attck div b {
+        color: var(--fg);
+        font-weight: 500;
+        display: block;
+        font-family: var(--mono);
+        font-size: 10.5px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--fg-dim);
+      }
+      .h-attck div span {
+        color: var(--fg);
+      }
 
-  /* ----- Featured hunt + library ----- */
-  .feature{
-    display:grid;grid-template-columns:1.1fr 1fr;border:1px solid var(--line-soft);border-radius:20px;overflow:hidden;
-    background:linear-gradient(180deg, oklch(0.23 0.024 300 / .9), oklch(0.18 0.022 300 / .85));
-  }
-  .feature .left{padding:36px;display:flex;flex-direction:column;gap:20px;border-right:1px solid var(--line-soft)}
-  .feature .right{padding:36px;display:flex;flex-direction:column;gap:18px}
-  .stamp{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ember-2)}
-  .stamp::before{content:"\2605";color:var(--ember)}
-  .feature h3{font-family:var(--serif);font-size:48px;letter-spacing:-.02em;line-height:1;margin:0}
-  .feature h3 em{font-style:italic;color:var(--ember-2)}
-  .feature .by{font-family:var(--mono);font-size:12px;color:var(--fg-dim);letter-spacing:.05em}
-  .feature .by b{color:var(--fg);font-weight:500}
-  .feature p{font-size:15.5px;line-height:1.6;color:var(--fg-mute);margin:0}
-  .feature .right h5{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-dim);font-weight:500;margin:0 0 6px}
-  .feature pre{font-family:var(--mono);font-size:12.5px;line-height:1.6;color:var(--fg);background:oklch(0.13 0.022 300);border:1px solid var(--line-soft);border-radius:10px;padding:14px;margin:0;overflow:auto;white-space:pre-wrap}
-  .feature pre .k{color:var(--ember-2)}
-  .feature pre .s{color:oklch(0.84 0.12 160)}
-  .feature pre .c{color:var(--fg-dim)}
+      /* ----- Featured hunt + library ----- */
+      .feature {
+        display: grid;
+        grid-template-columns: 1.1fr 1fr;
+        border: 1px solid var(--line-soft);
+        border-radius: 20px;
+        overflow: hidden;
+        background: linear-gradient(
+          180deg,
+          oklch(0.23 0.024 300 / 0.9),
+          oklch(0.18 0.022 300 / 0.85)
+        );
+      }
+      .feature .left {
+        padding: 36px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        border-right: 1px solid var(--line-soft);
+      }
+      .feature .right {
+        padding: 36px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+      .stamp {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ember-2);
+      }
+      .stamp::before {
+        content: "\2605";
+        color: var(--ember);
+      }
+      .feature h3 {
+        font-family: var(--serif);
+        font-size: 48px;
+        letter-spacing: -0.02em;
+        line-height: 1;
+        margin: 0;
+      }
+      .feature h3 em {
+        font-style: italic;
+        color: var(--ember-2);
+      }
+      .feature .by {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--fg-dim);
+        letter-spacing: 0.05em;
+      }
+      .feature .by b {
+        color: var(--fg);
+        font-weight: 500;
+      }
+      .feature p {
+        font-size: 15.5px;
+        line-height: 1.6;
+        color: var(--fg-mute);
+        margin: 0;
+      }
+      .feature .right h5 {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--fg-dim);
+        font-weight: 500;
+        margin: 0 0 6px;
+      }
+      .feature pre {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        line-height: 1.6;
+        color: var(--fg);
+        background: oklch(0.13 0.022 300);
+        border: 1px solid var(--line-soft);
+        border-radius: 10px;
+        padding: 14px;
+        margin: 0;
+        overflow: auto;
+        white-space: pre-wrap;
+      }
+      .feature pre .k {
+        color: var(--ember-2);
+      }
+      .feature pre .s {
+        color: oklch(0.84 0.12 160);
+      }
+      .feature pre .c {
+        color: var(--fg-dim);
+      }
 
-  /* library */
-  .lib{margin-top:48px;border:1px solid var(--line-soft);border-radius:16px;overflow:hidden}
-  .lib-head{display:grid;grid-template-columns:1.4fr .8fr .9fr .8fr .8fr 50px;gap:0;padding:10px 22px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-dim);border-bottom:1px solid var(--line-soft);background:oklch(0.21 0.024 300 / .6)}
-  .lib-row{display:grid;grid-template-columns:1.4fr .8fr .9fr .8fr .8fr 50px;gap:0;padding:13px 22px;border-bottom:1px solid var(--line-soft);align-items:center;transition:.15s;cursor:pointer}
-  .lib-row:last-child{border-bottom:0}
-  .lib-row:hover{background:oklch(0.22 0.024 300 / .8)}
-  .lib-row .name{font-family:var(--serif);font-size:16px;letter-spacing:-.01em;line-height:1.2;padding-right:18px}
-  .lib-row .cell{font-family:var(--mono);font-size:11px;color:var(--fg-mute)}
-  .lib-row .badge{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;display:inline-block;padding:2px 7px;border-radius:4px;border:1px solid var(--line-soft)}
-  .lib-row .badge.f{color:oklch(0.80 0.16 330);border-color:oklch(0.80 0.16 330 / .3)}
-  .lib-row .badge.e{color:oklch(0.86 0.08 270);border-color:oklch(0.86 0.08 270 / .3)}
-  .lib-row .badge.a{color:oklch(0.82 0.16 300);border-color:oklch(0.82 0.16 300 / .3)}
-  .lib-row .arrow{font-family:var(--mono);color:var(--fg-dim);text-align:right}
-  .lib-foot{padding:18px 22px;text-align:center;font-family:var(--mono);font-size:12px;color:var(--fg-mute);background:oklch(0.20 0.022 300 / .5)}
-  .lib-foot a{color:var(--ember-2);border-bottom:1px solid var(--line)}
+      /* library */
+      .lib {
+        margin-top: 48px;
+        border: 1px solid var(--line-soft);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      .lib-head {
+        display: grid;
+        grid-template-columns: 1.4fr 0.8fr 0.9fr 0.8fr 0.8fr 50px;
+        gap: 0;
+        padding: 10px 22px;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--fg-dim);
+        border-bottom: 1px solid var(--line-soft);
+        background: oklch(0.21 0.024 300 / 0.6);
+      }
+      .lib-row {
+        display: grid;
+        grid-template-columns: 1.4fr 0.8fr 0.9fr 0.8fr 0.8fr 50px;
+        gap: 0;
+        padding: 13px 22px;
+        border-bottom: 1px solid var(--line-soft);
+        align-items: center;
+        transition: 0.15s;
+        cursor: pointer;
+      }
+      .lib-row:last-child {
+        border-bottom: 0;
+      }
+      .lib-row:hover {
+        background: oklch(0.22 0.024 300 / 0.8);
+      }
+      .lib-row .name {
+        font-family: var(--serif);
+        font-size: 16px;
+        letter-spacing: -0.01em;
+        line-height: 1.2;
+        padding-right: 18px;
+      }
+      .lib-row .cell {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--fg-mute);
+      }
+      .lib-row .badge {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        display: inline-block;
+        padding: 2px 7px;
+        border-radius: 4px;
+        border: 1px solid var(--line-soft);
+      }
+      .lib-row .badge.f {
+        color: oklch(0.8 0.16 330);
+        border-color: oklch(0.8 0.16 330 / 0.3);
+      }
+      .lib-row .badge.e {
+        color: oklch(0.86 0.08 270);
+        border-color: oklch(0.86 0.08 270 / 0.3);
+      }
+      .lib-row .badge.a {
+        color: oklch(0.82 0.16 300);
+        border-color: oklch(0.82 0.16 300 / 0.3);
+      }
+      .lib-row .arrow {
+        font-family: var(--mono);
+        color: var(--fg-dim);
+        text-align: right;
+      }
+      .lib-foot {
+        padding: 18px 22px;
+        text-align: center;
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--fg-mute);
+        background: oklch(0.2 0.022 300 / 0.5);
+      }
+      .lib-foot a {
+        color: var(--ember-2);
+        border-bottom: 1px solid var(--line);
+      }
 
-  /* search */
-  .search{display:flex;align-items:center;gap:14px;border:1px solid var(--line-soft);border-radius:14px;padding:14px 18px;background:oklch(0.20 0.022 300 / .8);margin-bottom:24px}
-  .search input{flex:1;background:transparent;border:0;outline:0;color:var(--fg);font-family:var(--sans);font-size:18px}
-  .search input::placeholder{color:var(--fg-dim)}
-  .search .chips{display:flex;gap:8px}
-  .chip{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--fg-mute);padding:5px 9px;border-radius:999px;border:1px dashed var(--line);cursor:pointer}
-  .chip:hover,.chip.on{color:var(--fg);border-style:solid;background:var(--surface)}
+      /* search */
+      .search {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        border: 1px solid var(--line-soft);
+        border-radius: 14px;
+        padding: 14px 18px;
+        background: oklch(0.2 0.022 300 / 0.8);
+        margin-bottom: 24px;
+      }
+      .search input {
+        flex: 1;
+        background: transparent;
+        border: 0;
+        outline: 0;
+        color: var(--fg);
+        font-family: var(--sans);
+        font-size: 18px;
+      }
+      .search input::placeholder {
+        color: var(--fg-dim);
+      }
+      .search .chips {
+        display: flex;
+        gap: 8px;
+      }
+      .chip {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        color: var(--fg-mute);
+        padding: 5px 9px;
+        border-radius: 999px;
+        border: 1px dashed var(--line);
+        cursor: pointer;
+      }
+      .chip:hover,
+      .chip.on {
+        color: var(--fg);
+        border-style: solid;
+        background: var(--surface);
+      }
 
-  /* ----- Keepers ----- */
-  .keepers{display:grid;grid-template-columns:1.1fr 1fr;gap:48px}
-  .leader{border:1px solid var(--line-soft);border-radius:16px;overflow:hidden}
-  .leader h5{margin:0;padding:14px 18px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-dim);font-weight:500;border-bottom:1px solid var(--line-soft);display:flex;justify-content:space-between}
-  .leader-row{display:grid;grid-template-columns:30px 1fr auto 80px;gap:14px;padding:13px 18px;align-items:center;border-bottom:1px solid var(--line-soft)}
-  .leader-row:last-child{border-bottom:0}
-  .leader-row .rank{font-family:var(--mono);font-size:12px;color:var(--fg-dim)}
-  .leader-row .who{display:flex;align-items:center;gap:12px}
-  .avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg, var(--ember-2), var(--coal));display:grid;place-items:center;font-family:var(--mono);font-size:11px;font-weight:600;color:oklch(0.985 0.005 300)}
-  .leader-row .n{font-size:14.5px}
-  .leader-row .h{font-family:var(--mono);font-size:12px;color:var(--fg-mute)}
-  .leader-row .bar{height:6px;border-radius:3px;background:oklch(0.25 0.024 300);position:relative;overflow:hidden}
-  .leader-row .bar i{display:block;height:100%;background:linear-gradient(90deg, var(--ember), var(--ember-2));border-radius:3px}
+      /* ----- Keepers ----- */
+      .keepers {
+        display: grid;
+        grid-template-columns: 1.1fr 1fr;
+        gap: 48px;
+      }
+      .leader {
+        border: 1px solid var(--line-soft);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      .leader h5 {
+        margin: 0;
+        padding: 14px 18px;
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--fg-dim);
+        font-weight: 500;
+        border-bottom: 1px solid var(--line-soft);
+        display: flex;
+        justify-content: space-between;
+      }
+      .leader-row {
+        display: grid;
+        grid-template-columns: 30px 1fr auto 80px;
+        gap: 14px;
+        padding: 13px 18px;
+        align-items: center;
+        border-bottom: 1px solid var(--line-soft);
+      }
+      .leader-row:last-child {
+        border-bottom: 0;
+      }
+      .leader-row .rank {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--fg-dim);
+      }
+      .leader-row .who {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--ember-2), var(--coal));
+        display: grid;
+        place-items: center;
+        font-family: var(--mono);
+        font-size: 11px;
+        font-weight: 600;
+        color: oklch(0.985 0.005 300);
+      }
+      .leader-row .n {
+        font-size: 14.5px;
+      }
+      .leader-row .h {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--fg-mute);
+      }
+      .leader-row .bar {
+        height: 6px;
+        border-radius: 3px;
+        background: oklch(0.25 0.024 300);
+        position: relative;
+        overflow: hidden;
+      }
+      .leader-row .bar i {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, var(--ember), var(--ember-2));
+        border-radius: 3px;
+      }
 
-  .keepers-cards{display:grid;grid-template-columns:1fr;gap:16px}
-  .keeper{border:1px solid var(--line-soft);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:10px;background:oklch(0.21 0.024 300 / .55)}
-  .keeper .name{font-family:var(--serif);font-size:24px;letter-spacing:-.01em}
-  .keeper .role{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-dim)}
-  .keeper .quote{font-size:14.5px;line-height:1.5;color:var(--fg-mute);font-style:italic;border-left:2px solid var(--ember);padding-left:12px}
-  .keeper .handle{font-family:var(--mono);font-size:12px;color:var(--ember-2)}
+      .keepers-cards {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      .keeper {
+        border: 1px solid var(--line-soft);
+        border-radius: 14px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background: oklch(0.21 0.024 300 / 0.55);
+      }
+      .keeper .name {
+        font-family: var(--serif);
+        font-size: 24px;
+        letter-spacing: -0.01em;
+      }
+      .keeper .role {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--fg-dim);
+      }
+      .keeper .quote {
+        font-size: 14.5px;
+        line-height: 1.5;
+        color: var(--fg-mute);
+        font-style: italic;
+        border-left: 2px solid var(--ember);
+        padding-left: 12px;
+      }
+      .keeper .handle {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--ember-2);
+      }
 
-  /* ----- Bottom CTA ----- */
-  .cta{margin-top:48px;border:1px solid var(--line-soft);border-radius:20px;padding:56px 48px;position:relative;overflow:hidden;background:linear-gradient(135deg, oklch(0.22 0.024 300 / .85), oklch(0.18 0.022 300 / .85))}
-  .cta::after{
-    content:"";position:absolute;right:-160px;top:-160px;width:520px;height:520px;border-radius:50%;
-    background:radial-gradient(circle, oklch(0.66 0.22 300 / .35), transparent 65%);
-    filter:blur(20px);pointer-events:none;
-  }
-  .cta-row{display:flex;align-items:center;justify-content:space-between;gap:32px;position:relative;z-index:1;flex-wrap:wrap}
-  .cta h3{font-family:var(--serif);font-size:clamp(36px, 4.4vw, 60px);line-height:1;letter-spacing:-.02em;margin:0;max-width:18ch}
-  .cta h3 em{font-style:italic;color:var(--ember-2)}
+      /* ----- Bottom CTA ----- */
+      .cta {
+        margin-top: 48px;
+        border: 1px solid var(--line-soft);
+        border-radius: 20px;
+        padding: 56px 48px;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(
+          135deg,
+          oklch(0.22 0.024 300 / 0.85),
+          oklch(0.18 0.022 300 / 0.85)
+        );
+      }
+      .cta::after {
+        content: "";
+        position: absolute;
+        right: -160px;
+        top: -160px;
+        width: 520px;
+        height: 520px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          oklch(0.66 0.22 300 / 0.35),
+          transparent 65%
+        );
+        filter: blur(20px);
+        pointer-events: none;
+      }
+      .cta-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 32px;
+        position: relative;
+        z-index: 1;
+        flex-wrap: wrap;
+      }
+      .cta h3 {
+        font-family: var(--serif);
+        font-size: clamp(36px, 4.4vw, 60px);
+        line-height: 1;
+        letter-spacing: -0.02em;
+        margin: 0;
+        max-width: 18ch;
+      }
+      .cta h3 em {
+        font-style: italic;
+        color: var(--ember-2);
+      }
 
-  /* footer */
-  footer{padding:48px 0 64px;border-top:1px solid var(--line-soft);margin-top:96px;color:var(--fg-mute)}
-  .foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:32px;align-items:start}
-  footer h6{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-dim);font-weight:500;margin:0 0 14px}
-  footer ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
-  footer ul a{font-size:13.5px}
-  footer ul a:hover{color:var(--fg)}
-  .foot-end{margin-top:48px;padding-top:24px;border-top:1px solid var(--line-soft);display:flex;justify-content:space-between;font-family:var(--mono);font-size:11.5px;color:var(--fg-dim);letter-spacing:.05em}
-  .foot-end em{font-style:italic;color:var(--ember-2)}
+      /* footer */
+      footer {
+        padding: 48px 0 64px;
+        border-top: 1px solid var(--line-soft);
+        margin-top: 96px;
+        color: var(--fg-mute);
+      }
+      .foot-grid {
+        display: grid;
+        grid-template-columns: 1.6fr 1fr 1fr 1fr;
+        gap: 32px;
+        align-items: start;
+      }
+      footer h6 {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--fg-dim);
+        font-weight: 500;
+        margin: 0 0 14px;
+      }
+      footer ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      footer ul a {
+        font-size: 13.5px;
+      }
+      footer ul a:hover {
+        color: var(--fg);
+      }
+      .foot-end {
+        margin-top: 48px;
+        padding-top: 24px;
+        border-top: 1px solid var(--line-soft);
+        display: flex;
+        justify-content: space-between;
+        font-family: var(--mono);
+        font-size: 11.5px;
+        color: var(--fg-dim);
+        letter-spacing: 0.05em;
+      }
+      .foot-end em {
+        font-style: italic;
+        color: var(--ember-2);
+      }
 
-  /* Hamburger nav toggle */
-  .nav-toggle {
-    display: none;
-    background: transparent;
-    border: 1px solid var(--line-soft);
-    color: var(--fg);
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 18px;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: .15s;
-    padding: 0;
-  }
-  .nav-toggle:hover { background: var(--surface); border-color: var(--line); }
+      /* Hamburger nav toggle */
+      .nav-toggle {
+        display: none;
+        background: transparent;
+        border: 1px solid var(--line-soft);
+        color: var(--fg);
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 18px;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: 0.15s;
+        padding: 0;
+      }
+      .nav-toggle:hover {
+        background: var(--surface);
+        border-color: var(--line);
+      }
 
-  /* Mobile nav drawer */
-  .nav-drawer {
-    display: none;
-    flex-direction: column;
-    background: oklch(0.17 0.020 300 / 0.98);
-    border-top: 1px solid var(--line-soft);
-    padding: 8px 20px 16px;
-  }
-  .nav-drawer a {
-    display: flex;
-    align-items: center;
-    min-height: 44px;
-    font-size: 15px;
-    color: var(--fg-mute);
-    border-bottom: 1px solid var(--line-soft);
-    padding: 0 4px;
-    text-decoration: none;
-    transition: .15s;
-  }
-  .nav-drawer a:last-child { border-bottom: 0; }
-  .nav-drawer a.on, .nav-drawer a:hover { color: var(--fg); }
+      /* Mobile nav drawer */
+      .nav-drawer {
+        display: none;
+        flex-direction: column;
+        background: oklch(0.17 0.02 300 / 0.98);
+        border-top: 1px solid var(--line-soft);
+        padding: 8px 20px 16px;
+      }
+      .nav-drawer a {
+        display: flex;
+        align-items: center;
+        min-height: 44px;
+        font-size: 15px;
+        color: var(--fg-mute);
+        border-bottom: 1px solid var(--line-soft);
+        padding: 0 4px;
+        text-decoration: none;
+        transition: 0.15s;
+      }
+      .nav-drawer a:last-child {
+        border-bottom: 0;
+      }
+      .nav-drawer a.on,
+      .nav-drawer a:hover {
+        color: var(--fg);
+      }
 
-  .topbar.nav-open .nav-drawer { display: flex; }
+      .topbar.nav-open .nav-drawer {
+        display: flex;
+      }
 
-  /* responsive */
-  @media (max-width:1020px){
-    .hero-grid{grid-template-columns:1fr;gap:36px}
-    .peak{grid-template-columns:1fr}
-    .demo{grid-template-columns:1fr}
-    .feature{grid-template-columns:1fr}
-    .feature .left{border-right:0;border-bottom:1px solid var(--line-soft)}
-    .stats{grid-template-columns:repeat(2,1fr)}
-    .stat{border-bottom:1px solid var(--line-soft)}
-    .keepers{grid-template-columns:1fr}
-    .lib-head,.lib-row{grid-template-columns:1.5fr .9fr 60px}
-    .lib-head .h3,.lib-head .h4,.lib-head .h5,.lib-row .c3,.lib-row .c4,.lib-row .c5{display:none}
-    .nav{display:none}
-    .nav-toggle{display:flex}
-    .pill-mono,.top-cta .btn:not(.primary){display:none}
-    .sec-head{grid-template-columns:1fr;gap:18px}
-    .foot-grid{grid-template-columns:1fr 1fr}
-  }
-  @media (max-width:480px){
-    .wrap{padding:0 16px}
-    .topbar-inner{padding:12px 16px;gap:12px}
-    .mark .sub{display:none}
-    .hero{padding:40px 0 32px}
-    .hero-grid{gap:24px}
-    .lede{font-size:16px}
-    .sec{padding:48px 0}
-    .sec-title{font-size:clamp(32px,8vw,80px)}
-    .sec-head{gap:12px}
-    .stats{grid-template-columns:1fr 1fr}
-    .stat{padding:16px}
-    .stat .n{font-size:36px}
-    .ticker{display:none}
-    .cat{min-height:auto}
-    .cat-art{min-height:180px}
-    .sidecar{padding:16px}
-    .feed-item{grid-template-columns:48px 1fr auto;gap:10px}
-    .demo{gap:24px}
-    .hypothesis{padding:16px}
-    .h-title{font-size:20px}
-    .h-attck{grid-template-columns:1fr 1fr}
-    .feature .left,.feature .right{padding:20px 18px}
-    .feature h3{font-size:32px}
-    pre{overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:11.5px}
-    .search{flex-wrap:wrap;gap:10px}
-    .search .chips{flex-wrap:wrap;width:100%}
-    .lib-head,.lib-row{grid-template-columns:1fr 60px}
-    .lib-head>div:nth-child(2),.lib-row .badge{display:none}
-    .lib-foot{font-size:11px}
-    .leader-row{grid-template-columns:24px 1fr 60px;gap:10px}
-    .leader-row .bar{display:none}
-    .keeper{padding:16px}
-    .keeper .name{font-size:20px}
-    .cta{padding:32px 20px}
-    .cta-row{flex-direction:column;gap:16px;align-items:flex-start}
-    .cta h3{font-size:clamp(28px,7vw,60px)}
-    .foot-grid{grid-template-columns:1fr}
-    .foot-end{flex-direction:column;gap:8px;font-size:11px}
-  }
-</style>
-</head>
-<body>
-
-<!-- ====== TOPBAR ====== -->
-<header class="topbar">
-  <div class="topbar-inner">
-    <a class="mark" href="home.html">
-      <span class="glyph"></span>
-      <span class="name">HEARTH</span>
-      <span class="sub">THOR Collective</span>
-    </a>
-    <nav class="nav">
-      <a class="on" href="home.html">Home</a>
-      <a href="index.html">Library</a>
-      <a href="coverage.html">Coverage</a>
-      <a href="actors.html">Actors</a>
-      <a href="context-graph.html">Context</a>
-      <a href="submit.html">Submit</a>
-      <a href="https://dispatch.thorcollective.com/" target="_blank" rel="noopener">Dispatch ↗</a>
-    </nav>
-    <div class="top-cta">
-      <span class="pill-mono" id="topbar-pill">— hunts</span>
-      <a class="btn" href="index.html">Search <span class="kbd">⌘K</span></a>
-      <a class="btn primary" href="submit.html">Submit a hunt →</a>
-      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">&#9776;</button>
-    </div>
-  </div><!-- end topbar-inner -->
-  <nav class="nav-drawer" id="nav-drawer" aria-hidden="true">
-    <a class="on" href="home.html">Home</a>
-    <a href="index.html">Library</a>
-    <a href="coverage.html">Coverage</a>
-    <a href="actors.html">Actors</a>
-    <a href="context-graph.html">Context</a>
-    <a href="submit.html">Submit</a>
-    <a href="https://dispatch.thorcollective.com/" target="_blank" rel="noopener">Dispatch ↗</a>
-  </nav>
-</header>
-
-<!-- ====== HERO ====== -->
-<section class="hero">
-  <div class="wrap">
-    <div class="hero-grid">
-      <div>
-        <span class="eyebrow">Open · MIT · Community curated</span>
-        <h1 class="title">Keep the<br/><em>hearth</em> burning.</h1>
-        <p class="lede">HEARTH is an open library of <b>threat hunting hypotheses</b> — drafted by hunters, refined by AI, and organized around the PEAK framework. Browse what works. Paste a CTI link, get a hunt. Contribute one back.</p>
-        <div class="hero-actions">
-          <a class="btn primary" href="index.html">Browse the library →</a>
-          <a class="btn" href="#demo">Try the CTI pipeline</a>
-          <a class="btn" href="https://github.com/THORCollective/HEARTH" target="_blank" rel="noopener">View on GitHub ↗</a>
+      /* responsive */
+      @media (max-width: 1020px) {
+        .hero-grid {
+          grid-template-columns: 1fr;
+          gap: 36px;
+        }
+        .peak {
+          grid-template-columns: 1fr;
+        }
+        .demo {
+          grid-template-columns: 1fr;
+        }
+        .feature {
+          grid-template-columns: 1fr;
+        }
+        .feature .left {
+          border-right: 0;
+          border-bottom: 1px solid var(--line-soft);
+        }
+        .stats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .stat {
+          border-bottom: 1px solid var(--line-soft);
+        }
+        .keepers {
+          grid-template-columns: 1fr;
+        }
+        .lib-head,
+        .lib-row {
+          grid-template-columns: 1.5fr 0.9fr 60px;
+        }
+        .lib-head .h3,
+        .lib-head .h4,
+        .lib-head .h5,
+        .lib-row .c3,
+        .lib-row .c4,
+        .lib-row .c5 {
+          display: none;
+        }
+        .nav {
+          display: none;
+        }
+        .nav-toggle {
+          display: flex;
+        }
+        .pill-mono,
+        .top-cta .btn:not(.primary) {
+          display: none;
+        }
+        .sec-head {
+          grid-template-columns: 1fr;
+          gap: 18px;
+        }
+        .foot-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 480px) {
+        .wrap {
+          padding: 0 16px;
+        }
+        .topbar-inner {
+          padding: 12px 16px;
+          gap: 12px;
+        }
+        .mark .sub {
+          display: none;
+        }
+        .hero {
+          padding: 40px 0 32px;
+        }
+        .hero-grid {
+          gap: 24px;
+        }
+        .lede {
+          font-size: 16px;
+        }
+        .sec {
+          padding: 48px 0;
+        }
+        .sec-title {
+          font-size: clamp(32px, 8vw, 80px);
+        }
+        .sec-head {
+          gap: 12px;
+        }
+        .stats {
+          grid-template-columns: 1fr 1fr;
+        }
+        .stat {
+          padding: 16px;
+        }
+        .stat .n {
+          font-size: 36px;
+        }
+        .ticker {
+          display: none;
+        }
+        .cat {
+          min-height: auto;
+        }
+        .cat-art {
+          min-height: 180px;
+        }
+        .sidecar {
+          padding: 16px;
+        }
+        .feed-item {
+          grid-template-columns: 48px 1fr auto;
+          gap: 10px;
+        }
+        .demo {
+          gap: 24px;
+        }
+        .hypothesis {
+          padding: 16px;
+        }
+        .h-title {
+          font-size: 20px;
+        }
+        .h-attck {
+          grid-template-columns: 1fr 1fr;
+        }
+        .feature .left,
+        .feature .right {
+          padding: 20px 18px;
+        }
+        .feature h3 {
+          font-size: 32px;
+        }
+        pre {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          font-size: 11.5px;
+        }
+        .search {
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+        .search .chips {
+          flex-wrap: wrap;
+          width: 100%;
+        }
+        .lib-head,
+        .lib-row {
+          grid-template-columns: 1fr 60px;
+        }
+        .lib-head > div:nth-child(2),
+        .lib-row .badge {
+          display: none;
+        }
+        .lib-foot {
+          font-size: 11px;
+        }
+        .leader-row {
+          grid-template-columns: 24px 1fr 60px;
+          gap: 10px;
+        }
+        .leader-row .bar {
+          display: none;
+        }
+        .keeper {
+          padding: 16px;
+        }
+        .keeper .name {
+          font-size: 20px;
+        }
+        .cta {
+          padding: 32px 20px;
+        }
+        .cta-row {
+          flex-direction: column;
+          gap: 16px;
+          align-items: flex-start;
+        }
+        .cta h3 {
+          font-size: clamp(28px, 7vw, 60px);
+        }
+        .foot-grid {
+          grid-template-columns: 1fr;
+        }
+        .foot-end {
+          flex-direction: column;
+          gap: 8px;
+          font-size: 11px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ====== TOPBAR ====== -->
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="mark" href="home.html">
+          <span class="glyph"></span>
+          <span class="name">HEARTH</span>
+          <span class="sub">THOR Collective</span>
+        </a>
+        <nav class="nav">
+          <a class="on" href="home.html">Home</a>
+          <a href="index.html">Library</a>
+          <a href="coverage.html">Coverage</a>
+          <a href="actors.html">Actors</a>
+          <a href="context-graph.html">Context</a>
+          <a href="submit.html">Submit</a>
+          <a
+            href="https://dispatch.thorcollective.com/"
+            target="_blank"
+            rel="noopener"
+            >Dispatch ↗</a
+          >
+        </nav>
+        <div class="top-cta">
+          <span class="pill-mono" id="topbar-pill">— hunts</span>
+          <a class="btn" href="index.html"
+            >Search <span class="kbd">⌘K</span></a
+          >
+          <a class="btn primary" href="submit.html">Submit a hunt →</a>
+          <button
+            class="nav-toggle"
+            aria-label="Toggle navigation"
+            aria-expanded="false"
+          >
+            &#9776;
+          </button>
         </div>
       </div>
+      <!-- end topbar-inner -->
+      <nav class="nav-drawer" id="nav-drawer" aria-hidden="true">
+        <a class="on" href="home.html">Home</a>
+        <a href="index.html">Library</a>
+        <a href="coverage.html">Coverage</a>
+        <a href="actors.html">Actors</a>
+        <a href="context-graph.html">Context</a>
+        <a href="submit.html">Submit</a>
+        <a
+          href="https://dispatch.thorcollective.com/"
+          target="_blank"
+          rel="noopener"
+          >Dispatch ↗</a
+        >
+      </nav>
+    </header>
 
-      <aside class="sidecar">
-        <div class="sidecar-h">
-          <h4>Recent activity</h4>
-          <span class="live-dot">Live</span>
+    <!-- ====== HERO ====== -->
+    <section class="hero">
+      <div class="wrap">
+        <div class="hero-grid">
+          <div>
+            <span class="eyebrow">Open · MIT · Community curated</span>
+            <h1 class="title">Keep the<br /><em>hearth</em> burning.</h1>
+            <p class="lede">
+              HEARTH is an open library of <b>threat hunting hypotheses</b> —
+              drafted by hunters, refined by AI, and organized around the PEAK
+              framework. Browse what works. Paste a CTI link, get a hunt.
+              Contribute one back.
+            </p>
+            <div class="hero-actions">
+              <a class="btn primary" href="index.html">Browse the library →</a>
+              <a class="btn" href="#demo">Try the CTI pipeline</a>
+              <a
+                class="btn"
+                href="https://github.com/THORCollective/HEARTH"
+                target="_blank"
+                rel="noopener"
+                >View on GitHub ↗</a
+              >
+            </div>
+          </div>
+
+          <aside class="sidecar">
+            <div class="sidecar-h">
+              <h4>Recent activity</h4>
+              <span class="live-dot">Latest</span>
+            </div>
+            <div class="feed" id="activity-feed">
+              <div class="feed-item" style="opacity: 0.4">
+                <span class="when">—</span>
+                <span class="who" style="color: var(--fg-dim)"
+                  >Loading recent activity…</span
+                >
+              </div>
+            </div>
+          </aside>
         </div>
-        <div class="feed" id="activity-feed">
-          <div class="feed-item" style="opacity:.4">
-            <span class="when">—</span>
-            <span class="who" style="color:var(--fg-dim)">Loading recent activity…</span>
+
+        <!-- stats — populated by home.ts -->
+        <div class="stats">
+          <div class="stat">
+            <span class="n" id="stat-total">—</span
+            ><span class="l">Hypotheses</span>
+          </div>
+          <div class="stat">
+            <span class="n" id="stat-contributors">—</span
+            ><span class="l">Contributors</span>
+          </div>
+          <div class="stat">
+            <span class="n">3</span><span class="l">PEAK categories</span>
+          </div>
+          <div class="stat">
+            <span class="n" id="stat-techniques">—</span
+            ><span class="l">ATT&amp;CK techniques mapped</span>
           </div>
         </div>
-      </aside>
-    </div>
 
-    <!-- stats — populated by home.ts -->
-    <div class="stats">
-      <div class="stat"><span class="n" id="stat-total">—</span><span class="l">Hypotheses</span></div>
-      <div class="stat"><span class="n" id="stat-contributors">—</span><span class="l">Contributors</span></div>
-      <div class="stat"><span class="n">3</span><span class="l">PEAK categories</span></div>
-      <div class="stat"><span class="n" id="stat-techniques">—</span><span class="l">ATT&amp;CK techniques mapped</span></div>
-    </div>
-
-    <!-- ticker — populated by home.ts with real technique IDs from the library -->
-    <div class="ticker" aria-hidden="true">
-      <div class="ticker-track" id="ticker-track"></div>
-    </div>
-  </div>
-</section>
-
-<!-- ====== PEAK CATEGORIES ====== -->
-<section class="sec" id="peak">
-  <div class="wrap">
-    <div class="sec-head">
-      <div>
-        <div class="sec-num">01 — PEAK Framework</div>
-        <h2 class="sec-title">Three ways<br/>to <em>hunt.</em></h2>
+        <!-- ticker — populated by home.ts with real technique IDs from the library -->
+        <div class="ticker" aria-hidden="true">
+          <div class="ticker-track" id="ticker-track"></div>
+        </div>
       </div>
-      <p class="sec-blurb">Every hunt in HEARTH is classified into one of three categories from the PEAK threat hunting framework. They're not levels — they're different muscles. Use the right one for the job in front of you.</p>
-    </div>
+    </section>
 
-    <div class="peak">
-      <!-- Flames -->
-      <article class="cat" id="flames">
-        <div class="cat-top">
-          <span class="cat-id">01 · Flames</span>
-          <span class="cat-count" id="count-flames">—</span>
-        </div>
-        <div class="cat-art glyph-flames">
-          <div class="halo b"></div><div class="halo"></div><div class="halo c"></div>
-          <div class="ring"><div class="core"></div></div>
-        </div>
-        <div class="cat-body">
-          <h3 class="cat-name">Hypothesis<br/><em>driven</em></h3>
-          <p class="cat-desc">A specific theory about adversary behavior, and the evidence you'd expect to find. Classic threat hunting — write it down, then go look. <span class="mute">"An adversary uses DLL side-loading via a signed app to maintain persistence."</span></p>
-          <div class="cat-foot"><span id="flames-foot">—</span><a class="arrow" href="index.html?category=Flames">→</a></div>
-        </div>
-      </article>
-
-      <!-- Embers -->
-      <article class="cat" id="embers">
-        <div class="cat-top">
-          <span class="cat-id">02 · Embers</span>
-          <span class="cat-count" id="count-embers">—</span>
-        </div>
-        <div class="cat-art glyph-embers" id="embersGrid"></div>
-        <div class="cat-body">
-          <h3 class="cat-name">Baseline<br/>&amp; <em>explore</em></h3>
-          <p class="cat-desc">Understand "normal" before you can spot the anomaly. Inventory parent-child process trees. Map the long tail of user agents. Find what you didn't know you had.</p>
-          <div class="cat-foot"><span id="embers-foot">—</span><a class="arrow" href="index.html?category=Embers">→</a></div>
-        </div>
-      </article>
-
-      <!-- Alchemy -->
-      <article class="cat" id="alchemy">
-        <div class="cat-top">
-          <span class="cat-id">03 · Alchemy</span>
-          <span class="cat-count" id="count-alchemy">—</span>
-        </div>
-        <div class="cat-art glyph-alch">
-          <div class="grid"></div>
-          <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-            <defs>
-              <linearGradient id="al" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="oklch(0.85 0.10 80)"/>
-                <stop offset="100%" stop-color="oklch(0.73 0.17 48)"/>
-              </linearGradient>
-            </defs>
-            <polyline points="6,72 18,68 30,55 42,58 54,40 66,44 78,22 94,18"
-              fill="none" stroke="url(#al)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-            <g fill="oklch(0.82 0.10 290)">
-              <circle cx="18" cy="68" r="2.4"/>
-              <circle cx="30" cy="55" r="2.4"/>
-              <circle cx="42" cy="58" r="2.4"/>
-              <circle cx="54" cy="40" r="2.4"/>
-              <circle cx="66" cy="44" r="2.4"/>
-              <circle cx="78" cy="22" r="3.6" fill="oklch(0.73 0.17 48)"/>
-            </g>
-            <line x1="78" y1="22" x2="78" y2="92" stroke="oklch(0.55 0.15 48 / .55)" stroke-dasharray="2 3"/>
-          </svg>
-        </div>
-        <div class="cat-body">
-          <h3 class="cat-name">Model-<br/>assisted</h3>
-          <p class="cat-desc">Algorithmic and ML-powered approaches. Clustering, statistical baselines, outlier detection — let the data surface threats you wouldn't think to look for.</p>
-          <div class="cat-foot"><span id="alchemy-foot">—</span><a class="arrow" href="index.html?category=Alchemy">→</a></div>
-        </div>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- ====== AI / CTI DEMO ====== -->
-<section class="sec" id="demo" style="padding-top:0">
-  <div class="wrap">
-    <div class="sec-head">
-      <div>
-        <div class="sec-num">02 — From CTI to hunt</div>
-        <h2 class="sec-title">Paste the link.<br/>Get a <em>hunt.</em></h2>
-      </div>
-      <p class="sec-blurb">Drop a threat intel report URL into the pipeline. HEARTH fetches the article, summarizes the TTPs, validates technique IDs against MITRE ATT&amp;CK, checks the library for duplicates, and drafts a complete hypothesis you can review, edit, and merge.</p>
-    </div>
-
-    <div class="demo">
-      <!-- left: terminal log -->
-      <div class="pane">
-        <div class="pane-head">
-          <div class="dots"><i></i><i></i><i></i></div>
-          <span class="ti">hearth pipeline · run-2049 · 00:00:14 elapsed</span>
-        </div>
-        <div class="pane-body">
-          <p><span class="dim">$</span> hearth ingest <span class="url">https://mandiant.com/resources/blog/apt-living-off-the-land</span></p>
-          <p class="dim">→ resolving · brotli · readability-lxml fallback</p>
-          <p><span class="ok">&#10003;</span> content extracted · 4,218 words · 12 IOCs</p>
-          <p class="dim">→ analyzing with claude-sonnet-4-6 · drafting hypothesis…</p>
-          <div class="indent">
-            <p>tactic    : <span style="color:var(--fg)">TA0003 Persistence</span></p>
-            <p>technique : <span style="color:var(--fg)">T1547.001 Registry Run Keys / Startup</span></p>
-            <p>confidence: <span class="ok">0.92</span> · MITRE validated</p>
+    <!-- ====== PEAK CATEGORIES ====== -->
+    <section class="sec" id="peak">
+      <div class="wrap">
+        <div class="sec-head">
+          <div>
+            <div class="sec-num">01 — PEAK Framework</div>
+            <h2 class="sec-title">Three ways<br />to <em>hunt.</em></h2>
           </div>
-          <p><span class="ok">&#10003;</span> hypothesis drafted · 312 words · PEAK = <span style="color:var(--ember-2)">Flames</span></p>
-          <p class="dim">→ checking 162 hunts for similarity…</p>
-          <p><span class="warn">!</span> 2 weak matches found · <span class="dim">jaccard 0.31, 0.27</span></p>
-          <p><span class="ok">&#10003;</span> opened PR <span class="url">#0231</span> · awaiting Keeper review<span class="cursor"></span></p>
+          <p class="sec-blurb">
+            Every hunt in HEARTH is classified into one of three categories from
+            the PEAK threat hunting framework. They're not levels — they're
+            different muscles. Use the right one for the job in front of you.
+          </p>
+        </div>
+
+        <div class="peak">
+          <!-- Flames -->
+          <article class="cat" id="flames">
+            <div class="cat-top">
+              <span class="cat-id">01 · Flames</span>
+              <span class="cat-count" id="count-flames">—</span>
+            </div>
+            <div class="cat-art glyph-flames">
+              <div class="halo b"></div>
+              <div class="halo"></div>
+              <div class="halo c"></div>
+              <div class="ring"><div class="core"></div></div>
+            </div>
+            <div class="cat-body">
+              <h3 class="cat-name">Hypothesis<br /><em>driven</em></h3>
+              <p class="cat-desc">
+                A specific theory about adversary behavior, and the evidence
+                you'd expect to find. Classic threat hunting — write it down,
+                then go look.
+                <span class="mute"
+                  >"An adversary uses DLL side-loading via a signed app to
+                  maintain persistence."</span
+                >
+              </p>
+              <div class="cat-foot">
+                <span id="flames-foot">—</span
+                ><a class="arrow" href="index.html?category=Flames">→</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Embers -->
+          <article class="cat" id="embers">
+            <div class="cat-top">
+              <span class="cat-id">02 · Embers</span>
+              <span class="cat-count" id="count-embers">—</span>
+            </div>
+            <div class="cat-art glyph-embers" id="embersGrid"></div>
+            <div class="cat-body">
+              <h3 class="cat-name">Baseline<br />&amp; <em>explore</em></h3>
+              <p class="cat-desc">
+                Understand "normal" before you can spot the anomaly. Inventory
+                parent-child process trees. Map the long tail of user agents.
+                Find what you didn't know you had.
+              </p>
+              <div class="cat-foot">
+                <span id="embers-foot">—</span
+                ><a class="arrow" href="index.html?category=Embers">→</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Alchemy -->
+          <article class="cat" id="alchemy">
+            <div class="cat-top">
+              <span class="cat-id">03 · Alchemy</span>
+              <span class="cat-count" id="count-alchemy">—</span>
+            </div>
+            <div class="cat-art glyph-alch">
+              <div class="grid"></div>
+              <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                  <linearGradient id="al" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="oklch(0.85 0.10 80)" />
+                    <stop offset="100%" stop-color="oklch(0.73 0.17 48)" />
+                  </linearGradient>
+                </defs>
+                <polyline
+                  points="6,72 18,68 30,55 42,58 54,40 66,44 78,22 94,18"
+                  fill="none"
+                  stroke="url(#al)"
+                  stroke-width="2.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <g fill="oklch(0.82 0.10 290)">
+                  <circle cx="18" cy="68" r="2.4" />
+                  <circle cx="30" cy="55" r="2.4" />
+                  <circle cx="42" cy="58" r="2.4" />
+                  <circle cx="54" cy="40" r="2.4" />
+                  <circle cx="66" cy="44" r="2.4" />
+                  <circle cx="78" cy="22" r="3.6" fill="oklch(0.73 0.17 48)" />
+                </g>
+                <line
+                  x1="78"
+                  y1="22"
+                  x2="78"
+                  y2="92"
+                  stroke="oklch(0.55 0.15 48 / .55)"
+                  stroke-dasharray="2 3"
+                />
+              </svg>
+            </div>
+            <div class="cat-body">
+              <h3 class="cat-name">Model-<br />assisted</h3>
+              <p class="cat-desc">
+                Algorithmic and ML-powered approaches. Clustering, statistical
+                baselines, outlier detection — let the data surface threats you
+                wouldn't think to look for.
+              </p>
+              <div class="cat-foot">
+                <span id="alchemy-foot">—</span
+                ><a class="arrow" href="index.html?category=Alchemy">→</a>
+              </div>
+            </div>
+          </article>
         </div>
       </div>
+    </section>
 
-      <!-- right: drafted hypothesis card -->
-      <div class="pane">
-        <div class="pane-head">
-          <div class="dots"><i style="background:var(--ember)"></i><i></i><i></i></div>
-          <span class="ti">draft · H-0231-flames.md</span>
-        </div>
-        <div class="hypothesis">
-          <div class="h-id">Hunt H-0231 · Flames · drafted by Claude</div>
-          <h3 class="h-title">Persistence via signed-binary side-loading from a non-standard <em>%APPDATA%</em> path.</h3>
-          <p class="h-q"><b>Hypothesis.</b> An adversary establishes persistence by dropping a malicious DLL adjacent to a signed Microsoft binary in a user-writable directory, then registering the binary as a Run key — bypassing application allow-lists that trust the signer rather than the path.</p>
-          <div class="h-attck">
-            <div><b>Tactic</b><span>Persistence</span></div>
-            <div><b>Technique</b><span>T1547.001</span></div>
-            <div><b>Sub-tech</b><span>T1574.002</span></div>
+    <!-- ====== AI / CTI DEMO ====== -->
+    <section class="sec" id="demo" style="padding-top: 0">
+      <div class="wrap">
+        <div class="sec-head">
+          <div>
+            <div class="sec-num">02 — From CTI to hunt</div>
+            <h2 class="sec-title">Paste the link.<br />Get a <em>hunt.</em></h2>
           </div>
-          <div style="display:flex;gap:8px;margin-top:18px">
-            <a class="btn primary" style="font-size:12px" href="submit.html">Submit a hunt &#x2192;</a>
-            <a class="btn" style="font-size:12px" href="index.html">Browse library</a>
-            <a class="btn" style="font-size:12px" href="context-graph.html">View context graph</a>
+          <p class="sec-blurb">
+            Drop a threat intel report URL into the pipeline. HEARTH fetches the
+            article, summarizes the TTPs, validates technique IDs against MITRE
+            ATT&amp;CK, checks the library for duplicates, and drafts a complete
+            hypothesis you can review, edit, and merge.
+          </p>
+        </div>
+
+        <div class="demo">
+          <!-- left: terminal log -->
+          <div class="pane">
+            <div class="pane-head">
+              <div class="dots"><i></i><i></i><i></i></div>
+              <span class="ti"
+                >hearth pipeline · run-2049 · 00:00:14 elapsed</span
+              >
+            </div>
+            <div class="pane-body">
+              <p>
+                <span class="dim">$</span> hearth ingest
+                <span class="url"
+                  >https://mandiant.com/resources/blog/apt-living-off-the-land</span
+                >
+              </p>
+              <p class="dim">
+                → resolving · brotli · readability-lxml fallback
+              </p>
+              <p>
+                <span class="ok">&#10003;</span> content extracted · 4,218 words
+                · 12 IOCs
+              </p>
+              <p class="dim">
+                → analyzing with claude-sonnet-4-6 · drafting hypothesis…
+              </p>
+              <div class="indent">
+                <p>
+                  tactic :
+                  <span style="color: var(--fg)">TA0003 Persistence</span>
+                </p>
+                <p>
+                  technique :
+                  <span style="color: var(--fg)"
+                    >T1547.001 Registry Run Keys / Startup</span
+                  >
+                </p>
+                <p>
+                  confidence: <span class="ok">0.92</span> · MITRE validated
+                </p>
+              </div>
+              <p>
+                <span class="ok">&#10003;</span> hypothesis drafted · 312 words
+                · PEAK = <span style="color: var(--ember-2)">Flames</span>
+              </p>
+              <p class="dim">→ checking 162 hunts for similarity…</p>
+              <p>
+                <span class="warn">!</span> 2 weak matches found ·
+                <span class="dim">jaccard 0.31, 0.27</span>
+              </p>
+              <p>
+                <span class="ok">&#10003;</span> opened PR
+                <span class="url">#0231</span> · awaiting Keeper review<span
+                  class="cursor"
+                ></span>
+              </p>
+            </div>
+          </div>
+
+          <!-- right: drafted hypothesis card -->
+          <div class="pane">
+            <div class="pane-head">
+              <div class="dots">
+                <i style="background: var(--ember)"></i><i></i><i></i>
+              </div>
+              <span class="ti">draft · H-0231-flames.md</span>
+            </div>
+            <div class="hypothesis">
+              <div class="h-id">Hunt H-0231 · Flames · drafted by Claude</div>
+              <h3 class="h-title">
+                Persistence via signed-binary side-loading from a non-standard
+                <em>%APPDATA%</em> path.
+              </h3>
+              <p class="h-q">
+                <b>Hypothesis.</b> An adversary establishes persistence by
+                dropping a malicious DLL adjacent to a signed Microsoft binary
+                in a user-writable directory, then registering the binary as a
+                Run key — bypassing application allow-lists that trust the
+                signer rather than the path.
+              </p>
+              <div class="h-attck">
+                <div><b>Tactic</b><span>Persistence</span></div>
+                <div><b>Technique</b><span>T1547.001</span></div>
+                <div><b>Sub-tech</b><span>T1574.002</span></div>
+              </div>
+              <div style="display: flex; gap: 8px; margin-top: 18px">
+                <a
+                  class="btn primary"
+                  style="font-size: 12px"
+                  href="submit.html"
+                  >Submit a hunt &#x2192;</a
+                >
+                <a class="btn" style="font-size: 12px" href="index.html"
+                  >Browse library</a
+                >
+                <a class="btn" style="font-size: 12px" href="context-graph.html"
+                  >View context graph</a
+                >
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<!-- ====== ACTORS TEASER ====== -->
-<section class="sec" id="actors-teaser" style="padding-top:0;padding-bottom:48px">
-  <div class="wrap">
-    <div class="sec-head">
-      <div>
-        <div class="sec-num">03 — Actor coverage</div>
-        <h2 class="sec-title">Got a <em>target?</em><br/>Check the coverage.</h2>
-      </div>
-      <p class="sec-blurb">Name a threat actor. HEARTH shows which hunts cover them, where coverage runs thin, and which of their techniques nobody has hunted yet.</p>
-    </div>
-
-    <div class="demo">
-      <!-- left: lead-in card with try-it CTAs -->
-      <div class="pane" style="background:linear-gradient(180deg, oklch(0.23 0.024 300 / .9), oklch(0.18 0.022 300 / .85))">
-        <div class="pane-head">
-          <div class="dots"><i></i><i></i><i></i></div>
-          <span class="ti">hearth · /actors</span>
+    <!-- ====== ACTORS TEASER ====== -->
+    <section
+      class="sec"
+      id="actors-teaser"
+      style="padding-top: 0; padding-bottom: 48px"
+    >
+      <div class="wrap">
+        <div class="sec-head">
+          <div>
+            <div class="sec-num">03 — Actor coverage</div>
+            <h2 class="sec-title">
+              Got a <em>target?</em><br />Check the coverage.
+            </h2>
+          </div>
+          <p class="sec-blurb">
+            Name a threat actor. HEARTH shows which hunts cover them, where
+            coverage runs thin, and which of their techniques nobody has hunted
+            yet.
+          </p>
         </div>
-        <div class="hypothesis">
-          <div class="h-id">live · drawn from public/context-graph-data.json</div>
-          <h3 class="h-title">Match HEARTH to <em>your</em> threat model.</h3>
-          <p class="h-q">Type a name or alias. We'll surface every hunt that covers that group's tradecraft, score the coverage tactic by tactic, and call out the techniques where HEARTH is still blind — with a one-click path to fill them in.</p>
-          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:18px">
-            <a class="btn primary" style="font-size:12px" href="actors.html">Open actor coverage →</a>
-            <a class="btn" style="font-size:12px" href="actors.html?actor=G0016">Try APT29</a>
-            <a class="btn" style="font-size:12px" href="actors.html?actor=G1017">Try Volt Typhoon</a>
-            <a class="btn" style="font-size:12px" href="actors.html?q=cozy%20bear">Try Cozy Bear</a>
+
+        <div class="demo">
+          <!-- left: lead-in card with try-it CTAs -->
+          <div
+            class="pane"
+            style="
+              background: linear-gradient(
+                180deg,
+                oklch(0.23 0.024 300 / 0.9),
+                oklch(0.18 0.022 300 / 0.85)
+              );
+            "
+          >
+            <div class="pane-head">
+              <div class="dots"><i></i><i></i><i></i></div>
+              <span class="ti">hearth · /actors</span>
+            </div>
+            <div class="hypothesis">
+              <div class="h-id">
+                live · drawn from public/context-graph-data.json
+              </div>
+              <h3 class="h-title">
+                Match HEARTH to <em>your</em> threat model.
+              </h3>
+              <p class="h-q">
+                Type a name or alias. We'll surface every hunt that covers that
+                group's tradecraft, score the coverage tactic by tactic, and
+                call out the techniques where HEARTH is still blind — with a
+                one-click path to fill them in.
+              </p>
+              <div
+                style="
+                  display: flex;
+                  flex-wrap: wrap;
+                  gap: 8px;
+                  margin-top: 18px;
+                "
+              >
+                <a
+                  class="btn primary"
+                  style="font-size: 12px"
+                  href="actors.html"
+                  >Open actor coverage →</a
+                >
+                <a
+                  class="btn"
+                  style="font-size: 12px"
+                  href="actors.html?actor=G0016"
+                  >Try APT29</a
+                >
+                <a
+                  class="btn"
+                  style="font-size: 12px"
+                  href="actors.html?actor=G1017"
+                  >Try Volt Typhoon</a
+                >
+                <a
+                  class="btn"
+                  style="font-size: 12px"
+                  href="actors.html?q=cozy%20bear"
+                  >Try Cozy Bear</a
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- right: real mini coverage card, populated by home.ts -->
+          <div class="pane" id="actor-preview-pane" style="display: none">
+            <div class="pane-head">
+              <div class="dots">
+                <i style="background: var(--ember)"></i><i></i><i></i>
+              </div>
+              <span class="ti" id="actor-preview-ti">actors / —</span>
+            </div>
+            <div class="hypothesis" id="actor-preview-body">
+              <!-- rendered by home.ts -->
+            </div>
           </div>
         </div>
       </div>
+    </section>
 
-      <!-- right: real mini coverage card, populated by home.ts -->
-      <div class="pane" id="actor-preview-pane" style="display:none">
-        <div class="pane-head">
-          <div class="dots"><i style="background:var(--ember)"></i><i></i><i></i></div>
-          <span class="ti" id="actor-preview-ti">actors / —</span>
+    <style>
+      /* ----- Actor preview card (home page teaser) ----- */
+      .actor-preview-name {
+        font-family: var(--serif);
+        font-size: 30px;
+        letter-spacing: -0.01em;
+        line-height: 1.1;
+        margin: 0 0 8px;
+      }
+      .actor-preview-name em {
+        font-style: italic;
+        color: var(--ember-2);
+      }
+      .actor-preview-aliases {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 18px;
+      }
+      .actor-preview-aliases .alias {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        letter-spacing: 0.06em;
+        color: var(--fg-mute);
+        padding: 3px 9px;
+        border: 1px solid var(--line-soft);
+        border-radius: 999px;
+      }
+      .actor-preview-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0;
+        border-top: 1px solid var(--line-soft);
+        border-bottom: 1px solid var(--line-soft);
+        margin-bottom: 18px;
+      }
+      .actor-preview-stats .s {
+        padding: 14px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .actor-preview-stats .s + .s {
+        border-left: 1px solid var(--line-soft);
+        padding-left: 18px;
+      }
+      .actor-preview-stats .n {
+        font-family: var(--serif);
+        font-size: 34px;
+        letter-spacing: -0.02em;
+        line-height: 1;
+      }
+      .actor-preview-stats .n em {
+        font-style: italic;
+        color: var(--ember-2);
+        font-size: 18px;
+      }
+      .actor-preview-stats .l {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--fg-dim);
+      }
+      .actor-preview-tactics {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 18px;
+      }
+      .actor-preview-tactics .row {
+        display: grid;
+        grid-template-columns: 130px 1fr 56px;
+        align-items: center;
+        gap: 12px;
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--fg-mute);
+        letter-spacing: 0.05em;
+      }
+      .actor-preview-tactics .row .name {
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--fg-dim);
+      }
+      .actor-preview-tactics .row .bar {
+        height: 8px;
+        background: oklch(0.27 0.022 300);
+        border-radius: 4px;
+        overflow: hidden;
+        position: relative;
+      }
+      .actor-preview-tactics .row .bar i {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, var(--ember), var(--ember-2));
+        border-radius: 4px;
+      }
+      .actor-preview-tactics .row .nums {
+        text-align: right;
+        color: var(--fg);
+        font-feature-settings: "tnum";
+      }
+      .actor-preview-more {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        color: var(--fg-dim);
+        letter-spacing: 0.06em;
+        margin-top: -4px;
+      }
+      .actor-preview-cta {
+        display: flex;
+        justify-content: flex-end;
+      }
+      .actor-preview-cta a {
+        font-family: var(--mono);
+        font-size: 11.5px;
+        color: var(--ember-2);
+        letter-spacing: 0.04em;
+        border-bottom: 1px solid var(--line);
+      }
+      .actor-preview-cta a:hover {
+        color: var(--ember);
+      }
+    </style>
+
+    <!-- ====== FEATURED HUNT + LIBRARY ====== -->
+    <section class="sec" id="library" style="padding-top: 0">
+      <div class="wrap">
+        <div class="sec-head">
+          <div>
+            <div class="sec-num">04 — Hunt library</div>
+            <h2 class="sec-title">
+              Browse, fork,<br />and <em>burn it down.</em>
+            </h2>
+          </div>
+          <p class="sec-blurb">
+            Every hypothesis is a versioned markdown file — readable, forkable,
+            runnable. Start with the featured hunt of the week, or filter the
+            full library by tactic, data source, or PEAK category.
+          </p>
         </div>
-        <div class="hypothesis" id="actor-preview-body">
-          <!-- rendered by home.ts -->
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
-<style>
-  /* ----- Actor preview card (home page teaser) ----- */
-  .actor-preview-name{font-family:var(--serif);font-size:30px;letter-spacing:-.01em;line-height:1.1;margin:0 0 8px}
-  .actor-preview-name em{font-style:italic;color:var(--ember-2)}
-  .actor-preview-aliases{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
-  .actor-preview-aliases .alias{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--fg-mute);padding:3px 9px;border:1px solid var(--line-soft);border-radius:999px}
-  .actor-preview-stats{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);margin-bottom:18px}
-  .actor-preview-stats .s{padding:14px 0;display:flex;flex-direction:column;gap:4px}
-  .actor-preview-stats .s + .s{border-left:1px solid var(--line-soft);padding-left:18px}
-  .actor-preview-stats .n{font-family:var(--serif);font-size:34px;letter-spacing:-.02em;line-height:1}
-  .actor-preview-stats .n em{font-style:italic;color:var(--ember-2);font-size:18px}
-  .actor-preview-stats .l{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-dim)}
-  .actor-preview-tactics{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
-  .actor-preview-tactics .row{display:grid;grid-template-columns:130px 1fr 56px;align-items:center;gap:12px;font-family:var(--mono);font-size:11px;color:var(--fg-mute);letter-spacing:.05em}
-  .actor-preview-tactics .row .name{text-transform:uppercase;letter-spacing:.1em;color:var(--fg-dim)}
-  .actor-preview-tactics .row .bar{height:8px;background:oklch(0.27 0.022 300);border-radius:4px;overflow:hidden;position:relative}
-  .actor-preview-tactics .row .bar i{display:block;height:100%;background:linear-gradient(90deg, var(--ember), var(--ember-2));border-radius:4px}
-  .actor-preview-tactics .row .nums{text-align:right;color:var(--fg);font-feature-settings:"tnum"}
-  .actor-preview-more{font-family:var(--mono);font-size:10.5px;color:var(--fg-dim);letter-spacing:.06em;margin-top:-4px}
-  .actor-preview-cta{display:flex;justify-content:flex-end}
-  .actor-preview-cta a{font-family:var(--mono);font-size:11.5px;color:var(--ember-2);letter-spacing:.04em;border-bottom:1px solid var(--line)}
-  .actor-preview-cta a:hover{color:var(--ember)}
-</style>
-
-<!-- ====== FEATURED HUNT + LIBRARY ====== -->
-<section class="sec" id="library" style="padding-top:0">
-  <div class="wrap">
-    <div class="sec-head">
-      <div>
-        <div class="sec-num">04 — Hunt library</div>
-        <h2 class="sec-title">Browse, fork,<br/>and <em>burn it down.</em></h2>
-      </div>
-      <p class="sec-blurb">Every hypothesis is a versioned markdown file — readable, forkable, runnable. Start with the featured hunt of the week, or filter the full library by tactic, data source, or PEAK category.</p>
-    </div>
-
-    <!-- Featured -->
-    <div class="feature">
-      <div class="left">
-        <span class="stamp">Hunt of the week · 19 May 2026</span>
-        <h3>OAuth token <em>replay</em> across tenant boundaries.</h3>
-        <div class="by">by <b>L. Proehl</b> · reviewed by <b>S. Marrone</b> · 14 forks</div>
-        <p>A stolen refresh token is replayed from a new ASN within minutes of issuance, against a tenant the original user has never accessed. The hypothesis: legitimate token use clusters tightly by ASN and geography within the first 24 hours — replay shows up as a sharp deviation.</p>
-        <div style="display:flex;gap:8px">
-          <span class="tag flame">Flames</span>
-          <span class="tag" style="color:var(--fg-mute)">T1550.001</span>
-          <span class="tag" style="color:var(--fg-mute)">Entra ID</span>
-          <span class="tag" style="color:var(--fg-mute)">Cloud</span>
-        </div>
-        <a class="btn primary" style="align-self:flex-start;margin-top:8px" href="index.html">Open full hunt →</a>
-      </div>
-      <div class="right">
-        <h5>Detection query · KQL</h5>
-<pre><span class="c">// Token replay outside expected ASN cluster</span>
+        <!-- Featured -->
+        <div class="feature">
+          <div class="left">
+            <span class="stamp">Hunt of the week · 19 May 2026</span>
+            <h3>OAuth token <em>replay</em> across tenant boundaries.</h3>
+            <div class="by">
+              by <b>L. Proehl</b> · reviewed by <b>S. Marrone</b> · 14 forks
+            </div>
+            <p>
+              A stolen refresh token is replayed from a new ASN within minutes
+              of issuance, against a tenant the original user has never
+              accessed. The hypothesis: legitimate token use clusters tightly by
+              ASN and geography within the first 24 hours — replay shows up as a
+              sharp deviation.
+            </p>
+            <div style="display: flex; gap: 8px">
+              <span class="tag flame">Flames</span>
+              <span class="tag" style="color: var(--fg-mute)">T1550.001</span>
+              <span class="tag" style="color: var(--fg-mute)">Entra ID</span>
+              <span class="tag" style="color: var(--fg-mute)">Cloud</span>
+            </div>
+            <a
+              class="btn primary"
+              style="align-self: flex-start; margin-top: 8px"
+              href="index.html"
+              >Open full hunt →</a
+            >
+          </div>
+          <div class="right">
+            <h5>Detection query · KQL</h5>
+            <pre><span class="c">// Token replay outside expected ASN cluster</span>
 SigninLogs
 | <span class="k">where</span> ResultType == <span class="s">"0"</span>
 | <span class="k">where</span> AuthenticationProtocol == <span class="s">"oAuth2"</span>
@@ -761,162 +2260,239 @@ SigninLogs
 | <span class="k">where</span> array_length(asns) &gt; <span class="s">1</span>
 | <span class="k">where</span> first &gt; ago(<span class="s">24h</span>)
 | <span class="k">project</span> UserId, SessionId, asns, first</pre>
-        <h5 style="margin-top:6px">Required data</h5>
-        <div style="display:flex;flex-wrap:wrap;gap:6px">
-          <span class="tag">SigninLogs</span>
-          <span class="tag">AADNonInteractive</span>
-          <span class="tag">CloudAppEvents</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Search + library table -->
-    <div style="margin-top:48px">
-      <div class="search">
-        <span class="mono dim">&#8984;K</span>
-        <input placeholder='Try "persistence baseline" or "LOLBIN"' />
-        <div class="chips">
-          <span class="chip on" data-cat="">All</span>
-          <span class="chip" data-cat="Flames">Flames</span>
-          <span class="chip" data-cat="Embers">Embers</span>
-          <span class="chip" data-cat="Alchemy">Alchemy</span>
-        </div>
-      </div>
-
-      <div class="lib">
-        <div class="lib-head">
-          <div>Hypothesis</div>
-          <div class="h3">PEAK</div>
-          <div class="h4">Technique</div>
-          <div class="h5">Tactic</div>
-          <div>Contributor</div>
-          <div></div>
+            <h5 style="margin-top: 6px">Required data</h5>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px">
+              <span class="tag">SigninLogs</span>
+              <span class="tag">AADNonInteractive</span>
+              <span class="tag">CloudAppEvents</span>
+            </div>
+          </div>
         </div>
 
-        <!-- populated by home.ts -->
-        <div id="lib-rows"></div>
+        <!-- Search + library table -->
+        <div style="margin-top: 48px">
+          <div class="search">
+            <span class="mono dim">&#8984;K</span>
+            <input placeholder='Try "persistence baseline" or "LOLBIN"' />
+            <div class="chips">
+              <span class="chip on" data-cat="">All</span>
+              <span class="chip" data-cat="Flames">Flames</span>
+              <span class="chip" data-cat="Embers">Embers</span>
+              <span class="chip" data-cat="Alchemy">Alchemy</span>
+            </div>
+          </div>
 
-        <div class="lib-foot" id="lib-foot-text">Loading library&hellip;</div>
-      </div>
-    </div>
-  </div>
-</section>
+          <div class="lib">
+            <div class="lib-head">
+              <div>Hypothesis</div>
+              <div class="h3">PEAK</div>
+              <div class="h4">Technique</div>
+              <div class="h5">Tactic</div>
+              <div>Contributor</div>
+              <div></div>
+            </div>
 
-<!-- ====== KEEPERS ====== -->
-<section class="sec" id="keepers" style="padding-top:0">
-  <div class="wrap">
-    <div class="sec-head">
-      <div>
-        <div class="sec-num">05 — Keepers &amp; contributors</div>
-        <h2 class="sec-title">It takes<br/>a <em>collective.</em></h2>
-      </div>
-      <p class="sec-blurb">HEARTH is built by working hunters. The Keepers maintain the framework and review every PR — and <span id="contributors-blurb">—</span> contributors and counting have submitted hunts from the trenches of their own SOCs.</p>
-    </div>
+            <!-- populated by home.ts -->
+            <div id="lib-rows"></div>
 
-    <div class="keepers">
-      <div class="leader">
-        <h5><span>Top contributors · 90 days</span><span>Hunts</span></h5>
-
-        <!-- populated by home.ts -->
-        <div id="leaderboard-rows"></div>
-      </div>
-
-      <div class="keepers-cards">
-        <div class="keeper">
-          <div class="role">Keeper · co-founder</div>
-          <div class="name">Lauren Proehl</div>
-          <p class="quote">"A hypothesis written down is worth ten in someone's head. HEARTH is the place we write them down — together."</p>
-          <div class="handle">@jotunvillur</div>
-        </div>
-        <div class="keeper">
-          <div class="role">Keeper · co-founder</div>
-          <div class="name">Sydney Marrone</div>
-          <p class="quote">"Threat intel without action is decoration. HEARTH turns CTI into something you can actually run on Monday."</p>
-          <div class="handle">@letswastetime</div>
+            <div class="lib-foot" id="lib-foot-text">
+              Loading library&hellip;
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- bottom CTA -->
-    <div class="cta" id="submit">
-      <div class="cta-row">
-        <h3>Got a hunt? <em>Light it up.</em></h3>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <a class="btn primary" href="submit.html">Submit a CTI link →</a>
-          <a class="btn" href="submit.html">Open a manual submission</a>
-          <a class="btn" href="https://github.com/THORCollective/HEARTH/blob/main/Keepers/CONTRIBUTING.md" target="_blank" rel="noopener">Read the contributor guide</a>
+    <!-- ====== KEEPERS ====== -->
+    <section class="sec" id="keepers" style="padding-top: 0">
+      <div class="wrap">
+        <div class="sec-head">
+          <div>
+            <div class="sec-num">05 — Keepers &amp; contributors</div>
+            <h2 class="sec-title">It takes<br />a <em>collective.</em></h2>
+          </div>
+          <p class="sec-blurb">
+            HEARTH is built by working hunters. The Keepers maintain the
+            framework and review every PR — and
+            <span id="contributors-blurb">—</span> contributors and counting
+            have submitted hunts from the trenches of their own SOCs.
+          </p>
+        </div>
+
+        <div class="keepers">
+          <div class="leader">
+            <h5><span>Top contributors · 90 days</span><span>Hunts</span></h5>
+
+            <!-- populated by home.ts -->
+            <div id="leaderboard-rows"></div>
+          </div>
+
+          <div class="keepers-cards">
+            <div class="keeper">
+              <div class="role">Keeper · co-founder</div>
+              <div class="name">Lauren Proehl</div>
+              <p class="quote">
+                "A hypothesis written down is worth ten in someone's head.
+                HEARTH is the place we write them down — together."
+              </p>
+              <div class="handle">@jotunvillur</div>
+            </div>
+            <div class="keeper">
+              <div class="role">Keeper · co-founder</div>
+              <div class="name">Sydney Marrone</div>
+              <p class="quote">
+                "Threat intel without action is decoration. HEARTH turns CTI
+                into something you can actually run on Monday."
+              </p>
+              <div class="handle">@letswastetime</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- bottom CTA -->
+        <div class="cta" id="submit">
+          <div class="cta-row">
+            <h3>Got a hunt? <em>Light it up.</em></h3>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap">
+              <a class="btn primary" href="submit.html">Submit a CTI link →</a>
+              <a class="btn" href="submit.html">Open a manual submission</a>
+              <a
+                class="btn"
+                href="https://github.com/THORCollective/HEARTH/blob/main/Keepers/CONTRIBUTING.md"
+                target="_blank"
+                rel="noopener"
+                >Read the contributor guide</a
+              >
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<!-- ====== FOOTER ====== -->
-<footer>
-  <div class="wrap">
-    <div class="foot-grid">
-      <div>
-        <a class="mark" href="home.html">
-          <span class="glyph"></span>
-          <span class="name" style="font-size:28px">HEARTH</span>
-        </a>
-        <p class="mute" style="max-width:42ch;font-size:13.5px;line-height:1.55;margin-top:14px">Hunting Exchange and Research Threat Hub. An open community library of threat hunting hypotheses, built by THE THOR Collective and the global hunting community.</p>
+    <!-- ====== FOOTER ====== -->
+    <footer>
+      <div class="wrap">
+        <div class="foot-grid">
+          <div>
+            <a class="mark" href="home.html">
+              <span class="glyph"></span>
+              <span class="name" style="font-size: 28px">HEARTH</span>
+            </a>
+            <p
+              class="mute"
+              style="
+                max-width: 42ch;
+                font-size: 13.5px;
+                line-height: 1.55;
+                margin-top: 14px;
+              "
+            >
+              Hunting Exchange and Research Threat Hub. An open community
+              library of threat hunting hypotheses, built by THE THOR Collective
+              and the global hunting community.
+            </p>
+          </div>
+          <div>
+            <h6>Project</h6>
+            <ul>
+              <li><a href="index.html">Hunt library</a></li>
+              <li><a href="#peak">PEAK framework</a></li>
+              <li><a href="graph.html">Coverage map</a></li>
+              <li><a href="context-graph.html">Context graph</a></li>
+            </ul>
+          </div>
+          <div>
+            <h6>Contribute</h6>
+            <ul>
+              <li><a href="submit.html">Submit CTI link</a></li>
+              <li><a href="submit.html">Manual submission</a></li>
+              <li>
+                <a
+                  href="https://github.com/THORCollective/HEARTH/blob/main/Keepers/CONTRIBUTING.md"
+                  target="_blank"
+                  rel="noopener"
+                  >Contributor guide</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://github.com/THORCollective/HEARTH/issues"
+                  target="_blank"
+                  rel="noopener"
+                  >Open issues</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h6>The Collective</h6>
+            <ul>
+              <li>
+                <a
+                  href="https://github.com/THORCollective"
+                  target="_blank"
+                  rel="noopener"
+                  >About THOR</a
+                >
+              </li>
+              <li><a href="#keepers">Keepers</a></li>
+              <li>
+                <a
+                  href="https://github.com/THORCollective/HEARTH"
+                  target="_blank"
+                  rel="noopener"
+                  >GitHub ↗</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://dispatch.thorcollective.com/"
+                  target="_blank"
+                  rel="noopener"
+                  >Dispatch ↗</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://github.com/THORCollective/HEARTH/blob/main/LICENSE"
+                  target="_blank"
+                  rel="noopener"
+                  >License · MIT</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="foot-end">
+          <span>HEARTH · <em>Keep it burning.</em></span>
+          <span>&#169; 2026 THOR Collective · MIT licensed</span>
+        </div>
       </div>
-      <div>
-        <h6>Project</h6>
-        <ul>
-          <li><a href="index.html">Hunt library</a></li>
-          <li><a href="#peak">PEAK framework</a></li>
-          <li><a href="graph.html">Coverage map</a></li>
-          <li><a href="context-graph.html">Context graph</a></li>
-        </ul>
-      </div>
-      <div>
-        <h6>Contribute</h6>
-        <ul>
-          <li><a href="submit.html">Submit CTI link</a></li>
-          <li><a href="submit.html">Manual submission</a></li>
-          <li><a href="https://github.com/THORCollective/HEARTH/blob/main/Keepers/CONTRIBUTING.md" target="_blank" rel="noopener">Contributor guide</a></li>
-          <li><a href="https://github.com/THORCollective/HEARTH/issues" target="_blank" rel="noopener">Open issues</a></li>
-        </ul>
-      </div>
-      <div>
-        <h6>The Collective</h6>
-        <ul>
-          <li><a href="https://github.com/THORCollective" target="_blank" rel="noopener">About THOR</a></li>
-          <li><a href="#keepers">Keepers</a></li>
-          <li><a href="https://github.com/THORCollective/HEARTH" target="_blank" rel="noopener">GitHub ↗</a></li>
-          <li><a href="https://dispatch.thorcollective.com/" target="_blank" rel="noopener">Dispatch ↗</a></li>
-          <li><a href="https://github.com/THORCollective/HEARTH/blob/main/LICENSE" target="_blank" rel="noopener">License · MIT</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="foot-end">
-      <span>HEARTH · <em>Keep it burning.</em></span>
-      <span>&#169; 2026 THOR Collective · MIT licensed</span>
-    </div>
-  </div>
-</footer>
+    </footer>
 
-<script>
-  (function(){
-    var toggle = document.querySelector('.nav-toggle');
-    var header = document.querySelector('.topbar');
-    if (!toggle || !header) return;
-    toggle.addEventListener('click', function() {
-      var open = header.classList.toggle('nav-open');
-      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-      document.getElementById('nav-drawer').setAttribute('aria-hidden', open ? 'false' : 'true');
-    });
-    document.querySelectorAll('.nav-drawer a').forEach(function(a) {
-      a.addEventListener('click', function() {
-        header.classList.remove('nav-open');
-        toggle.setAttribute('aria-expanded', 'false');
-        document.getElementById('nav-drawer').setAttribute('aria-hidden', 'true');
-      });
-    });
-  })();
-</script>
-<script type="module" src="/src/home.ts"></script>
-</body>
+    <script>
+      (function () {
+        var toggle = document.querySelector(".nav-toggle");
+        var header = document.querySelector(".topbar");
+        if (!toggle || !header) return;
+        toggle.addEventListener("click", function () {
+          var open = header.classList.toggle("nav-open");
+          toggle.setAttribute("aria-expanded", open ? "true" : "false");
+          document
+            .getElementById("nav-drawer")
+            .setAttribute("aria-hidden", open ? "false" : "true");
+        });
+        document.querySelectorAll(".nav-drawer a").forEach(function (a) {
+          a.addEventListener("click", function () {
+            header.classList.remove("nav-open");
+            toggle.setAttribute("aria-expanded", "false");
+            document
+              .getElementById("nav-drawer")
+              .setAttribute("aria-hidden", "true");
+          });
+        });
+      })();
+    </script>
+    <script type="module" src="/src/home.ts"></script>
+  </body>
 </html>
