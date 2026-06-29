@@ -1,6 +1,11 @@
-export type HuntCategory = 'Flames' | 'Embers' | 'Alchemy';
-export type HuntSeverity = 'critical' | 'high' | 'medium' | 'low' | 'informational';
-export type HuntStatus = 'current' | 'stale' | 'retired';
+export type HuntCategory = "Flames" | "Embers" | "Alchemy";
+export type HuntSeverity =
+  | "critical"
+  | "high"
+  | "medium"
+  | "low"
+  | "informational";
+export type HuntStatus = "current" | "stale" | "retired";
 
 export interface DetectionQuery {
   platform: string;
@@ -26,4 +31,6 @@ export interface Hunt {
   why: string;
   references: string;
   file_path: string;
+  /** ISO 8601 date the hunt first landed in git; may be absent on older data. */
+  created?: string;
 }

@@ -6,6 +6,12 @@ on:
   push:
     branches: ["main"]
 
+  # Daily backstop so the Recent activity feed ages and picks up stars /
+  # submissions that didn't trigger a push. 06:23 UTC, off the top of the
+  # hour and away from the midnight leaderboard job to avoid runner contention.
+  schedule:
+    - cron: "23 6 * * *"
+
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -35,11 +41,19 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Fetch recent activity feed
+        # Best-effort: a GitHub API hiccup must never fail the deploy. On
+        # failure the home page falls back to listing the newest hunts.
+        continue-on-error: true
+        run: node scripts/fetch_activity.cjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build project
         run: npm run build
@@ -51,7 +65,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload built dist folder
-          path: './dist'
+          path: "./dist"
 
       - name: Deploy to GitHub Pages
         id: deployment

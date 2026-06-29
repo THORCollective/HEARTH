@@ -11,7 +11,15 @@ import {
 
 const BOTS = new Set(["HEARTH Bot"]);
 
+interface ActivityEvent {
+  verb: string;
+  title: string;
+  url: string;
+  when: string; // ISO 8601
+}
+
 let allHunts: Hunt[] = [];
+let activityEvents: ActivityEvent[] = [];
 let activeCategory = "";
 let searchQuery = "";
 
@@ -122,6 +130,18 @@ async function init() {
   } catch (err) {
     console.error("[HEARTH] Failed to load hunt data:", err);
     return;
+  }
+
+  // Best-effort: real GitHub activity baked in at deploy time. If it's absent
+  // (local dev) or empty, renderActivityFeed falls back to the newest hunts.
+  try {
+    const res = await fetch("/activity.json", { cache: "no-cache" });
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data?.events)) activityEvents = data.events;
+    }
+  } catch {
+    /* fall back to newest hunts */
   }
 
   try {
@@ -274,8 +294,31 @@ function renderActivityFeed() {
   const feed = document.getElementById("activity-feed");
   if (!feed) return;
 
-  const sorted = byIdDesc(allHunts);
-  const recent = sorted.slice(0, 5);
+  // Prefer real GitHub activity (merges, submissions, stars) when available;
+  // otherwise fall back to the newest hunts by git creation date.
+  feed.innerHTML = activityEvents.length
+    ? renderEventRows(activityEvents)
+    : renderNewestHuntRows();
+}
+
+function renderEventRows(events: ActivityEvent[]): string {
+  return events
+    .slice(0, 5)
+    .map((e) => {
+      const title = e.title.length > 48 ? e.title.slice(0, 48) + "…" : e.title;
+      const inner = `${esc(e.verb)} · <span>${esc(title)}</span>`;
+      const who = e.url
+        ? `<a href="${esc(e.url)}" target="_blank" rel="noopener">${inner}</a>`
+        : inner;
+      return `<div class="feed-item">
+  <span class="when">${esc(relativeTime(e.when))}</span>
+  <span class="who">${who}</span>
+</div>`;
+    })
+    .join("");
+}
+
+function renderNewestHuntRows(): string {
   const catTagClass = (h: Hunt) =>
     (
       ({ Flames: "flame", Embers: "ember", Alchemy: "alch" }) as Record<
@@ -284,20 +327,47 @@ function renderActivityFeed() {
       >
     )[h.category] ?? "flame";
 
-  // Illustrative recency labels — we don't have real timestamps
-  const labels = ["2m", "14m", "38m", "1h", "3h"];
-  const verbs = ["Merged", "New hunt", "PR merged", "Updated", "Merged"];
+  // Order by real creation date (newest first); hunts without a date fall to
+  // the bottom, tie-broken by id so the list stays stable.
+  const recent = [...allHunts]
+    .sort((a, b) => {
+      const ta = a.created ? Date.parse(a.created) : 0;
+      const tb = b.created ? Date.parse(b.created) : 0;
+      if (tb !== ta) return tb - ta;
+      return idNum(b.id) - idNum(a.id);
+    })
+    .slice(0, 5);
 
-  feed.innerHTML = recent
-    .map((h, i) => {
+  return recent
+    .map((h) => {
       const title = h.title.length > 48 ? h.title.slice(0, 48) + "…" : h.title;
       return `<div class="feed-item">
-  <span class="when">${labels[i]}</span>
-  <span class="who">${esc(verbs[i])} · <span>${esc(title)}</span></span>
+  <span class="when">${esc(relativeTime(h.created))}</span>
+  <span class="who">New hunt · <span>${esc(title)}</span></span>
   <span class="tag ${catTagClass(h)}">${esc(h.category)}</span>
 </div>`;
     })
     .join("");
+}
+
+/** Compact relative time ("now", "5m", "3h", "2d", "4w", "6mo", "2y"). */
+function relativeTime(iso?: string): string {
+  if (!iso) return "";
+  const then = Date.parse(iso);
+  if (Number.isNaN(then)) return "";
+  const s = Math.max(0, (Date.now() - then) / 1000);
+  if (s < 60) return "now";
+  const m = s / 60;
+  if (m < 60) return `${Math.floor(m)}m`;
+  const h = m / 60;
+  if (h < 24) return `${Math.floor(h)}h`;
+  const d = h / 24;
+  if (d < 7) return `${Math.floor(d)}d`;
+  const w = d / 7;
+  if (w < 4.345) return `${Math.floor(w)}w`;
+  const mo = d / 30.44;
+  if (mo < 12) return `${Math.floor(mo)}mo`;
+  return `${Math.floor(d / 365.25)}y`;
 }
 
 // ----- Leaderboard -----
@@ -440,12 +510,12 @@ function updateLibFooter(shown: number, filteredTotal: number) {
 
 // ----- Helpers -----
 
+function idNum(id: string): number {
+  return parseInt(id.replace(/\D/g, ""), 10) || 0;
+}
+
 function byIdDesc(hunts: Hunt[]): Hunt[] {
-  return [...hunts].sort((a, b) => {
-    const na = parseInt(a.id.replace(/\D/g, ""), 10) || 0;
-    const nb = parseInt(b.id.replace(/\D/g, ""), 10) || 0;
-    return nb - na;
-  });
+  return [...hunts].sort((a, b) => idNum(b.id) - idNum(a.id));
 }
 
 function extractHandle(link: string): string | null {
