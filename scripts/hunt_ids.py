@@ -1,8 +1,8 @@
 """Shared helpers for HEARTH hunt-ID parsing, allocation, and rewriting.
 
-Hunt IDs use the format ``H-YYYY-NNN`` (files under ``Flames/``). Older hunts
-use ``HNNN`` (and ``B``/``A`` prefixes for Embers/Alchemy); those are a separate
-namespace and are intentionally ignored by the ``H-YYYY-NNN`` allocator here.
+Flames hunt IDs use the format ``HNNN`` (e.g. ``H200``), one monotonic sequence
+across the whole catalog. Embers/Alchemy use ``BNNN``/``MNNN`` in their own
+namespaces; this allocator is Flames-only and ignores them.
 """
 
 from __future__ import annotations
@@ -11,17 +11,17 @@ import re
 from pathlib import Path
 from typing import Iterable
 
-HUNT_STEM_RE = re.compile(r"^H-(\d{4})-(\d{3,})$")
+HUNT_STEM_RE = re.compile(r"^H(\d+)$")
 
 
 def parse_hunt_number(stem: str) -> int | None:
-    """Return the numeric part of an ``H-YYYY-NNN`` stem, or None if it isn't one."""
+    """Return the numeric part of an ``HNNN`` stem, or None if it isn't one."""
     match = HUNT_STEM_RE.match(stem)
-    return int(match.group(2)) if match else None
+    return int(match.group(1)) if match else None
 
 
 def existing_numbers(names: Iterable[str]) -> set[int]:
-    """Collect the numeric IDs from an iterable of ``H-YYYY-NNN(.md)`` names/paths."""
+    """Collect the numeric IDs from an iterable of ``HNNN(.md)`` names/paths."""
     nums: set[int] = set()
     for name in names:
         num = parse_hunt_number(Path(name).stem)
@@ -39,8 +39,8 @@ def next_free_number(existing: set[int]) -> int:
     return max(existing) + 1 if existing else 1
 
 
-def format_hunt_id(year: int, num: int) -> str:
-    return f"H-{year}-{num:03d}"
+def format_hunt_id(num: int) -> str:
+    return f"H{num:03d}"
 
 
 def rewrite_hunt_id(path: Path, new_id: str) -> Path:
@@ -59,7 +59,7 @@ def rewrite_hunt_id(path: Path, new_id: str) -> Path:
         lines[0] = f"# {new_id}"
     text = "\n".join(lines)
 
-    # Replace a populated Hunt# cell (e.g. "| H-2026-001 |"); a no-op for the
+    # Replace a populated Hunt# cell (e.g. "| H200 |"); a no-op for the
     # common case where generated files leave that cell empty.
     text = re.sub(rf"\|\s*{re.escape(old_id)}\s*\|", f"| {new_id} |", text, count=1)
 

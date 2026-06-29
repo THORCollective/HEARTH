@@ -10,10 +10,13 @@ from scripts.hunt_ids import (
 
 
 def test_parse_hunt_number():
-    assert parse_hunt_number("H-2026-007") == 7
-    assert parse_hunt_number("H-2026-012") == 12
-    assert parse_hunt_number("H001") is None  # old namespace ignored
-    assert parse_hunt_number("B-2026-001") is None  # Embers prefix, not H
+    assert parse_hunt_number("H200") == 200
+    assert parse_hunt_number("H001") == 1
+    assert parse_hunt_number("B001") is None  # Embers prefix, not H
+    assert parse_hunt_number("M001") is None  # Alchemy prefix, not H
+    assert (
+        parse_hunt_number("H-2026-007") is None
+    )  # legacy year format, no longer minted
     assert parse_hunt_number("not-an-id") is None
 
 
@@ -25,8 +28,8 @@ def test_next_free_number():
 
 
 def test_format_hunt_id():
-    assert format_hunt_id(2026, 3) == "H-2026-003"
-    assert format_hunt_id(2026, 42) == "H-2026-042"
+    assert format_hunt_id(3) == "H003"
+    assert format_hunt_id(200) == "H200"
 
 
 def _write_hunt(path: Path, hunt_id: str, hunt_cell: str = "") -> None:
@@ -42,52 +45,48 @@ def _write_hunt(path: Path, hunt_id: str, hunt_cell: str = "") -> None:
 
 
 def test_rewrite_hunt_id_renames_and_updates_heading(tmp_path):
-    src = tmp_path / "H-2026-001.md"
-    _write_hunt(src, "H-2026-001")  # empty Hunt# cell — the real generated format
-    new_path = rewrite_hunt_id(src, "H-2026-003")
-    assert new_path.name == "H-2026-003.md"
+    src = tmp_path / "H200.md"
+    _write_hunt(src, "H200")  # empty Hunt# cell — the real generated format
+    new_path = rewrite_hunt_id(src, "H202")
+    assert new_path.name == "H202.md"
     assert not src.exists()
     text = new_path.read_text()
-    assert text.splitlines()[0] == "# H-2026-003"
-    assert "# H-2026-001" not in text
+    assert text.splitlines()[0] == "# H202"
+    assert "# H200" not in text
     assert "## Why" in text and "## References" in text  # body preserved
 
 
 def test_rewrite_hunt_id_updates_populated_table_cell(tmp_path):
-    src = tmp_path / "H-2026-002.md"
-    _write_hunt(src, "H-2026-002", hunt_cell="H-2026-002")
-    new_path = rewrite_hunt_id(src, "H-2026-004")
+    src = tmp_path / "H201.md"
+    _write_hunt(src, "H201", hunt_cell="H201")
+    new_path = rewrite_hunt_id(src, "H203")
     text = new_path.read_text()
-    assert "| H-2026-004 |" in text
-    assert "H-2026-002" not in text
+    assert "| H203 |" in text
+    assert "H201" not in text
 
 
 def test_find_id_problems_flags_main_collision():
-    added = [("H-2026-002", "H-2026-002")]
-    problems = find_id_problems(
-        added, main_ids={"H-2026-001", "H-2026-002"}, all_stems=["H-2026-002"]
-    )
+    added = [("H201", "H201")]
+    problems = find_id_problems(added, main_ids={"H200", "H201"}, all_stems=["H201"])
     assert any("already exists on main" in p for p in problems)
 
 
 def test_find_id_problems_clean_add():
-    added = [("H-2026-003", "H-2026-003")]
+    added = [("H202", "H202")]
     problems = find_id_problems(
         added,
-        main_ids={"H-2026-001", "H-2026-002"},
-        all_stems=["H-2026-001", "H-2026-002", "H-2026-003"],
+        main_ids={"H200", "H201"},
+        all_stems=["H200", "H201", "H202"],
     )
     assert problems == []
 
 
 def test_find_id_problems_heading_mismatch():
-    added = [("H-2026-003", "H-2026-002")]
-    problems = find_id_problems(added, main_ids=set(), all_stems=["H-2026-003"])
+    added = [("H202", "H201")]
+    problems = find_id_problems(added, main_ids=set(), all_stems=["H202"])
     assert any("does not match filename" in p for p in problems)
 
 
 def test_find_id_problems_duplicate_in_tree():
-    problems = find_id_problems(
-        [], main_ids=set(), all_stems=["H-2026-001", "H-2026-001"]
-    )
+    problems = find_id_problems([], main_ids=set(), all_stems=["H200", "H200"])
     assert any("duplicate" in p.lower() for p in problems)
