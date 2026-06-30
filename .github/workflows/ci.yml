@@ -42,3 +42,24 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  # Errors-only lint of the Python pipeline scripts. Catches syntax errors and
+  # undefined names — e.g. a used import removed by an over-eager cleanup, which
+  # is exactly what broke hunt drafting (a missing `import re` crashed every CTI
+  # submission at runtime, past where py_compile or the build job would notice).
+  python-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install flake8
+        run: pip install flake8
+
+      - name: Lint pipeline scripts (errors only)
+        run: flake8 scripts/ .github/scripts/ --count --select=E9,F63,F7,F82 --show-source --statistics
