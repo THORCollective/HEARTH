@@ -7015,6 +7015,51 @@ const HUNTS_DATA = [
     "created": "2026-06-27T07:17:02-05:00"
   },
   {
+    "id": "H209",
+    "category": "Flames",
+    "title": "SimpleHelp technician session launches TaskWeaver and reads developer secrets",
+    "tactic": "Initial Access, Execution, Command and Control, Credential Access, Collection, Exfiltration",
+    "notes": "Endpoint EDR process telemetry - Core filter: SimpleHelp service or technician process spawning `node.exe`, `powershell.exe`, `wscript.exe`, `cscript.exe`, `mshta.exe`, or a user-writable executable. Triage values: `process command line`, `parent process command line`, `file path`, `user`, `host`. Pivot: require `jquery.js` or `jsquery.js` staging under `AppData`, `ProgramData`, `Temp`, or a remote support working directory. Strong red flags: `SimpleService.exe`, `Manage Remote Access Service.exe`, or another SimpleHelp lineage launching `node.exe <path>\\jquery.js`.\nEndpoint EDR file telemetry - Core filter: the same process lineage reading credential stores after loader execution. Triage values: `file path`, `process command line`, `parent process command line`, `user`, `host`. Pivot: reads or copies of `Cookies`, `Login Data`, `%USERPROFILE%\\.ssh`, `.aws\\credentials`, `.npmrc`, `.pypirc`, `Docker config.json`, `.git-credentials`, or source-control token files. Strong red flags: several secret families touched within minutes by the same remote support child process.\nEndpoint network and DNS telemetry - Core filter: child process from SimpleHelp lineage opening outbound connections that are not normal SimpleHelp service traffic. Triage values: `source IP address`, `remote URL`, `remote IP`, `destination port`, `user agent`. Correlation: join `node.exe` loader execution to DNS for `trycloudflare.com` or other temporary tunnel infrastructure, then outbound encrypted C2 from the same host. Strong red flags: `jquery.js` fetched from a temporary tunnel, followed by credential-store reads.\nCloud audit logs - Core filter: after endpoint secret reads, look for new credential use or long-lived credential creation by the same user or developer principal. Triage values: `user`, `source IP address`, `user agent`, `session ID`, `request ID`. Pivot: `CreateAccessKey`, `GetSecretValue`, `ListSecrets`, `AssumeRole`, service-account key creation, storage listing, or source repository token use. Strong red flags: cloud control-plane activity from infrastructure not tied to the endpoint shortly after TaskWeaver execution.\n",
+    "tags": [
+      "simplehelp",
+      "cve_2026_48558",
+      "taskweaver",
+      "djinn_stealer",
+      "rmm_abuse",
+      "credential_access",
+      "nodejs",
+      "T1190",
+      "T1219",
+      "T1059.007",
+      "T1105",
+      "T1552.001",
+      "T1555",
+      "T1005",
+      "T1041"
+    ],
+    "techniques": [
+      "T1190",
+      "T1219",
+      "T1059.007",
+      "T1105",
+      "T1552.001",
+      "T1555",
+      "T1005",
+      "T1041"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Joshua Strickland",
+      "link": ""
+    },
+    "why": "- The source reporting is current and tied to active CVE-2026-48558 exploitation, so the hunt starts from observed post-exploitation behavior instead of patch state or internet exposure.\n- The detection survives infrastructure rotation because it keys on remote support process lineage, Node.js loader staging, and credential-store access, not a domain list alone.\n- The required telemetry is common in MDR work: endpoint process, file, and network events can show the loader chain, and cloud audit logs can show follow-on credential use.\n- False positives are controllable because legitimate SimpleHelp support activity should not load a jQuery-named Node payload and immediately read browser, SSH, package registry, and cloud credential stores.",
+    "references": "- [CVE-2026-48558: SimpleHelp OIDC Auth Bypass Used to Deploy Infostealer Payloads](https://socradar.io/blog/cve-2026-48558-simplehelp-oidc-infostealer/)\n- [A Djinn in the Machine: TaskWeaver's Node.js Intrusion Chain](https://blackpointcyber.com/blog/a-djinn-in-the-machine-taskweavers-node-js-intrusion-chain/)\n- [Critical SimpleHelp flaw exploited to deploy new stealer malware](https://www.bleepingcomputer.com/news/security/hackers-exploit-critical-simplehelp-flaw-deploy-new-djinn-infostealer-taskweaver-malware/)",
+    "file_path": "Flames/H209.md",
+    "created": "2026-06-30T10:19:48-04:00"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
