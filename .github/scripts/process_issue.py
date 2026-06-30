@@ -2,7 +2,7 @@ import os
 import re
 import requests
 from bs4 import BeautifulSoup
-import PyPDF2
+import pypdf
 import docx
 import io
 from pathlib import Path
@@ -152,7 +152,7 @@ def get_cti_content(url):
 
         if 'pdf' in content_type:
             with io.BytesIO(response.content) as f:
-                reader = PyPDF2.PdfReader(f)
+                reader = pypdf.PdfReader(f)
                 text = "".join(page.extract_text() for page in reader.pages)
             return text
         elif 'vnd.openxmlformats-officedocument.wordprocessingml.document' in content_type:

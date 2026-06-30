@@ -14,7 +14,7 @@ readability-lxml>=0.8.0
 lxml>=5.0.0
 
 # Document Processing
-PyPDF2>=3.0.0
+pypdf>=4.0.0
 python-docx>=1.0.0
 
 # Utilities
@@ -24,4 +24,4 @@ jsonschema==4.23.0
 
 # Optional: For local GitHub Actions testing
 # act (install via brew or binary, not pip)
-pytest==8.3.3
+pytest>=9.0.3
