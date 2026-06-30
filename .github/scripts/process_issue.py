@@ -214,6 +214,13 @@ def get_cti_content(url):
                     print(f"✅ JS rendering succeeded ({len(js_content.split())} words)")
                     return js_content
 
+                # Heaviest fallback: a real headless browser, which can solve
+                # JS bot-challenges (e.g. AWS WAF) the paths above cannot.
+                browser_content = fetch_with_browser(url)
+                if browser_content and len(browser_content.split()) > word_count:
+                    print(f"✅ Browser rendering succeeded ({len(browser_content.split())} words)")
+                    return browser_content
+
             return final_text
 
     except requests.exceptions.HTTPError as e:
@@ -266,6 +273,57 @@ def try_js_rendering(url):
     except Exception as e:
         print(f"⚠️  JS rendering failed: {e}")
         return None
+
+def fetch_with_browser(url):
+    """
+    Render the page in a headless Chromium browser to defeat JavaScript bot
+    challenges (e.g. AWS WAF, Cloudflare) that serve no extractable content to
+    a plain HTTP client. Returns extracted article text, or None on failure.
+
+    This is the heaviest fallback and only runs after the lightweight paths
+    return too little content, so the common case never pays the browser cost.
+    """
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        print("⚠️  playwright not available, skipping browser fallback")
+        return None
+
+    try:
+        with sync_playwright() as pw:
+            browser = pw.chromium.launch(headless=True)
+            try:
+                page = browser.new_page(user_agent=get_user_agent())
+                page.goto(url, wait_until='domcontentloaded', timeout=45000)
+                # Give the challenge script time to solve and reload the page.
+                try:
+                    page.wait_for_load_state('networkidle', timeout=20000)
+                except Exception:
+                    pass
+                page.wait_for_timeout(3000)
+                html = page.content()
+            finally:
+                browser.close()
+    except Exception as e:
+        print(f"⚠️  Browser fallback failed: {e}")
+        return None
+
+    # Prefer readability to strip nav/footer chrome; fall back to raw parsing.
+    try:
+        from readability import Document
+        html = Document(html).summary()
+    except Exception:
+        pass
+
+    soup = BeautifulSoup(html, 'html.parser')
+    for junk in soup(["script", "style", "meta", "noscript"]):
+        junk.decompose()
+    paragraphs = [
+        el.get_text(strip=True)
+        for el in soup.find_all(['p', 'h1', 'h2', 'h3', 'h4', 'li', 'blockquote'])
+        if len(el.get_text(strip=True)) > 20
+    ]
+    return '\n\n'.join(paragraphs) or None
 
 def save_cti_content_to_file(content, issue_number):
     """
@@ -345,6 +403,17 @@ def main():
     # Download the full content
     print("Downloading CTI content from URL...")
     content = get_cti_content(cti_url)
+
+    # An empty / near-empty result is a failure, not a 0-char "success": a JS
+    # bot-challenge (e.g. AWS WAF) can return no extractable text without raising
+    # an HTTP error. Route it to the failure path so the submitter is asked to
+    # paste the content instead of seeing a misleading download confirmation.
+    if content and not content.startswith("Error") and len(content.strip()) < 50:
+        content = (
+            "Error: The page returned no extractable text. This usually means the "
+            "site is behind a JavaScript bot-challenge (e.g. AWS WAF or Cloudflare) "
+            "that automated fetching could not pass."
+        )
 
     # Check if content starts with "Error:" (our error messages, not content containing the word "error")
     if content.startswith("Error"):
