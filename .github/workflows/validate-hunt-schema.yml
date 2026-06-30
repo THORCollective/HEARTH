@@ -8,6 +8,7 @@ on:
       - "Alchemy/**.md"
       - "scripts/hunt_parser.py"
       - "scripts/hunt_schema.py"
+      - "scripts/cti_extract.py"
       - "scripts/tests/**"
   push:
     branches: [main]

@@ -7,6 +7,13 @@ import docx
 import io
 from pathlib import Path
 import random
+import sys
+
+_REPO_ROOT = str(Path(__file__).resolve().parent.parent.parent)
+if _REPO_ROOT not in sys.path:
+    sys.path.insert(0, _REPO_ROOT)
+
+from scripts.cti_extract import extract_readable_text
 
 def get_user_agent():
     """
@@ -239,7 +246,6 @@ def try_js_rendering(url):
     This is a lightweight approach that works in GitHub Actions.
     """
     try:
-        from readability import Document
         import urllib.request
 
         # Fetch with a real browser user agent
@@ -251,21 +257,7 @@ def try_js_rendering(url):
         with urllib.request.urlopen(req, timeout=20) as response:
             html = response.read()
 
-        # Use readability to extract main content
-        doc = Document(html)
-        content_html = doc.summary()
-
-        # Parse the cleaned HTML
-        soup = BeautifulSoup(content_html, 'html.parser')
-
-        # Extract text preserving structure
-        paragraphs = []
-        for element in soup.find_all(['p', 'h1', 'h2', 'h3', 'h4', 'li', 'blockquote']):
-            text = element.get_text(strip=True)
-            if text and len(text) > 20:
-                paragraphs.append(text)
-
-        return '\n\n'.join(paragraphs)
+        return extract_readable_text(html)
 
     except ImportError:
         print("⚠️  readability-lxml not available, skipping JS rendering")
@@ -292,22 +284,6 @@ def fetch_with_browser(url, attempts=3, min_words=120):
         print("⚠️  playwright not available, skipping browser fallback")
         return None
 
-    def _extract(html):
-        try:
-            from readability import Document
-            html = Document(html).summary()
-        except Exception:
-            pass
-        soup = BeautifulSoup(html, 'html.parser')
-        for junk in soup(["script", "style", "meta", "noscript"]):
-            junk.decompose()
-        paragraphs = [
-            el.get_text(strip=True)
-            for el in soup.find_all(['p', 'h1', 'h2', 'h3', 'h4', 'li', 'blockquote'])
-            if len(el.get_text(strip=True)) > 20
-        ]
-        return '\n\n'.join(paragraphs)
-
     for attempt in range(1, attempts + 1):
         text = ''
         try:
@@ -324,7 +300,7 @@ def fetch_with_browser(url, attempts=3, min_words=120):
                     # Poll until real content appears; nudge with a reload if stuck.
                     for i in range(15):
                         page.wait_for_timeout(2000)
-                        text = _extract(page.content())
+                        text = extract_readable_text(page.content())
                         if len(text.split()) >= min_words:
                             break
                         if i in (5, 10):
