@@ -7,6 +7,9 @@ on:
 jobs:
   create_pr:
     if: github.event.label.name == 'approved'
+    concurrency:
+      group: hunt-id-reassign
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -27,8 +30,10 @@ jobs:
       - name: "Fetch main"
         run: git fetch origin main
 
-      - name: "Reassign hunt ID if it collides with main"
+      - name: "Reassign hunt ID if it collides with main or another draft"
         id: reassign
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: python scripts/reassign_hunt_id.py
 
       - name: "Commit and push reassigned hunt ID"
