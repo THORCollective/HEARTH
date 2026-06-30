@@ -137,7 +137,8 @@ jobs:
           if grep -q "### CTI Content" /tmp/issue_body.txt; then
             # Check if it's not the placeholder or error message
             if ! grep -q "This will be processed automatically by our system" /tmp/issue_body.txt && \
-               ! grep -q "Failed to retrieve or process content" /tmp/issue_body.txt; then
+               ! grep -q "Failed to retrieve or process content" /tmp/issue_body.txt && \
+               ! grep -q "Content successfully downloaded" /tmp/issue_body.txt; then
               has_manual_content="true"
             fi
           fi
