@@ -7511,5 +7511,43 @@
     "references": "- [MITRE ATT&CK T1087.004 — Account Discovery: Cloud Account](https://attack.mitre.org/techniques/T1087/004/)\n- [source report — Elastic: Azure AD Graph Activity Logs](https://www.elastic.co/security-labs/aad-graph-activity-logs-threat-detection)\n- [MITRE ATT&CK T1069.003 — Permission Groups Discovery: Cloud Groups (cross-ref)](https://attack.mitre.org/techniques/T1069/003/)\n- [MITRE ATT&CK T1526 — Cloud Service Discovery (cross-ref)](https://attack.mitre.org/techniques/T1526/)\n- [Microsoft Security Experts — Threat hunting with Microsoft Graph activity logs (KQL recon thresholds on /users, /groups, /serviceprincipals, /rolemanagement)](https://techcommunity.microsoft.com/blog/microsoftsecurityexperts/cloud-forensics-why-enabling-microsoft-azure-graph-activity-logs-matters/4234632)\n- [Cloudbrothers — Detect threats using Microsoft Graph activity logs (Part 1)](https://cloudbrothers.info/en/detect-threats-microsoft-graph-logs-part-1/)\n- [Azure-Sentinel — Microsoft Graph Activity Logs reconnaissance detection pack (PR #10643)](https://github.com/Azure/Azure-Sentinel/pull/10643)\n- [Unit 42 — Cloud Discovery with AzureHound: threat actor misuse](https://unit42.paloaltonetworks.com/threat-actor-misuse-of-azurehound/)\n- [dirkjanm — Introducing ROADtools / ROADrecon, the Azure AD exploration framework](https://dirkjanm.io/introducing-roadtools-and-roadrecon-azure-ad-exploration-framework/)\n- [Splunk Security Content — Azure AD Service Principal Enumeration detection](https://research.splunk.com/cloud/3f0647ce-add5-4436-8039-cbd1abe74563/)",
     "file_path": "Alchemy/M022.md",
     "created": "2026-06-20T07:14:58-05:00"
+  },
+  {
+    "id": "M023",
+    "category": "Alchemy",
+    "title": "A per-identity baseline over Windows authentication events (NTLM and Kerberos network logons) can distinguish a compromised credential moving laterally from legitimate accounts, by modeling each source account's normal set of distinct destination hosts and flagging windows where authentication breadth — distinct destination-host fan-out — spikes far above that account's own rolling baseline. Because service and automation accounts legitimately authenticate to hundreds of hosts, a global fan-out threshold is unworkable in both directions; a per-user robust baseline (median + k*MAD of distinct-host count) surfaces credential spread while tuning the always-busy service account out.",
+    "tactic": "Lateral Movement",
+    "notes": "ALCHEMY ANALYTIC — per-identity baseline, not a static rule. Platform: Windows / Active Directory (on-prem authentication). **Attacker pattern**: once an adversary captures a credential or hash, lateral movement fans the same account across many destination hosts it never normally touches — pass-the-hash (NTLM network logons) and Kerberos service-ticket use across the estate. In the LANL Unified Host & Network red-team data this is unmistakable: 104 compromised accounts touch a median of 20 distinct destination hosts (max 198) during the operation, versus a median of 1 for benign users in the same window — but a handful of benign service accounts legitimately reach thousands of hosts, which is exactly why a static org-wide cutoff fails. **Data sources**: Windows Security Event Log 4624 (logon; focus LogonType 3 = network), 4625 (failed logon), 4768/4769 (Kerberos TGT/TGS), or domain-controller authentication; the LANL `auth.txt` schema (time, source user@domain, destination user@domain, source computer, destination computer, auth type, logon type, auth orientation, success/failure) is a faithful research stand-in. Required fields: timestamp, source account, source host, destination host, auth type (NTLM/Kerberos), logon type, success. **Feature engineering** (per source account, sliding daily/hourly window): (1) `distinct_dst_hosts` = dcount(destination host) — the primary breadth signal; (2) `auth_volume` = total logon count (the foil dimension — volume alone cannot separate a chatty service account from a spreading credential); (3) `new_host_fraction` = share of destination hosts not seen for this account in its prior 30-day history (novelty); (4) `ntlm_network_fraction` = share of NTLM LogonType-3 events (pass-the-hash tell, T1550.002); (5) `failure_ratio` = 4625/(4624+4625) (spray/guessing corroborator). **Model approach**: fit a per-account robust baseline of `distinct_dst_hosts` over a rolling 30-day window using median + k*MAD (robust to a single busy day poisoning the baseline; mean+stddev inflates and goes blind), and flag windows where breadth exceeds the account's own envelope. A global threshold is the explicit foil: any cutoff low enough to catch a compromised user's 20-host fan-out also fires on every legitimate vulnerability-scanner, SCCM, or backup service account. **Fire conditions**: alert when `distinct_dst_hosts` exceeds the account's baseline envelope AND (`new_host_fraction` high OR `ntlm_network_fraction` high). **Tuning**: maintain a per-environment allowlist of known wide-reach service principals (scanners, patch management, monitoring, backup) and seed their baselines; apply a cold-start guard so a newly-onboarded account is not flagged until it has accrued baseline history. Cross-reference **T1550.002** (Use Alternate Authentication Material: Pass the Hash — the NTLM network-logon spread) and **T1078** (Valid Accounts — the captured credential is the precondition).",
+    "tags": [
+      "lateral_movement",
+      "authentication",
+      "ntlm",
+      "kerberos",
+      "pass_the_hash",
+      "credential_access",
+      "anomaly_detection",
+      "model_assisted",
+      "per_identity_baseline",
+      "active_directory",
+      "lanl",
+      "t1021",
+      "t1550_002",
+      "t1078",
+      "T1021"
+    ],
+    "techniques": [
+      "T1021"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Lateral movement is a *breadth* signal, not a *volume* one: a compromised\n  credential's tell is the set of **distinct destination hosts** it suddenly\n  reaches, not how many times it authenticates. Volume-based alerting chases the\n  noisiest service account and misses a credential that spreads quietly to twenty\n  machines.\n- A static, org-wide fan-out threshold fails in both directions — it drowns in the\n  legitimate scanners, patch-management, and backup accounts that reach hundreds\n  of hosts by design, and it misses a normal user account whose baseline is one or\n  two hosts the moment it jumps to ten. A per-identity baseline is the only thing\n  that separates \"normal for a service account\" from \"abnormal for this user.\"\n- The discriminator is empirically validated on real ground truth: in the LANL\n  Unified Host & Network red-team dataset, the 104 compromised accounts fan out to\n  a median of 20 distinct destination hosts (p95 76, max 198) during the\n  operation, while benign accounts in the same window sit at a median of 1 — yet\n  benign service accounts reach as many as ~9,400 hosts, confirming that only a\n  per-account baseline, not a global cutoff, makes the separation clean.\n- A robust per-account baseline (median + MAD, not mean + stddev) matters\n  operationally: red-team operations are bursty, and a single legitimately-busy\n  day in the baseline window inflates a mean/stddev threshold enough to mask the\n  later spread. The median ignores the lone spike, so the baseline stays tight.\n  NTLM-network-logon fraction and new-host novelty sharpen the signal toward\n  pass-the-hash specifically.",
+    "references": "- [MITRE ATT&CK T1021 — Remote Services](https://attack.mitre.org/techniques/T1021/)\n- [MITRE ATT&CK T1550.002 — Use Alternate Authentication Material: Pass the Hash](https://attack.mitre.org/techniques/T1550/002/)\n- [MITRE ATT&CK T1078 — Valid Accounts](https://attack.mitre.org/techniques/T1078/)\n- [LANL Unified Host and Network Data Set — Turcotte, Kent & Hash (comprehensive cyber-security data with red-team labels)](https://csr.lanl.gov/data/2017/)\n- [Hopper: Modeling and Detecting Lateral Movement — Ho et al., USENIX Security 2021](https://www.usenix.org/conference/usenixsecurity21/presentation/ho)\n- [A.D. Kent — Comprehensive, Multi-Source Cyber-Security Events (LANL authentication data)](https://csr.lanl.gov/data/cyber1/)",
+    "file_path": "Alchemy/M023.md",
+    "created": "2026-06-29T21:01:31-05:00"
   }
 ]
