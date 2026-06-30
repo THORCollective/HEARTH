@@ -274,14 +274,17 @@ def try_js_rendering(url):
         print(f"⚠️  JS rendering failed: {e}")
         return None
 
-def fetch_with_browser(url):
+def fetch_with_browser(url, attempts=3, min_words=120):
     """
     Render the page in a headless Chromium browser to defeat JavaScript bot
     challenges (e.g. AWS WAF, Cloudflare) that serve no extractable content to
     a plain HTTP client. Returns extracted article text, or None on failure.
 
-    This is the heaviest fallback and only runs after the lightweight paths
-    return too little content, so the common case never pays the browser cost.
+    The challenge solves in variable time and occasionally fails outright, so
+    each attempt waits for the network to settle and then polls for real
+    content (reloading if still stuck), and the whole launch is retried. This
+    is the heaviest fallback and only runs after the lightweight paths return
+    too little content, so the common case never pays the browser cost.
     """
     try:
         from playwright.sync_api import sync_playwright
@@ -289,41 +292,56 @@ def fetch_with_browser(url):
         print("⚠️  playwright not available, skipping browser fallback")
         return None
 
-    try:
-        with sync_playwright() as pw:
-            browser = pw.chromium.launch(headless=True)
-            try:
-                page = browser.new_page(user_agent=get_user_agent())
-                page.goto(url, wait_until='domcontentloaded', timeout=45000)
-                # Give the challenge script time to solve and reload the page.
+    def _extract(html):
+        try:
+            from readability import Document
+            html = Document(html).summary()
+        except Exception:
+            pass
+        soup = BeautifulSoup(html, 'html.parser')
+        for junk in soup(["script", "style", "meta", "noscript"]):
+            junk.decompose()
+        paragraphs = [
+            el.get_text(strip=True)
+            for el in soup.find_all(['p', 'h1', 'h2', 'h3', 'h4', 'li', 'blockquote'])
+            if len(el.get_text(strip=True)) > 20
+        ]
+        return '\n\n'.join(paragraphs)
+
+    for attempt in range(1, attempts + 1):
+        text = ''
+        try:
+            with sync_playwright() as pw:
+                browser = pw.chromium.launch(headless=True)
                 try:
-                    page.wait_for_load_state('networkidle', timeout=20000)
-                except Exception:
-                    pass
-                page.wait_for_timeout(3000)
-                html = page.content()
-            finally:
-                browser.close()
-    except Exception as e:
-        print(f"⚠️  Browser fallback failed: {e}")
-        return None
+                    page = browser.new_page(user_agent=get_user_agent())
+                    page.goto(url, wait_until='domcontentloaded', timeout=45000)
+                    # Let the challenge script run and reload the page.
+                    try:
+                        page.wait_for_load_state('networkidle', timeout=15000)
+                    except Exception:
+                        pass
+                    # Poll until real content appears; nudge with a reload if stuck.
+                    for i in range(15):
+                        page.wait_for_timeout(2000)
+                        text = _extract(page.content())
+                        if len(text.split()) >= min_words:
+                            break
+                        if i in (5, 10):
+                            try:
+                                page.reload(wait_until='domcontentloaded', timeout=45000)
+                            except Exception:
+                                pass
+                finally:
+                    browser.close()
+        except Exception as e:
+            print(f"⚠️  Browser attempt {attempt}/{attempts} failed: {e}")
+            continue
+        if len(text.split()) >= min_words:
+            return text
+        print(f"⚠️  Browser attempt {attempt}/{attempts}: insufficient content ({len(text.split())} words)")
 
-    # Prefer readability to strip nav/footer chrome; fall back to raw parsing.
-    try:
-        from readability import Document
-        html = Document(html).summary()
-    except Exception:
-        pass
-
-    soup = BeautifulSoup(html, 'html.parser')
-    for junk in soup(["script", "style", "meta", "noscript"]):
-        junk.decompose()
-    paragraphs = [
-        el.get_text(strip=True)
-        for el in soup.find_all(['p', 'h1', 'h2', 'h3', 'h4', 'li', 'blockquote'])
-        if len(el.get_text(strip=True)) > 20
-    ]
-    return '\n\n'.join(paragraphs) or None
+    return None
 
 def save_cti_content_to_file(content, issue_number):
     """
