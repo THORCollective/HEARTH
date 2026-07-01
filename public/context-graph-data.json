@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-24T19:29:24.516Z",
+  "generated_at": "2026-07-01T08:38:38.794Z",
   "stats": {
     "totalNodes": 509,
     "totalEdges": 3868,
@@ -13,8 +13,8 @@
       "newest": "2026-03-10T12:04:11.000Z"
     },
     "averageHypothesisAgeDays": 255,
-    "threat_actors": 2,
-    "campaigns": 4,
+    "threat_actors": 0,
+    "campaigns": 0,
     "hottest_technique": "T1105",
     "hottest_technique_score": 1,
     "intel_sources": 23
@@ -3944,7 +3944,7 @@
       "tactics": [
         "Execution"
       ],
-      "prevalence_score": 0.83,
+      "prevalence_score": 0.823,
       "actor_count": 85,
       "campaign_count": 17
     },
@@ -3984,7 +3984,7 @@
       "tactics": [
         "Defense Evasion"
       ],
-      "prevalence_score": 0.286,
+      "prevalence_score": 0.279,
       "actor_count": 29,
       "campaign_count": 5
     },
@@ -4035,7 +4035,7 @@
       "tactics": [
         "Execution"
       ],
-      "prevalence_score": 0.469,
+      "prevalence_score": 0.463,
       "actor_count": 42,
       "campaign_count": 12
     },
@@ -4267,7 +4267,7 @@
       "tactics": [
         "Command and Control"
       ],
-      "prevalence_score": 0.204,
+      "prevalence_score": 0.197,
       "actor_count": 15,
       "campaign_count": 6
     },
@@ -4695,7 +4695,7 @@
       "tactics": [
         "Exfiltration"
       ],
-      "prevalence_score": 0.34,
+      "prevalence_score": 0.333,
       "actor_count": 27,
       "campaign_count": 10
     },
@@ -4802,7 +4802,7 @@
         "Persistence",
         "Privilege Escalation"
       ],
-      "prevalence_score": 0.551,
+      "prevalence_score": 0.544,
       "actor_count": 54,
       "campaign_count": 12
     },
@@ -4857,7 +4857,7 @@
       "tactics": [
         "Resource Development"
       ],
-      "prevalence_score": 0.524,
+      "prevalence_score": 0.517,
       "actor_count": 44,
       "campaign_count": 15
     },
@@ -34614,5 +34614,5 @@
       "type": "MOTIVATED_BY"
     }
   ],
-  "phase2a_enriched_at": "2026-06-24T19:29:24.516Z"
+  "phase2a_enriched_at": "2026-07-01T08:38:38.794Z"
 }
