@@ -70,25 +70,55 @@ def rewrite_hunt_id(path: Path, new_id: str) -> Path:
     return new_path
 
 
+def _norm_submitter(name: str | None) -> str:
+    """Case/space-insensitive submitter name for identity comparison."""
+    return re.sub(r"\s+", " ", (name or "").strip()).casefold()
+
+
 def find_id_problems(
     added: list[tuple[str, str | None]],
     main_ids: set[str],
     all_stems: list[str],
+    modified: list[tuple[str, str | None, str | None, str | None]] | None = None,
 ) -> list[str]:
     """Return human-readable collision problems for a PR (empty list = clean).
 
-    ``added`` is ``[(stem, heading_id), ...]`` for hunt files the PR adds.
+    ``added`` is ``[(stem, declared_id), ...]`` for hunt files the PR adds, where
+    ``declared_id`` is the file's frontmatter ``id`` (or line-1 heading for legacy
+    hunts), or None if none is present.
+
+    ``modified`` is ``[(stem, declared_id, pr_submitter, main_submitter), ...]``
+    for hunt files the PR changes in place. A modified hunt whose submitter no
+    longer matches the version on ``main`` is overwriting a different
+    contributor's hunt under the same ID — it should get a new ID instead.
+
     ``main_ids`` is the set of hunt stems already on ``main``.
     ``all_stems`` is every hunt stem in the working tree (for duplicate detection).
     """
     problems: list[str] = []
 
-    for stem, heading_id in added:
+    for stem, declared_id in added:
         if stem in main_ids:
             problems.append(f"{stem}.md: hunt ID '{stem}' already exists on main")
-        if heading_id is not None and heading_id != stem:
+        if declared_id is not None and declared_id != stem:
             problems.append(
-                f"{stem}.md: heading ID '{heading_id}' does not match filename '{stem}'"
+                f"{stem}.md: declared ID '{declared_id}' does not match filename '{stem}'"
+            )
+
+    for stem, declared_id, pr_submitter, main_submitter in modified or []:
+        if declared_id is not None and declared_id != stem:
+            problems.append(
+                f"{stem}.md: declared ID '{declared_id}' does not match filename '{stem}'"
+            )
+        if (
+            pr_submitter
+            and main_submitter
+            and _norm_submitter(pr_submitter) != _norm_submitter(main_submitter)
+        ):
+            problems.append(
+                f"{stem}.md: modifies an existing hunt in place but changes its "
+                f"submitter ('{main_submitter}' -> '{pr_submitter}'), which overwrites "
+                f"a different contributor's hunt under the same ID; reassign a new ID instead"
             )
 
     seen: set[str] = set()
