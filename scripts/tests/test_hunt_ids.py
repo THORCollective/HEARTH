@@ -90,3 +90,48 @@ def test_find_id_problems_heading_mismatch():
 def test_find_id_problems_duplicate_in_tree():
     problems = find_id_problems([], main_ids=set(), all_stems=["H200", "H200"])
     assert any("duplicate" in p.lower() for p in problems)
+
+
+def test_find_id_problems_flags_modified_hunt_overwrite():
+    # Regression for #320: H210.md kept its ID but was overwritten with a
+    # different contributor's hunt. The submitter change is the tell.
+    modified = [("H210", "H210", "Joshua Strickland", "th3CyF0x")]
+    problems = find_id_problems(
+        [], main_ids={"H210"}, all_stems=["H210"], modified=modified
+    )
+    assert any("submitter" in p.lower() for p in problems)
+
+
+def test_find_id_problems_allows_same_submitter_edit():
+    # A contributor editing their own hunt in place is fine.
+    modified = [("H210", "H210", "th3CyF0x", "th3CyF0x")]
+    problems = find_id_problems(
+        [], main_ids={"H210"}, all_stems=["H210"], modified=modified
+    )
+    assert problems == []
+
+
+def test_find_id_problems_submitter_compare_is_normalized():
+    # Whitespace/case differences are not an identity change.
+    modified = [("H210", "H210", "  th3CyF0x  ", "th3cyf0x")]
+    problems = find_id_problems(
+        [], main_ids={"H210"}, all_stems=["H210"], modified=modified
+    )
+    assert problems == []
+
+
+def test_find_id_problems_flags_modified_id_filename_mismatch():
+    modified = [("H210", "H999", "same", "same")]
+    problems = find_id_problems(
+        [], main_ids={"H210"}, all_stems=["H210"], modified=modified
+    )
+    assert any("does not match filename" in p for p in problems)
+
+
+def test_find_id_problems_skips_identity_when_submitter_unknown():
+    # If either side's submitter can't be determined, don't guess.
+    modified = [("H210", "H210", "New Person", None)]
+    problems = find_id_problems(
+        [], main_ids={"H210"}, all_stems=["H210"], modified=modified
+    )
+    assert problems == []
