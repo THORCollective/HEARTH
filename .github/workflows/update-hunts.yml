@@ -9,6 +9,13 @@ on:
       - "Embers/**.md"
       - "Alchemy/**.md"
 
+# Serialize runs of this workflow so two rebuilds never race each other on the
+# same generated files. Don't cancel in-progress runs — each carries a real data
+# commit we want to land.
+concurrency:
+  group: update-hunts-data
+  cancel-in-progress: false
+
 jobs:
   update-data:
     runs-on: ubuntu-latest
@@ -37,9 +44,22 @@ jobs:
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add hunts-data.js public/hunts-data.json public/actor-mentions.json
           # Commit only if there are changes
-          if ! git diff --staged --quiet; then
-            git commit -m "chore: Auto-update hunt database"
-            git push
-          else
+          if git diff --staged --quiet; then
             echo "No changes to commit."
+            exit 0
           fi
+          git commit -m "chore: Auto-update hunt database"
+          # Retry with rebase: the sibling update-hunt-database job (pushes
+          # database/hunts.db) or a rapid second merge can land on main between
+          # checkout and push, causing a non-fast-forward rejection. Those touch
+          # different files, so a rebase reconciles cleanly.
+          for attempt in 1 2 3 4 5; do
+            if git push; then
+              exit 0
+            fi
+            echo "Push failed (attempt $attempt), rebasing on origin/main and retrying..."
+            git pull --rebase origin main
+            sleep 2
+          done
+          echo "::error::Failed to push hunt data after 5 attempts"
+          exit 1
