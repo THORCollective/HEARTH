@@ -7337,6 +7337,85 @@ const HUNTS_DATA = [
     "created": "2026-07-04T11:52:59-07:00"
   },
   {
+    "id": "H219",
+    "category": "Flames",
+    "title": "Windchill login JSP web shell followed by application-server command execution",
+    "tactic": "Initial Access, Persistence, Execution, Command and Control, Collection, Exfiltration",
+    "notes": "Endpoint file telemetry - Core filter: new or modified `*.jsp` under Windchill or FlexPLM application paths, especially `/Windchill/login/[0-9a-f]{16}.jsp`. Triage values: `file path`, `file hash`, `process command line`, `user account`. Pivot: inspect for `flst.txt` in `/tmp` or the Windchill working directory and compare suspicious JSP files to `55a1eb4c2d3da04376df39d7ba832569c6af1a37a0cf2b95f754ac898023a30c`.\nApplication HTTP logs - Core filter: `POST /Windchill/login/` where the requested path ends in a 16 lowercase hex character `.jsp` name, or requests containing `X-windchill-req:`. Triage values: `source IP address`, `user agent`, `request path`, `status code`. Correlation: line up the request time with the JSP file creation time and later command execution by the application service account. Strong red flags: requests from `5.180.41.35`, `172.111.38.31`, `216.152.148.54`, `104.243.35.131`, or `74.50.76.146` followed by new JSP creation.\nEndpoint process telemetry - Core filter: Windchill, FlexPLM, Tomcat, or `java.exe` service processes spawning `cmd.exe`, `powershell.exe`, `/bin/sh`, `bash`, `curl`, `wget`, `tar`, `zip`, or `7z`. Triage values: `parent process command line`, `process command line`, `working directory`, `destination IP address`. Pivot: same service account touching design, product, supplier, or archive files before outbound transfer.\nDNS or network telemetry - Core filter: application server outbound connections to PTC-listed infrastructure or new external hosts after JSP creation. Correlation: require prior web shell file write or application-server child shell before treating network activity as malicious. False positive: normal vendor update traffic should not be preceded by `/Windchill/login/[0-9a-f]{16}.jsp` creation or `X-windchill-req:` requests.\n",
+    "tags": [
+      "windchill",
+      "flexplm",
+      "jsp_web_shell",
+      "cve_2026_12569",
+      "web_shell",
+      "T1190",
+      "T1505.003",
+      "T1059",
+      "T1105",
+      "T1560",
+      "T1041"
+    ],
+    "techniques": [
+      "T1190",
+      "T1505.003",
+      "T1059",
+      "T1105",
+      "T1560",
+      "T1041"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Joshua Strickland",
+      "link": "https://novasky.io"
+    },
+    "why": "- CISA added CVE-2026-12569 to KEV and Field Effect reported active exploitation against Windchill and FlexPLM, which makes compromise assessment more useful than a patch-status check alone.\n- The web shell path pattern, `flst.txt` artifact, and application-server child process behavior survive IP rotation better than the listed C2 addresses, so the hunt does not depend on one short-lived IOC.\n- Most environments running Windchill or FlexPLM can collect endpoint file and process telemetry on the application server, and HTTP access logs add the request path needed to tie exploitation to the file write.\n- False positives are manageable because ordinary maintenance may touch application files, but it should not create `/Windchill/login/[0-9a-f]{16}.jsp` and then have the same service account spawn shells or transfer tools.",
+    "references": "- [Field Effect: Actively exploited PTC Windchill flaw allows unauthenticated RCE](https://fieldeffect.com/blog/ptc-windchill-flaw-allows-unauthenticated-rce)\n- [CISA Known Exploited Vulnerabilities Catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog)\n- [The Hacker News: CISA Adds Exploited PTC Windchill RCE Flaw to KEV as Web Shell Attacks Continue](https://thehackernews.com/2026/06/cisa-adds-exploited-ptc-windchill-rce.html)\n- [Help Net Security: JSP webshells being dropped on unpatched PTC Windchill instances](https://www.helpnetsecurity.com/2026/06/29/ptc-windchill-cve-2026-12569-exploited/)\n- [PTC advisory: Windchill and FlexPLM RCE vulnerability](https://www.ptc.com/en/about/trust-center/advisory-center/active-advisories/windchill-flexplm-rce-vulnerability)",
+    "file_path": "Flames/H219.md",
+    "created": "2026-07-04T14:58:25-04:00"
+  },
+  {
+    "id": "H220",
+    "category": "Flames",
+    "title": "Qilin Svchosts.exe masquerade before recovery impairment",
+    "tactic": "Stealth, Defense Impairment, Impact, Lateral Movement, Execution",
+    "notes": "EDR process telemetry - Core filter: process image name `Svchosts.exe` or another close `svchost.exe` lookalike executing from a non-system path such as `C:\\Users\\`, `C:\\ProgramData\\`, `C:\\Windows\\Temp\\`, `C:\\Users\\Public\\`, or `ADMIN$`. Triage values: `process command line`, `parent process command line`, `file path`, `user`, `source host`. Pivot: compare against legitimate `C:\\Windows\\System32\\svchost.exe` and require the wrong path, odd signer state, or recent file creation.\nWindows process telemetry - Core filter: recovery impairment commands after the lookalike starts, including `vssadmin delete shadows`, `wmic shadowcopy delete`, `wbadmin delete catalog`, `bcdedit /set recoveryenabled no`, or `diskshadow.exe`. Correlation: same host, same user, or same logon session as `Svchosts.exe` within 30 minutes. Strong red flags: more than one recovery command or attempts on two or more hosts.\nWindows Security and EDR telemetry - Core filter: lateral spread after the first lookalike execution through remote service creation, scheduled task creation, WMI, SMB, or admin-share staging. Triage values: `source host`, `destination host`, `logon type`, `service name`, `scheduled task name`, `file path`. Pivot: look for the same `Svchosts.exe` filename copied to another endpoint or launched from `ADMIN$`, `C$`, `Temp`, or `Public`.\nEDR file telemetry - Core filter: rapid file rewrites, ransom note creation, or extension changes after recovery impairment. Triage values: `file path`, `file extension`, `process command line`, `timestamp`. Strong red flags: recovery commands before the first encryption-like file activity or the same lookalike process touching many directories.\n",
+    "tags": [
+      "qilin",
+      "ransomware",
+      "windows",
+      "svchosts",
+      "masquerading",
+      "recovery_impairment",
+      "T1036",
+      "T1490",
+      "T1486",
+      "T1021",
+      "T1569",
+      "T1053"
+    ],
+    "techniques": [
+      "T1036",
+      "T1490",
+      "T1486",
+      "T1021",
+      "T1569",
+      "T1053"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Joshua Strickland",
+      "link": "https://novasky.io"
+    },
+    "why": "- Halcyon reported the Qilin payload as Svchosts.exe and said the intrusion reached 30 endpoints before encryption was stopped, so the hunt is tied to current ransomware tradecraft rather than a generic shadow copy rule.\n- The discriminator survives hash and infrastructure rotation because it keys on the ordered behavior: a service-host lookalike from the wrong path, followed by recovery impairment and spread.\n- The telemetry is common in MDR environments. EDR process and file data, Windows Security process creation, Sysmon process creation, and admin-share access logs can all see different parts of the chain.\n- False positives are controllable because backup or admin recovery commands by themselves are not enough. The alert requires a suspicious filename and path plus recovery impairment or multi-host propagation.",
+    "references": "- [Halcyon: How One Letter Hid a Ransomware Army](https://www.halcyon.ai/blog/how-one-letter-hid-a-ransomware-army-qilin)\n- [MITRE ATT&CK T1036: Masquerading](https://attack.mitre.org/techniques/T1036/)\n- [MITRE ATT&CK T1490: Inhibit System Recovery](https://attack.mitre.org/techniques/T1490/)\n- [MITRE ATT&CK T1486: Data Encrypted for Impact](https://attack.mitre.org/techniques/T1486/)",
+    "file_path": "Flames/H220.md",
+    "created": "2026-07-04T14:58:28-04:00"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
