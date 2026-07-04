@@ -842,6 +842,46 @@ const HUNTS_DATA = [
     "created": "2026-06-27T07:17:02-05:00"
   },
   {
+    "id": "B029",
+    "category": "Embers",
+    "title": "Akira operators, arriving via a Bumblebee loader that stages an AdaptixC2 beacon before hands-on-keyboard ransomware deployment, run a dense burst of built-in account and group discovery (net user, net localgroup, net group \"domain admins\" /dom, net accounts, nltest /dclist: /domain_trusts, whoami /groups, plus PowerShell Get-ADUser/Get-ADComputer) within minutes of gaining access. Because helpdesk staff, login scripts, and AD tooling issue these exact commands constantly, a static signature is noise. This hunt first baselines normal account/group enumeration volume, tooling, and timing per host and per user over ~30 days, then flags the anomalous short-window burst — many distinct discovery commands from one host/user, from an unusual parent — that betrays the AdaptixC2-to-Akira recon phase.",
+    "tactic": "Discovery",
+    "notes": "PLATFORM: Windows / Active Directory. BASELINE FIRST (Embers): over 30 days build a per-host and per-user profile of normal account/group enumeration — which discovery binaries run (net.exe/net1.exe/nltest.exe/dsquery.exe/whoami.exe), how often, under which parent processes, and the typical count of distinct discovery commands per process tree per hour. Most workstations show near-zero; admin/jump hosts show a steady, predictable rate. DATA COLLECTION FIELDS: hostname, username, parent process, full command line, process GUID, timestamp, target of enumeration (group/user/domain named). TELEMETRY: Windows Security 4688 (process create with command line — requires \"Include command line in process creation events\" auditing) and Sysmon EID 1 for net.exe/net1.exe/nltest.exe/dsquery.exe/whoami.exe/quser.exe; Directory Services / 4661 handle-to-object; PowerShell 4104 script-block for Get-ADUser/Get-ADComputer/Invoke-ShareFinder; for LDAP recon (SharpHound/ADSISearcher) Windows 1644 verbose LDAP or ETW Microsoft-Windows-LDAP-Client. KQL: DeviceProcessEvents | where FileName in~ (\"net.exe\",\"net1.exe\",\"nltest.exe\",\"dsquery.exe\") or ProcessCommandLine has_any (\"localgroup\",\"group /domain\",\"group domain admins\",\"/dom\",\"/domain_trusts\",\"/dclist\",\"net accounts\",\"net user administrator\"). COLLECTION WINDOW: 30 days. DELIVERABLE: per-host/per-user allowlist of normal enumeration volume, tools, and timing plus a burst threshold. IMMEDIATE FLAGS (do not wait for baseline): AdFind.exe or SharpHound/BloodHound/ADSISearcher on any non-admin host; net group \"Domain Admins\" /domain (or /dom) from a workstation; a single process tree running >5 distinct discovery commands within minutes; discovery spawned by a suspicious parent (rundll32/powershell from AppData, a sideloaded DLL host, or an AdaptixC2 beacon such as the observed AdgNsy.exe); nltest /dclist: + whoami /groups + net user chained together. In the source intrusion this exact burst (systeminfo, nltest /dclist:, whoami /groups, nltest /domain_trusts) fired ~5 hours post-compromise under the AdaptixC2 beacon, then continued as methodical net user/net group/net localgroup/net accounts enumeration across DC, file, and backup servers over days 2-5. The operators used native net/nltest/whoami/quser plus PowerShell Get-ADUser/Get-ADComputer/Invoke-ShareFinder — AdFind/SharpHound were not seen here and are kept only as generic tripwires. CROSS-REF the Flames/Alchemy hunts this baseline enables (e.g. the Akira RDP lateral-movement hunt M024, and Domain Admins credential-access hunts).",
+    "tags": [
+      "discovery",
+      "windows",
+      "active_directory",
+      "t1087_001",
+      "t1069_001",
+      "t1069_002",
+      "t1033",
+      "account_discovery",
+      "permission_groups_discovery",
+      "akira",
+      "adaptixc2",
+      "baseline",
+      "T1087.001",
+      "T1069.001",
+      "T1069.002"
+    ],
+    "techniques": [
+      "T1087.001",
+      "T1069.001",
+      "T1069.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **Admins and tooling run the identical commands.** `net user`, `net localgroup`, `net group /domain`, `nltest /dclist:`, and `whoami /groups` are the daily bread of helpdesk sessions, login scripts, inventory tools, and AD management. A signature on any one of them fires on every legitimate support session, so it is worthless without a per-host/per-user notion of \"normal.\" Baselining first is the only way to make the malicious use stand out.\n- **The burst is the signal, not the command.** In the DFIR Report intrusion the Akira operator, running under an AdaptixC2 beacon (AdgNsy.exe), issued `systeminfo` → `nltest /dclist:` → `whoami /groups` → `nltest /domain_trusts` in rapid succession ~5 hours after initial access — then escalated to `net user administrator`, `net group domain admins /dom`, `net localgroup`, and `net accounts` across the DC, file server, and backup server. The anomaly is the *density and breadth* of distinct discovery commands from one host/user in a short window, and the *unusual parent* (a beacon / sideloaded DLL rather than an admin console).\n- **It is a cheap, high-leverage tripwire early in the kill chain.** This recon happens before lateral movement, credential theft, and encryption. Catching the enumeration burst gives defenders their earliest hands-on-keyboard signal in the Bumblebee → AdaptixC2 → Akira chain, buying time before backups are targeted and ransomware is staged.\n- **The telemetry already exists and is nearly free.** 4688 with command-line auditing (or Sysmon EID 1) plus PowerShell 4104 for the `Get-ADUser`/`Get-ADComputer` follow-on already sit in most SIEMs. No new sensor is required — only the discipline to baseline enumeration volume per host/user and then alert on the deviation.",
+    "references": "- [MITRE ATT&CK T1087.001 - Account Discovery: Local Account](https://attack.mitre.org/techniques/T1087/001/)\n- [MITRE ATT&CK T1069.001 - Permission Groups Discovery: Local Groups](https://attack.mitre.org/techniques/T1069/001/)\n- [MITRE ATT&CK T1069.002 - Permission Groups Discovery: Domain Groups](https://attack.mitre.org/techniques/T1069/002/)\n- [Source CTI Report — The DFIR Report: Bumblebee and AdaptixC2 Deliver Akira](https://thedfirreport.com/2026/06/29/from-bing-search-to-ransomware-bumblebee-and-adaptixc2-deliver-akira-3/)\n- [SigmaHQ — Suspicious Group And Account Reconnaissance Activity Using Net.EXE](https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_net_groups_and_accounts_recon.yml)\n- [Elastic Detection Rules — Enumerating Domain Trusts via NLTEST.EXE](https://www.elastic.co/docs/reference/security/prebuilt-rules/rules/windows/discovery_enumerating_domain_trusts_via_nltest)\n- [Atomic Red Team T1087.001 — Account Discovery: Local Account](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1087.001/T1087.001.md)",
+    "file_path": "Embers/B029.md",
+    "created": "2026-07-04T07:11:35-05:00"
+  },
+  {
     "id": "H001",
     "category": "Flames",
     "title": "An adversary is attempting to brute force the admin account on the externally facing VPN gateway.",
@@ -7143,6 +7183,160 @@ const HUNTS_DATA = [
     "created": "2026-06-30T20:52:35+02:00"
   },
   {
+    "id": "H213",
+    "category": "Flames",
+    "title": "A signed .NET host process (`RegAsm.exe`, and by extension `InstallUtil.exe`/`aspnet_compiler.exe`/`MSBuild.exe`/`jsc.exe`) is spawned suspended and hollowed to run AsyncRAT, with the parent lineage tracing back to `ScreenConnect.ClientService.exe` → `powershell.exe`/`wscript.exe`; the hollowed binary runs with an empty/absent command line and then beacons to C2.",
+    "tactic": "Defense Evasion",
+    "notes": "Sysmon EID 1: `RegAsm.exe` (or `InstallUtil.exe`/`aspnet_compiler.exe`/`MSBuild.exe`/`jsc.exe`) process-create with an empty or trivial CommandLine and an anomalous ParentImage (`ScreenConnect.ClientService.exe`, `powershell.exe`, `wscript.exe`, `cscript.exe`) — these .NET utilities almost never launch bare with no arguments. Sysmon EID 10 (ProcessAccess) into the target with `GrantedAccess` `0x1F0FFF`/`0x1FFFFF`/`0x1478`/`0x143A` (VM_WRITE+VM_OPERATION+SUSPEND_RESUME+SET_CONTEXT) from an unusual/unsigned source; Sysmon EID 8 (CreateRemoteThread) into the same target; Sysmon EID 25 (ProcessTampering, \"Image is replaced\") is the highest-fidelity signal for the hollow itself. Windows Security 4688 for the same suspicious `RegAsm.exe` lineage where 4688 shows a signed .NET binary with no command line. Correlate the hollowed process making outbound connections (Sysmon EID 3 / DeviceNetworkEvents) — a signed .NET compiler-utility that beacons is high-signal. KQL: `DeviceProcessEvents",
+    "tags": [
+      "T1055",
+      "T1218"
+    ],
+    "techniques": [
+      "T1055",
+      "T1218"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "#defense_evasion #T1055_012 #T1055 #T1218 #process_hollowing #windows #asyncrat #screenconnect",
+      "link": ""
+    },
+    "why": "- Process hollowing lets AsyncRAT execute inside a Microsoft-signed .NET binary (`RegAsm.exe`), so the malicious process inherits a trusted image name/signature and slips past image-name allowlists and casual triage — high impact, low visibility without behavioral detection.\n- The behavior is inherently detectable: the hollow requires a suspended child plus cross-process `VM_WRITE`/`SET_CONTEXT` access (Sysmon EID 10 GrantedAccess), and `RegAsm.exe`/`InstallUtil.exe`/`MSBuild.exe` launching with no command line and an interpreter/RAT-tool parent is a rare, high-signal anomaly. Sysmon EID 25 (ProcessTampering) catches the image replacement directly.\n- The chain is durable across the campaign: even as installers, hashes, and C2 rotate, the structural lineage (ScreenConnect → PowerShell/VBScript reflective load → hollowed signed .NET host → outbound beacon) stays constant, making the parent-child + no-command-line + network-beacon correlation resilient to IOC churn.\n- Anchoring on host-process lineage rather than payload signatures generalizes to other loaders that abuse the same signed .NET utilities (T1218), so the hunt keeps value beyond this single AsyncRAT variant.",
+    "references": "- [MITRE ATT&CK T1055.012 - Process Injection: Process Hollowing](https://attack.mitre.org/techniques/T1055/012/)\n- [Source CTI Report — Securelist ScreenConnect/AsyncRAT campaign](https://securelist.com/tr/the-soc-files-screenconnect-campaign-with-asyncrat/120472/)\n- [FalconForce — Sysmon 13: Process Tampering Detection (EventID 25)](https://medium.com/falconforce/sysmon-13-process-tampering-detection-820366138a6c)\n- [Splunk Security Content — Detect Regasm Spawning a Process](https://research.splunk.com/endpoint/72170ec5-f7d2-42f5-aefb-2b8be6aad15f/)\n- [Elastic — Execution from Unusual Directory / Command Line (RegAsm, InstallUtil abuse)](https://www.elastic.co/guide/en/security/current/execution-from-unusual-directory-command-line.html)\n- [Red Canary — Process Hollowing and Portable Executable relocations](https://redcanary.com/blog/threat-detection/process-hollowing/)",
+    "file_path": "Flames/H213.md",
+    "created": "2026-07-04T07:11:35-05:00"
+  },
+  {
+    "id": "H214",
+    "category": "Flames",
+    "title": "An adversary evades command-line detection by executing obfuscated commands — Base64 `-e`/`-EncodedCommand` PowerShell run via WMI, mixed-case `pOWerShELl.exE`/`CmD.eXe` interpreter names, and runtime string reconstruction — matching the BumbleBee→AdaptixC2→Akira tradecraft from the DFIR Report (SEO-poisoned MSI, `consent.exe` sideloading `msimg32.dll`).",
+    "tactic": "Defense Evasion",
+    "notes": "Primary telemetry: PowerShell Script Block Logging EID 4104 (Microsoft-Windows-PowerShell/Operational) — engine logs post-deobfuscation clear text, so `Invoke-Expression` of a decoded blob spawns its own readable 4104; enable Module Logging EID 4103 and Windows Security 4688 (require \"Include command line in process creation events\") + Sysmon EID 1 for full command lines. Obfuscation indicators to hunt: `-e`/`-enc`/`-EncodedCommand`/`-ec` with a long Base64 string (e.g. `powershell.exe -e JABQAG8...`); high entropy / non-uniform char distribution in ProcessCommandLine; runtime reassembly tokens `[char]`, `-join`, `[string]::join`, format operator `-f`, backtick escaping; cmd/batch caret `^` escaping and `%VAR:~x,y%` env-var substring; mixed/toggled case interpreter names (`pOWerShELl.exE`, `CmD.eXe`). Example KQL: `DeviceProcessEvents",
+    "tags": [],
+    "techniques": [],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "where ProcessCommandLine has_any (\"-e \",\"-enc\",\"-EncodedCommand\",\"-ec \",\"FromBase64String\",\"[char]\",\"-join\",\"Invoke-Expression\",\"iex\") or ProcessCommandLine matches regex @\"[pP][oO][wW][eE][rR]\"` then filter by base64 length/entropy. Source-article detections: DFIR private Sigma `410f5c82-…` (Veeam creds via psql), YARA `SUSP_PS1_JAB_Pattern_Jun22_1` (PS Base64 `JAB` pattern), `BumblebeeC2`/`CAPE_Bumblebee2024`, Suricata 2056726/2056727 (BumbleBee C2), AdaptixC2 IP `172.96.137[.]160`. Decode captured Base64 and rescore with Revoke-Obfuscation (`Measure-RvoObfuscation`). Cross-ref **T1059.001** (PowerShell) and **T1059.003** (Windows cmd) — the obfuscation rides on those interpreters; validate against legit encoded-command use (SCCM/Defender/GPO).",
+      "link": ""
+    },
+    "why": "- Directly models the observed Akira tradecraft: Base64 `-e` PowerShell executed via WMI and mixed-case `CmD.eXe`/`pOWerShELl.exE` are concrete command-obfuscation behaviors from the 2026-06-29 DFIR Report, not generic theory.\n- EID 4104 Script Block Logging defeats the obfuscation by design — it records the deobfuscated script the engine actually ran — so this is a high-fidelity, low-cost hunt where logging is enabled, with 4688/Sysmon 1 catching the outer encoded launcher.\n- Obfuscation is an interpreter-agnostic evasion layer sitting on top of T1059.001/T1059.003; hunting the encoding/case/reconstruction indicators catches BumbleBee/AdaptixC2 loaders and any commodity actor reusing `-enc`, `Invoke-Obfuscation`, or `Invoke-DOSfuscation`.\n- Entropy/character-ratio scoring separates malicious obfuscation from benign long command lines, keeping the hunt tunable against known-good encoded-command tooling (SCCM, Defender, GPO scripts).",
+    "references": "- [MITRE ATT&CK T1027.010 - Command Obfuscation](https://attack.mitre.org/techniques/T1027/010/)\n- [Source CTI Report — The DFIR Report: Bumblebee and AdaptixC2 Deliver Akira](https://thedfirreport.com/2026/06/29/from-bing-search-to-ransomware-bumblebee-and-adaptixc2-deliver-akira-3/)\n- [Elastic — Potential PowerShell Obfuscated Script via High Entropy (Detection.FYI)](https://detection.fyi/elastic/detection-rules/windows/defense_evasion_posh_high_entropy/)\n- [Splunk Security Content — PowerShell 4104 Hunting](https://research.splunk.com/endpoint/d6f2b006-0041-11ec-8885-acde48001122/)\n- [Splunk — Hunting for Malicious PowerShell using Script Block Logging](https://www.splunk.com/en_us/blog/security/hunting-for-malicious-powershell-using-script-block-logging.html)\n- [TrustedSec — Building a Detection Foundation Part 3: PowerShell and Script Logging (EID 4104/4103)](https://trustedsec.com/blog/building-a-detection-foundation-part-3-powershell-and-script-logging)\n- [Daniel Bohannon — Revoke-Obfuscation: PowerShell Obfuscation Detection Framework](https://github.com/danielbohannon/Revoke-Obfuscation)",
+    "file_path": "Flames/H214.md",
+    "created": "2026-07-04T07:11:35-05:00"
+  },
+  {
+    "id": "H215",
+    "category": "Flames",
+    "title": "Akira operators inhibit system recovery on Windows immediately before encryption by deleting Volume Shadow Copies (WMI/PowerShell, vssadmin, wmic), tampering with boot recovery via bcdedit, and deleting the backup catalog via wbadmin — hunt for these LOLBin invocations with destructive arguments, spawned from ransomware or an anomalous parent.",
+    "tactic": "Impact",
+    "notes": "Look in Windows Security EID 4688 (New Process Created, requires command-line auditing) and Sysmon EID 1 (ProcessCreate) for `vssadmin.exe`, `wmic.exe`, `bcdedit.exe`, `wbadmin.exe`, and `powershell.exe` executing recovery-inhibition arguments. Source-article command (confirmed): `powershell.exe -Command \"Get-WmiObject Win32_Shadowcopy",
+    "tags": [],
+    "techniques": [],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "where ProcessCommandLine has_any (\"delete shadows\",\"shadowcopy delete\",\"Win32_Shadowcopy\",\"Remove-WmiObject\",\"recoveryenabled no\",\"bootstatuspolicy ignoreallfailures\",\"delete catalog\",\"delete systemstatebackup\",\"resize shadowstorage\")`. Pivot on **parent-process lineage** — legitimate admin use is rare and interactive; ransomware spawns these non-interactively from the locker or a suspicious parent (loader, script host, remote WMI). **Correlate with T1489 Service Stop** — the same actor disabled SQL/IIS across hosts via `wmic /node:@C:\\temp\\hosts1.txt /failfast:on service where \"Name Like '%sql%'\" call ChangeStartmode Disabled` and `wmic /node:@C:\\temp1\\hosts.txt /failfast:on process where \"CommandLine Like '%sql%'\" delete` — watch Service Control Manager (System log **EID 7040** service start-type changed to disabled). Also watch **Windows Backup EID 524** (backup catalog deleted) for shadow-copy loss. Because Akira chains **T1490 + T1489 + T1486**, treat any of these as part of the encryption kill-chain and escalate to ransomware IR. Tune out narrow, single-volume admin deletions with a snapshot/volume filter; escalate on `/all`, remote `/node:`, or no filter.",
+      "link": ""
+    },
+    "why": "- **Directly observed tradecraft, not theory:** The DFIR Report intrusion shows Akira's `locker.exe` auto-deleting shadow copies via `Get-WmiObject Win32_Shadowcopy | Remove-WmiObject` ~1 second after execution on every host — a tight, high-fidelity signal that fires just before mass encryption, giving defenders a narrow window to isolate hosts.\n- **Recovery inhibition is the ransomware pivot point:** Deleting shadow copies, wiping the backup catalog, and disabling boot-time recovery (`bcdedit`) removes the victim's ability to restore without paying — catching it converts a \"we restore from backup\" incident into a contained one.\n- **LOLBins make this behavior-detectable, not IOC-dependent:** `vssadmin`, `wmic`, `bcdedit`, `wbadmin`, and `powershell` are signed native tools, so the detection lives in the command-line arguments and parent lineage rather than file hashes — durable across Akira builds, loaders (Bumblebee), and C2 (AdaptixC2).\n- **Akira runs T1490 + T1489 + T1486 together:** Recovery inhibition co-occurs with mass service stop (SQL/IIS teardown via remote WMIC) and encryption; correlating these three raises confidence and reduces the false positives that any single vssadmin/wmic hit generates.",
+    "references": "- [MITRE ATT&CK T1490 - Inhibit System Recovery](https://attack.mitre.org/techniques/T1490/)\n- [Source CTI Report — The DFIR Report: Bumblebee and AdaptixC2 Deliver Akira](https://thedfirreport.com/2026/06/29/from-bing-search-to-ransomware-bumblebee-and-adaptixc2-deliver-akira-3/)\n- [Atomic Red Team — T1490 Inhibit System Recovery (vssadmin, WMI, wbadmin, recovery console atomics)](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1490/T1490.md)\n- [Splunk Security Content — Windows WMIC Shadowcopy Delete](https://research.splunk.com/endpoint/0a8c4b26-a4e2-4ef1-b0d9-62af6d36bdc8/)\n- [Splunk Security Content — Deleting Shadow Copies (vssadmin/wmic)](https://research.splunk.com/endpoint/b89919ed-ee5f-492c-b139-95dbb162039e/)\n- [Elastic Prebuilt Rule — Volume Shadow Copy Deletion via WMIC](https://www.elastic.co/docs/reference/security/prebuilt-rules/rules/windows/impact_volume_shadow_copy_deletion_via_wmic)\n- [Red Canary — It's all fun and games until ransomware deletes the shadow copies](https://redcanary.com/blog/threat-detection/its-all-fun-and-games-until-ransomware-deletes-the-shadow-copies/)",
+    "file_path": "Flames/H215.md",
+    "created": "2026-07-04T07:11:35-05:00"
+  },
+  {
+    "id": "H216",
+    "category": "Flames",
+    "title": "A process that is not a legitimate Windows authentication service (lsass.exe, services.exe, winlogon.exe) creates a new access token via `LogonUser` and impersonates a user, then spawns a child process (notably a browser) under the new token context — matching ToddyCat's Umbrij tool minting/impersonating a token to run headless Chrome and steal Gmail OAuth tokens.",
+    "tactic": "Privilege Escalation",
+    "notes": "Primary tells (Windows Security): 4624 New Logon with LogonType 9 (NewCredentials) — the classic make-token / `runas /netonly` signature where a process mints a fresh token for a user; 4648 explicit-credential logon (alternate creds supplied); 4672 special privileges assigned at logon (SeImpersonatePrivilege, SeAssignPrimaryTokenPrivilege, SeTcbPrivilege — SeTcb is required to fully populate a made token); 4688 process create where the new process runs under a LogonId/SID that differs from its parent, and command line shows browser flags `--remote-debugging-port` / `--headless`. ETW/API telemetry: a non-auth-service process calling LogonUser(W) followed by SetThreadToken / ImpersonateLoggedOnUser / DuplicateTokenEx / CreateProcessWithTokenW. Sysmon: EID 1 (process create — parent/child token mismatch, browser child with remote-debugging) and EID 10 (ProcessAccess — handle to explorer.exe with token-dup rights; Umbrij locates and duplicates explorer.exe's token). Correlate LogonUser -> SetThreadToken/Impersonate -> child-process create as a behavior chain. Sub-technique note: the source describes Umbrij *duplicating* explorer.exe's existing token (behaviorally closer to T1134.001 Token Impersonation/Theft) while Securelist labels it T1134.003; hunt both the mint-and-impersonate (`LogonUser`→`SetThreadToken`) and duplicate-and-impersonate (`OpenProcessToken`→`DuplicateTokenEx`) variants. KQL: `DeviceLogonEvents",
+    "tags": [
+      "T1134.001",
+      "T1134.003"
+    ],
+    "techniques": [
+      "T1134.001",
+      "T1134.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "where InitiatingProcessFileName !in (\"lsass.exe\",\"services.exe\",\"winlogon.exe\") and ProcessCommandLine has_any (\"--remote-debugging-port\",\"--headless\")` correlated on token/SID.",
+      "link": ""
+    },
+    "why": "- ToddyCat's Umbrij tool escalates into a user's context by manufacturing/duplicating and impersonating an access token, then runs a headless browser with `--remote-debugging-port` to steal Gmail OAuth tokens — a token-manipulation abuse that produces distinctive logon and process-lineage artifacts.\n- The make-and-impersonate pattern is high-signal on Windows: a LogonType 9 (NewCredentials) 4624 and a child process running under a different LogonId/SID than its parent are rare in normal endpoint activity outside admin `runas /netonly` usage, giving a hunter a tight, tunable anchor.\n- Legitimate token creation is concentrated in a small set of authentication services (lsass.exe, services.exe, winlogon.exe); any other process invoking `LogonUser` + `SetThreadToken`/`ImpersonateLoggedOnUser` is inherently suspicious and worth review.\n- The browser-specific tail (headless Chrome + remote debugging launched under an impersonated user token, no interactive desktop) ties the generic token-manipulation primitive to the specific ToddyCat OAuth-theft objective, sharpening the hunt beyond the raw technique.",
+    "references": "- [MITRE ATT&CK T1134.003 - Access Token Manipulation: Make and Impersonate Token](https://attack.mitre.org/techniques/T1134/003/)\n- [MITRE ATT&CK T1134.001 - Access Token Manipulation: Token Impersonation/Theft (cross-reference)](https://attack.mitre.org/techniques/T1134/001/)\n- [Source CTI Report — Securelist ToddyCat Part 2 (Umbrij tool and OAuth)](https://securelist.com/toddycat-apt-umbrij-tool-and-oauth/120251/)\n- [Elastic Blog — How attackers abuse Access Token Manipulation (ATT&CK T1134)](https://www.elastic.co/blog/how-attackers-abuse-access-token-manipulation)\n- [Atomic Red Team — T1134.001 Token Impersonation/Theft (cross-ref atomics)](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1134.001/T1134.001.md)\n- [Red Canary — Better know a data source: Access tokens](https://redcanary.com/blog/threat-detection/better-know-a-data-source/access-tokens/)",
+    "file_path": "Flames/H216.md",
+    "created": "2026-07-04T07:11:35-05:00"
+  },
+  {
+    "id": "H217",
+    "category": "Flames",
+    "title": "After EvilTokens/OAuth token theft in M365, an actor uses the hijacked session or a freshly added cloud credential to lock legitimate users/admins out — mass password resets, session/refresh-token revocation, MFA method changes, account disable/delete, and role removals — clustered shortly after an anomalous token sign-in. Hunt for that burst of access-removal ops from one actor/session.",
+    "tactic": "Impact",
+    "notes": "M365 Unified Audit Log / Entra audit operations to pivot on: \"Reset user password\", \"Change user password\", \"Update user\" (accountEnabled→false / UserPrincipalName change), \"Disable account\", \"Delete user\", \"Remove member from role\" / \"Remove eligible member from role\", \"Revoke sign-in sessions\", and the token-invalidation write \"Update StsRefreshTokenValidFrom on user\". MFA lockout signals: \"Admin registered security info\" / \"User registered security info\" / \"User deleted security info\" / \"Admin updated security info\" (attacker swaps victim's MFA to lock them out). KQL surfaces: `AuditLogs` (Entra), `CloudAppEvents` / `OfficeActivity` (UnifiedAuditLog for Exchange/mailbox removal), `IdentityDirectoryEvents`; parse `TargetResources`, `InitiatedBy`, and `RawEventData`/`AdditionalDetails` (Actor IP, SessionId, correlationId, ModifiedProperties old→new value). Correlation logic: join the access-removal ops to a preceding anomalous sign-in (`SigninLogs` — new ASN/device, impossible travel, non-interactive token replay, `AuthenticationRequirement`/`RiskState`) on the same actor UPN/IP/session within a short window; alert when ≥N distinct destructive ops (or ops against ≥N distinct targets, especially other admins) fire from one actor/session. PowerShell/Graph triage: `Get-MgUserAuthenticationMethod`, `Get-MgRoleManagementDirectoryRoleAssignment` / `Get-AzureADDirectoryRoleMember`, `Revoke-MgUserSignInSession`, `Search-UnifiedAuditLog`. Baseline expected admin activity (helpdesk SSPR, JML automation) to cut FPs. Preceding steps to cross-ref: T1528 (Steal Application Access Token) and T1098.001 (Additional Cloud Credentials).",
+    "tags": [
+      "impact",
+      "account_access_removal",
+      "m365",
+      "entra_id",
+      "eviltokens",
+      "identity",
+      "T1528",
+      "T1098.001",
+      "T1531"
+    ],
+    "techniques": [
+      "T1528",
+      "T1098.001",
+      "T1531"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- The Talos ARToken/EvilTokens report shows an affiliate panel engineered to weaponize stolen M365 tokens fast (`persistAfterPassChange: false` acknowledges refresh tokens die on reset), so the natural escalation is the attacker resetting/revoking *first* to lock the victim out — the exact cloud manifestation of T1531.\n- T1531 in a cloud/M365 context is high-impact and often *late*: by the time lockout ops fire, token theft and persistence already happened, so a detection keyed on the burst of access-removal operations is a strong last-line catch even if the initial token sign-in was missed.\n- These operations are individually legitimate admin actions (helpdesk resets, offboarding), so signal comes from *correlation and clustering* — many destructive ops from one actor/session, against multiple targets or other admins, right after an anomalous sign-in — not any single event.\n- Attacker MFA manipulation (\"register security info\" / \"delete security info\") is a quiet but decisive lockout lever because Entra does not re-challenge MFA when auth methods change, making it easy to overlook without explicit hunting.",
+    "references": "- [MITRE ATT&CK T1531 - Account Access Removal](https://attack.mitre.org/techniques/T1531/)\n- [Source CTI Report — Cisco Talos: ARToken / EvilTokens M365](https://blog.talosintelligence.com/artoken-inside-an-eviltokens-affiliate-panel-targeting-microsoft-365/)\n- [Microsoft Learn — Microsoft Entra audit log activity reference (operation names)](https://learn.microsoft.com/en-us/entra/identity/monitoring-health/reference-audit-activities)\n- [Microsoft Community Hub — Hunting for MFA manipulations in Entra ID tenants using KQL](https://techcommunity.microsoft.com/blog/microsoftsecurityexperts/hunting-for-mfa-manipulations-in-entra-id-tenants-using-kql/4154039)\n- [Microsoft Learn — Responding to a Compromised Email Account (M365 / Unified Audit Log)](https://learn.microsoft.com/en-us/defender-office-365/responding-to-a-compromised-email-account)\n- [Mitiga — Persistent MFA Circumvention in an Advanced BEC Campaign on Microsoft 365](https://www.mitiga.io/blog/persistent-mfa-circumvention-in-an-advanced-bec-campaign-on-microsoft-365-targets)",
+    "file_path": "Flames/H217.md",
+    "created": "2026-07-04T07:11:35-05:00"
+  },
+  {
+    "id": "H218",
+    "category": "Flames",
+    "title": "Threat actors are exploiting Adobe ColdFusion's Remote Development Services (RDS) by sending HTTP POST requests to /CFIDE/main/ide.cfm with ACTION=FILEIO and OPERATION=FILEREAD parameters to read arbitrary files from the server filesystem, enabling reconnaissance of sensitive configuration files and credentials.",
+    "tactic": "Initial Access",
+    "notes": "Based on ATT&CK technique T1190. Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
+    "tags": [
+      "initial_access",
+      "coldfusion",
+      "rds",
+      "file_read",
+      "T1190"
+    ],
+    "techniques": [
+      "T1190"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "_No response_",
+      "link": ""
+    },
+    "why": "- Adobe ColdFusion RDS arbitrary file read vulnerabilities (CVE-2026-48313) allow unauthenticated attackers to read any file on the server when RDS authentication is disabled, exposing sensitive configuration files, database credentials, and application secrets\n- This technique provides attackers with critical reconnaissance data needed to escalate privileges, move laterally, or chain with file write capabilities (CVE-2026-48282) for remote code execution as NT AUTHORITY\\SYSTEM\n- ColdFusion has a documented history of RDS-related vulnerabilities being exploited in the wild, and the /CFIDE/main/ide.cfm endpoint is a well-known attack surface that is often left accessible in production environments despite Adobe's warnings\n- Detection of this specific HTTP POST pattern to the RDS endpoint with FILEIO actions is highly distinctive and represents a clear indicator of exploitation attempts, as legitimate RDS usage is rare in production environments",
+    "references": "- [MITRE ATT&CK T1190 - Exploit Public-Facing Application](https://attack.mitre.org/techniques/T1190/)\n- [Source CTI Report](https://labs.watchtowr.com/its-37oc-and-all-we-can-think-about-is-coldfusion-adobe-coldfusion-security-bulletin-apsb26-68-cve-bonanza/)",
+    "file_path": "Flames/H218.md",
+    "created": "2026-07-04T11:52:59-07:00"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
@@ -7678,5 +7872,40 @@ const HUNTS_DATA = [
     "references": "- [MITRE ATT&CK T1021 — Remote Services](https://attack.mitre.org/techniques/T1021/)\n- [MITRE ATT&CK T1550.002 — Use Alternate Authentication Material: Pass the Hash](https://attack.mitre.org/techniques/T1550/002/)\n- [MITRE ATT&CK T1078 — Valid Accounts](https://attack.mitre.org/techniques/T1078/)\n- [LANL Unified Host and Network Data Set — Turcotte, Kent & Hash (comprehensive cyber-security data with red-team labels)](https://csr.lanl.gov/data/2017/)\n- [Hopper: Modeling and Detecting Lateral Movement — Ho et al., USENIX Security 2021](https://www.usenix.org/conference/usenixsecurity21/presentation/ho)\n- [A.D. Kent — Comprehensive, Multi-Source Cyber-Security Events (LANL authentication data)](https://csr.lanl.gov/data/cyber1/)",
     "file_path": "Alchemy/M023.md",
     "created": "2026-06-29T21:01:31-05:00"
+  },
+  {
+    "id": "M024",
+    "category": "Alchemy",
+    "title": "Build a per-source-host and per-account baseline of the normal internal RDP destination set over a rolling 30-day window, modeling each entity's typical RDP fan-out (count of distinct destination hosts) and its set of normal source->dest edges. Flag windows where a host or account suddenly initiates RDP (Windows LogonType 10 / TCP 3389) to many destinations it has never previously reached — the Akira-style lateral fan-out from a beachhead to the domain controller, backup server, file server, and child DC. A single global RDP threshold cannot work: jump hosts, admin bastions, and SCCM legitimately fan out to dozens of hosts, so any cutoff low enough to catch the operator drowns in benign admin traffic. A per-entity envelope (median + k*MAD of that entity's own history) is required so each host and account is judged against its own normal breadth.",
+    "tactic": "Lateral Movement",
+    "notes": "ALCHEMY ANALYTIC — per-entity baseline, not a static rule. Platform: Windows / Active Directory. ATTACKER PATTERN: In the DFIR Report Bumblebee/AdaptixC2 -> Akira intrusion, the operator created a rogue Enterprise Admin account (backup_EA) on day one, then ~5h post-infection ran discovery and by day two used RDP from the beachhead to fan out to the domain controller, backup server, and file server, reaching a child domain controller by day five; ransomware (locker.exe) deployed ~44h into the intrusion. The fan-out is a beachhead host and a single privileged account suddenly touching a set of internal servers it never normally RDPs to. DATA SOURCES: Windows Security 4624 LogonType 10 (RemoteInteractive) and 4625 failures on destination hosts; 4778/4779 session connect/reconnect; Sysmon EID 3 network connection DestinationPort=3389; NSM/Zeek rdp.log; Defender DeviceLogonEvents (LogonType RemoteInteractive) + DeviceNetworkEvents RemotePort 3389. REQUIRED FIELDS: timestamp, source host, destination host, account, logon type, success. FEATURE ENGINEERING (per source host/account, sliding daily window): distinct_rdp_dst_hosts (breadth — primary signal); new_edge_fraction (share of source->dest pairs never seen in prior 30d); off_hours_fraction; account_host_novelty. MODEL: per-entity robust baseline (median + k*MAD) of distinct_rdp_dst_hosts over rolling 30d; flag windows exceeding the entity envelope AND high new_edge_fraction. GLOBAL THRESHOLD IS THE FOIL: any cutoff low enough to catch the operator fan-out also fires on jump hosts/admin bastions/SCCM. FIRE CONDITIONS: distinct_rdp_dst_hosts exceeds entity baseline AND new_edge_fraction high AND (off-hours OR preceded by discovery burst). TUNING: allowlist known jump hosts/bastions/admin accounts and seed their baselines; cold-start guard for new hosts and newly created accounts (the backup_EA case — a brand-new account with instant fan-out should score high, not be excused by a thin history). Build a directed source->dest RDP graph; the operator appears as a new high-degree node. CROSS-REF T1078 (Valid Accounts — the rogue/stolen privileged account is the precondition) and the discovery-baseline hunt B029 (the recon burst that precedes fan-out).",
+    "tags": [
+      "lateral_movement",
+      "windows",
+      "active_directory",
+      "rdp",
+      "t1021_001",
+      "t1078",
+      "anomaly_detection",
+      "model_assisted",
+      "per_entity_baseline",
+      "graph_analysis",
+      "akira",
+      "T1021.001"
+    ],
+    "techniques": [
+      "T1021.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **Breadth, not volume, is the signal.** Ransomware operators betray themselves by *reach* — one beachhead host or one account suddenly RDPing to a set of servers it has never touched. In the Akira case that was the domain controller, backup server, file server, and eventually a child DC. Counting distinct new RDP destinations per entity catches the fan-out that raw session-count thresholds miss.\n- **A static global threshold fails in both directions.** Set it low and every jump host, admin bastion, and SCCM box trips it constantly; set it high enough to silence those and the operator's fan-out to a handful of servers slips under. Only a per-entity baseline — each host/account judged against its own historical breadth — separates \"admin who always fans out\" from \"workstation that never did until today.\"\n- **Grounded in the Akira tradecraft.** The operator created a rogue Enterprise Admin account (`backup_EA`) and moved on valid credentials, not exploits, so the RDP itself is \"legitimate\" LogonType 10 traffic. The tell is the *new edge*: a privileged account with essentially no RDP history instantly reaching critical servers, off-hours, minutes after a discovery burst, ~44h before the locker fired. Cross-referencing T1078 (the rogue account) and a discovery-baseline hunt tightens confidence.\n- **Robust per-entity baseline, cheaply observable.** Median + k*MAD over a rolling 30-day window resists the occasional legit maintenance spike far better than mean+stddev, and it all rides on data most shops already collect: 4624 LogonType 10 on destinations, Sysmon EID 3 to port 3389, or Defender DeviceLogonEvents. Modeling those as a directed source->dest graph makes the operator surface as a brand-new high-degree node — the same intuition behind Hopper's login-path anomaly scoring.",
+    "references": "- [MITRE ATT&CK T1021.001 - Remote Services: Remote Desktop Protocol](https://attack.mitre.org/techniques/T1021/001/)\n- [Source CTI Report — The DFIR Report: From Bing Search to Ransomware: Bumblebee and AdaptixC2 Deliver Akira](https://thedfirreport.com/2026/06/29/from-bing-search-to-ransomware-bumblebee-and-adaptixc2-deliver-akira-3/)\n- [Hopper: Modeling and Detecting Lateral Movement (USENIX Security 2021)](https://www.usenix.org/conference/usenixsecurity21/presentation/ho)\n- [Elastic Security — Identifying malicious Remote Desktop Protocol (RDP) connections](https://www.elastic.co/blog/remote-desktop-protocol-connections-elastic-security)\n- [The DFIR Spot — Lateral Movement: RDP Event Logs (4624 LogonType 10, 4778/4779)](https://www.thedfirspot.com/post/lateral-movement-remote-desktop-protocol-rdp-event-logs)\n- [Microsoft — Audit Logon / Event 4624 Logon Type reference](https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4624)",
+    "file_path": "Alchemy/M024.md",
+    "created": "2026-07-04T07:11:35-05:00"
   }
 ];
