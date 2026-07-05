@@ -14,6 +14,8 @@ readability-lxml>=0.8.0
 lxml>=5.0.0
 # Headless-browser fallback for JS bot-challenged sources (needs: playwright install chromium)
 playwright>=1.40.0
+# Hardened XML parsing for CTI feed ingestion (billion-laughs/XXE defense)
+defusedxml>=0.7.1
 
 # Document Processing
 pypdf>=4.0.0
