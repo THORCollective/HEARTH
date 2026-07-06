@@ -7986,5 +7986,39 @@ const HUNTS_DATA = [
     "references": "- [MITRE ATT&CK T1021.001 - Remote Services: Remote Desktop Protocol](https://attack.mitre.org/techniques/T1021/001/)\n- [Source CTI Report — The DFIR Report: From Bing Search to Ransomware: Bumblebee and AdaptixC2 Deliver Akira](https://thedfirreport.com/2026/06/29/from-bing-search-to-ransomware-bumblebee-and-adaptixc2-deliver-akira-3/)\n- [Hopper: Modeling and Detecting Lateral Movement (USENIX Security 2021)](https://www.usenix.org/conference/usenixsecurity21/presentation/ho)\n- [Elastic Security — Identifying malicious Remote Desktop Protocol (RDP) connections](https://www.elastic.co/blog/remote-desktop-protocol-connections-elastic-security)\n- [The DFIR Spot — Lateral Movement: RDP Event Logs (4624 LogonType 10, 4778/4779)](https://www.thedfirspot.com/post/lateral-movement-remote-desktop-protocol-rdp-event-logs)\n- [Microsoft — Audit Logon / Event 4624 Logon Type reference](https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4624)",
     "file_path": "Alchemy/M024.md",
     "created": "2026-07-04T07:11:35-05:00"
+  },
+  {
+    "id": "M025",
+    "category": "Alchemy",
+    "title": "A source making an anomalous number of connection attempts against ONE authentication service is running a credential brute-force / flood. The discriminating move is SCOPE, not raw volume: busy web servers, backups, CI runners and monitoring probes all carry huge connection counts, so an attempt-count threshold on every port drowns in benign traffic. Applying the volume-outlier test only to the client -> auth-service direction (SSH/FTP/Telnet/RDP/SMB) separates a credential flood from benign high-volume traffic. Unsupervised, because an attacker has no benign history to baseline against and labelled campaigns are rare: learn the benign auth-service volume baseline and flag campaigns whose attempt count is an extreme outlier over it (an order of magnitude beyond the 99th percentile of normal auth-client volume). A volume signal alone catches high-volume floods but not low-and-slow / password-spray, which sits under the benign tail and needs an auth-outcome (failed:success) signal to see.",
+    "tactic": "Credential Access",
+    "notes": "ALCHEMY ANALYTIC — auth-scoped volume outlier, not a static global threshold. Platform: network / NIDS flow telemetry (host-independent). ATTACKER PATTERN: an adversary or external scanner sprays credentials at an exposed auth service, issuing hundreds to hundreds-of-thousands of attempts per target. DATA SOURCES: Zeek conn.log, NetFlow/IPFIX, CICFlowMeter/NTLFlowLyzer flow features; firewall/auth logs (4625 failure bursts) as corroboration. FEATURE ENGINEERING (per src -> dst:port campaign): attempts (count) against auth-service destination ports. DETECTION: robust volume-outlier fence (e.g. 10x the 99th percentile of benign auth-client volume — a percentile, not mean/MAD, because the benign distribution is a heavy point mass at 1 attempt). SCOPE is the signal — the same fence applied UNSCOPED is the FOIL: it false-positives busy benign servers on non-auth ports. VALIDATION (BCCC-CSE-CIC-IDS2018): on the labelled SSH/FTP campaigns the detector catches the 2 high-volume floods (94k / 193k attempts) at ~0.016% false-positive rate but misses a paced 30-attempt campaign that hides under the benign auth tail — a documented limit of a volume-only signal. NOTE: an earlier flow-SHAPE hypothesis (reset storm + tiny failed-login replies) did NOT hold on real BCCC benign traffic (benign carried MORE resets than the brute force), which is why the validated detector keys on scoped volume, not shape. TUNING: allowlist known chatty auth automation; SMB/RDP (445/3389) carry heavy benign volume tails and need a per-service baseline rather than a population fence. FUTURE (learned track): correlate failed:success auth outcome (4625 / ssh.log auth_success) or a learned model to recover low-and-slow / password-spray. CROSS-REF T1110.001 (Password Guessing) / T1110.003 (Password Spraying) and M001 (per-user login-pattern anomaly — the account-takeover counterpart on identity telemetry).",
+    "tags": [
+      "credential_access",
+      "brute_force",
+      "credential_stuffing",
+      "password_spraying",
+      "network",
+      "flow_analysis",
+      "t1110",
+      "anomaly_detection",
+      "model_assisted",
+      "unsupervised",
+      "T1110"
+    ],
+    "techniques": [
+      "T1110"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **Scope is the signal, not volume.** A credential brute-force and a nightly backup both hammer one host:port — a raw attempt-count threshold on every port can't tell them apart and buries the analyst in benign web/backup/CI floods. Applying the volume-outlier test only to client -> auth-service traffic is what surfaces the flood while tuning out the busy servers. The same threshold applied unscoped is the negative control: it false-positives a benign high-volume server.\n- **Unsupervised, because the positive is rare and history-less.** An attacker has no benign baseline of their own and labelled brute-force campaigns are scarce, so a per-user or supervised model has little to learn from. Learning the *benign auth-service* volume baseline from the population and flagging extreme outliers (an order of magnitude beyond its 99th percentile) needs no labels and no attacker history.\n- **Honest about its blind spot.** A volume signal catches high-volume floods with near-zero false positives but cannot see low-and-slow or password-spray — a paced campaign hides under the benign auth tail. Validation on BCCC-CSE-CIC-IDS2018 shows exactly this: the two large SSH/FTP floods are caught, a 30-attempt campaign is missed. Closing that gap needs an auth-outcome (failed:success) signal — a learned follow-up, not flow volume alone. (An earlier flow-shape idea — reset storm, tiny replies — did not survive contact with real benign traffic, which carried more resets than the attacks.)\n- **Complements the identity-side hunt.** M001 baselines per-user login *patterns* (unusual time/location/device) to catch account takeover after credentials succeed. M025 is the network-flow counterpart before they succeed: the flood of attempts against a service, keyed on scoped volume rather than user identity — useful exactly where per-user history doesn't exist (external scanners, service accounts, freshly exposed hosts).",
+    "references": "- [MITRE ATT&CK T1110 - Brute Force](https://attack.mitre.org/techniques/T1110/)\n- [MITRE ATT&CK T1110.003 - Brute Force: Password Spraying](https://attack.mitre.org/techniques/T1110/003/)\n- [BCCC-CSE-CIC-IDS2018 dataset (Behaviour-Centric Cybersecurity Center, York University)](https://www.yorku.ca/research/bccc/ucs-technical/cybersecurity-datasets-cds/)\n- [Shafi, Lashkari & Roudsari — Toward Generating a New Cyber Threat Intelligence Dataset (JNSM 2025)](https://doi.org/10.1007/s10922-025-09895-3)\n- [Zeek conn.log connection state history (conn_state / history)](https://docs.zeek.org/en/master/logs/conn.html)\n- [Elastic Security — Detecting and responding to brute force attacks](https://www.elastic.co/guide/en/security/current/potential-ssh-brute-force.html)",
+    "file_path": "Alchemy/M025.md",
+    "created": "2026-07-04T14:37:30-05:00"
   }
 ];
