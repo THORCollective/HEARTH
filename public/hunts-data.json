@@ -7415,6 +7415,48 @@
     "created": "2026-07-04T14:58:28-04:00"
   },
   {
+    "id": "H221",
+    "category": "Flames",
+    "title": "ClickFix PowerShell staging into ResiLoader and StealC",
+    "tactic": "Execution, Persistence, Stealth, Defense Impairment, Credential Access, Command and Control",
+    "notes": "Endpoint process telemetry - Core filter: user shell or browser lineage that runs `powershell.exe` with `iex`, `irm`, `iwr`, `wget`, or `curl`. Triage values: `process command line`, `parent process command line`, `user`, `file path`. Pivot: creation of `C:\\ProgramData\\Zooms`, `tmp*.tmp.ps1`, or payload retrieval over HTTP ports `6600`, `9900`, `5506`, `7895`, `7493`, `149`, or `8442`. Strong red flags: PowerShell started from a paste or Run dialog pattern with no admin tool parent.\nEndpoint file, module, and driver telemetry - Core filter: writes or loads of `msys-crypto-3.dll`, `pcdhost.sys`, `ssh-add.exe`, `ServiceModelReg.exe`, or DLLs from `C:\\ProgramData\\Google Update` or `C:\\ProgramData\\Zooms`. Triage values: `file path`, `loaded module path`, `driver file path`, `signer`. Correlation: the same lineage drops or decrypts the OPSWAT AppRemover driver and then attempts to terminate security processes.\nRegistry and persistence telemetry - Core filter: Run key writes under `HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run` or `HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run` with value data pointing to `C:\\ProgramData\\Google Update`, `ssh-add.exe`, or the staged loader directory. Triage values: `registry key path`, `registry value data`, `process command line`. Strong red flags: fake Google Update persistence created by the same loader chain that touched security tooling.\nNetwork and post-compromise telemetry - Core filter: outbound HTTPS from `powershell.exe`, `ssh-add.exe`, or hollowed `ServiceModelReg.exe` after the copied command runs. Pivot: DNS or HTTP connections to Cloudflare R2 buckets, `.pages.dev`, or small HTTP responses containing `hehe`, then StealC traffic or credential-store reads. False positive: developer PowerShell downloads should not also load `pcdhost.sys`, tamper with security tools, write fake Google Update persistence, and hollow `ServiceModelReg.exe`.\n",
+    "tags": [
+      "clickfix",
+      "powershell",
+      "resiloader",
+      "stealc",
+      "byovd",
+      "process_hollowing",
+      "T1059.001",
+      "T1105",
+      "T1574.002",
+      "T1547.001",
+      "T1055",
+      "T1562.001",
+      "T1555.003"
+    ],
+    "techniques": [
+      "T1059.001",
+      "T1105",
+      "T1574.002",
+      "T1547.001",
+      "T1055",
+      "T1562.001",
+      "T1555.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Joshua Strickland",
+      "link": "https://novasky.io"
+    },
+    "why": "- ClickFix remains useful to attackers because the first execution step is performed by the user, but this hunt moves past the page text and keys on the copied PowerShell, ProgramData staging, ResiLoader loader artifacts, and StealC execution chain.\n- The ProgramData Zooms path, tmp ps1 staging, msys-crypto-3.dll, pcdhost.sys, fake Google Update Run key, and ServiceModelReg.exe hollowing are concrete artifacts that survive page rebrands and domain churn.\n- The required telemetry is common in endpoint MDR coverage: process creation, file writes, registry changes, driver or module loads, and outbound connection metadata are enough to follow the chain without relying on proxy or browser internals.\n- False positives are controllable because normal admin PowerShell and software installers should not chain driver-based security tool impairment, fake Google Update persistence, and process hollowing into an infostealer.",
+    "references": "- [Malwarebytes: Fake Google and Cloudflare verification pages spread multiple malware families](https://www.malwarebytes.com/blog/threat-intel/2026/07/fake-google-and-cloudflare-verification-pages-spread-multiple-malware-families)\n- [MITRE ATT&CK T1059.001: PowerShell](https://attack.mitre.org/techniques/T1059/001/)\n- [MITRE ATT&CK T1562.001: Impair Defenses](https://attack.mitre.org/techniques/T1562/001/)\n- [MITRE ATT&CK T1055: Process Injection](https://attack.mitre.org/techniques/T1055/)",
+    "file_path": "Flames/H221.md",
+    "created": "2026-07-05T15:40:27-04:00"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
@@ -8019,5 +8061,33 @@
     "references": "- [MITRE ATT&CK T1110 - Brute Force](https://attack.mitre.org/techniques/T1110/)\n- [MITRE ATT&CK T1110.003 - Brute Force: Password Spraying](https://attack.mitre.org/techniques/T1110/003/)\n- [BCCC-CSE-CIC-IDS2018 dataset (Behaviour-Centric Cybersecurity Center, York University)](https://www.yorku.ca/research/bccc/ucs-technical/cybersecurity-datasets-cds/)\n- [Shafi, Lashkari & Roudsari — Toward Generating a New Cyber Threat Intelligence Dataset (JNSM 2025)](https://doi.org/10.1007/s10922-025-09895-3)\n- [Zeek conn.log connection state history (conn_state / history)](https://docs.zeek.org/en/master/logs/conn.html)\n- [Elastic Security — Detecting and responding to brute force attacks](https://www.elastic.co/guide/en/security/current/potential-ssh-brute-force.html)",
     "file_path": "Alchemy/M025.md",
     "created": "2026-07-04T14:37:30-05:00"
+  },
+  {
+    "id": "M026",
+    "category": "Alchemy",
+    "title": "A machine learning model can predict which SOC alerts an analyst will grade a true positive — from the alert's CONTEXT at triage time (its ATT&CK tactic/technique, the entity type it fired on, its evidence role, the detector that raised it) — well enough to safely de-prioritise the benign and false positives that drive alert fatigue. The naive triage shortcut, trusting the alert's own suspicion flag, barely beats the base rate because most true positives never carry one; the separating signal is the surrounding context, learned across many graded alerts. Two rules keep it honest rather than a leak: the model must use ONLY fields known when the alert fires (never the resolution verdict or the remediation action, which are outcomes), and it must be evaluated with an incident-grouped split, since alerts of one incident share a grade.",
+    "tactic": "Multiple",
+    "notes": "ALCHEMY ANALYTIC — supervised alert triage / false-positive reduction (detection-operations, cross-tactic). Platform: SOC / SIEM / XDR alert pipeline. PROBLEM: analysts trge far more alerts than are real; blanket rules (escalate all High, trust the detector's suspicion flag) either bury the team or miss true positives. DATA SOURCES: graded alert/incident records — Microsoft GUIDE (13.7M evidence rows, 1M+ alerts, 6k orgs, real analyst IncidentGrade), Sentinel/Defender incidents with analyst disposition, any SOAR case store with closure codes. REQUIRED FIELDS (alert-time only): alert category/tactic, MITRE technique, entity type, evidence role, detector id, suspicion level, timestamp, incident id (for grouping), and the analyst grade (TruePositive / BenignPositive / FalsePositive) as the label. FEATURE ENGINEERING: low-cardinality categoricals (category, entity type, evidence role, suspicion level) as native categoricals; high-cardinality identifiers (technique, detector) frequency-encoded (label-independent, no leak). MODEL: gradient-boosted trees (or similar) predicting P(TruePositive). NAIVE FOIL: escalate iff suspicion_level is set — provably weak (sparse, most TPs unflagged). LEAKAGE GUARD: exclude last_verdict / action_grouped (resolution + remediation are outcomes); score with GroupKFold on incident so no incident spans train and test. VALIDATION (Microsoft GUIDE): incident-grouped precision ~0.84, recall ~0.70, PR-AUC ~0.85, versus the suspicion foil at ~0.23 precision. TUNING: pick the escalation threshold for the recall you can afford; monitor drift per detector/category; retrain as detections change. CROSS-REF: complements every detection hunt — this one triages their output rather than raising new detections.",
+    "tags": [
+      "alert_triage",
+      "false_positive_reduction",
+      "detection_engineering",
+      "soc_operations",
+      "model_assisted",
+      "supervised",
+      "machinelearning"
+    ],
+    "techniques": [],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **Alert fatigue is the attacker's ally.** A SOC that can't keep up with benign and false positives misses the real one in the pile. A model that predicts the analyst's own grade from context lets the team spend attention where it pays off — de-prioritising the noise without a human reading every alert first.\n- **The suspicion flag is not the signal.** Trusting an alert's own suspicion level (or a blanket severity rule) barely beats guessing — most true positives never carry the flag. What separates true from benign/false positives is the surrounding context: which tactic and technique fired, on what kind of entity, from which detector. That's exactly what a model can learn across many graded alerts and a rule can't hand-code.\n- **Honest by construction, or it's a leak.** The temptation is to train on fields that already contain the answer — the resolution verdict, the remediation taken. Those are outcomes, not triage-time inputs; using them inflates the score and fails in production. Likewise, alerts of one incident share a grade, so a random train/test split leaks — evaluation must group by incident. Get both right and the result holds up (validated on Microsoft GUIDE's real analyst grades).\n- **It complements detection hunts rather than competing.** Every other Alchemy hunt raises detections; this one triages the alert stream they and everything else produce. It's the model-assisted layer between detection and the analyst.",
+    "references": "- [Microsoft GUIDE dataset — a benchmark for evaluating SOC alert triage (arXiv 2407.09017)](https://arxiv.org/abs/2407.09017)\n- [MITRE ATT&CK](https://attack.mitre.org/)\n- [Alert fatigue in security operations (SANS)](https://www.sans.org/blog/)\n- [scikit-learn — Histogram-based Gradient Boosting with native categorical support](https://scikit-learn.org/stable/modules/ensemble.html#histogram-based-gradient-boosting)",
+    "file_path": "Alchemy/M026.md",
+    "created": "2026-07-04T23:28:14-05:00"
   }
 ]
