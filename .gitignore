@@ -61,3 +61,12 @@ scripts/cti_pipeline.py
 
 # CI-generated at deploy time (home page Recent activity feed)
 public/activity.json
+
+# Local screenshot / social-card generation artifacts (root-level)
+/.playwright-mcp/
+/.superpowers/
+/social/
+/smoke-*.png
+/social-*.png
+/hero-*.png
+/profile-hero-*.png
