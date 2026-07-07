@@ -10,11 +10,11 @@ Everyone listed below has submitted ideas that have been added to HEARTH. This l
 | 2 | Jinx (THOR Collective) | 39 |
 | 3 | Sydney Marrone | 29 |
 | 4 | John Grageda | 6 |
-| 5 | Jamie Williams | 3 |
-| 6 | Azrara | 3 |
-| 7 | Jocko | 3 |
-| 8 | Bruce Breuer | 3 |
-| 9 | Joshua Strickland | 3 |
+| 5 | Joshua Strickland | 4 |
+| 6 | Jamie Williams | 3 |
+| 7 | Azrara | 3 |
+| 8 | Jocko | 3 |
+| 9 | Bruce Breuer | 3 |
 | 10 | Audra Streetman | 2 |
 | 11 | Siddhant Mishra | 2 |
 | 12 | DarkWizardCatcher | 2 |
