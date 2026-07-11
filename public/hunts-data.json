@@ -881,6 +881,40 @@
     "created": "2026-07-04T07:11:35-05:00"
   },
   {
+    "id": "B030",
+    "category": "Embers",
+    "title": "Baseline internal SMB/NTLM authentication to surface coerced/reflected auth (CVE-2025-33073)",
+    "tactic": "Lateral Movement",
+    "notes": "PLATFORM: Windows / Active Directory. BASELINE FIRST (Embers). Source: Unit 42, \"The Gentlemen Ransomware,\" which exploits CVE-2025-33073 (Windows SMB Client NTLM reflection EoP) and internal service vulns for lateral movement and recommends enforcing SMB signing + disabling SMBv1. This is a high-level brief with no forensic command lines, so the hunt is built as an authentication baseline rather than an IOC match.\n\nDATA COLLECTION FIELDS (per event): source host, destination host, account name, account type (user vs machine account `HOST$`), logon type (3 = network), authentication package (NTLM vs Kerberos), NTLM version, SMB dialect, SMB signing negotiated (yes/no), share/pipe accessed, process/service context, timestamp. TELEMETRY: Windows Security 4624 / 4625 (network logon, capture `Authentication Package` = NTLM and the source/destination), 4776 (NTLM credential validation), 5140 / 5145 (share and detailed file-share access, esp. IPC$ and named pipes used by relay tooling — svcctl, atsvc, winreg), and SMBServer/SMBClient operational logs for dialect + signing. Sysmon EID 3 (network connect on 445) and EID 18 (named-pipe connect) enrich the picture.\n\nCOLLECTION WINDOW: 30 days per host/account to learn normal peers, auth package, and signing posture. DELIVERABLE: a per-host/per-account allowlist of expected SMB/NTLM authentication — which accounts authenticate to which destinations, whether they use NTLM or Kerberos, and whether signing is enforced — plus a baseline of the small, predictable set of hosts that legitimately see machine-account inbound SMB.\n\nIMMEDIATE FLAGS (do not wait for the baseline to finish): (1) a host authenticating to ITSELF via network NTLM (source host == destination host, logon type 3) — the reflection tell; (2) a machine account (`HOST$`) authenticating to a host other than a domain controller or its normal management peers; (3) SYSTEM-context SMB sessions initiated to peers the machine never contacts, immediately followed by service creation (7045) or named-pipe access to `svcctl`/`atsvc`; (4) NTLM where Kerberos is expected (unsigned NTLM to an internal host that normally uses Kerberos), a hallmark of coercion/relay; (5) inbound SMB with signing NOT negotiated on hosts where policy requires it. CROSS-REF: enables lateral-movement Flames/Alchemy hunts (Impacket service-exec, PsExec `-s`, DCOM/WMI alternate lateral movement) and complements credential-access hunts on the DC.",
+    "tags": [
+      "lateral_movement",
+      "windows",
+      "active_directory",
+      "smb",
+      "ntlm_reflection",
+      "coercion",
+      "cve_2025_33073",
+      "the_gentlemen",
+      "baseline",
+      "t1210",
+      "T1210"
+    ],
+    "techniques": [
+      "T1210"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **Coercion and NTLM reflection hide inside the busiest protocol in the domain.** Internal SMB/NTLM authentication happens constantly and legitimately, so a signature on \"NTLM to 445\" fires on everything. Only a per-host/per-account baseline of *normal* auth makes the coerced or reflected session stand out — which is why this is an Ember, not a Flame.\n- **CVE-2025-33073 turns a client into a SYSTEM foothold.** The SMB-client reflection vulnerability lets an attacker coerce a host into authenticating in a way that reflects back to SYSTEM, enabling local privilege escalation and lateral movement. The Gentlemen operators fold this into their intrusion chain, and Microsoft's fix pairs with enforcing SMB signing — the exact posture this baseline measures.\n- **The anomalies are structural, not IOC-based.** A host authenticating to itself, a machine account reaching an unexpected peer, or NTLM where Kerberos belongs are deviations from a learned baseline that survive tool and infrastructure changes — durable signal a hash list can't provide.\n- **The telemetry already exists and doubles as hardening evidence.** 4624/4776/5145 and SMB signing negotiation are already in most SIEMs; building the baseline simultaneously inventories where SMB signing is missing, directly reducing the relay/coercion attack surface.",
+    "references": "- [MITRE ATT&CK T1210: Exploitation of Remote Services](https://attack.mitre.org/techniques/T1210/)\n- [Unit 42: No Manners Here — The Ruthless Rise of The Gentlemen Ransomware](https://unit42.paloaltonetworks.com/the-gentlemen-ransomware/)\n- [Microsoft MSRC: CVE-2025-33073 — Windows SMB Client Elevation of Privilege Vulnerability](https://msrc.microsoft.com/update-guide/en-US/advisory/CVE-2025-33073)\n- [Synacktiv: NTLM reflection is dead, long live NTLM reflection! — An in-depth analysis of CVE-2025-33073](https://www.synacktiv.com/en/publications/ntlm-reflection-is-dead-long-live-ntlm-reflection-an-in-depth-analysis-of-cve-2025)\n- [Elastic: Potential Machine Account Relay Attack via SMB](https://www.elastic.co/guide/en/security/current/potential-machine-account-relay-attack-via-smb.html)",
+    "file_path": "Embers/B030.md",
+    "created": null
+  },
+  {
     "id": "H001",
     "category": "Flames",
     "title": "An adversary is attempting to brute force the admin account on the externally facing VPN gateway.",
@@ -7457,6 +7491,172 @@
     "created": "2026-07-05T15:40:27-04:00"
   },
   {
+    "id": "H222",
+    "category": "Flames",
+    "title": "GigaWiper destructive disk wipe via raw volume writes and partition reinitialization",
+    "tactic": "Impact",
+    "notes": "PLATFORM: Windows. This hunt keys on the destructive PRIMITIVES a wiper cannot avoid, not on GigaWiper's specific\nhashes, so it survives rebuilds.\n\nEndpoint process + API telemetry - Core filter: a non-system process opening a handle to `\\\\.\\PhysicalDrive0`\n(and higher), `\\\\.\\C:`, or a raw volume, then issuing high-volume sequential `WriteFile` calls. GigaWiper's\n`WipeMain` overwrites each physical drive in 0xA00000-byte (10 MB) chunks (first byte randomized via\n`crypto/rand`, remainder zeroed); `WipeCMain` does a 3-pass overwrite (0x00, 0xFF, random) logging\n\"Pass 1/2/3 Time took\". Triage values: `process name`, `image path`, `signer`, `command line`, target device path.\nSysmon EID 1 (process create) + EID 9 (RawAccessRead) are the primary sensors; Defender XDR `DeviceProcessEvents`\nand `DeviceEvents` (RawAccessRead / DeviceIoControl) are the KQL equivalents.\n\nDisk-structure destruction - Core filter: `DeviceIoControl` carrying control code `IOCTL_DISK_CREATE_DISK`\n(`0x7C058`) issued against non-Windows physical drives (GigaWiper's `main.unallocateDrive`), which reinitializes\nthe partition table / MBR-GPT metadata. Correlate with `takeown`/`icacls` re-permissioning of boot and kernel\nfiles under `\\Windows\\System32\\` immediately preceding their deletion (the `BSOD` command path), which forces an\nunbootable state.\n\nPre-wipe reconnaissance and detonation - Pivot: WMI `SELECT * FROM Win32_DiskDrive` enumeration by the same\nprocess shortly before the writes (it must find every drive to wipe it), and a forced immediate reboot afterward\n(`NtShutdownSystem` / `InitiateSystemShutdownEx` with force+zero-delay, or `shutdown.exe /r /t 0 /f`) that turns\nthe tampering into an outage. Strong red flag: raw-volume writes + `IOCTL_DISK_CREATE_DISK` + forced reboot from\none un-trusted process lineage in a short window.\n\nCROSS-REF: pairs with T1490 (Inhibit System Recovery, already covered) and T1529 (System Shutdown/Reboot) — the\nrecovery inhibition and forced reboot are what actualize the wipe. Detonation-stage forced reboots that follow\nanomalous disk writes are a strong correlation signal.\n",
+    "tags": [
+      "impact",
+      "windows",
+      "wiper",
+      "destructive",
+      "gigawiper",
+      "t1561_001",
+      "t1561_002",
+      "disk_wipe",
+      "T1561.001",
+      "T1561.002"
+    ],
+    "techniques": [
+      "T1561.001",
+      "T1561.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **Raw-disk overwriting is the irreversible act, and it is loud in telemetry.** A user-mode process opening `\\\\.\\PhysicalDrive` and issuing 10 MB sequential writes is rare and high-signal; Sysmon EID 9 (RawAccessRead) and process-create events capture it without any new sensor.\n- **`IOCTL_DISK_CREATE_DISK` on non-boot drives is a near-unambiguous structure-wipe signal.** Outside of provisioning and imaging tooling, almost nothing legitimately reinitializes partition tables on multiple drives — and provisioning tools are signed, run from expected paths, and do not chain into a forced reboot.\n- **The chain distinguishes destruction from administration.** Drive enumeration (`Win32_DiskDrive`) → raw writes / `IOCTL_DISK_CREATE_DISK` → boot-file re-permission and deletion → forced zero-delay reboot is a wiper's fingerprint; any single step is benign, but the ordered sequence from one untrusted process is not.\n- **Coverage gap for destructive impact.** HEARTH lacked T1561.x entirely; wipers (GigaWiper, and the broader FlockWiper/HermeticWiper/CaddyWiper lineage) are a recurring, high-consequence threat where minutes of early detection matter.",
+    "references": "- [MITRE ATT&CK T1561.001: Disk Wipe — Disk Content Wipe](https://attack.mitre.org/techniques/T1561/001/)\n- [MITRE ATT&CK T1561.002: Disk Wipe — Disk Structure Wipe](https://attack.mitre.org/techniques/T1561/002/)\n- [Microsoft Threat Intelligence: GigaWiper — Anatomy of a destructive backdoor assembled from multiple malware](https://www.microsoft.com/en-us/security/blog/2026/07/09/gigawiper-anatomy-of-a-destructive-backdoor-assembled-from-multiple-malware/)\n- [Splunk Security Content: Windows Raw Access To Disk Volume Partition](https://research.splunk.com/endpoint/a85aa37e-9647-11ec-90c5-acde48001122/)\n- [SigmaHQ: Potential Defense Evasion Via Raw Disk Access By Uncommon Tools](https://github.com/SigmaHQ/sigma/blob/master/rules/windows/raw_access_thread/raw_access_thread_susp_disk_access_using_uncommon_tools.yml)\n- [Elastic Security Labs: Elastic protects against data wiper malware targeting Ukraine (HERMETICWIPER)](https://www.elastic.co/security-labs/elastic-protects-against-data-wiper-malware-targeting-ukraine-hermeticwiper)",
+    "file_path": "Flames/H222.md",
+    "created": null
+  },
+  {
+    "id": "H223",
+    "category": "Flames",
+    "title": "AD FS active token-signing key theft via machine DPAPI enabling Golden SAML",
+    "tactic": "Credential Access, Defense Evasion",
+    "notes": "PLATFORM: Windows / AD FS / Identity (Entra ID federation). Two-stage hunt — key theft on the AD FS host, then\ntoken forgery visible in the cloud. Novelty vs. classic Golden SAML: the attacker recovers the LIVE signing key\nfrom the machine key store rather than the WID config DB + DKM path, so when AutoCertificateRollover is disabled\nand a cert was manually rotated, the DKM/config path yields a stale \"ghost\" cert while the active key sits in\n`C:\\ProgramData\\Microsoft\\Crypto\\RSA\\MachineKeys\\`.\n\nKey-theft stage (T1552.004) - Enable SACL auditing and hunt Windows Security **4663** (object access) for reads\nof `C:\\ProgramData\\Microsoft\\Crypto\\RSA\\MachineKeys\\` and `C:\\Windows\\System32\\Microsoft\\Protect\\S-1-5-18\\`\n(DPAPI_SYSTEM masterkey) by any process other than the AD FS service. Correlate with process telemetry for\nmachine-scoped DPAPI extraction (SharpDPAPI `/machine`), and access to the `LocalMachine\\My` certificate store on\nthe AD FS host. LSA-secret / masterkey recovery maps to T1003.004 (already covered) as a supporting behavior.\n\nForgery stage (T1606.002) - Cross-correlate AD FS token-issuance audit events (**1200** \"issued a valid token\",\n**1202** validation, **299** token issuance, version-dependent) against a preceding primary-authentication\ncontext: a token issuance with NO correlatable authentication is an orphaned issuance = forged. Event **385**\n(certificate validity warning) signals the ghost-cert config drift precondition. On the cloud side, hunt Entra ID\nsign-in logs for accepted federated sign-ins with anomalous source IP / claim-set / user-agent that have NO\nmatching AD FS issuance, and failed forgeries surfacing as `AADSTS500172` (invalid signing material).\n\nScoping check (Embers-style hardening pivot): `Get-AdfsProperties` (is `AutoCertificateRollover` disabled?),\n`Get-AdfsCertificate` — a manually-rotated signing cert with rollover disabled is the exploitable precondition.\nCROSS-REF: pairs with the OAuth/app-token abuse and Midnight Blizzard federation-attack patterns; supporting\ncreds theft maps to T1003.004 (covered).\n",
+    "tags": [
+      "credential_access",
+      "defense_evasion",
+      "windows",
+      "identity",
+      "adfs",
+      "golden_saml",
+      "dpapi",
+      "t1552_004",
+      "t1606_002",
+      "T1552.004",
+      "T1606.002"
+    ],
+    "techniques": [
+      "T1552.004",
+      "T1606.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **Golden SAML defeats MFA and Conditional Access by design.** Once the token-signing key is stolen, the adversary mints tokens for any user without ever authenticating — so identity-plane token issuance, not endpoint logon, is where the hunt must live.\n- **The active-key-from-MachineKeys path evades DKM-focused detections.** Hunts that watch the DKM container object (4662) miss this technique entirely because the live key never touches the DKM/AD object; file-level SACL (4663) on the machine key store is the sensor that catches it.\n- **Orphaned token issuance is a high-fidelity, near-zero-FP signal.** A legitimate AD FS token cannot exist without a preceding primary authentication; a valid, Entra-accepted federated sign-in with no correlating AD FS auth is a forged token by construction.\n- **The precondition is detectable as hygiene.** `AutoCertificateRollover` disabled plus a manually rotated cert (Event 385 warnings) marks the exact environments where the \"ghost cert\" gap exists — surfacing risk before an adversary uses it.",
+    "references": "- [MITRE ATT&CK T1606.002: Forge Web Credentials — SAML Tokens](https://attack.mitre.org/techniques/T1606/002/)\n- [MITRE ATT&CK T1552.004: Unsecured Credentials — Private Keys](https://attack.mitre.org/techniques/T1552/004/)\n- [Mandiant / Google Threat Intelligence: The 'Ghost' in the Database — Recovering Active ADFS Signing Keys via Machine DPAPI](https://cloud.google.com/blog/topics/threat-intelligence/recovering-active-adfs-signing-keys-machine-dpapi/)\n- [Splunk: A Golden SAML Journey — SolarWinds Continued](https://www.splunk.com/en_us/blog/security/a-golden-saml-journey-solarwinds-continued.html)\n- [CISA AA21-008A: Detecting Post-Compromise Threat Activity in Microsoft Cloud Environments](https://www.cisa.gov/news-events/cybersecurity-advisories/aa21-008a)\n- [Microsoft Entra: Understanding and Mitigating Golden SAML Attacks](https://techcommunity.microsoft.com/blog/microsoft-entra-blog/understanding-and-mitigating-golden-saml-attacks/4418864)",
+    "file_path": "Flames/H223.md",
+    "created": null
+  },
+  {
+    "id": "H224",
+    "category": "Flames",
+    "title": "Cavern Manticore modular C2 detection via encoded HTTP protocol fingerprint",
+    "tactic": "Command and Control",
+    "notes": "PLATFORM: Windows host / network. Keys on the Cavern Agent C2 protocol constants, which are static across samples\neven as domains rotate.\n\nEncoded C2 fingerprint (T1132.001) - Core filter over proxy / web-gateway / endpoint-network logs:\n- Custom request header `X-User-token: <AgentID>00` (value ends in the literal `00`).\n- Fixed URIs: `/profile` (beacon check-in), `/gallery` (result upload), `/socket` (WebSocket upgrade).\n- Command verbs seen in decoded traffic: `get send cget cpost upload ws getws sendws closews`; field delimiters\n  `_;;_` (verb/arg) and `_,_` (arg separation). Payloads are single-byte XOR (key `0x48`) then Base64.\nTriage values: `url`, request headers, user-agent, `http_method`, destination host, JA3/TLS metadata.\n\nCorroborating signals (do not alert alone) - A single FROZEN User-Agent across the environment with no version\ndrift: `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0\nSafari/537.36 Edg/146.0.0.0`; and brand-in-subdomain domain masquerade such as `google[.]com[.]<attacker-domain>`\n/ `auth[.]<attacker-domain>` (these map to T1001.003, a separate anomaly-scoring hunt). Host-side, the loader\nside-loads `uxtheme.dll` via `WinDirStat.exe` and works out of `C:\\ProgramData\\WinDir\\` (config `config.txt`;\nmutexes `MYMUTEX123HELLP*`) — DLL sideloading maps to already-covered T1574.002; reflective plugin loading of\nmodules (`n-HTCommp.dll`, `mhm.dll`, `ode.dll`, `n-ten.dll`, `n-sws.dll`) from ProgramData maps to T1129.\n\nCROSS-REF: pair with a T1129 shared-modules image-load hunt (uxtheme.dll loading unsigned DLLs from ProgramData\nwith AppDomain load/unload churn) and a T1001.003 impersonation-scoring hunt for full Cavern coverage.\n",
+    "tags": [
+      "command_and_control",
+      "windows",
+      "cavern_manticore",
+      "iran",
+      "c2",
+      "data_encoding",
+      "t1132_001",
+      "T1132.001"
+    ],
+    "techniques": [
+      "T1132.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **Protocol constants outlive infrastructure.** Domains, IPs, and TLS certs churn; the `X-User-token: …00` header, the `/profile` `/gallery` `/socket` URIs, and the `_;;_` / `_,_` delimiters are baked into the agent and persist across samples — so a signature on them keeps paying off.\n- **Encoding-plus-constants beats generic base64 detection.** Base64 in HTTP is everywhere; the Cavern-specific header/URI/delimiter combination is not, which turns a noisy idea into a precise one.\n- **Network-only visibility.** This hunt fires from proxy / web-gateway metadata alone — valuable in environments where the AD FS/endpoint side of the intrusion is not fully instrumented.\n- **Anchors a multi-technique campaign.** The same framework side-loads `uxtheme.dll` and reflectively loads plugin DLLs from `C:\\ProgramData\\WinDir\\`; catching the C2 fingerprint gives a pivot into the host-side T1129 / T1574.002 activity.",
+    "references": "- [MITRE ATT&CK T1132.001: Data Encoding — Standard Encoding](https://attack.mitre.org/techniques/T1132/001/)\n- [Check Point Research: Cavern Manticore — Exposing Iran-Linked Modular C2 Framework](https://research.checkpoint.com/2026/cavern-manticore-exposing-iran-linked-modular-c2-framework/)\n- [Splunk Security Content: Windows PowGoop Beacon Decoding](https://research.splunk.com/endpoint/4d0480d8-80c4-4f74-84fe-2ab7fb514c85/)\n- [SigmaHQ: Suspicious Base64 Encoded User-Agent](https://github.com/SigmaHQ/sigma/blob/master/rules/web/proxy_generic/proxy_ua_base64_encoded.yml)\n- [Red Canary Atomic Red Team: T1132.001 — Data Encoding: Standard Encoding](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1132.001/T1132.001.md)",
+    "file_path": "Flames/H224.md",
+    "created": null
+  },
+  {
+    "id": "H225",
+    "category": "Flames",
+    "title": "Gamaredon USB-triggered document collection via WMI removable-drive event subscription",
+    "tactic": "Discovery, Collection",
+    "notes": "PLATFORM: Windows. Two-part chain — real-time removable-media DISCOVERY (T1120) wired to document COLLECTION\n(T1025). Key on the verbatim GammaSteel artifacts.\n\nDiscovery trigger (T1120) - Core filter: `powershell.exe` registering a WMI event subscription for removable\nmedia. Verbatim artifact:\n`Register-WmiEvent -Query \"select * from __InstanceCreationEvent within 5 where TargetInstance ISA 'Win32_LogicalDisk' and TargetInstance.DriveType = 2\"`.\nTELEMETRY: PowerShell 4104 script-block logging (the `Register-WmiEvent` / `DriveType = 2` string), WMI-Activity\nETW (`Microsoft-Windows-WMI-Activity/Operational` EID 5860/5861 temporary/permanent event consumers), Sysmon\nEID 19/20/21 (WmiEventFilter/Consumer/Binding) for the permanent-subscription variant, and Defender XDR\n`DeviceEvents` for WMI activity. Triage values: `process command line`, `parent process`, `user`, script-block text.\n\nCollection (T1025) - Core filter: on USB insertion the stealer copies `*.doc *.docx *.xls *.xlsx *.ppt *.pptx\n*.pdf *.zip *.rar *.7z *.txt *.csv` into a HIDDEN staging folder named from the first 15 chars of\n`HKLM\\SOFTWARE\\Microsoft\\Cryptography\\MachineGuid`, marked hidden via `attrib +h`; it also arms a\n`System.IO.FileSystemWatcher` on drive roots (NotifyFilter FileName,DirectoryName,Attributes,Size,LastWrite,\nSecurity) for in-use capture. Hunt file-create bursts of those extensions from a removable volume into a\nhidden/GUID-named directory. Mutex `Global\\assembly307` is a supporting host artifact.\n\nCROSS-REF: Gamaredon persistence stores DPAPI-encrypted PowerShell under `HKCU\\Printers` and re-executes it from\na Run key (`[scriptblock]::Create` — registry-as-code, maps to already-covered T1112 / T1547.001); DDR C2 via\nTelegraph/write.as/Mastodon maps to already-covered T1102.001. This hunt is the removable-media collection leg.\n",
+    "tags": [
+      "discovery",
+      "collection",
+      "windows",
+      "gamaredon",
+      "gammasteel",
+      "wmi",
+      "removable_media",
+      "t1120",
+      "t1025",
+      "T1120",
+      "T1025"
+    ],
+    "techniques": [
+      "T1120",
+      "T1025"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **The WMI removable-drive subscription is a distinctive, verbatim artifact.** A `__InstanceCreationEvent` filter on `Win32_LogicalDisk` with `DriveType = 2` created by `powershell.exe` is rare outside of purpose-built USB-monitoring malware and is captured directly by 4104 and WMI-Activity ETW.\n- **Discovery + collection together beat either alone.** Removable-drive discovery is benign on its own and document reads are benign on their own; the malicious signal is the subscription arming a document-harvest burst into a hidden GUID-named folder within seconds of a USB attach.\n- **Air-gapped and USB-borne intel theft is Gamaredon's stock in trade.** This loop is how documents leave hosts that never touch the internet directly — catching the subscription gives defenders the earliest signal, before staging and exfil.\n- **Cheap telemetry, high leverage.** Script-block logging plus WMI-Activity ETW already exist in most Windows estates; no new sensor is needed to hunt the subscription and the collection burst.",
+    "references": "- [MITRE ATT&CK T1120: Peripheral Device Discovery](https://attack.mitre.org/techniques/T1120/)\n- [MITRE ATT&CK T1025: Data from Removable Media](https://attack.mitre.org/techniques/T1025/)\n- [Sekoia: FSB's matryoshka #3/3 — Gamaredon's gifts that keep unpacking — GammaSteel](https://www.sekoia.com/blog/fsbs-matryoshka-3-3-gamaredons-gifts-that-keeps-unpacking-gammasteel)\n- [Splunk Security Content: WMI Temporary Event Subscription](https://research.splunk.com/endpoint/38cbd42c-1098-41bb-99cf-9d6d2b296d83/)\n- [SigmaHQ: WMI Event Subscription](https://github.com/SigmaHQ/sigma/blob/master/rules/windows/wmi_event/sysmon_wmi_event_subscription.yml)\n- [Red Canary Atomic Red Team: T1025 — Data from Removable Media](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1025/T1025.md)",
+    "file_path": "Flames/H225.md",
+    "created": null
+  },
+  {
+    "id": "H226",
+    "category": "Flames",
+    "title": "Linux residential-proxy bandwidth hijacking (proxyjacking) via proxyware ELF execution",
+    "tactic": "Impact",
+    "notes": "PLATFORM: Linux. Keys on the proxyware EXECUTION primitive, portable across IPRoyal Pawns, Pawns.app,\npacketstream, peer2profit, and similar clients — not on Mimo's specific hashes.\n\nProcess execution (T1496.002) - Core filter: `execve` of an ELF from a world-writable / non-package path with\nproxyware enrollment flags. Verbatim Mimo example:\n`./hezb.x86_64 -email <addr> -password <pwd> -accept-tos` (IPRoyal Pawns; operator account `4l4md4r@proton.me`).\nTELEMETRY: auditd `execve` syscall (log `exe`, `argv`, `cwd`, `uid`, `ppid`), eBPF (e.g. Falco/Tetragon\nprocess_exec), or Sysmon-for-Linux EID 1. Triage values: executable path, full argv (proxyware flags), parent\nprocess (web service = strong signal), working directory. Pivot: a preceding `chmod +x` on the same inode in\n`/tmp`/`/var/tmp` seconds before `execve`, and (when unprivileged) a bundled `su` binary used to elevate the\n`chmod`.\n\nNetwork (T1496.002) - Core filter: outbound sessions from the host (or the proxyware process) to residential-\nproxy provider infrastructure, and — the tell of an OPEN RELAY — the host both receiving inbound connections and\ninitiating symmetric outbound traffic on behalf of third parties. Flag persistent connections to known\nproxy-network endpoints from a server that has no business acting as a proxy.\n\nCROSS-REF: the same Mimo intrusion set also runs XMRig for cryptomining — this proxyjacking hunt is the bandwidth\nmonetization counterpart to compute hijacking (T1496 parent / T1496.001, cryptomining coverage). Initial access\nwas CVE-2025-32432 (Craft CMS) → PHP web shell (T1505.003, already covered); the loader also sets\n`/etc/ld.so.preload` for `readdir` hooking (T1574.006) — hunt those legs separately.\n",
+    "tags": [
+      "impact",
+      "linux",
+      "proxyjacking",
+      "proxyware",
+      "bandwidth_hijacking",
+      "mimo",
+      "t1496_002",
+      "T1496.002"
+    ],
+    "techniques": [
+      "T1496.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **Proxyjacking is quiet, profitable, and under-hunted.** Unlike cryptomining it does not spike CPU, so it evades resource-based detection; the signal is the proxyware binary and its network behavior, not host load.\n- **The command line is self-identifying.** Residential-proxy clients take enrollment flags (`-accept-tos`, `-email`, `-password`) on the command line — a high-fidelity `execve` signature that survives binary renames.\n- **Path + parent make it obvious on a server.** A proxyware ELF dropped into `/tmp` or a web-service working directory and launched by `www-data`/`php-fpm` is nothing a legitimate bandwidth-sharing install ever looks like.\n- **Portable, evergreen coverage.** The drop → `chmod +x` → `execve` chain and the open-relay network pattern apply to any proxyware family, making this hunt useful long after the Mimo campaign fades.",
+    "references": "- [MITRE ATT&CK T1496.002: Resource Hijacking — Bandwidth Hijacking](https://attack.mitre.org/techniques/T1496/002/)\n- [Sekoia: The Sharp Taste of Mimo'lette — Analyzing Mimo's Latest Campaign targeting Craft CMS](https://www.sekoia.com/blog/the-sharp-taste-of-mimolette-analyzing-mimos-latest-campaign-targeting-craft-cms)\n- [Sysdig: Proxyjacking has Entered the Chat](https://www.sysdig.com/blog/proxyjacking-attackers-log4j-exploited)\n- [Akamai: Proxyjacking — The Latest Cybercriminal Side Hustle](https://www.akamai.com/blog/security-research/proxyjacking-new-campaign-cybercriminal-side-hustle)\n- [Red Canary Atomic Red Team: T1496 — Resource Hijacking](https://www.atomicredteam.io/atomic-red-team/atomics/T1496)",
+    "file_path": "Flames/H226.md",
+    "created": null
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
@@ -8089,5 +8289,38 @@
     "references": "- [Microsoft GUIDE dataset — a benchmark for evaluating SOC alert triage (arXiv 2407.09017)](https://arxiv.org/abs/2407.09017)\n- [MITRE ATT&CK](https://attack.mitre.org/)\n- [Alert fatigue in security operations (SANS)](https://www.sans.org/blog/)\n- [scikit-learn — Histogram-based Gradient Boosting with native categorical support](https://scikit-learn.org/stable/modules/ensemble.html#histogram-based-gradient-boosting)",
     "file_path": "Alchemy/M026.md",
     "created": "2026-07-04T23:28:14-05:00"
+  },
+  {
+    "id": "M027",
+    "category": "Alchemy",
+    "title": "Perimeter device acting as an ORB external-proxy relay (volumetric detection)",
+    "tactic": "Command and Control",
+    "notes": "ALCHEMY ANALYTIC — volumetric / behavioral network anomaly detection for ORB relay activity. PLATFORM: network (edge / embedded Linux). Source: Cisco Talos UAT-7810, which builds ORB networks from compromised Ruckus and ASUS edge devices using LONGLEASH (Boost.Asio proxy for HTTP/DNS/SOCKS/TCP/ICMP/UDP) and DOGLEASH backdoors.\n\nPROBLEM: ORB nodes are legitimate perimeter devices, so a static IOC/signature list ages out as infrastructure rotates. The durable signal is the CHANGE in a device's role — a gateway that has only ever originated its own management/update traffic starting to relay third-party sessions. This is an anomaly-modeling problem, not a signature match.\n\nDATA SOURCES: NetFlow/IPFIX or firewall/gateway flow logs at the perimeter; per-device inbound/outbound connection records; passive DNS; TLS/JA3 metadata. REQUIRED FIELDS: source device, direction, dst/src port, bytes in/out, connection count, distinct external peers, protocol, timestamp.\n\nFEATURES per perimeter device over a rolling baseline (~30 days): count of inbound connections on non-service / high ports; ratio and temporal correlation of inbound-to-outbound sessions (relay = tight inbound⇄outbound pairing); distinct external-peer fan-in and fan-out; proxied-protocol mix (SOCKS/HTTP/DNS/ICMP tunneling); bytes-relayed vs bytes-terminated. MODEL: per-device baseline + outlier scoring (robust z-score / isolation forest) on the relay-shape features; alert on a device crossing from \"terminator\" to \"relay\" behavior. UAT-7810 observed pivots: listeners on ports 99 (TLS), 2222 (C2), 8088; relay IPs 194.233.92[.]26, 217.15.160[.]247, 217.15.164[.]147, 95.182.100[.]231.\n\nHIGH-FIDELITY JOIN (near-signature): self-signed TLS certificate with every X.509 field set to the literal string `exploit` (`C=exploit, ST=exploit, L=exploit, O=exploit, OU=exploit, CN=exploit`), fingerprint `c2ab9adaba93ff094b8f3fc37d906014d870582039d276b7bd03e6fd583d8a15`, and a spoofed `Mozilla/5.0 (Windows NT 10.0...)` User-Agent egressing from a Linux/embedded device — use as a corroborating feature to promote a scored anomaly to an alert.\n\nVALIDATION / TUNING: backtest against known-good change windows (firmware updates, new site links) to set the outlier threshold; monitor per-device drift; treat sanctioned proxies/VPN concentrators as an allowlist. NAIVE FOIL: alerting on any inbound high-port connection — provably noisy on internet-facing devices; the separating signal is the inbound⇄outbound relay CORRELATION, not inbound alone. CROSS-REF: complements external-proxy/relay IOC hunts; the ORB device is often the pivot upstream of the T1132.001 encoded-C2 hunt.",
+    "tags": [
+      "command_and_control",
+      "network",
+      "orb",
+      "external_proxy",
+      "edge_device",
+      "uat_7810",
+      "volumetric",
+      "model_assisted",
+      "t1090_002",
+      "T1090.002"
+    ],
+    "techniques": [
+      "T1090.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **ORB networks are built to raise the cost of IOC-based defense.** Operators rotate through pools of compromised edge devices so that any single relay IP is short-lived; chasing IPs loses. Modeling each of *your own* perimeter devices' behavior flips the problem — you detect the compromise by the role change, not by matching the adversary's disposable infrastructure.\n- **The relay role is the signal, not the ports.** Internet-facing devices receive odd inbound connection attempts constantly, so inbound-on-high-port alone is noise. What is anomalous is a device that begins *pairing* inbound sessions with symmetric outbound flows — accepting traffic and forwarding it on behalf of third parties. That inbound⇄outbound correlation is what a per-device model can learn and a static rule cannot.\n- **Edge devices are under-instrumented and long-lived.** Routers, firewalls, and IoT rarely run EDR, so network flow is often the only telemetry — making a flow-based volumetric model the right (and sometimes only) sensor for on-device ORB behavior.\n- **A cheap high-fidelity join exists.** UAT-7810's self-signed `exploit`-everything certificate and frozen spoofed User-Agent give a near-signature corroborator that promotes a scored flow anomaly into a confident alert without waiting for the next campaign's IOCs.",
+    "references": "- [MITRE ATT&CK T1090.002: Proxy — External Proxy](https://attack.mitre.org/techniques/T1090/002/)\n- [Cisco Talos: UAT-7810 continues building ORB networks using new malware](https://blog.talosintelligence.com/uat-7810/)\n- [Mandiant / Google Threat Intelligence: IOC Extinction? China-Nexus Cyber Espionage Actors Use ORB Networks](https://cloud.google.com/blog/topics/threat-intelligence/china-nexus-espionage-orb-networks)\n- [Team Cymru: An Introduction to Operational Relay Box (ORB) Networks](https://www.team-cymru.com/post/an-introduction-to-operational-relay-box-orb-networks-unpatched-forgotten-and-obscured)\n- [Elastic Security Labs: Identifying beaconing malware using Elastic](https://www.elastic.co/security-labs/identifying-beaconing-malware-using-elastic)",
+    "file_path": "Alchemy/M027.md",
+    "created": null
   }
 ]
