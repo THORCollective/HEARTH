@@ -1,5 +1,6 @@
 """Tests for identity extraction used by the hunt-ID collision check."""
 
+from scripts import check_hunt_id_collisions as collisions
 from scripts.check_hunt_id_collisions import extract_identity
 
 # The original H210 as it lived on main: legacy table format, submitter th3CyF0x.
@@ -62,3 +63,11 @@ def test_extract_identity_handles_garbage():
     declared, submitter = extract_identity("not a hunt file", "H999")
     assert declared is None
     assert submitter is None
+
+
+def test_main_fails_closed_when_origin_main_empty(monkeypatch, capsys):
+    # When origin/main resolves to no hunts (e.g. the base ref wasn't fetched in
+    # a fork-PR runner), the check must fail rather than pass every ID through.
+    monkeypatch.setattr(collisions, "_git", lambda *args: "")
+    assert collisions.main() == 1
+    assert "no hunts on origin/main" in capsys.readouterr().out

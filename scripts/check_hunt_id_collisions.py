@@ -8,6 +8,9 @@ Run on a PR with the head checked out and ``origin/main`` fetched. Detects:
      contributor's hunt overwritten by a different hunt under the same ID,
   4. two files in the working tree sharing an ID.
 
+Fails closed if ``origin/main`` yields no hunts, since an empty baseline (an
+unresolved base ref) would otherwise let every colliding ID pass.
+
 Exits 1 (printing each problem) on any collision, else 0.
 """
 
@@ -78,6 +81,20 @@ def _show_main(path: str) -> str:
 
 
 def main() -> int:
+    # Establish the baseline first, and fail closed if it looks empty. ``main``
+    # always has hunts, so an empty result means ``origin/main`` didn't resolve
+    # (e.g. the remote-tracking ref wasn't populated in a fork-PR runner) rather
+    # than a genuinely clean base. Trusting it would let every colliding ID pass.
+    main_out = _git("ls-tree", "-r", "--name-only", "origin/main", "--", *DIRS)
+    main_ids = {Path(p).stem for p in main_out.splitlines() if p.endswith(".md")}
+    if not main_ids:
+        print(
+            "Hunt ID collision check FAILED: found no hunts on origin/main. "
+            "The base didn't resolve (is origin/main fetched?); refusing to pass "
+            "against an empty baseline."
+        )
+        return 1
+
     added_out = _git(
         "diff", "--diff-filter=A", "--name-only", "origin/main...HEAD", "--", *DIRS
     )
@@ -96,9 +113,6 @@ def main() -> int:
         pr_id, pr_submitter = extract_identity(p.read_text(encoding="utf-8"), p.stem)
         _, main_submitter = extract_identity(_show_main(p.as_posix()), p.stem)
         modified.append((p.stem, pr_id, pr_submitter, main_submitter))
-
-    main_out = _git("ls-tree", "-r", "--name-only", "origin/main", "--", *DIRS)
-    main_ids = {Path(p).stem for p in main_out.splitlines() if p.endswith(".md")}
 
     all_stems = [p.stem for d in DIRS for p in Path(d).glob("*.md")]
 
