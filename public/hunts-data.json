@@ -7657,6 +7657,41 @@
     "created": "2026-07-11T07:17:00-05:00"
   },
   {
+    "id": "H227",
+    "category": "Flames",
+    "title": "ConsentFix OAuth callback token replay into Microsoft 365 resource access",
+    "tactic": "Credential Access, Stealth, Collection",
+    "notes": "Entra interactive sign-in logs - Core filter: successful sign-in for first-party CLI or admin clients with a localhost redirect such as `http://localhost:1605/?code=` or `http://localhost:<port>/?code=`. Triage values: `app ID`, `resource name`, `source IP address`, `user agent`, `session ID`, `authentication requirement`. Pivot: keep the `session ID`, `app ID`, and `user principal name` for token use correlation.\nEntra non-interactive sign-in logs - Core filter: same `user principal name` and `app ID` later using tokens from a `new ASN`, `new source IP address`, or changed `user agent` without a fresh interactive MFA event. Correlation: compare the interactive leg to later refresh or resource events by `session ID` and `token identifier`. Strong red flags: token use begins within `10 minutes` of the callback.\nMicrosoft 365 audit logs - Core filter: resource reads after the token handoff, especially `MailItemsAccessed`, `Graph`, `SharePoint`, `OneDrive`, `FileDownloaded`, or `FileSyncDownloadedFull`. Triage values: `client request ID`, `session ID`, `source IP address`, `user agent`, `object path`. Pivot: identify mail, file, and directory objects touched by the replayed token.\nOAuth and app consent audit logs - Core filter: new delegated grant, service principal assignment, or consent change near the same session. Triage values: `client ID`, `app ID`, `scope`, `actor`, `target resource`. Strong red flags: broad mail or file scopes such as `Mail.Read`, `Files.Read.All`, or `offline_access` paired with resource reads from a different network.\n",
+    "tags": [
+      "entra_id",
+      "oauth",
+      "token_replay",
+      "microsoft_365",
+      "consentfix",
+      "T1528",
+      "T1550.001",
+      "T1114.002",
+      "T1213"
+    ],
+    "techniques": [
+      "T1528",
+      "T1550.001",
+      "T1114.002",
+      "T1213"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Joshua Strickland",
+      "link": "https://novasky.io"
+    },
+    "why": "- ConsentFix matters because the Microsoft login can be legitimate while the attacker steals the OAuth callback after the user handles it. Password and MFA failure telemetry will not be the primary signal.\n- The localhost callback and token replay chain survives domain rotation. The domain only gets the user to the handoff point; the invariant behavior is authorization code capture followed by token use from another network.\n- Entra sign-in logs and Microsoft 365 audit logs give the two halves of the chain: the interactive authorization event and later non-interactive resource access tied by session ID, client request ID, app ID, or user.\n- False positives are controllable because admin and developer use of Azure CLI can be scoped by role, but same-user SharePoint, OneDrive, or mailbox access from a new ASN after the callback is much harder to explain.",
+    "references": "- [Verified X ad spreads Mac malware, while ConsentFix steals Microsoft accounts](https://www.malwarebytes.com/blog/news/2026/07/verified-x-ad-spreads-mac-malware-while-consentfix-steals-microsoft-accounts)\n- [ConsentFix: Browser-native ClickFix hijacks OAuth grants](https://pushsecurity.com/blog/consentfix)\n- [New Attack Technique ConsentFix Hijacks OAuth Consent Grants](https://arcticwolf.com/resources/blog/new-attack-technique-consentfix-hijacks-oauth-consent-grants/)\n- [ConsentFix AuthCodeFix: Detecting OAuth2 Authorization Code Phishing](https://blog.nviso.eu/2026/01/29/consentfix-a-k-a-authcodefix-detecting-oauth2-authorization-code-phishing/)\n- [Use MailItemsAccessed to investigate compromised accounts](https://learn.microsoft.com/en-us/purview/audit-log-investigate-accounts)",
+    "file_path": "Flames/H227.md",
+    "created": "2026-07-13T14:05:48-04:00"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
