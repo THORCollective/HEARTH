@@ -7693,6 +7693,125 @@ const HUNTS_DATA = [
     "created": "2026-07-13T14:05:48-04:00"
   },
   {
+    "id": "H228",
+    "category": "Flames",
+    "title": "GodDamn credential theft into PsExec fan-out and PoisonX impairment",
+    "tactic": "Credential Access, Lateral Movement, Persistence, Defense Impairment, Impact",
+    "notes": "Endpoint process and file telemetry - Core filter: user-profile execution of credential tooling or browser credential access before remote execution. Triage values: `process command line`, `parent process command line`, `file path`, `user context`. Strong red flags: `Mimikatz`, `WebBrowserPassView`, `ChromePass`, `PasswordFox`, `VNCPassView`, `MailPassView`, `WirelessKeyView`, or `NetPass` staged under `C:\\Users\\*\\Music\\` or another user-writable path, followed by archive creation or network movement.\nWindows service and remote execution telemetry - Core filter: PsExec-style service execution across hosts. Triage values: `service name`, `service image path`, `source host`, `target host`, `account name`. Correlation: chain `psexesvc.exe` to `services.exe` and `wininit.exe`, then look for remote command execution, administrative share writes, or tool transfer in the same operator window. Strong red flags: the same account touches multiple hosts after local credential-store reads.\nRemote access persistence telemetry - Core filter: remote access tool installation after PsExec movement. Triage values: `process command line`, `service name`, `file path`, `parent process command line`. Strong red flags: `AnyDesk.exe` configured for unattended access, an access password piped through standard input, consent prompts disabled, and two Windows services created so the tool starts after reboot.\nDriver and endpoint defense impairment telemetry - Core filter: signed or masqueraded driver activity paired with security process termination. Triage values: `driver file path`, `driver signer`, `service name`, `process command line`, `target process`. Correlation: `symantec.exe` dropping or loading `g11.sys`, then security process termination, real-time monitoring disabled, or endpoint sensor errors before ransomware activity.\nImpact telemetry - Core filter: encryption binary and mass file rename after the impairment chain. Triage values: `process command line`, `file path`, `renamed file extension`, `host role`. Strong red flags: `encrypter-windows-gui-x86.exe`, `.God8Damn`, victim-name file extensions, or qTox ransom-note contact text after credential tooling, PsExec, AnyDesk, and `g11.sys` are seen in sequence.\n",
+    "tags": [
+      "ransomware",
+      "windows",
+      "psexec",
+      "byovd",
+      "credential_access",
+      "T1555",
+      "T1003",
+      "T1021.002",
+      "T1569.002",
+      "T1570",
+      "T1219",
+      "T1543.003",
+      "T1562.001",
+      "T1486"
+    ],
+    "techniques": [
+      "T1555",
+      "T1003",
+      "T1021.002",
+      "T1569.002",
+      "T1570",
+      "T1219",
+      "T1543.003",
+      "T1562.001",
+      "T1486"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Joshua Strickland",
+      "link": "https://novasky.io"
+    },
+    "why": "- The reporting is current, and the June 2026 intrusion gives a concrete post-foothold chain even though initial access was not confirmed.\n- The hunt survives filename and hash rotation because the operator still has to collect credentials, move with a remote execution mechanism, impair endpoint defenses, and encrypt files.\n- The telemetry is common for MDR coverage: endpoint process and file events, Windows service creation, driver load activity, remote logon evidence, and file rename activity.\n- False positives are controllable because the signal is the sequence across phases, not the presence of PsExec, AnyDesk, or a driver load by itself.",
+    "references": "- [GBHackers: GodDamn Ransomware Attack Uses PsExec Lateral Movement and NirSoft Toolkit for Credential Theft](https://gbhackers.com/goddamn-ransomware-attack/)\n- [The Hacker News: GodDamn Ransomware Uses PoisonX Driver to Disable Endpoint Defenses](https://thehackernews.com/2026/07/goddamn-ransomware-uses-poisonx-driver.html)\n- [SecurityAffairs: GodDamn Ransomware Uses PoisonX to Blind Security Software](https://securityaffairs.com/195042/malware/goddamn-ransomware-uses-poisonx-to-blind-security-software.html)\n- [MITRE ATT&CK T1555: Credentials from Password Stores](https://attack.mitre.org/techniques/T1555/)\n- [MITRE ATT&CK T1562.001: Impair Defenses: Disable or Modify Tools](https://attack.mitre.org/techniques/T1562/001/)",
+    "file_path": "Flames/H228.md",
+    "created": "2026-07-13T14:06:05-04:00"
+  },
+  {
+    "id": "H229",
+    "category": "Flames",
+    "title": "GigaWiper OneDrive Update Persistence Before Destructive Commands",
+    "tactic": "Persistence, Stealth, Collection, Command and Control, Impact",
+    "notes": "Windows scheduled task telemetry - Core filter: task name `OneDrive Update` with an action path outside normal OneDrive install paths. Triage values: `task action`, `process command line`, `parent process command line`, `signer`, `file path`. Pivot: same host and user creating or updating `HKCU\\SOFTWARE\\OneDrive\\Environment`.\nEDR registry and process telemetry - Core filter: unsigned or newly created Go PE writes `HKCU\\SOFTWARE\\OneDrive\\Environment`, then launches from the scheduled task. Correlation: same process tree opens `\\\\.\\PHYSICALDRIVE0`, `\\\\.\\PHYSICALDRIVE1`, invokes `bcdedit`, or deletes recovery, boot, or kernel files. Strong red flags: `.candy` file renames or immediate reboot after the task fires.\nEDR file, screen capture, and network telemetry - Core filter: process tree creates `C:\\ProgramData\\output` or screenshot folders like `.\\2026-06-10_12-30-00\\0.png`, then connects over `AMQP`, `RabbitMQ`, `Redis`, or remote-control TCP traffic. Pivot: correlate these events with raw disk writes, service manager commands, registry manager commands, or firewall rule creation by the same binary.\nWindows event log telemetry - Core filter: process attempts to clear `System`, `Setup`, `Application`, `ForwardedEvents`, or `Security.evtx` after the OneDrive task appears. Correlation: treat log clearing as supporting context only unless the same lineage also shows `\\\\.\\PHYSICALDRIVE*`, `.candy`, `bcdedit`, boot file deletion, or fake-ransomware encryption.\n",
+    "tags": [
+      "windows",
+      "gigawiper",
+      "wiper",
+      "scheduled_task",
+      "registry",
+      "ransomware",
+      "T1053.005",
+      "T1112",
+      "T1113",
+      "T1485",
+      "T1490",
+      "T1486",
+      "T1071"
+    ],
+    "techniques": [
+      "T1053.005",
+      "T1112",
+      "T1113",
+      "T1485",
+      "T1490",
+      "T1486",
+      "T1071"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Joshua Strickland",
+      "link": "https://novasky.io"
+    },
+    "why": "- GigaWiper is current destructive tradecraft from Microsoft reporting, and the proposed hunt starts before the wipe command lands by looking at the persistence and state the implant needs to keep running.\n- The chain survives IP and hash rotation because the implant still needs a recurring task, the HKCU OneDrive state key, command traffic, and destructive disk or boot operations to complete the same objective.\n- The telemetry is available in common MDR data sets: process creation, scheduled task changes, registry writes, file operations, network connections, and Windows event-log activity on the endpoint.\n- False positives are controllable because normal OneDrive, backup, and admin tooling do not combine fake OneDrive persistence, raw physical drive writes, screen capture, event-log clearing, and fake-ransomware file renames in one lineage.",
+    "references": "- [Microsoft Security Blog: GigaWiper: Anatomy of a destructive backdoor assembled from multiple malware](https://www.microsoft.com/en-us/security/blog/2026/07/09/gigawiper-anatomy-of-a-destructive-backdoor-assembled-from-multiple-malware/)\n- [Malwarebytes: This new Windows malware can take over your PC and wipe it clean](https://www.malwarebytes.com/blog/news/2026/07/this-new-windows-malware-can-take-over-your-pc-and-wipe-it-clean)\n- [MITRE ATT&CK: Scheduled Task/Job: Scheduled Task](https://attack.mitre.org/techniques/T1053/005/)\n- [MITRE ATT&CK: Data Destruction](https://attack.mitre.org/techniques/T1485/)",
+    "file_path": "Flames/H229.md",
+    "created": "2026-07-13T14:06:17-04:00"
+  },
+  {
+    "id": "H230",
+    "category": "Flames",
+    "title": "Entra OAuth Client ID Spoofing in ROPC Token Requests",
+    "tactic": "Credential Access, Initial Access",
+    "notes": "Entra sign-in logs - Core filter: authentication flow `Resource Owner Password Credentials` or grant type `password` with result or error `AADSTS700016`. Triage values: `application ID`, `application display name`, `source IP address`, `user agent`, `session ID`, `client request ID`, `username`. Pivot: group by `source IP address`, `user agent`, and `tenant` to find breadth across many users. Strong red flags: `application ID` blank, `application display name` blank, or many unique client IDs with the same request pattern.\n\nNon-interactive sign-in logs - Core filter: repeated password-grant attempts where the app identity is missing or the app name is empty. Triage values: `username`, `result code`, `failure reason`, `conditional access result`, `MFA requirement`, `source IP address`. Correlation: look for the same `username` moving from `AADSTS700016` to successful cloud access from the same infrastructure or user agent. Strong red flags: alphabetical username ordering, initial-plus-surname patterns like `jsmith`, or many tenants hit by the same request shape.\n\nMicrosoft 365 and Graph activity - Core filter: mailbox, file, or Graph reads after the ROPC validation sequence. Triage values: `session ID`, `client request ID`, `resource name`, `operation name`, `user agent`, `source IP address`. Pivot: correlate later Exchange, SharePoint, OneDrive, Teams, or Graph activity to prior ROPC failures for the same account. Strong red flags: resource access without a fresh interactive sign-in, new ASN or proxy infrastructure, and data reads shortly after `AADSTS700016`.\n\nIdentity investigation - False positive: legacy app testing can produce unrecognized-client errors, but it should be limited to one app team, a small set of accounts, and known test infrastructure. Escalate when blank app identity, ROPC, `AADSTS700016`, breadth across users, and later resource access appear together.\n",
+    "tags": [
+      "microsoft_entra_id",
+      "oauth",
+      "ropc",
+      "aadsts700016",
+      "cloud_identity",
+      "password_spraying",
+      "T1110.004",
+      "T1078.004"
+    ],
+    "techniques": [
+      "T1110.004",
+      "T1078.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Joshua Strickland",
+      "link": "https://novasky.io"
+    },
+    "why": "- Proofpoint reporting described multiple campaigns using this technique against Entra tenants, including one that reached more than a million users across nearly 4,000 tenants and another that reached more than 2 million users.\n- The hunt is not tied to an IP, domain, or lure. It follows the required OAuth behavior: password-grant token requests, spoofed or missing app identity, AADSTS700016, and later cloud resource access.\n- Most MDR teams already collect Entra sign-in and Microsoft 365 audit data. The core fields are portable: application identity, result code, source IP address, user agent, session ID, and client request ID.\n- False positives are controllable because app misconfiguration usually stays narrow, while this tradecraft spreads across many users, many fake client IDs, or repeated username patterns.",
+    "references": "- [Infosecurity Magazine - Novel OAuth Client ID Spoofing Technique Targets Cloud Environments](https://www.infosecurity-magazine.com/news/novel-spoofing-technique-targets/)\n- [Help Net Security - Fake OAuth client IDs are helping attackers slip past sign-in logs](https://www.helpnetsecurity.com/2026/07/13/entra-id-oauth-client-id-spoofing/)\n- [Microsoft Learn - Microsoft identity platform and OAuth 2.0 Resource Owner Password Credentials](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth-ropc)",
+    "file_path": "Flames/H230.md",
+    "created": "2026-07-13T14:22:37-04:00"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
