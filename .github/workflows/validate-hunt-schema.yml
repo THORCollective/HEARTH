@@ -1,15 +1,10 @@
 name: Validate Hunt Schema
 
 on:
+  # Run on every PR (no path filter) so this can be a required status check
+  # without hanging PRs that don't touch hunt files. The collision check and
+  # schema validation are cheap and no-op when nothing relevant changed.
   pull_request:
-    paths:
-      - "Flames/**.md"
-      - "Embers/**.md"
-      - "Alchemy/**.md"
-      - "scripts/hunt_parser.py"
-      - "scripts/hunt_schema.py"
-      - "scripts/cti_extract.py"
-      - "scripts/tests/**"
   push:
     branches: [main]
     paths:
