@@ -21,23 +21,23 @@ Everyone listed below has submitted ideas that have been added to HEARTH. This l
 | 13 | Joshua Hines | 2 |
 | 14 | p-o-s-t | 2 |
 | 15 | Alan G | 2 |
-| 16 | kkroth0 | 2 |
-| 17 | Ryan Fetterman | 2 |
-| 18 | hu983r | 1 |
-| 19 | Cody Lunday | 1 |
-| 20 | wikijm | 1 |
-| 21 | Apramey "Apps" S | 1 |
-| 22 | Shaimon Weslley | 1 |
-| 23 | Duc Viet Hoang | 1 |
-| 24 | samuel-lucas6 | 1 |
-| 25 | tsof-smoky | 1 |
-| 26 | odanh | 1 |
-| 27 | smossmos | 1 |
-| 28 | Omer M | 1 |
-| 29 | asteinbr | 1 |
-| 30 | Badger | 1 |
-| 31 | T3chn3 | 1 |
-| 32 | Shilpa Merlin Joy | 1 |
+| 16 | Shilpa Merlin Joy | 2 |
+| 17 | kkroth0 | 2 |
+| 18 | Ryan Fetterman | 2 |
+| 19 | hu983r | 1 |
+| 20 | Cody Lunday | 1 |
+| 21 | wikijm | 1 |
+| 22 | Apramey "Apps" S | 1 |
+| 23 | Shaimon Weslley | 1 |
+| 24 | Duc Viet Hoang | 1 |
+| 25 | samuel-lucas6 | 1 |
+| 26 | tsof-smoky | 1 |
+| 27 | odanh | 1 |
+| 28 | smossmos | 1 |
+| 29 | Omer M | 1 |
+| 30 | asteinbr | 1 |
+| 31 | Badger | 1 |
+| 32 | T3chn3 | 1 |
 | 33 | young6x7 | 1 |
 | 34 | th3CyF0x | 1 |
 | 35 | Claire Stromboe | 1 |
