@@ -7867,6 +7867,46 @@ const HUNTS_DATA = [
     "created": "2026-07-13T13:26:57-07:00"
   },
   {
+    "id": "H233",
+    "category": "Flames",
+    "title": "AsyncAPI Import-Time Node Loader Persistence",
+    "tactic": "Initial Access, Execution, Persistence, Credential Access, Command and Control",
+    "notes": "Endpoint process telemetry - Core filter: `node`, `node.exe`, `npm`, `yarn`, `pnpm`, or a build tool spawning a detached child after package import. Triage values: `process command line`, `parent process command line`, `working directory`, `package cache path`, `user account`. Pivot: join the child process to file writes under `node_modules`, `%LOCALAPPDATA%\\NodeJS`, `~/Library/Application Support/NodeJS`, `~/.local/share/NodeJS`, or `~/.config/NodeJS`. Strong red flags: a child `node` process executing `sync.js` outside the project tree with hidden window or ignored stdio behavior.\nEndpoint file and persistence telemetry - Core filter: creation or execution of `sync.js` from a NodeJS masquerade directory, then persistence named `miasma-monitor`. Triage values: `file path`, `registry key path`, `launch agent path`, `systemd user unit path`, `file signer`, `process hash`. Pivot: Windows `HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run`, Linux `miasma-monitor.service`, macOS `.zshrc`, `.bashrc`, or `.bash_profile`. Strong red flags: package import lineage plus a persistence write by `node` or `sync.js`.\nEndpoint network telemetry - Core filter: `node` or `sync.js` retrieving a second stage from `ipfs.io/ipfs/`, CID `Qmet4fhsAaWMBUxNDfREHwgiyDeSWy4YSYs9wiKUW5jGyf`, CID `QmQobZSp1wRPrpSEQ56qnyq7ecZh5Bg5k1fnjt4SUwwHb9`, or connecting to `85.137.53.71` on `8080`, `8081`, or `8091`. Triage values: `destination host`, `destination IP address`, `destination port`, `process command line`, `parent process command line`. Correlation: IPFS retrieval followed by local `sync.js` execution and `miasma-monitor` persistence. Strong red flags: fallback traffic to Ethereum RPC, Nostr relay, BitTorrent DHT, or libp2p after the local loader chain.\nRepository and CI workflow logs - Core filter: `pull_request_target` workflow execution that checks out an untrusted pull request head while secrets or persisted checkout credentials are available. Triage values: `workflow name`, `pull request number`, `actor`, `commit SHA`, `bot account`, `branch name`, `release tag`. Pivot: PR `#2155`, commit `47be388`, bot-authenticated pushes, release branches `next` or `schema`, and trusted publishing releases for `@asyncapi/specs@6.11.2`, `@asyncapi/specs@6.11.2-alpha.1`, `@asyncapi/generator@3.3.1`, `@asyncapi/generator-helpers@1.1.1`, or `@asyncapi/generator-components@0.7.1`. False positive: release workflows are normal, but a risky PR workflow followed by bot pushes and package publication is not normal release hygiene.\n",
+    "tags": [
+      "supply_chain",
+      "npm",
+      "developer_endpoint",
+      "ci_cd",
+      "nodejs",
+      "miasma",
+      "ipfs",
+      "persistence",
+      "T1195.002",
+      "T1059.007",
+      "T1105",
+      "T1547.001",
+      "T1552.001"
+    ],
+    "techniques": [
+      "T1195.002",
+      "T1059.007",
+      "T1105",
+      "T1547.001",
+      "T1552.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Joshua Strickland",
+      "link": "https://novasky.io"
+    },
+    "why": "- The July AsyncAPI compromise changed the common npm hunt shape. The package did not need an install script to run, so hunts that only watch preinstall or postinstall hooks can miss the trigger.\n- The behavior survives package and infrastructure rotation because it keys on the required execution chain: import, detached Node child, `sync.js` in NodeJS masquerade paths, user persistence, and second-stage retrieval.\n- The telemetry is available to most MDR programs on developer workstations and build hosts through process, file, persistence, and network events, with repository and CI logs used to scope affected projects.\n- False positives are controllable when the hunt requires the full sequence. Normal package imports do not write `sync.js` into OS profile storage, install `miasma-monitor`, and immediately retrieve an IPFS-hosted second stage.",
+    "references": "- [Microsoft Security Blog - Unpacking the AsyncAPI npm supply chain compromise and import-time payload delivery](https://www.microsoft.com/en-us/security/blog/2026/07/15/unpacking-asyncapi-npm-supply-chain-compromise-import-time-payload-delivery/)\n- [Unit 42 - The npm Threat Landscape: Attack Surface and Mitigations](https://unit42.paloaltonetworks.com/monitoring-npm-supply-chain-attacks/)\n- [MITRE ATT&CK T1195.002 - Compromise Software Supply Chain](https://attack.mitre.org/techniques/T1195/002/)\n- [MITRE ATT&CK T1059.007 - JavaScript](https://attack.mitre.org/techniques/T1059/007/)\n- [MITRE ATT&CK T1547.001 - Registry Run Keys / Startup Folder](https://attack.mitre.org/techniques/T1547/001/)",
+    "file_path": "Flames/H233.md",
+    "created": "2026-07-17T09:28:39-04:00"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
