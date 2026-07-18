@@ -915,6 +915,41 @@
     "created": "2026-07-11T07:17:00-05:00"
   },
   {
+    "id": "B031",
+    "category": "Embers",
+    "title": "Baseline legitimate SNMP managers and config-backup flows to surface rogue MIB/config dumps",
+    "tactic": "Collection",
+    "notes": "PLATFORM: Network Devices (SNMP-managed routers/switches). BASELINE FIRST (Embers). Source: CISA/NSA/FBI joint advisory AA26-194A, \"Improve Router Hygiene to Protect Against Russian State-Sponsored Targeting\" (2026-07-13). The advisory's core mitigations — MIB allow-list, management ACLs, SNMPv3 authPriv, out-of-band management — are exactly the \"normal\" this baseline measures, so building it doubles as hardening evidence.\n\nDATA COLLECTION FIELDS (per SNMP/management event): source (manager) IP, destination device, SNMP version (v1/v2c/v3), community string or v3 user (record presence of weak/default strings like `public`/`private`), request type (Get/GetNext/GetBulk/Set), OID(s) accessed — especially CISCO-CONFIG-COPY-MIB (1.3.6.1.4.1.9.9.96) and other config/sensitive MIBs, request volume/rate, source port, timestamp; and for config backups: source host, destination server, protocol (TFTP/SCP/FTP), filename, direction. TELEMETRY: SNMP agent/server logs on managed devices, device syslog (config-change / config-copy notifications, CISCO-CONFIG-MAN-MIB `ccmHistoryEventConfigSource`), NetFlow/IPFIX or firewall flow at the management boundary (UDP/161-162 SNMP, UDP/69 TFTP, TCP/4786 Smart Install).\n\nCOLLECTION WINDOW: 30 days per device to learn the stable, small set of legitimate managers, the SNMP version and OID scope each uses, and the normal config-backup source/destination pairs. DELIVERABLE: a per-device allow-list of expected SNMP managers (IP + version + OID scope) and expected config-backup flows (source NMS → destination server, protocol), plus an inventory of devices still permitting SNMPv1/v2c, default community strings, open UDP/69, or TCP/4786 — a direct remediation worklist.\n\nIMMEDIATE FLAGS (do not wait for the baseline to finish): (1) SNMP Set-Requests to any device, especially writes under CISCO-CONFIG-COPY-MIB `ccCopyTable` — legitimate management rarely uses SNMP Set to trigger config copies; (2) SNMP from a source IP not in the management allow-list, or from an external/spoofed-looking address; (3) reads of config/sensitive OIDs at high volume or from an unexpected source (MIB dump); (4) SNMPv1/v2c or default community strings on a device where v3 authPriv is expected; (5) an outbound TFTP/SCP/FTP config transfer from a device to a destination that appears in no known backup job. CROSS-REF: enables H235 (T1602.002 config exfiltration via SNMP-triggered TFTP copy) — that Flames hunt depends on this baseline to call an SNMP source \"unexpected\" or a transfer destination \"first-seen.\" T1602.001 (this SNMP MIB dump) is the recon twin of the T1602.002 config dump.",
+    "tags": [
+      "collection",
+      "network_devices",
+      "cisco",
+      "snmp",
+      "mib_dump",
+      "config_backup",
+      "baseline",
+      "fsb_center16",
+      "aa26_194a",
+      "t1602_001",
+      "t1602_002",
+      "T1602.001"
+    ],
+    "techniques": [
+      "T1602.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **SNMP is the busiest, most-trusted management protocol on the network fabric, so a signature fires on everything.** Only a per-device baseline of *which* managers legitimately poll *which* devices, with *what* version and OID scope, makes a rogue MIB dump or SNMP-triggered config copy stand out — which is why this is an Ember, not a Flame.\n- **The advisory's own attack surface is a baseline gap.** FSB Center 16 succeeds precisely where SNMPv1/v2c and default community strings persist; inventorying who legitimately uses SNMP (and how) simultaneously produces the remediation list — devices to move to v3 authPriv and lock behind a management ACL.\n- **The anomalies are structural, not IOC-based.** An SNMP source outside the management allow-list, a Set-Request under CISCO-CONFIG-COPY-MIB, or a config transfer to an unknown destination are deviations from a learned norm that survive the actor rotating infrastructure — durable signal no community-string block-list provides.\n- **It is the prerequisite for the config-exfil Flame.** H228 can only call a TFTP destination \"first-seen\" or an SNMP source \"unexpected\" against this baseline of legitimate managers and backup flows; without it, the config-dump hunt has no normal to diff against.",
+    "references": "- [MITRE ATT&CK T1602.001: Data from Configuration Repository — SNMP (MIB Dump)](https://attack.mitre.org/techniques/T1602/001/)\n- [CISA Advisory AA26-194A: Improve Router Hygiene to Protect Against Russian State-Sponsored Targeting](https://www.cisa.gov/news-events/cybersecurity-advisories/aa26-194a)\n- [Picus Security: FSB Center 16 — How Russian Hackers Exploit Routers via SNMP and Cisco Smart Install](https://www.picussecurity.com/resource/blog/fsb-center-16-how-russian-hackers-exploit-routers-via-snmp-and-cisco-smart-install)\n- [HackTricks: Cisco SNMP — Community-String Abuse and Config Exfiltration](https://hacktricks.wiki/en/network-services-pentesting/pentesting-snmp/cisco-snmp.html)\n- [Cisco: SNMP Configuration Guide and CISCO-CONFIG-COPY-MIB reference](https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/snmp/configuration/xe-16/snmp-xe-16-book.html)\n- [CISA/NSA Joint CSA PDF: Improve Router Hygiene (CSA_IMPROVE_ROUTER_HYGIENE)](https://media.defense.gov/2026/Jul/09/2003959498/-1/-1/1/CSA_IMPROVE_ROUTER_HYGIENE.PDF)",
+    "file_path": "Embers/B031.md",
+    "created": "2026-07-18T14:13:05-05:00"
+  },
+  {
     "id": "H001",
     "category": "Flames",
     "title": "An adversary is attempting to brute force the admin account on the externally facing VPN gateway.",
@@ -7906,6 +7941,75 @@
     "created": "2026-07-17T09:28:39-04:00"
   },
   {
+    "id": "H234",
+    "category": "Flames",
+    "title": "Malicious OAuth connected-app consent granting Salesforce/SaaS API access (ShinyHunters/UNC6040)",
+    "tactic": "Persistence",
+    "notes": "PLATFORM: SaaS (Salesforce) surfaced through Microsoft Defender for Cloud Apps CloudAppEvents; also applicable to\nM365/Entra OAuth consent. Source: Microsoft, \"Defending SaaS-based applications against ShinyHunters OAuth abuse\"\n(2026-07-13). Two intrusion paths in the report: (1) vishing → user-consented malicious connected app; (2) supply-\nchain compromise of OAuth-integrated vendors (Salesloft, Gainsight, Klue) to steal connection secrets/tokens.\n\nKEY TELEMETRY — CloudAppEvents (Application == \"Salesforce\"): ActionTypes `ApiTotalUsage`, `API Event`,\n`ReportExport`, `UniqueQuery`. RawEventData fields: `CONNECTED_APP_ID`/`ConnectedAppId`, `CONNECTED_APP_NAME`,\n`USER_ID`, `QUERY_IDENTIFIER` (SOQL text), and the `UncommonForUser` anomaly array.\n\nCORE HUNT — connected-app API activity anomalous for the user (verbatim from the source report):\n  CloudAppEvents\n  | where Application == \"Salesforce\"\n  | where ActionType in (\"ApiTotalUsage\", \"API Event\")\n  | extend ConnectedAppId = tostring(coalesce(RawEventData.CONNECTED_APP_ID, RawEventData.ConnectedAppId))\n  | where isnotempty(ConnectedAppId)\n  | where array_length(UncommonForUser) > 0\n\nENUMERATE connected apps + who/where they run from (pivot to first-seen apps):\n  CloudAppEvents\n  | where Application == \"Salesforce\"\n  | where ActionType in (\"ApiTotalUsage\", \"API Event\")\n  | extend SalesforceUserId = coalesce(tostring(RawEventData.USER_ID), tostring(RawEventData.UserId))\n  | extend ConnectedAppName = tostring(RawEventData.CONNECTED_APP_NAME)\n  | summarize count() by AccountObjectId, AccountId, AccountDisplayName, SalesforceUserId, IPAddress, UserAgent, ConnectedAppName\n\nCORRELATE with identity risk (high-risk user hitting Salesforce SSO):\n  let VeryRiskyUsers = IdentityInfo | where RiskScore >= 90 | distinct AccountObjectId;\n  CloudAppEvents\n  | where Application == \"Salesforce\"\n  | where ActionType has \"sso\" or ActionType has \"saml\"\n  | where AccountObjectId in (VeryRiskyUsers)\n\nCROSS-REF: pairs with M028 (anomalous CRM bulk-export volume, T1213.004) — the same connected app that consents\nhere is the one that bulk-exports there. Also cross-ref T1528 (Steal Application Access Token) for the token-theft\nsupply-chain path, and OAuth consent-phishing hunts on the M365/Entra side (illicit `oAuth2PermissionGrant`).\n",
+    "tags": [
+      "persistence",
+      "saas",
+      "salesforce",
+      "m365",
+      "oauth",
+      "connected_app",
+      "consent_phishing",
+      "shinyhunters",
+      "unc6040",
+      "t1671",
+      "t1528",
+      "T1671"
+    ],
+    "techniques": [
+      "T1671"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **The abuse hides behind legitimate trust.** No malware, no failed logins, no impossible travel — just an approved OAuth app calling the API. The only place the anomaly surfaces is the connected-app attribution (`CONNECTED_APP_ID` + `UncommonForUser`), which is exactly what this hunt keys on.\n- **The consent step is user-driven and self-identifying.** A non-admin end user consenting to a \"Data Loader\"-named app right after an inbound support call is a high-fidelity behavioral sequence that survives infrastructure rotation — operators change IPs and app names, but the consent-then-enumerate shape persists.\n- **It is a persistence mechanism, not a one-shot.** The OAuth token grants standing API access that outlives the phishing call and any password reset, which is why T1671 sits under Persistence — killing the session does nothing; the connected app must be revoked.\n- **The telemetry is now first-class.** Defender's upgraded Salesforce connector ingests Real-Time Event Monitoring with connected-app attribution and granted OAuth scopes, so the `ConnectedAppId`/`UncommonForUser` join the report ships is directly queryable rather than theoretical.",
+    "references": "- [MITRE ATT&CK T1671: Cloud Application Integration](https://attack.mitre.org/techniques/T1671/)\n- [Microsoft Security Blog: Defending SaaS-based applications against ShinyHunters OAuth abuse](https://www.microsoft.com/en-us/security/blog/2026/07/13/defending-saas-based-applications-against-shinyhunters-oauth-abuse/)\n- [Google Cloud / Mandiant: UNC6040 Proactive Hardening Recommendations](https://cloud.google.com/blog/topics/threat-intelligence/unc6040-proactive-hardening-recommendations)\n- [AppOmni: Detecting ShinyHunters/UNC6040 Vishing in Salesforce OAuth Attacks](https://appomni.com/blog/detecting-unc6040-vishing-in-salesforce-oauth-attacks/)\n- [Microsoft Learn: App consent grant investigation playbook](https://learn.microsoft.com/en-us/security/operations/incident-response-playbook-app-consent)\n- [Elastic Security Labs: Microsoft Entra ID OAuth Phishing and Detections](https://www.elastic.co/security-labs/entra-id-oauth-phishing-detection)",
+    "file_path": "Flames/H234.md",
+    "created": "2026-07-18T14:13:05-05:00"
+  },
+  {
+    "id": "H235",
+    "category": "Flames",
+    "title": "Network-device configuration exfiltration via SNMP-triggered TFTP copy (FSB Center 16 router hygiene)",
+    "tactic": "Collection",
+    "notes": "PLATFORM: Network Devices (Cisco IOS and other SNMP-managed routers/switches). Source: CISA/NSA/FBI + 16 partners\njoint advisory AA26-194A, \"Improve Router Hygiene to Protect Against Russian State-Sponsored Targeting\"\n(2026-07-13), attributing the activity to FSB Center 16 (a.k.a. Berserk Bear / Dragonfly lineage).\n\nATTACK MECHANICS: actors scan Internet ranges for SNMP agents accepting common/default community strings\n(SNMPv1/v2c). They issue SNMP Set-Requests (often from SPOOFED source IPs) carrying OIDs under CISCO-CONFIG-COPY-MIB\n`ccCopyTable` (1.3.6.1.4.1.9.9.96.1.1.1) — setting `ccCopySourceFileType` = runningConfig/startupConfig,\n`ccCopyDestFileType` = networkFile, `ccCopyProtocol` = tftp, and `ccCopyServerAddress`/`ccCopyFileName` to the\nactor's server — which makes the device copy its own config (often named `config.bkp` / `output.txt`) off-box via\nTFTP to a leased VPS or compromised FTP server. Cisco Smart Install (TCP/4786) is a second config-pull vector.\n\nDETECTION SIGNALS (device + network):\n- CISCO-CONFIG-MAN-MIB `ccmHistoryEventConfigSource` / syslog config-change events indicating an out-of-band or\n  SNMP-sourced config change or copy (%SYS-5-CONFIG_I, config-copy notifications) at an unexpected time/source.\n- High-volume or unexpected SNMP Set/Get on config-copy OIDs, or SNMP from a source IP not on the management ACL.\n- Outbound TFTP (UDP/69), SCP, or FTP transfers ORIGINATING from a router/switch (infrastructure devices should\n  rarely initiate outbound file transfers), especially to external or first-seen destinations, carrying a config-\n  sized payload or a filename like `config.bkp`/`output.txt`.\n- Smart Install traffic on TCP/4786 to/from the device.\n\nMITIGATION CONTEXT (from the advisory, for false-positive tuning and hardening): move to SNMPv3 authPriv and\ndisable SNMPv1/v2c; restrict SNMP with a MIB allow-list and management ACLs on an out-of-band network; disable\nCisco Smart Install; block UDP/69 and TCP/4786 at the edge.\n\nCROSS-REF: pair with B031 (baseline of legitimate SNMP managers / config-backup flows, T1602.001) — you cannot\nreliably call an SNMP source \"unexpected\" or a TFTP destination \"first-seen\" without that baseline. The SNMP MIB\ndump (T1602.001) is the reconnaissance twin of this config exfiltration.\n",
+    "tags": [
+      "collection",
+      "network_devices",
+      "cisco",
+      "snmp",
+      "tftp",
+      "config_exfiltration",
+      "fsb_center16",
+      "aa26_194a",
+      "t1602_002",
+      "t1602_001",
+      "T1602.002"
+    ],
+    "techniques": [
+      "T1602.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **Config theft is a credential-and-map heist, not just recon.** A device's running-config carries hashed/typed passwords, SNMP community strings, VPN secrets, ACLs, and routing topology — everything needed to pivot deeper — so catching the copy-and-exfil early denies the actor their next several steps.\n- **The behavior is detectable precisely because devices shouldn't do it.** Routers and switches almost never *initiate* outbound file transfers; an SNMP-sourced config copy followed by an outbound TFTP/FTP push from an infrastructure device is a sharp, low-base-rate signal once legitimate NMS backups are baselined out.\n- **The OIDs are self-identifying.** CISCO-CONFIG-COPY-MIB writes (`ccCopyProtocol` = tftp, `ccCopyServerAddress` set to an external host) are a specific, high-fidelity indicator of remotely triggered config export that survives changes in the actor's infrastructure.\n- **It aligns with a hardening posture defenders can verify.** The same advisory prescribes SNMPv3 authPriv, management ACLs, and disabling Smart Install — so building this hunt simultaneously surfaces the misconfigured devices (SNMPv1/v2c, open UDP/69, TCP/4786) that make the attack possible.",
+    "references": "- [MITRE ATT&CK T1602.002: Data from Configuration Repository — Network Device Configuration Dump](https://attack.mitre.org/techniques/T1602/002/)\n- [CISA Advisory AA26-194A: Improve Router Hygiene to Protect Against Russian State-Sponsored Targeting](https://www.cisa.gov/news-events/cybersecurity-advisories/aa26-194a)\n- [MITRE ATT&CK Detection Strategy DET0233: Network Device Configuration Dump via Config Repositories](https://attack.mitre.org/detectionstrategies/DET0233/)\n- [Picus Security: FSB Center 16 — How Russian Hackers Exploit Routers via SNMP and Cisco Smart Install](https://www.picussecurity.com/resource/blog/fsb-center-16-how-russian-hackers-exploit-routers-via-snmp-and-cisco-smart-install)\n- [HackTricks: Cisco SNMP — RCE and Config Exfiltration via CISCO-CONFIG-COPY-MIB](https://hacktricks.wiki/en/network-services-pentesting/pentesting-snmp/cisco-snmp.html)\n- [CISA/NSA Joint CSA PDF: Improve Router Hygiene (CSA_IMPROVE_ROUTER_HYGIENE)](https://media.defense.gov/2026/Jul/09/2003959498/-1/-1/1/CSA_IMPROVE_ROUTER_HYGIENE.PDF)",
+    "file_path": "Flames/H235.md",
+    "created": "2026-07-18T14:13:05-05:00"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
@@ -8571,5 +8675,40 @@
     "references": "- [MITRE ATT&CK T1090.002: Proxy — External Proxy](https://attack.mitre.org/techniques/T1090/002/)\n- [Cisco Talos: UAT-7810 continues building ORB networks using new malware](https://blog.talosintelligence.com/uat-7810/)\n- [Mandiant / Google Threat Intelligence: IOC Extinction? China-Nexus Cyber Espionage Actors Use ORB Networks](https://cloud.google.com/blog/topics/threat-intelligence/china-nexus-espionage-orb-networks)\n- [Team Cymru: An Introduction to Operational Relay Box (ORB) Networks](https://www.team-cymru.com/post/an-introduction-to-operational-relay-box-orb-networks-unpatched-forgotten-and-obscured)\n- [Elastic Security Labs: Identifying beaconing malware using Elastic](https://www.elastic.co/security-labs/identifying-beaconing-malware-using-elastic)",
     "file_path": "Alchemy/M027.md",
     "created": "2026-07-11T07:17:00-05:00"
+  },
+  {
+    "id": "M028",
+    "category": "Alchemy",
+    "title": "Anomalous Salesforce/CRM bulk-export volume from a connected app (ShinyHunters data theft)",
+    "tactic": "Collection",
+    "notes": "ALCHEMY ANALYTIC — per-user / per-connected-app volumetric anomaly detection on CRM data access. PLATFORM: SaaS (Salesforce), surfaced via Microsoft Defender for Cloud Apps CloudAppEvents and Salesforce Event Monitoring / Event Log Files (ELF). Source: Microsoft, \"Defending SaaS-based applications against ShinyHunters OAuth abuse\" (2026-07-13), which notes the activity \"appeared indistinguishable from legitimate Salesforce usage\" and that effective detection requires spotting *anomalous* export/enumeration volume, not any single event.\n\nWHY MODEL-ASSISTED (not a static rule): report exports and SOQL queries are routine for sales/ops users, and ShinyHunters deliberately paces exfiltration (\"slow exfiltration\") to stay under fixed thresholds. The separating signal is the deviation from a given user's/app's own history — a volumetric/behavioral problem, not a signature.\n\nDATA SOURCES / FIELDS: CloudAppEvents where Application == \"Salesforce\", ActionType in (\"ReportExport\",\"ApiTotalUsage\",\"UniqueQuery\",\"API Event\"); RawEventData fields `USER_ID`, `CONNECTED_APP_ID`, `CONNECTED_APP_NAME`, `QUERY_IDENTIFIER` (SOQL text/object), plus IPAddress, UserAgent. Salesforce ELF event types `ReportExport`, `API`, `BulkApi`, `RestApi` give row counts and durations for finer volume features.\n\nFEATURES per user AND per connected app over a rolling baseline (~30 days): count and summed row-volume of `ReportExport`; distinct high-value objects queried (Accounts/Contacts/Cases/Opportunities); SOQL query rate; ratio of read/export volume to that identity's historical mean; export activity outside business hours; export from an IP/user-agent first-seen for that identity; share of total-org export volume concentrated in one app/user. MODEL: per-entity baseline + robust outlier scoring (z-score / MAD or isolation forest) on the volume and breadth features; alert when an entity crosses from its normal envelope into sustained high-volume export, especially when the ConnectedAppId is itself first-seen (join to H227).\n\nANCHOR QUERY (report-export volume by user, from the source report):\n  CloudAppEvents\n  | where Application == \"Salesforce\"\n  | where ActionType == \"ReportExport\"\n  | extend SalesforceUserId = tostring(RawEventData.USER_ID)\n  | summarize Events = count() by AccountObjectId, AccountId, AccountName, SalesforceUserId, IPAddress, UserAgent\n\nVALIDATION / TUNING: backtest against known heavy-reporting periods (quarter-end, data-migration projects) to set thresholds; maintain per-entity drift; allowlist sanctioned ETL/integration service accounts by ConnectedAppId (but keep them baselined — a compromised vendor app, e.g. Salesloft/Gainsight, is exactly the supply-chain path in the report). NAIVE FOIL: a fixed \"N exports/day\" threshold — provably bypassed by paced exfil and noisy for power users; the separating signal is deviation from the entity's own baseline plus first-seen app/IP breadth. CROSS-REF: H234 (T1671) is the consent/foothold half — the connected app that consents there is the one whose export volume spikes here; also cross-ref T1567 (exfil over web service) for the outbound leg.",
+    "tags": [
+      "collection",
+      "saas",
+      "salesforce",
+      "crm",
+      "data_theft",
+      "bulk_export",
+      "shinyhunters",
+      "unc6040",
+      "volumetric",
+      "model_assisted",
+      "t1213_004",
+      "T1213.004"
+    ],
+    "techniques": [
+      "T1213.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **The event is legitimate; the volume is not.** Exporting a report and querying Contacts are things thousands of sales users do daily, so no single event is malicious. Only the deviation from an identity's own learned export/query envelope separates theft from work — a textbook per-entity anomaly-modeling problem, which is why this is an Alchemy hunt and not a Flame.\n- **Static thresholds lose both ways.** ShinyHunters paces exfiltration to slip under fixed limits, so a low threshold is bypassed and a high one is blind; a per-user/per-app baseline adapts to each identity's normal and catches the *relative* spike a global rule can't.\n- **Two entities must be modeled, not one.** Baselining the human user misses the case where a compromised third-party integration (Salesloft, Gainsight, Klue) does the exporting; baselining the connected app catches it. Modeling both — and joining on first-seen ConnectedAppId — is what makes the analytic robust.\n- **The telemetry carries true volume.** Salesforce ELF and Defender's Real-Time Event Monitoring expose row counts, object names, and app attribution, so the model can score actual data volume and object breadth rather than a coarse event count — the difference between detecting a 10-row test and a full-CRM dump.",
+    "references": "- [MITRE ATT&CK T1213.004: Data from Information Repositories — Customer Relationship Management Software](https://attack.mitre.org/techniques/T1213/004/)\n- [Microsoft Security Blog: Defending SaaS-based applications against ShinyHunters OAuth abuse](https://www.microsoft.com/en-us/security/blog/2026/07/13/defending-saas-based-applications-against-shinyhunters-oauth-abuse/)\n- [Google Cloud / Mandiant: The Cost of a Call — From Voice Phishing to Data Extortion (UNC6040)](https://cloud.google.com/blog/topics/threat-intelligence/voice-phishing-data-extortion)\n- [AppOmni: Detecting ShinyHunters/UNC6040 Vishing in Salesforce OAuth Attacks](https://appomni.com/blog/detecting-unc6040-vishing-in-salesforce-oauth-attacks/)\n- [Salesforce: Real-Time Event Monitoring — ReportExport and API events](https://help.salesforce.com/s/articleView?id=sf.real_time_event_monitoring_overview.htm)\n- [Elastic Security Labs: Microsoft Entra ID OAuth Phishing and Detections](https://www.elastic.co/security-labs/entra-id-oauth-phishing-detection)",
+    "file_path": "Alchemy/M028.md",
+    "created": "2026-07-18T14:13:05-05:00"
   }
 ]
