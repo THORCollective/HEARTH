@@ -8010,6 +8010,52 @@
     "created": "2026-07-18T14:13:05-05:00"
   },
   {
+    "id": "H236",
+    "category": "Flames",
+    "title": "Node developer project decodes SVG-hidden payload before browser credential access",
+    "tactic": "Initial Access, Execution, Stealth, Credential Access, Collection, Command and Control, Exfiltration",
+    "notes": "Endpoint process telemetry - Core filter: `npm`, `yarn`, `pnpm`, `npx`, or `node` launching `server/index.js` from a project path. Triage values: `process command line`, `parent process command line`, `file path`, `user`, `host`. Pivot: require project startup tied to `npm run dev`, `npm start`, or `node server/index.js`, then follow the same `node` PID into script and file telemetry. Strong red flags: `runServerValidation`, `serverValidation.js`, `Check(validation())`, `eval`, or a process title set to `npm-cache`.\nEndpoint file and script telemetry - Core filter: Node reading `assets/flags/*.svg` and extracting HTML comments before a Base64 decode. Triage values: `file path`, `process command line`, `script content`, `user`, `host`. Pivot: the same process reads `Login Data`, `Web Data`, `Local Extension Settings`, `login.keychain-db`, `.aws`, `.azure`, `.ssh`, `.bash_history`, or `.zsh_history` within minutes. Strong red flags: SVG comment reconstruction followed by browser store or developer secret reads.\nEndpoint network and DNS telemetry - Core filter: the same Node process opens HTTPS multipart POSTs or Socket.IO traffic after credential-store reads. Triage values: `remote URL`, `remote IP`, `destination port`, `user agent`, `process command line`. Correlation: join Node PID or host/user to requests for `/upload`, `/cldbs`, `/api/service/process/`, or `/api/service/makelog`. Strong red flags: `axios/1.18.1`, Socket.IO C2, or `child_process.exec()` returning shell output.\nClipboard and follow-on payload telemetry - Core filter: Windows Node child spawning `powershell.exe -NoProfile -NonInteractive Get-Clipboard`, macOS invoking `pbpaste`, or Windows curl pulling `hostService.txt`, `printSvc.txt`, or `dhcpSvc.txt` before renaming them to `.exe`. Triage values: `process command line`, `parent process command line`, `file path`. Correlation: treat this as high severity when it follows SVG decode and browser credential-store reads from the same project server process.\n",
+    "tags": [
+      "contagious_interview",
+      "ottercookie",
+      "dprk",
+      "nodejs",
+      "svg_steganography",
+      "browser_credentials",
+      "developer_workstation",
+      "socketio",
+      "T1204",
+      "T1059.007",
+      "T1027.003",
+      "T1555.003",
+      "T1005",
+      "T1115",
+      "T1071.001",
+      "T1041"
+    ],
+    "techniques": [
+      "T1204",
+      "T1059.007",
+      "T1027.003",
+      "T1555.003",
+      "T1005",
+      "T1115",
+      "T1071.001",
+      "T1041"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Joshua Strickland",
+      "link": "https://novasky.io"
+    },
+    "why": "- Elastic published the SVG-hidden Contagious Interview chain on July 18, 2026, and the target is the developer host where source code, browser sessions, package tokens, wallet data, and cloud credentials are often close together.\n- The hunt survives domain, hash, and repository rotation because it keys on the required execution path: Node server startup reads SVG comments, decodes Base64, evaluates JavaScript, and then touches credential stores.\n- The telemetry is available in normal MDR endpoint coverage. Process, file, script, and network events can show the same node process moving from server startup to credential access and Socket.IO C2.\n- False positives are controllable because normal projects may read images or use Socket.IO, but they should not read `Login Data`, `Web Data`, `Local Extension Settings`, shell history, or wallet paths after hidden SVG content is evaluated.",
+    "references": "- [Elastic Security Labs: New North Korean campaign uses fake coding interviews to steal developer credentials](https://www.elastic.co/security-labs/contagious-interview-malware-svg-steganography)\n- [Microsoft Security Blog: Contagious Interview malware delivered through fake developer job interviews](https://www.microsoft.com/en-us/security/blog/2026/03/11/contagious-interview-malware-delivered-through-fake-developer-job-interviews/)\n- [MITRE ATT&CK T1027.003: Obfuscated Files or Information, Steganography](https://attack.mitre.org/techniques/T1027/003/)\n- [MITRE ATT&CK T1555.003: Credentials from Password Stores, Credentials from Web Browsers](https://attack.mitre.org/techniques/T1555/003/)\n- [MITRE ATT&CK T1059.007: Command and Scripting Interpreter, JavaScript](https://attack.mitre.org/techniques/T1059/007/)",
+    "file_path": "Flames/H236.md",
+    "created": "2026-07-18T19:59:51-04:00"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
