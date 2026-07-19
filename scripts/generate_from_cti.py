@@ -1,5 +1,7 @@
 import os
+import random
 import re
+import time
 from pathlib import Path
 from dotenv import load_dotenv
 from pypdf import PdfReader
@@ -50,6 +52,53 @@ else:
     from openai import OpenAI
 
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+
+# HTTP status codes worth retrying: 429 (rate limit), 5xx, and Anthropic's
+# 529 "overloaded_error". A single un-retried 529 during hunt generation
+# silently drops the whole draft (issue #348), so every LLM call is routed
+# through _call_with_retries with exponential backoff + jitter.
+_RETRYABLE_STATUS = {429, 500, 502, 503, 504, 529}
+_RETRYABLE_EXC_NAMES = {
+    "APIConnectionError",
+    "APITimeoutError",
+    "InternalServerError",
+    "RateLimitError",
+    "OverloadedError",
+}
+
+
+def _is_retryable(exc):
+    if getattr(exc, "status_code", None) in _RETRYABLE_STATUS:
+        return True
+    return type(exc).__name__ in _RETRYABLE_EXC_NAMES
+
+
+def _call_with_retries(
+    create_fn, description="LLM call", max_attempts=5, base_delay=2.0
+):
+    """Invoke an LLM completion, retrying transient API failures with backoff."""
+    for attempt in range(1, max_attempts + 1):
+        try:
+            return create_fn()
+        except Exception as exc:
+            if attempt == max_attempts or not _is_retryable(exc):
+                raise
+            delay = base_delay * (2 ** (attempt - 1)) + random.uniform(0, 1)
+            print(
+                f"⚠️  {description} failed (attempt {attempt}/{max_attempts}): "
+                f"{exc}. Retrying in {delay:.1f}s..."
+            )
+            time.sleep(delay)
+
+
+def _anthropic_create_with_retries(**kwargs):
+    return _call_with_retries(lambda: anthropic_client.messages.create(**kwargs))
+
+
+def _openai_create_with_retries(**kwargs):
+    return _call_with_retries(lambda: client.chat.completions.create(**kwargs))
+
 
 CTI_INPUT_DIR = Path(".hearth/intel-drops/")
 OUTPUT_DIR = Path("Flames/")
@@ -270,7 +319,7 @@ def summarize_cti_with_map_reduce(text, model="gpt-4", max_tokens=128000):
                     "Your output will be combined with others, so be concise and clear.\n\n"
                     f"--- CHUNK {i + 1}/{len(chunks)} ---\n\n{chunk}\n\nAssistant:"
                 )
-                response = anthropic_client.messages.create(
+                response = _anthropic_create_with_retries(
                     model=CLAUDE_MODEL,
                     max_tokens=1024,
                     temperature=0.2,
@@ -278,7 +327,7 @@ def summarize_cti_with_map_reduce(text, model="gpt-4", max_tokens=128000):
                 )
                 summary = response.content[0].text.strip()
             else:
-                response = client.chat.completions.create(
+                response = _openai_create_with_retries(
                     model=model,
                     messages=[
                         {
@@ -312,7 +361,7 @@ def summarize_cti_with_map_reduce(text, model="gpt-4", max_tokens=128000):
                 "The final output should be a comprehensive summary that can be used to generate a threat hunt.\n\n"
                 f"--- COMBINED SUMMARIES ---\n\n{combined_summary}\n\nAssistant:"
             )
-            final_response = anthropic_client.messages.create(
+            final_response = _anthropic_create_with_retries(
                 model=CLAUDE_MODEL,
                 max_tokens=2048,
                 temperature=0.2,
@@ -320,7 +369,7 @@ def summarize_cti_with_map_reduce(text, model="gpt-4", max_tokens=128000):
             )
             return final_response.content[0].text.strip()
         else:
-            final_response = client.chat.completions.create(
+            final_response = _openai_create_with_retries(
                 model=model,
                 messages=[
                     {
@@ -424,7 +473,7 @@ def generate_hunt_content(
         )
         if AI_PROVIDER == "claude":
             full_prompt = f"\n\nHuman: {SYSTEM_PROMPT}\n\n{prompt}\n\nAssistant:"
-            response = anthropic_client.messages.create(
+            response = _anthropic_create_with_retries(
                 model=CLAUDE_MODEL,
                 max_tokens=1200,
                 temperature=temperature,
@@ -432,7 +481,7 @@ def generate_hunt_content(
             )
             return response.content[0].text.strip()
         else:
-            response = client.chat.completions.create(
+            response = _openai_create_with_retries(
                 model="gpt-4",
                 messages=[
                     {"role": "system", "content": SYSTEM_PROMPT},
