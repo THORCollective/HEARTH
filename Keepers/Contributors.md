@@ -40,6 +40,7 @@ Everyone listed below has submitted ideas that have been added to HEARTH. This l
 | 32 | T3chn3 | 1 |
 | 33 | young6x7 | 1 |
 | 34 | th3CyF0x | 1 |
-| 35 | Claire Stromboe | 1 |
-| 36 | Jon Perez | 1 |
-| 37 | Collin McClaine | 1 |
+| 35 | Kelly Lehman | 1 |
+| 36 | Claire Stromboe | 1 |
+| 37 | Jon Perez | 1 |
+| 38 | Collin McClaine | 1 |
