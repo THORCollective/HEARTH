@@ -8084,6 +8084,47 @@
     "created": "2026-07-18T21:28:52-07:00"
   },
   {
+    "id": "H238",
+    "category": "Flames",
+    "title": "RenPy Loader temp BAT execution through forfiles and MSBuild",
+    "tactic": "Initial Access, Execution, Stealth, Credential Access, Command and Control",
+    "notes": "EDR process telemetry - Core filter: Ren'Py, game installer, archive extraction, or user-launched installer ancestry followed by `forfiles.exe` with `/p` pointing at `%TEMP%` and `/c` invoking `cmd /c ren @file` before calling a BAT. Triage values: `process command line`, `parent process command line`, `file path`, `user`, `host`. Strong red flags: `forfiles.exe` renaming an arbitrary extension to `.bat`, then `conhost.exe --headless` and `cmd.exe` in the same process lineage.\n\nEDR file telemetry - Core filter: creation of a fresh `%TEMP%\\tmp-*` directory containing `*.bat`, `*.csproj`, `*.props`, or `*.targets` after reads of `data/libwin32.rpa`, `data/.GEg`, or `data/*.E3`. Triage values: `file path`, `original file name`, `creating process`, `parent process command line`. Pivot: inspect for `Nancy.csproj`, `Nancy.csproj.user`, `Internal.props`, and `Nancy.Compile.targets` created within the same extraction window.\n\nAlternate data stream telemetry - Core filter: a process writes `Zone.Identifier` with `ZoneId=0` to files it just extracted into `%TEMP%`. Triage values: `file path`, `stream name`, `stream content`, `creating process`. Correlation: require the same host to show temp BAT execution or MSBuild project execution within minutes.\n\nMSBuild and .NET loader telemetry - Core filter: `%WINDIR%\\Microsoft.NET\\Framework*\\v4.0.30319\\MSBuild.exe` or `%WINDIR%\\Microsoft.NET\\Framework64\\v4.0.30319\\MSBuild.exe` launched against `Nancy.csproj` from a user-writable temp path after `MSBUILDENABLEALLPROPERTYFUNCTIONS=1` is set. Pivot: module-load or script telemetry showing `AppDomain.CurrentDomain.Load`, `DefaultEvaluator5`, or `AppDomain.Load`.\n\nEndpoint network and credential-access telemetry - Core filter: the MSBuild-descended .NET chain makes Ethereum JSON-RPC `eth_call` requests to `bsc-dataseed.binance.org`, then stages `GollopDevest.dll`, `PavinWide`, or `LanoseThrip`. Correlation: follow the same process lineage into browser credential access such as `Login Data`, `Local State`, `key4.db`, extension data, wallet paths, or messaging-app credential stores. False positive: blockchain JSON-RPC alone is not enough. Require the loader process chain.\n",
+    "tags": [
+      "endpoint",
+      "windows",
+      "renpy_loader",
+      "msbuild",
+      "forfiles",
+      "amatera",
+      "etherhiding",
+      "T1127.001",
+      "T1059.003",
+      "T1202",
+      "T1027",
+      "T1055",
+      "T1555.003"
+    ],
+    "techniques": [
+      "T1127.001",
+      "T1059.003",
+      "T1202",
+      "T1027",
+      "T1055",
+      "T1555.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Joshua Strickland",
+      "link": "https://novasky.io"
+    },
+    "why": "- Malwarebytes reported this activity in July 2026 and gave enough execution detail to hunt the chain without relying on game names, domains, hashes, or download pages.\n- The behavior survives IOC rotation because the loader still has to decrypt a ZIP, write a temp BAT and MSBuild project, rename and execute the BAT, and proxy code through MSBuild before the stealer runs.\n- The telemetry is observable in common endpoint data sources: process lineage, temp file creation, alternate data stream writes, module-load behavior, outbound HTTP, and browser credential-store access.\n- False positives are controllable because normal Ren'Py games and normal MSBuild use do not usually combine `forfiles.exe`, `cmd /c ren @file`, `conhost.exe --headless`, `MSBUILDENABLEALLPROPERTYFUNCTIONS=1`, and credential-store reads in one chain.",
+    "references": "- [Malwarebytes: Fake games spread stealers with RenPy Loader, MSBuild and EtherHiding](https://www.malwarebytes.com/blog/threat-intel/2026/07/fake-games-spread-stealers-with-renpy-loader-msbuild-and-etherhiding)\n- [MITRE ATT&CK T1127.001: Trusted Developer Utilities: MSBuild](https://attack.mitre.org/techniques/T1127/001/)\n- [MITRE ATT&CK T1202: Indirect Command Execution](https://attack.mitre.org/techniques/T1202/)\n- [MITRE ATT&CK T1555.003: Credentials from Web Browsers](https://attack.mitre.org/techniques/T1555/003/)",
+    "file_path": "Flames/H238.md",
+    "created": "2026-07-20T23:39:02-04:00"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
