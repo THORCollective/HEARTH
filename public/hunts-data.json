@@ -8125,6 +8125,45 @@
     "created": "2026-07-20T23:39:02-04:00"
   },
   {
+    "id": "H239",
+    "category": "Flames",
+    "title": "Starland RAT launching WLDR tasking from pythonw LICENSE.txt",
+    "tactic": "Execution, Persistence, Discovery, Credential Access, Command and Control",
+    "notes": "Endpoint process telemetry - Core filter: `mshta.exe` launched from browser, clipboard, user shell, or script lineage and reaching a remote `.hta` or web path. Triage values: `process command line`, `parent process command line`, `user`, `file path`, `process integrity level`. Pivot: look for a nearby trojanized installer execution such as `MobaXterm_v26.1.exe`, `WebEx_Client.exe`, `Zoom`, `dbeaver-ce-windows-x86_64.exe`, or `FaceitInstaller_x64.exe` followed by `pythonw.exe` running `LICENSE.txt`. Strong red flags: `mshta.exe` persistence, remote HTA execution, installer lineage into `pythonw.exe`, and user-profile temp BAT activity.\nRegistry and scheduled task telemetry - Core filter: writes to `HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run` with value name `MyApp` pointing back to `mshta.exe`, plus scheduled tasks matching `PythonLauncher-*`. Triage values: `registry key path`, `registry value name`, `registry value data`, `task name`, `task trigger`, `task action`, `run level`. Correlation: require the Run key or `PythonLauncher-*` task to appear before or shortly after `pythonw.exe LICENSE.txt`. Strong red flags: `AtLogOn`, `RunLevel Highest`, startup LNK creation through `WScript.Shell`, and `ShellExecuteW` with `runas`.\nDiscovery and credential-access telemetry - Core filter: `pythonw.exe` or its PowerShell child executes `Get-CimInstance -Class Win32_ComputerSystemProduct.UUID`, `wmic memorychip get Capacity`, `Get-CimInstance -Namespace root/SecurityCenter2 -ClassName AntiVirusProduct`, `Get-WmiObject Win32_ComputerSystem.Domain`, `whoami`, `systeminfo`, `net user /dom`, `nltest /dclist`, or `whoami /all`. Triage values: `process command line`, `parent process command line`, `working directory`, `user`, `host name`. Pivot: check for browser credential-store or cryptocurrency wallet enumeration from the same process tree. Strong red flags: reconnaissance output staged with a screenshot or JSON file before outbound HTTP POST activity.\nPowerShell and network telemetry - Core filter: `curl` or PowerShell downloads the WLDR stager, then PowerShell executes obfuscated Base64 or XOR decode logic and polls a C2 path carrying a hardware identifier derived from the C: drive volume serial number. Triage values: `process command line`, `script content`, `destination host`, `request path`, `user agent`, `HTTP method`, `process-owned connection`. Correlation: tie `curl` download, PowerShell stager execution, and follow-on encrypted polling to prior Starland `pythonw.exe` activity on the same host. Strong red flags: `RunspacePool`, `WSv1`, `PBKDF2`, `AES-256-CBC`, 10 second polling, or 50 to 60 second Starland polling from the same infection chain.\n",
+    "tags": [
+      "endpoint",
+      "clickfix",
+      "starland_rat",
+      "wldr",
+      "powershell",
+      "T1218.005",
+      "T1059.001",
+      "T1053.005",
+      "T1547.001",
+      "T1055",
+      "T1555.003"
+    ],
+    "techniques": [
+      "T1218.005",
+      "T1059.001",
+      "T1053.005",
+      "T1547.001",
+      "T1055",
+      "T1555.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Joshua Strickland",
+      "link": "https://novasky.io"
+    },
+    "why": "- Talos described an active financially motivated campaign with a repeatable chain from ClickFix-style HTA execution to trojanized NSIS installers, Starland RAT, and WLDR PowerShell tasking. That gives hunters several ordered pivots before later payload delivery.\n- The hunt keys on remote HTA execution, the MyApp Run key, pythonw.exe executing LICENSE.txt, PythonLauncher-* scheduled tasks, and Starland reconnaissance from the same process tree instead of relying on replaceable infrastructure.\n- The telemetry is available to most MDR teams through endpoint process, registry, scheduled task, PowerShell, file, and process-owned network events. The network indicators enrich the case, but the behavior chain carries the detection.\n- False positives are controllable because legitimate installers rarely combine mshta.exe persistence, a disguised Python loader, domain reconnaissance commands, wallet or browser credential access, and a curl-launched PowerShell C2 stager on the same host.",
+    "references": "- [Cisco Talos: UAT-11795 deploys novel Starland RAT and bespoke WLDR C2 implant in financially motivated campaign](https://blog.talosintelligence.com/uat-11795-deploys-novel-starland-rat-and-bespoke-wldr-c2-implant-in-financially-motivated-campaign/)\n- [MITRE ATT&CK T1218.005: Mshta](https://attack.mitre.org/techniques/T1218/005/)\n- [MITRE ATT&CK T1059.001: PowerShell](https://attack.mitre.org/techniques/T1059/001/)\n- [MITRE ATT&CK T1053.005: Scheduled Task](https://attack.mitre.org/techniques/T1053/005/)\n- [MITRE ATT&CK T1547.001: Registry Run Keys and Startup Folder](https://attack.mitre.org/techniques/T1547/001/)",
+    "file_path": "Flames/H239.md",
+    "created": "2026-07-24T22:31:35-04:00"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
