@@ -985,6 +985,40 @@ const HUNTS_DATA = [
     "created": "2026-07-25T23:51:25-05:00"
   },
   {
+    "id": "B033",
+    "category": "Embers",
+    "title": "Baseline of ctfmon.exe execution provenance, instance count, and network silence",
+    "tactic": "Defense Evasion, Privilege Escalation",
+    "notes": "PLATFORM: Windows. BASELINE FIRST. TRIGGER SOURCE: Sekoia (TDR), \"PikaBot: a Guide to its Deep Secrets and\nOperations\" (2026-07-23), in which stage 2 creates a NEW ctfmon.exe purely to host the injected core DLL. This\nbaseline exists because the paired Flames hunt (H245, T1055.002) depends on being able to call a given\nctfmon.exe \"unexpected\" — and on most estates nobody can, because the process runs on every desktop and has\nnever been profiled.\n\nCOLLECTION FIELDS (per ctfmon.exe process start):\n- hostname; OS build; WOW64 vs native\n- Image path (expect C:\\Windows\\System32\\ctfmon.exe or C:\\Windows\\SysWOW64\\ctfmon.exe) and file hash\n- ParentImage + parent PID/GUID (expect userinit.exe, winlogon.exe, or svchost.exe -k netsvcs)\n- CommandLine in full (expect empty or a single legacy switch)\n- IntegrityLevel (expect Medium) and User / LogonId / session ID\n- Instance count per LogonId and per host, sampled over the day\n- Loaded modules (Sysmon EID 7) — the normal msctf/IME module set, and any third-party IME DLLs\n- Any outbound network connection or DNS query (Sysmon EID 3/22) — expected count is ZERO\n- Processes that open handles to ctfmon.exe (Sysmon EID 10): SourceImage, signer, GrantedAccess mask\n\nCOLLECTION WINDOW: 30 days, and deliberately spanning at least one patch cycle plus one full business cycle so\nthat build-driven launch-path differences and any monthly IME/accessibility tooling appear in the sample. On\nRDS/VDI estates extend to cover a full user-rotation period.\n\nDELIVERABLE: a per-environment ctfmon.exe allowlist recording (a) the approved parent-process set, (b) approved\nimage paths and hashes, (c) the approved command-line forms, (d) expected instances per logon session, (e) the\napproved module set, (f) the signer allowlist for processes that legitimately open handles to it, and (g) an\nexplicit written assertion that ctfmon.exe generates no network traffic in this environment, with the observed\ncount to back it. Ship it as the tuning input to H245.\n\nIMMEDIATE FLAGS (do not wait for the 30 days to elapse):\n- Any Sysmon EID 3 or EID 22 sourced from ctfmon.exe — investigate on sight.\n- ctfmon.exe running from any path outside System32/SysWOW64, or with a hash that does not match the OS build.\n- ctfmon.exe whose parent is rundll32.exe, cmd.exe, wscript.exe, cscript.exe, mshta.exe, regsvr32.exe, or any\n  unsigned binary or binary under a user-writable directory.\n- Sysmon EID 25 (ProcessTampering) or EID 8 (CreateRemoteThread) naming ctfmon.exe as target.\n- Two or more ctfmon.exe in the SAME LogonId on a single-session workstation (PikaBot uses no mutex, so\n  re-infection of a host yields a duplicate).\n\nCROSS-REF: enables H245 (T1055.002, PikaBot core DLL injected into a freshly-spawned ctfmon.exe) and the\nT1055.003 thread-hijack half of the same chain. The module-set inventory also supports M030 (T1027.007 dynamic\nAPI resolution / direct syscalls), and the network-silence assertion feeds M031 (T1571 non-standard-port C2).\n",
+    "tags": [
+      "defense_evasion",
+      "privilege_escalation",
+      "windows",
+      "baseline",
+      "ctfmon",
+      "process_injection",
+      "pikabot",
+      "t1055_002",
+      "t1055_003",
+      "t1057",
+      "T1055.002"
+    ],
+    "techniques": [
+      "T1055.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **The Flames hunt is unrunnable without it.** \"ctfmon.exe with an unusual parent\" only means something once the usual parents are enumerated for *your* estate — and they legitimately differ across OS builds, WOW64, and RDS/VDI. Guessing produces either a dead rule or an alert storm.\n- **The expected result is a null, and nulls are the most valuable baselines.** Confirming with 30 days of evidence that `ctfmon.exe` never makes an outbound connection converts a noisy-sounding idea into a standing near-zero-false-positive detection. A documented null is a detection asset.\n- **Instance count is a free re-infection signal.** Sekoia notes PikaBot uses no mutex, so re-running on the same host yields a second `ctfmon.exe`. That is only visible if the normal per-session count is known — and it differs between workstations and multi-session servers.\n- **It generalises past PikaBot.** The technique here is \"create a ubiquitous, unremarkable process and inject into it.\" Once the profile for this host process exists, the same collection template applies to the other perennial injection targets, and the allowlist keeps paying out after this particular loader is gone.",
+    "references": "- [MITRE ATT&CK T1055.002: Process Injection — Portable Executable Injection](https://attack.mitre.org/techniques/T1055/002/)\n- [Sekoia TDR: PikaBot — a Guide to its Deep Secrets and Operations](https://www.sekoia.io/en/blog/pikabot-a-guide-to-its-deep-secrets-and-operations/)\n- [Elastic Security Labs: PIKABOT, I choose you! (ctfmon.exe injection host)](https://www.elastic.co/security-labs/pikabot-i-choose-you)\n- [Microsoft Learn: Sysmon configuration and event reference (EID 1, 3, 7, 8, 10, 22, 25)](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon)\n- [SANS: Know Normal, Find Evil — Windows process baselining reference](https://www.sans.org/posters/hunt-evil/)\n- [Microsoft Learn: Advanced hunting DeviceProcessEvents schema reference](https://learn.microsoft.com/en-us/defender-xdr/advanced-hunting-deviceprocessevents-table)\n- [Red Canary Atomic Red Team: T1055.002 atomic tests (validate the baseline detects injection)](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1055.002/T1055.002.md)",
+    "file_path": "Embers/B033.md",
+    "created": null
+  },
+  {
     "id": "H001",
     "category": "Flames",
     "title": "An adversary is attempting to brute force the admin account on the externally facing VPN gateway.",
@@ -8375,6 +8409,115 @@ const HUNTS_DATA = [
     "created": "2026-07-25T23:51:25-05:00"
   },
   {
+    "id": "H245",
+    "category": "Flames",
+    "title": "PikaBot core DLL injected into a freshly-spawned ctfmon.exe via PE injection and thread hijack",
+    "tactic": "Defense Evasion, Privilege Escalation",
+    "notes": "PLATFORM: Windows. Source: Sekoia (TDR), \"PikaBot: a Guide to its Deep Secrets and Operations\" (2026-07-23).\nPikaBot is a three-stage loader (each stage a DLL) used by TA577 as an Initial Access Broker tool to deliver\nCobalt Strike and Meterpreter, with intrusions leading to Black Basta ransomware. Its infrastructure was disrupted\nduring Operation Endgame (27-29 May 2024) but the injection pattern is reused by the wider loader ecosystem.\n\nATTACK MECHANICS (from the report): stage 2 calls RtlCreateProcessParametersEx and RtlCreateUserProcess to\n\"prepare a new process to host the PikaBot core DLL\" — the target is a newly created ctfmon.exe, NOT an existing\none. It then allocates memory in the host, rebuilds the DOS and NT headers, and copies each section across; the\npayload chunks are decompressed with RtlDecompressBuffer before the copy. Execution is transferred by thread\nhijacking. The whole sequence runs through direct syscalls generated with SysWhispers2 — NtCreateUserProcess /\nZwCreateUserProcess, NtAllocateVirtualMemory, NtWriteVirtualMemory, NtReadVirtualMemory, NtGetContextThread,\nNtSetContextThread, NtResumeThread, NtOpenProcess, NtFreeVirtualMemory, NtClose — specifically to \"bypass\nEndpoint Detection and Response (EDR) solutions that use hooks in the ntdll.dll API in userland.\" Sekoia notes\nre-infection of the same host produces a second ctfmon.exe (no mutex is used to prevent it), which is itself a\nuseful multiplicity signal.\n\nDETECTION SIGNALS (Windows):\n- Sysmon EID 1 / 4688: ctfmon.exe whose ParentImage is not userinit.exe, winlogon.exe or svchost.exe. Alert on\n  parents such as rundll32.exe, cmd.exe, wscript.exe, regsvr32.exe, or any unsigned/user-writable-path binary.\n- Sysmon EID 10 (ProcessAccess) with TargetImage ending in ctfmon.exe and a GrantedAccess mask conferring\n  PROCESS_VM_WRITE|PROCESS_VM_OPERATION (0x0A8) or THREAD_SET_CONTEXT — the SourceImage is the loader.\n- Sysmon EID 8 (CreateRemoteThread) targeting ctfmon.exe, and EID 25 (ProcessTampering) naming ctfmon.exe.\n- Sysmon EID 3: ANY outbound connection from ctfmon.exe. Post-injection PikaBot beacons over HTTP POST with a raw\n  binary body to Nginx servers on bare IPs and non-standard ports (see M031) — a network event from a text-input\n  service process is by itself high-signal.\n- Two or more concurrent ctfmon.exe processes in the same logon session (re-infection tell, no mutex).\n- Defender XDR KQL starting point:\n  DeviceProcessEvents | where FileName =~ \"ctfmon.exe\"\n    | where InitiatingProcessFileName !in~ (\"userinit.exe\",\"winlogon.exe\",\"svchost.exe\")\n  and\n  DeviceNetworkEvents | where InitiatingProcessFileName =~ \"ctfmon.exe\"\n\nCROSS-REF: T1055.003 (Thread Execution Hijacking) is the second half of this same behaviour — the\nNtGetContextThread/NtSetContextThread/NtResumeThread step — and Elastic separately documents PikaBot \"hijacks\nctfmon.exe threads using SetThreadContext.\" T1106 (Native API) and T1027.007 (Dynamic API Resolution) cover the\ndirect-syscall delivery of these calls; M030 hunts that resolution layer. B033 is the paired baseline that makes\n\"unusual ctfmon.exe\" answerable in your environment. M031 covers the non-standard-port C2 that follows.\n",
+    "tags": [
+      "defense_evasion",
+      "privilege_escalation",
+      "windows",
+      "process_injection",
+      "pikabot",
+      "ctfmon",
+      "thread_hijacking",
+      "black_basta",
+      "ta577",
+      "t1055_002",
+      "t1055_003",
+      "t1106",
+      "T1055.002"
+    ],
+    "techniques": [
+      "T1055.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **The host process choice is the weakness, not the strength.** `ctfmon.exe` was picked because it is ubiquitous and unremarkable, but that ubiquity is exactly what makes it baselineable: it has one normal parent, one normal path, one normal instance per session, and zero normal network connections. Every one of those is a cheap, high-signal predicate.\n- **A network connection from `ctfmon.exe` is close to a zero-false-positive event.** The text-input host has no business resolving a domain or opening a socket to a bare IP on port 2078. Sysmon EID 3 filtered to this one image is a standing detection that costs almost nothing to run.\n- **Direct syscalls defeat userland hooks but not kernel telemetry.** PikaBot routes the entire injection through SysWhispers2 stubs specifically to evade `ntdll.dll` hooking. Sysmon EID 8/10/25 and ETW-TI are driven from kernel callbacks, so the cross-process write and thread-context modification still surface even when the API hooks are bypassed — this is why the hunt anchors on those events rather than on API tracing.\n- **It sits on a ransomware path.** PikaBot is an access-broker loader whose intrusions have terminated in Black Basta. Catching the loader at the injection step is upstream of Cobalt Strike, lateral movement and encryption, and the same create-then-inject pattern generalises well beyond this one family.",
+    "references": "- [MITRE ATT&CK T1055.002: Process Injection — Portable Executable Injection](https://attack.mitre.org/techniques/T1055/002/)\n- [Sekoia TDR: PikaBot — a Guide to its Deep Secrets and Operations](https://www.sekoia.io/en/blog/pikabot-a-guide-to-its-deep-secrets-and-operations/)\n- [MITRE ATT&CK T1055.003: Process Injection — Thread Execution Hijacking](https://attack.mitre.org/techniques/T1055/003/)\n- [Elastic Security Labs: PIKABOT, I choose you! (loader analysis and injection into ctfmon.exe)](https://www.elastic.co/security-labs/pikabot-i-choose-you)\n- [Red Canary Atomic Red Team: T1055.002 Portable Executable Injection atomic tests](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1055.002/T1055.002.md)\n- [SigmaHQ: PikaBot rundll32 hollowing detection rule](https://github.com/SigmaHQ/sigma/blob/master/rules-emerging-threats/2023/Malware/Pikabot/proc_creation_win_malware_pikabot_rundll32_hollowing.yml)\n- [SigmaHQ: PikaBot rundll32 network activity detection rule](https://github.com/SigmaHQ/sigma/blob/master/rules-emerging-threats/2023/Malware/Pikabot/net_connection_win_malware_pikabot_rundll32_activity.yml)\n- [Red Canary Atomic Red Team: T1055.003 Thread Execution Hijacking atomic tests](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1055.003/T1055.003.md)\n- [Zscaler ThreatLabz: Technical Analysis of PikaBot](https://www.zscaler.com/blogs/security-research/technical-analysis-pikabot)",
+    "file_path": "Flames/H245.md",
+    "created": null
+  },
+  {
+    "id": "H246",
+    "category": "Flames",
+    "title": "Encrypted payload modules stored in non-executable carrier files — PNG IDAT chunks and .db blobs",
+    "tactic": "Defense Evasion",
+    "notes": "PLATFORM: Windows. Source: Rapid7, \"From a Single Alert to 1,000 Files: Inside an Exposed WebDAV Malware Delivery\nLab\" (2026-07-20), which recovered an operator staging server (1,048 files, including 89 encrypted droppers) and\nthe operators' own build notes. Corroborating mechanics from Sekoia (TDR), \"RATatouille: Cooking Up Chaos in the\nI2P Kitchen\" (2026-07-23), whose loader carries its configuration as an AES-128-CBC blob with a per-sample key/IV\nrather than as plaintext strings.\n\nATTACK MECHANICS (from the reports): Rapid7 observed encrypted modules \"hidden inside PNG IDAT chunks\", stored on\ndisk as `loader-pool.db` — an image payload behind a database extension — and decrypted at runtime with AES plus\nGZip before being executed via `Assembly.Load(byte[])`, i.e. reflective in-memory loading with no executable\nartifact on disk. Sibling staged names in the same kit include `discord-rpc.x64.dll` (resolves APIs by hash and\nmanually maps its module) and `profiler16.dll`, dropped under `%TEMP%\\is-XXXXX.tmp\\` and\n`%AppData%\\Roaming\\inttracer_i686_prod\\`. I2PRAT's loader decrypts its C2 configuration with AES-128-CBC using a\nunique key/IV per sample, with values pushed via XMM instructions to keep them out of the static string table.\n\nDETECTION SIGNALS (Windows):\n- Sysmon EID 11: creation of .png/.jpg/.db/.dat files inside %TEMP%\\is-*.tmp\\, %AppData%\\Roaming\\<random>\\, or\n  alongside a freshly-dropped DLL — then correlate to the process that opens them.\n- Magic-byte vs extension mismatch sweep: files named .db/.dat/.log that begin with the PNG signature\n  (89 50 4E 47 0D 0A 1A 0A), and files named .png that do not. `loader-pool.db` is exactly this shape.\n- PNG structural validation: confirm IHDR/IDAT/IEND appear in a sane order, that the IDAT stream actually decodes\n  to an image, and that no data trails IEND. Score per-file entropy — an encrypted payload in the pixel data\n  pushes the file toward uniform randomness and inflates size relative to reported dimensions.\n- Reader-identity anomaly: a non-browser, non-imaging, unsigned or user-path binary performing repeated reads of\n  an image/.db file it dropped itself. Legitimate images are read by viewers and browsers, not by loaders.\n- ETW Microsoft-Windows-DotNETRuntime AssemblyLoad events with no on-disk module path, in a process that loaded\n  clr.dll shortly after touching the carrier file — the Assembly.Load(byte[]) tell.\n- Defender XDR KQL starting point:\n  DeviceFileEvents | where FolderPath has_any (@\"\\AppData\\Roaming\\\", @\"\\Temp\\\")\n    | where FileName endswith \".db\" or FileName endswith \".png\"\n    | join kind=inner (DeviceProcessEvents) on DeviceId\n    | where InitiatingProcessFolderPath has_any (@\"\\AppData\\\", @\"\\Temp\\\")\n\nCROSS-REF: pair with T1027.003 (Steganography — the PNG-carrier half of the same trick), T1620 (Reflective Code\nLoading — how the decrypted module is executed without touching disk), and T1140 (Deobfuscate/Decode Files or\nInformation — the AES+GZip step). H244 covers the WebDAV/RTLO delivery that lands these files, and H243/H241/B032\ncover the UAC-bypass and WMI-persistence stages of the same intrusion set. M030 (T1027.007) covers the\nhash-resolved API layer that `discord-rpc.x64.dll` uses once mapped.\n",
+    "tags": [
+      "defense_evasion",
+      "windows",
+      "encrypted_payload",
+      "steganography",
+      "png_idat",
+      "loader",
+      "webdav",
+      "purerat",
+      "t1027_013",
+      "t1027_003",
+      "t1620",
+      "t1140",
+      "T1027.013"
+    ],
+    "techniques": [
+      "T1027.013"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **It defeats the artifact everyone hunts for.** Signature scanning, MOTW checks, image-name allowlists and \"unsigned PE in %TEMP%\" rules all assume the payload exists on disk as code. Here it exists as pixel data. The hunt has to move to the read side — who opens this image, and why — because the write side looks like a cache file.\n- **Structure lies less than extension does.** An extension is a naming convention; magic bytes, chunk ordering, and entropy are properties of the content. A `.db` that starts with the PNG signature, or a `.png` whose IDAT stream will not decode to an image, is a cheap and durable sweep that survives every rename the operator tries.\n- **The reader is the anomaly, not the file.** Millions of legitimate PNGs and SQLite databases sit in `%AppData%`. Almost none of them are opened repeatedly by an unsigned binary that dropped them into its own scratch directory moments earlier. Pivoting on reader identity collapses the false-positive surface that extension-based hunting creates.\n- **It is upstream of the expensive stages.** In Rapid7's chains these encrypted modules unpack into modular RAT plugins for keylogging, screen capture and browser-credential theft (see H247). Catching the carrier catches the whole plugin set in one place, before any of it runs.",
+    "references": "- [MITRE ATT&CK T1027.013: Obfuscated Files or Information — Encrypted/Encoded File](https://attack.mitre.org/techniques/T1027/013/)\n- [Rapid7: From a Single Alert to 1,000 Files — Inside an Exposed WebDAV Malware Delivery Lab](https://www.rapid7.com/blog/post/tr-exposed-webdav-malware-delivery-lab-analysis/)\n- [Sekoia TDR: RATatouille — Cooking Up Chaos in the I2P Kitchen](https://www.sekoia.io/en/blog/ratatouille-cooking-up-chaos-in-the-i2p-kitchen/)\n- [Splunk STRT: Image Steganography — Quasar RAT loader detection](https://www.splunk.com/en_us/blog/security/image-steganography-quasar-rat-detection.html)\n- [Splunk STRT: Updated .NET Steganography Loader delivering Lokibot](https://www.splunk.com/en_us/blog/security/updated-net-steganography-loader-lokibot-malware-analysis.html)\n- [MITRE ATT&CK T1027.003: Obfuscated Files or Information — Steganography](https://attack.mitre.org/techniques/T1027/003/)\n- [MITRE ATT&CK T1620: Reflective Code Loading](https://attack.mitre.org/techniques/T1620/)\n- [Red Canary Atomic Red Team: T1027.013 Encrypted/Encoded File atomic tests](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1027.013/T1027.013.md)",
+    "file_path": "Flames/H246.md",
+    "created": null
+  },
+  {
+    "id": "H247",
+    "category": "Flames",
+    "title": "RAT keylogger plugin with financial keyword triggers, co-occurring with browser credential and wallet-extension theft",
+    "tactic": "Collection, Credential Access",
+    "notes": "PLATFORM: Windows. Source: Rapid7, \"From a Single Alert to 1,000 Files: Inside an Exposed WebDAV Malware Delivery\nLab\" (2026-07-20). The delivered `DlrtyGames.exe` RAT was modular, with plugins for keylogging, screenshots,\nwindow monitoring and C2. Rapid7 did NOT publish the specific keylogging API used or the on-disk log location —\nthose are stated here as the standard implementations to hunt, not as report-confirmed IOCs, and the hunt is\nwritten to be robust to whichever is in use.\n\nATTACK MECHANICS (from the report): the keylogger used plaintext keyword triggers to decide what was worth\ncapturing. The recovered list is explicitly financial and crypto-focused — `relaypayments.com`, `plaid`,\n`fiservapps`, `payoneer`, `google pay`, `coinbase`, `Zelle`, `paypal`, `link.com`, `amazonrelay`, `Exodus`,\n`Electrum`, `Bitcoin`, `monero`, `Seed Phrase`, `Seed`, `FCU`, `Credit Union`, `Account Overview`,\n`Available Balance`, `Merchant`, `online access`, `debit`, `credit`, `cvv`, `card`, `settlement`, `fees`,\n`loans`, `bank`, `banking`, `finance`, `invest`. The same implant targeted browser wallet-extension artifacts and\nChrome cookies and login data. Sibling staged payload names in the kit: `Fo-Binary.exe`, `Volt_Droid.exe`,\n`MegArray.exe`, `Crisp.exe`, dropped under `%TEMP%\\is-XXXXX.tmp\\` and `%AppData%\\Roaming\\inttracer_i686_prod\\`.\n\nDETECTION SIGNALS (Windows):\n- Keylogging implementation, any of: SetWindowsHookEx with WH_KEYBOARD_LL (13); tight-loop GetAsyncKeyState /\n  GetKeyState polling; GetRawInputData registration; PeekMessage/GetMessage GUI-message harvesting. Surface via\n  EDR API telemetry or ETW Win32k; Sysmon alone will not see the hook install.\n- Clipboard monitoring in the same process (OpenClipboard/GetClipboardData) — T1115, commonly bundled.\n- Browser credential-store reads by a NON-browser process:\n  %LocalAppData%\\Google\\Chrome\\User Data\\Default\\Login Data\n  %LocalAppData%\\Google\\Chrome\\User Data\\Default\\Network\\Cookies\n  %LocalAppData%\\Google\\Chrome\\User Data\\Local State  (the app-bound/DPAPI key blob)\n  and the Edge equivalents under %LocalAppData%\\Microsoft\\Edge\\User Data\\.\n- Wallet-extension enumeration under\n  %LocalAppData%\\Google\\Chrome\\User Data\\Default\\Local Extension Settings\\<extension-id>\\ — plus filesystem\n  walks for Exodus and Electrum data directories, both named in the recovered keyword list.\n- Sysmon EID 10 against chrome.exe/msedge.exe with PROCESS_VM_READ, which is the app-bound-encryption bypass\n  pattern used since Chrome 127+ made offline DPAPI decryption insufficient.\n- Sysmon EID 11: a capture/log file growing steadily in the implant's own %AppData%\\Roaming\\<random>\\ directory,\n  then archived (T1560.001) prior to exfiltration over the C2 channel.\n- Defender XDR KQL starting point:\n  DeviceFileEvents | where FileName in~ (\"Login Data\",\"Cookies\",\"Local State\")\n    | where InitiatingProcessFileName !in~ (\"chrome.exe\",\"msedge.exe\",\"brave.exe\")\n    | where InitiatingProcessFolderPath has_any (@\"\\AppData\\Roaming\\\", @\"\\Temp\\\")\n\nCROSS-REF: pair with T1555.003 (Credentials from Web Browsers) and T1539 (Steal Web Session Cookie) — the\ncredential half of the same plugin set — plus T1115 (Clipboard Data) and T1113 (Screen Capture), which Rapid7\nlists as sibling plugins in the same RAT. H244 covers the WebDAV/RTLO delivery that lands this implant and H246\ncovers the encrypted PNG-carrier storage its modules are unpacked from.\n",
+    "tags": [
+      "collection",
+      "credential_access",
+      "windows",
+      "keylogging",
+      "infostealer",
+      "browser_credentials",
+      "crypto_wallet",
+      "webdav",
+      "purerat",
+      "t1056_001",
+      "t1555_003",
+      "t1539",
+      "t1115",
+      "T1056.001"
+    ],
+    "techniques": [
+      "T1056.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **The keyword list tells you what the operator is actually after.** Payment-processor and credit-union terms alongside `Seed Phrase` and `Exodus` describe a fraud and crypto-theft objective, which sets both the priority and the population most at risk — finance, treasury, AP, and anyone holding wallet software. That shapes where to hunt first.\n- **Conjunction is what makes keylogging huntable at all.** AutoHotkey, password managers, screen readers and remote-support agents all hook the keyboard; on its own the API is noise. One unsigned binary in `%AppData%\\Roaming` that hooks the keyboard *and* reads `Login Data` *and* walks `Local Extension Settings` is a combination legitimate software essentially never produces.\n- **Credential theft has moved back into the live process.** Chrome 127+ app-bound encryption broke offline DPAPI decryption of `Login Data`, pushing stealers toward reading decrypted material out of the running browser. That makes Sysmon EID 10 `PROCESS_VM_READ` against `chrome.exe`/`msedge.exe` from a non-browser process a sharper signal now than it was two years ago.\n- **Keystroke capture survives every other control.** MFA fatigue defences, cookie-theft detections and password rotation all assume the secret is stolen at rest or in transit. A keylogger takes it at the moment of entry, including data that is never stored anywhere — which is why the capture stage deserves its own hunt rather than being folded into the infostealer hunt.",
+    "references": "- [MITRE ATT&CK T1056.001: Input Capture — Keylogging](https://attack.mitre.org/techniques/T1056/001/)\n- [Rapid7: From a Single Alert to 1,000 Files — Inside an Exposed WebDAV Malware Delivery Lab](https://www.rapid7.com/blog/post/tr-exposed-webdav-malware-delivery-lab-analysis/)\n- [Red Canary Atomic Red Team: T1056.001 Keylogging atomic tests](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1056.001/T1056.001.md)\n- [SigmaHQ: Suspicious process access to browser credential files](https://github.com/SigmaHQ/sigma/blob/master/rules/windows/file/file_access/file_access_win_susp_process_access_browser_cred_files.yml)\n- [SigmaHQ (threat hunting): Browser credential file access](https://github.com/SigmaHQ/sigma/blob/master/rules-threat-hunting/windows/file/file_access/file_access_win_browsers_credential.yml)\n- [MITRE ATT&CK T1555.003: Credentials from Password Stores — Credentials from Web Browsers](https://attack.mitre.org/techniques/T1555/003/)\n- [MITRE ATT&CK T1539: Steal Web Session Cookie](https://attack.mitre.org/techniques/T1539/)\n- [Microsoft Learn: SetWindowsHookExW and WH_KEYBOARD_LL hook reference](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwindowshookexw)\n- [Google Security Blog: Improving the security of Chrome cookies on Windows (app-bound encryption)](https://security.googleblog.com/2024/07/improving-security-of-chrome-cookies-on.html)",
+    "file_path": "Flames/H247.md",
+    "created": null
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
@@ -9111,5 +9254,80 @@ const HUNTS_DATA = [
     "references": "- [MITRE ATT&CK T1048.003: Exfiltration Over Alternative Protocol — Exfiltration Over Unencrypted Non-C2 Protocol](https://attack.mitre.org/techniques/T1048/003/)\n- [Unit 42 (Palo Alto Networks): Russian Global Webmail Espionage (CL-STA-1114 / Void Blizzard)](https://unit42.paloaltonetworks.com/russian-webmail-espionage/)\n- [CISA Advisory AA26-204A: Russian State-Supported Cyber Actors Conduct Phishing Campaign Targeting Zimbra Collaboration Suite Users](https://www.cisa.gov/news-events/cybersecurity-advisories/aa26-204a)\n- [ESET Research: Operation RoundPress — XSS Exploitation of Webmail Servers (Zimbra/Roundcube/Horde)](https://www.welivesecurity.com/en/eset-research/operation-roundpress/)\n- [Elastic Security Labs: Hunting for Data Exfiltration Over the Network](https://www.elastic.co/security-labs/network-exfiltration-detection)\n- [MITRE ATT&CK T1114.002: Email Collection — Remote Email Collection](https://attack.mitre.org/techniques/T1114/002/)",
     "file_path": "Alchemy/M029.md",
     "created": "2026-07-25T23:51:25-05:00"
+  },
+  {
+    "id": "M030",
+    "category": "Alchemy",
+    "title": "Scoring dynamic API resolution and direct syscall invocation via call-stack and unbacked-memory anomalies",
+    "tactic": "Defense Evasion",
+    "notes": "PLATFORM: Windows. ALCHEMY ANALYTIC — anomaly scoring over call-stack provenance and kernel-transition origin,\nnot a static rule. Sources: Sekoia (TDR), \"PikaBot: a Guide to its Deep Secrets and Operations\" (2026-07-23) and\nSekoia (TDR), \"RATatouille: Cooking Up Chaos in the I2P Kitchen\" (2026-07-23). Both families were flagged as\nT1027.007 gaps, as was the Rapid7 WebDAV lab kit, making dynamic API resolution the most cross-cutting uncovered\ntechnique in this batch.\n\nATTACK MECHANICS (from the reports): PikaBot resolves APIs with a custom hash algorithm whose SEED IS UNIQUE PER\nSAMPLE — Zscaler observed 0x113b, Sekoia's sample used 0x2329 — which is precisely why a static IOC on the hash\nconstant does not generalise:\n    def hash_pika(api_name, seed): checksum = seed; for c in api_name: if c > 0x60: c -= 0x20;\n                                   checksum = (c + (0x21 * checksum)) & 0xffffffff\nSince February 2024 it has used SysWhispers2, with `_SW2_SYSCALL_ENTRY {DWORD Hash; DWORD Address;}` and\n`_SW2_SYSCALL_LIST`, adding a wrapper that saves the return address and resolves the ntdll address from the hash.\nSekoia states the intent explicitly: to \"bypass Endpoint Detection and Response (EDR) solutions that use hooks in\nthe ntdll.dll API in userland.\" Observed direct-syscall set: NtCreateUserProcess/ZwCreateUserProcess,\nNtAllocateVirtualMemory, NtWriteVirtualMemory, NtReadVirtualMemory, NtGetContextThread, NtSetContextThread,\nNtResumeThread, NtOpenProcess, NtQuerySystemInformation, NtSystemDebugControl, NtFreeVirtualMemory, NtClose.\nRapid7's `discord-rpc.x64.dll` likewise \"resolved APIs by hash and manually mapped\" its module.\n\nWHY MODEL-ASSISTED: there is no string, import or constant to match — the hash seed rotates per sample, the API\nnames never appear in the binary, and the syscall stubs are inlined into the malware's own image. Meanwhile the\nraw signal (unbacked executable memory, non-ntdll return addresses) is generated in enormous volume by every JIT\nruntime on the estate, so a binary rule is simultaneously evadable and unusable. The separating property is\nstatistical: how a given process's kernel transitions are distributed compared to how that same image normally\nbehaves, and how tightly they cluster around a cross-process operation.\n\nFEATURES (per process, per execution):\n- Fraction of sensitive-API kernel transitions whose return address falls OUTSIDE ntdll.dll / win32u.dll\n- Count and proportion of call-stack frames in private, non-image-backed RX/RWX memory (Sysmon EID 10 CallTrace\n  UNKNOWN frames as a cheap proxy where ETW-TI is unavailable)\n- Ratio of syscall-level operations to resolved imports — a near-empty IAT paired with heavy Nt* activity\n- Presence of the memory-manipulation sequence within a short time window: NtAllocateVirtualMemory ->\n  NtWriteVirtualMemory -> NtSetContextThread/NtResumeThread against a DIFFERENT process\n- Process provenance: signing status, image path writability, parent lineage, total process lifetime\n- Burstiness: temporal clustering of unbacked-frame transitions (loaders spike briefly; JITs run continuously)\n- Novelty of the image hash in the environment, and whether the image loaded clr.dll (JIT explainer)\n\nMODEL: per-image-name baseline plus robust outlier scoring (MAD / isolation forest) over the feature vector.\nSuppress any process whose image has an established high-unbacked-frame baseline (browsers, .NET/Java hosts,\nEDR agents, anti-cheat) and alert on entities that cross out of their OWN historical envelope. Weight the\ncross-process-write co-occurrence and short-lifetime/unsigned features most heavily, since those are what\nseparate a loader from a runtime.\n\nVALIDATION / TUNING: generate known-good load with Atomic Red Team T1055.002/T1620 tests, then confirm the model\nranks them above the JIT population. Enumerate and allowlist the environment's legitimate unhookers (EDR, DLP,\nanti-cheat) explicitly — they will otherwise dominate the top of the ranking permanently.\n\nNAIVE FOIL: \"alert on any RWX private memory\" or \"alert on syscalls not originating in ntdll\" — both fire on\nevery browser and .NET application on the estate, and both are trivially reduced by an operator who allocates RX\nafter RW or who trampolines back through a legitimate module. Per-entity deviation plus co-occurrence is what\nsurvives that.\n\nCROSS-REF: T1106 (Native API) is the mechanism, T1055.002/T1055.003 the payoff — H245 hunts the ctfmon.exe\ninjection these syscalls carry out, and B033 baselines that host process. T1620 (Reflective Code Loading) and\nH246 (T1027.013) cover the manually-mapped, disk-less modules that use the same resolution layer.\n",
+    "tags": [
+      "defense_evasion",
+      "windows",
+      "dynamic_api_resolution",
+      "direct_syscalls",
+      "syswhispers",
+      "api_hashing",
+      "unbacked_memory",
+      "edr_evasion",
+      "pikabot",
+      "t1027_007",
+      "t1106",
+      "t1055_002",
+      "t1620",
+      "T1027.007"
+    ],
+    "techniques": [
+      "T1027.007"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **Every static anchor rotates, but the kernel transition cannot be hidden.** The hash seed is per-sample, the API names are never present, and the stubs are inlined. What the operator cannot change is that execution must eventually enter the kernel — and when it does from a SysWhispers2 stub, the return address is in the malware's image rather than in `ntdll.dll`. That structural fact outlives every IOC in the report.\n- **The raw signal is far too noisy for a rule, which is exactly why it needs a model.** Unbacked executable memory is the normal, correct behaviour of every JIT on the estate — .NET, Java, browser JavaScript engines, Electron. A binary rule here produces thousands of daily hits from Chrome alone. Ranking by per-image deviation turns an unusable signal into a short, triageable list.\n- **Burstiness and co-occurrence separate loaders from runtimes.** A JIT emits unbacked frames continuously for the life of a long-running process. A loader emits a handful, tightly clustered, immediately before writing into another process. That temporal shape is a feature a model can weigh and a rule cannot express.\n- **It catches the evasion layer shared across unrelated families.** PikaBot, I2PRAT and the Rapid7 kit are different operators with different objectives, all reaching for the same commodity technique. Detection built here degrades gracefully as families come and go, which is not true of any hunt anchored on a specific loader.",
+    "references": "- [MITRE ATT&CK T1027.007: Obfuscated Files or Information — Dynamic API Resolution](https://attack.mitre.org/techniques/T1027/007/)\n- [Sekoia TDR: PikaBot — a Guide to its Deep Secrets and Operations](https://www.sekoia.io/en/blog/pikabot-a-guide-to-its-deep-secrets-and-operations/)\n- [Sekoia TDR: RATatouille — Cooking Up Chaos in the I2P Kitchen](https://www.sekoia.io/en/blog/ratatouille-cooking-up-chaos-in-the-i2p-kitchen/)\n- [Elastic Security Labs: Detecting direct syscalls and call-stack anomalies with ETW Threat Intelligence](https://www.elastic.co/security-labs/finding-truth-in-the-shadows)\n- [MITRE ATT&CK T1106: Native API](https://attack.mitre.org/techniques/T1106/)\n- [SysWhispers2 — direct syscall stub generation (reference implementation used by PikaBot)](https://github.com/jthuraisamy/SysWhispers2)\n- [Microsoft Learn: Sysmon ProcessAccess (Event ID 10) and the CallTrace field](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon)\n- [Zscaler ThreatLabz: PikaBot API hashing and code reuse analysis](https://www.zscaler.com/blogs/security-research/d-bot-story-code-reuse-pikabot)",
+    "file_path": "Alchemy/M030.md",
+    "created": null
+  },
+  {
+    "id": "M031",
+    "category": "Alchemy",
+    "title": "Clustering C2 on rare high ports by TLS certificate-subject synthesis and server-fingerprint agreement",
+    "tactic": "Command and Control",
+    "notes": "PLATFORM: Windows endpoints / network egress. ALCHEMY ANALYTIC — joint rarity and fingerprint clustering, not a\nport blocklist. Sources: Sekoia (TDR), \"PikaBot: a Guide to its Deep Secrets and Operations\" (2026-07-23) and\nSekoia (TDR), \"RATatouille: Cooking Up Chaos in the I2P Kitchen\" (2026-07-23).\n\nATTACK MECHANICS (from the reports):\n- PikaBot C2 runs on Nginx servers on BARE IPs (no domain), across non-standard ports including 443, 1194, 2078,\n  2083, 2221-2226, 2222, 2967, 5000, 5242, 5243, 5631, 5632, 5938, 9785, 13720, 13721, 13724, 13782, 13783,\n  13785, 13786, 23399, 32999. Transport is HTTP POST with a raw binary body; the POST body is structured as\n  16 bytes of configuration, then a 32-byte RC4 key, then RC4-encrypted data. Over 360 unique C2 IPs were\n  collected between Feb 2023 and early May 2024 (Sekoia published `pikabot_iocs_20240603.csv` with\n  IP/port/valid-from/valid-until).\n- Certificate impersonation is explicit: a February 2023 sample presented\n  `C=US, ST=CA, O=Slack Technologies Inc, OU=DigiCert Inc, CN=slack.com`, paired with an Nginx 404\n  (`Server: nginx/1.18.0`). TLS certificate patterns overlap with Qakbot.\n- Sekoia published a CENSYS HUNTING QUERY that is effectively a synthetic-subject detector — it matches on the\n  STRUCTURE of generated certificate fields rather than their values: province `/[A-Z]{2}/`, country\n  `/[A-Z]{2}/`, organization `/[A-Z][a-z]{4,24}( [A-Z][a-z]{4,24})?( Inc.)?/`, common name\n  `/[a-z]{6,32}\\.[a-z]{2,8}/`, combined with HTTP header `Server` = `nginx`. Porting that regex set to egress\n  certificate telemetry is the highest-value single feature in this hunt.\n- I2PRAT's loader stage speaks RAW TCP (no TLS) to ports 1110-1130, with a decoded loader C2 of\n  64.95.10[.]162:1119, before transitioning to I2P multi-hop proxying. Traffic is AES-128-CBC encrypted with a\n  per-sample key/IV. So the same analytic must score plaintext-TCP-on-odd-port as well as TLS.\n\nWHY MODEL-ASSISTED: the IP set churns constantly (360+ IPs in ~15 months) and the port list deliberately overlaps\nlegitimate product ports (NetBackup, cPanel, VPN), so neither an IP blocklist nor a port blocklist works. The\ncertificate values are randomly generated per host, so exact-match on subject fails. What is stable is the\nGENERATION PATTERN — field structure, stack fingerprint, and the joint improbability of a given\nhost/process/port/certificate combination in a specific environment. That is a scoring problem.\n\nFEATURES (per outbound session, aggregated per internal host and per destination):\n- Destination-port rarity within the environment (fraction of hosts and sessions ever using it), and rarity of\n  the host-process/port pairing specifically\n- Destination is a bare IP with no prior DNS resolution (Sysmon EID 3 with no matching EID 22) — PikaBot's\n  bare-IP infrastructure produces this directly\n- Certificate-subject synthesis score: does the subject match the Censys-style structural regex set; is the\n  issuer a well-known SaaS/CA name inconsistent with the CN; self-signed flag; very short validity window\n- Server-stack agreement: JARM / JA3S / JA4S value shared across MULTIPLE unrelated destination IPs contacted by\n  the estate — infrastructure built from one image fingerprints identically\n- HTTP response shape where visible: bare-IP host returning `Server: nginx` with a 404 to non-POST requests\n- Beaconing regularity: inter-arrival jitter, session duration, and orig/resp byte-ratio stability\n- Payload shape: POST with a high-entropy binary body and near-constant size (the 16-byte config + 32-byte RC4\n  key + encrypted-data structure yields a distinctive minimum size)\n- Plaintext-TCP variant: sustained sessions to ports in a narrow contiguous range (e.g. 1110-1130) with no TLS\n  handshake and high payload entropy\n- Process attribution: the initiating image is unsigned, in a user-writable path, or is a process that should\n  never egress at all (see H245 — ctfmon.exe)\n\nMODEL: per-environment rarity baseline over a rolling 30-day window, combined into a joint-improbability score;\ncluster candidate destinations by JA3S/JA4S/JARM plus certificate-structure signature to group one operator's\ninfrastructure into a single finding rather than N alerts. Alert on entities crossing their own envelope, with\nthe certificate-synthesis and bare-IP features weighted highest.\n\nVALIDATION / TUNING: enumerate the environment's real high-port TLS estate FIRST — backup infrastructure\n(13720-13786), hosting control panels (2078/2083), VPN (1194), SSH-alt (2222) — and register them as named\nexclusions with an owner, so the exclusion list is reviewable rather than silently swallowing the port range the\nactor is actually using.\n\nNAIVE FOIL: an IP blocklist from the published IOC CSV (360+ IPs, all long dead), or \"alert on TLS to any port\nnot in {443, 8443}\" — the first has zero shelf life, the second fires on every backup server and cPanel host in\nthe estate. Structure plus joint rarity is what survives IP churn.\n\nCROSS-REF: M017 covers UDP-heartbeat beaconing volumetrics and is complementary, not overlapping — this hunt is\nTLS/TCP certificate-structure clustering. T1573.001 (Encrypted Channel: Symmetric Cryptography) is the RC4/AES\nlayer inside these sessions, T1095 (Non-Application Layer Protocol) the raw-TCP I2PRAT variant, and T1104\n(Multi-Stage Channels) the loader-to-I2P transition. H245 supplies the process-attribution half — a network\nevent from an injected ctfmon.exe scored by this analytic is a near-certain finding.\n",
+    "tags": [
+      "command_and_control",
+      "windows",
+      "network",
+      "non_standard_port",
+      "tls_fingerprint",
+      "jarm",
+      "certificate_anomaly",
+      "beaconing",
+      "pikabot",
+      "i2prat",
+      "t1571",
+      "t1573_001",
+      "t1095",
+      "t1104",
+      "T1571"
+    ],
+    "techniques": [
+      "T1571"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **The IPs are disposable and the ports are borrowed.** Sekoia collected 360+ unique C2 IPs across roughly fifteen months, and the port list deliberately overlaps NetBackup, cPanel and VPN ranges. An IP blocklist expires on publication; a port blocklist fires on the backup estate. Neither is a detection — which is what pushes this to a scored analytic rather than a rule.\n- **Randomly generated certificates are still generated the same way.** The operator randomises the *values* but not the *grammar*. A two-letter state, a title-cased organisation with an optional \" Inc.\", and a lowercase CN of a fixed length range is a fingerprint of the generator, and it survives every certificate rotation. This is the single highest-value feature in the model.\n- **Fingerprint agreement clusters infrastructure that IP-level analysis fragments.** JARM/JA4S identifies the TLS stack and configuration; when the same value appears across several unrelated destination IPs that your estate contacted, that is one operator's fleet, reported as one finding instead of N. The caveat matters too — JARM alone only identifies \"default Nginx\", so it is a clustering feature, never an alert on its own.\n- **Bare-IP destinations with no preceding DNS are cheap and rare.** PikaBot's use of bare IPs means the endpoint makes a connection with no matching resolution event. Joining Sysmon EID 3 against EID 22 costs almost nothing and independently narrows the candidate set before any TLS analysis runs.\n- **It closes the loop on the endpoint hunts.** The same intrusion produces an injected `ctfmon.exe` (H245) that should never egress at all. A network session scored highly by this analytic and attributed to a process that has no legitimate network profile (B033) is about as close to a confirmed finding as network telemetry gets.",
+    "references": "- [MITRE ATT&CK T1571: Non-Standard Port](https://attack.mitre.org/techniques/T1571/)\n- [Sekoia TDR: PikaBot — a Guide to its Deep Secrets and Operations (Censys hunting query, IOC CSV)](https://www.sekoia.io/en/blog/pikabot-a-guide-to-its-deep-secrets-and-operations/)\n- [Sekoia TDR: RATatouille — Cooking Up Chaos in the I2P Kitchen](https://www.sekoia.io/en/blog/ratatouille-cooking-up-chaos-in-the-i2p-kitchen/)\n- [Salesforce Engineering: Easily Identify Malicious Servers on the Internet with JARM](https://engineering.salesforce.com/easily-identify-malicious-servers-on-the-internet-with-jarm-e095edac525a/)\n- [FoxIO: JA4+ network fingerprinting (JA4S server fingerprints)](https://github.com/FoxIO-LLC/ja4)\n- [Zeek documentation: ssl.log and x509.log field reference for certificate hunting](https://docs.zeek.org/en/master/logs/ssl.html)\n- [MITRE ATT&CK T1573.001: Encrypted Channel — Symmetric Cryptography](https://attack.mitre.org/techniques/T1573/001/)\n- [Red Canary Atomic Red Team: T1571 Non-Standard Port atomic tests](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1571/T1571.md)",
+    "file_path": "Alchemy/M031.md",
+    "created": null
   }
 ];
