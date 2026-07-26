@@ -8233,7 +8233,7 @@
     "why": "- Talos tied this behavior to active Chaos ransomware operations and named concrete artifacts: `update_ms.msi`, `C:\\ProgramData\\update_ms.msi`, `lib.dll`, and CDP binding names such as `msaOpen` and `msaMessage`.\n- The hunt survives IP and domain rotation because the RAT still has to stage an MSI, load the embedded DLL, start a headless browser, and control it through a local debugging channel.\n- MDR teams can observe the chain with standard endpoint telemetry: process creation, file creation, module loads, browser command lines, localhost connections, and process-owned network metadata.\n- False positives are controllable because benign browser automation is not expected to appear immediately after `curl.exe` writes an MSI into `ProgramData` and `msiexec.exe` loads a payload DLL.",
     "references": "- [Cisco Talos: Chaos ransomware msaRAT browser C2](https://blog.talosintelligence.com/chaos-msarat-living-off-the-browser-to-build-covert-c2-channel/)\n- [MITRE ATT&CK T1105 Ingress Tool Transfer](https://attack.mitre.org/techniques/T1105/)\n- [MITRE ATT&CK T1218.007 Msiexec](https://attack.mitre.org/techniques/T1218/007/)\n- [MITRE ATT&CK T1090 Proxy](https://attack.mitre.org/techniques/T1090/)\n- [MITRE ATT&CK T1071.001 Web Protocols](https://attack.mitre.org/techniques/T1071/001/)",
     "file_path": "Flames/H240.md",
-    "created": "2026-07-25T22:17:55-05:00"
+    "created": "2026-07-24T22:31:47-04:00"
   },
   {
     "id": "H241",
