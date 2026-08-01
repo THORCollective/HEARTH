@@ -8518,6 +8518,51 @@ const HUNTS_DATA = [
     "created": "2026-07-26T01:06:00-05:00"
   },
   {
+    "id": "H250",
+    "category": "Flames",
+    "title": "Qilin PerfLogs staging and PsExec fan-out after credential theft",
+    "tactic": "Credential Access, Persistence, Lateral Movement, Execution, Defense Impairment, Impact",
+    "notes": "EDR process and file telemetry - Core filter: `rundll32.exe` loading `C:\\Windows\\System32\\comsvcs.dll` with `MiniDump`, or `ntdsutil.exe` with `activate instance ntds`, `ifm`, and `create full C:\\Windows\\Temp\\NTDS`. Triage values: `process command line`, `parent process command line`, `file path`, `user`, `host`. Pivot: same account or source host later writes `C:\\PerfLogs\\win.exe` or `\\\\<host>\\c$\\Windows\\Temp\\win.exe`. Strong red flags: LSASS dump output using `C:\\Windows\\Temp\\output.odt`, NTDS output under `C:\\Windows\\Temp\\NTDS`, or file browsing into `C:\\PerfLogs` before ransomware staging.\nWindows service and admin-share telemetry - Core filter: service creation for `PSEXESVC.exe`, remote service execution, or executable writes over `ADMIN$` and `C$` followed by process launch on the target host. Triage values: `source host`, `destination host`, `service name`, `service image path`, `share path`, `user`. Correlation: require prior credential dumping or NTDS IFM activity by the same account, then remote `PSEXESVC.exe` creation or `cmd.exe` launching the staged payload across more than one host.\nRegistry and staging telemetry - Core filter: Run key values under `HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run` or `HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run` where the value name matches `*[a-z]{6}` and the value data launches `C:\\PerfLogs\\win.exe --password` with `--no-admin`. Triage values: `registry key path`, `registry value name`, `registry value data`, `process command line`. Pivot: file creation in `C:\\PerfLogs` followed by execution through `C:\\Windows\\SysWOW64\\cmd.exe`.\nWindows security and PowerShell telemetry - Core filter: PowerShell command lines containing `Get-WinEvent -ListLog *`, `Where-Object {$_.RecordCount}`, and `[System.Diagnostics.Eventing.Reader.EventLogSession]::GlobalSession.ClearLog($l)`. Event ID: `1102` or equivalent audit-log-cleared telemetry. Correlation: event-log clearing after LSASS or NTDS access and before `C:\\PerfLogs\\win.exe --password` execution. False positive: require the credential access and staging chain before treating log clearing as part of the same intrusion.\n",
+    "tags": [
+      "qilin",
+      "ransomware",
+      "perflogs",
+      "psexec",
+      "credential_access",
+      "windows",
+      "admin_shares",
+      "T1003.001",
+      "T1003.003",
+      "T1547.001",
+      "T1570",
+      "T1021.002",
+      "T1569.002",
+      "T1070.001",
+      "T1486"
+    ],
+    "techniques": [
+      "T1003.001",
+      "T1003.003",
+      "T1547.001",
+      "T1570",
+      "T1021.002",
+      "T1569.002",
+      "T1070.001",
+      "T1486"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Joshua Strickland",
+      "link": "https://novasky.io"
+    },
+    "why": "- Arctic Wolf reported multiple June 2026 Qilin intrusions that reused the same Windows post-compromise chain after CVE-2026-0257 access, and assessed related activity as likely ongoing.\n- The hunt survives infrastructure and hash rotation because it keys on required behavior: credential theft, AD database extraction, ransomware staging under `C:\\PerfLogs`, PsExec fan-out, and event-log clearing.\n- The telemetry is common for MDR work. EDR process and file events, registry telemetry, service creation logs, Windows security events, and PowerShell logs each cover a different part of the chain.\n- False positives are controllable because normal PsExec, backup, or BitLocker work should not include LSASS dumping to `output.odt`, NTDS IFM extraction, `C:\\PerfLogs\\win.exe --password`, and broad log clearing in the same window.",
+    "references": "- [Arctic Wolf: Cookie Crumbles: How Exploitation of CVE-2026-0257 Leads to Qilin Ransomware](https://arcticwolf.com/resources/blog/exploitation-of-cve-2026-0257-leads-to-qilin-ransomware/)\n- [MITRE ATT&CK T1003.001: LSASS Memory](https://attack.mitre.org/techniques/T1003/001/)\n- [MITRE ATT&CK T1003.003: NTDS](https://attack.mitre.org/techniques/T1003/003/)\n- [MITRE ATT&CK T1021.002: SMB/Windows Admin Shares](https://attack.mitre.org/techniques/T1021/002/)\n- [MITRE ATT&CK T1569.002: Service Execution](https://attack.mitre.org/techniques/T1569/002/)\n- [MITRE ATT&CK T1486: Data Encrypted for Impact](https://attack.mitre.org/techniques/T1486/)",
+    "file_path": "Flames/H250.md",
+    "created": "2026-08-01T13:24:42-04:00"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
