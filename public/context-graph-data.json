@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-01T08:38:38.794Z",
+  "generated_at": "2026-08-01T07:59:48.852Z",
   "stats": {
     "totalNodes": 509,
     "totalEdges": 3868,
@@ -4245,7 +4245,7 @@
       "tactics": [
         "Credential Access"
       ],
-      "prevalence_score": 0.122,
+      "prevalence_score": 0.116,
       "actor_count": 11,
       "campaign_count": 2
     },
@@ -4684,7 +4684,7 @@
       "tactics": [
         "Command and Control"
       ],
-      "prevalence_score": 0.694,
+      "prevalence_score": 0.687,
       "actor_count": 57,
       "campaign_count": 21
     },
@@ -34614,5 +34614,5 @@
       "type": "MOTIVATED_BY"
     }
   ],
-  "phase2a_enriched_at": "2026-07-01T08:38:38.794Z"
+  "phase2a_enriched_at": "2026-08-01T07:59:48.852Z"
 }
