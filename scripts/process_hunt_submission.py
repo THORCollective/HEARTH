@@ -81,6 +81,21 @@ The final markdown file content should look like this:
 """
 
 
+def flatten_for_table_cell(value):
+    """Collapse a multi-line form field into one line.
+
+    The 'HEARTH Crafter' field is a markdown bullet list, but it renders into a
+    single markdown table cell. An embedded newline breaks the table row, so
+    strip bullet markers and join the entries with commas.
+    """
+    entries = [
+        re.sub(r"^\s*[-*+]\s+", "", line).strip()
+        for line in value.splitlines()
+        if line.strip()
+    ]
+    return ", ".join(entries)
+
+
 def parse_issue_body(body):
     """Parses the structured data from the HEARTH Hunt Submission Form issue."""
     details = {}
@@ -106,7 +121,7 @@ def parse_issue_body(body):
             elif "knowledge base" in header:
                 details["references"] = content
             elif "hearth crafter" in header:
-                details["submitter"] = content
+                details["submitter"] = flatten_for_table_cell(content)
         except IndexError:
             continue  # Ignore malformed sections
     return details
