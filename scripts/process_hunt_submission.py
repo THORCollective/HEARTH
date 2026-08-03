@@ -18,7 +18,7 @@ load_dotenv()
 AI_PROVIDER = os.getenv("AI_PROVIDER", "claude").lower()
 
 # Claude model configuration - use environment variable or default to latest
-CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-5-20250929")
+CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-5")
 
 if AI_PROVIDER == "claude":
     if not CLAUDE_AVAILABLE:
@@ -128,8 +128,8 @@ def generate_hunt_file(details):
     if AI_PROVIDER == "claude":
         response = anthropic_client.messages.create(
             model=CLAUDE_MODEL,
-            max_tokens=1200,
-            temperature=0.1,
+            max_tokens=4096,
+            thinking={"type": "disabled"},
             system=SYSTEM_PROMPT,
             messages=[{"role": "user", "content": prompt}],
         )

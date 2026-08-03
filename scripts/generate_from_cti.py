@@ -3,6 +3,7 @@ import random
 import re
 import time
 from pathlib import Path
+
 from dotenv import load_dotenv
 from pypdf import PdfReader
 
@@ -37,7 +38,7 @@ load_dotenv()
 AI_PROVIDER = os.getenv("AI_PROVIDER", "claude").lower()
 
 # Claude model configuration - use environment variable or default to latest
-CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-5-20250929")
+CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-5")
 
 if AI_PROVIDER == "claude":
     if not CLAUDE_AVAILABLE:
@@ -321,8 +322,8 @@ def summarize_cti_with_map_reduce(text, model="gpt-4", max_tokens=128000):
                 )
                 response = _anthropic_create_with_retries(
                     model=CLAUDE_MODEL,
-                    max_tokens=1024,
-                    temperature=0.2,
+                    max_tokens=2048,
+                    thinking={"type": "disabled"},
                     messages=[{"role": "user", "content": prompt}],
                 )
                 summary = response.content[0].text.strip()
@@ -363,8 +364,8 @@ def summarize_cti_with_map_reduce(text, model="gpt-4", max_tokens=128000):
             )
             final_response = _anthropic_create_with_retries(
                 model=CLAUDE_MODEL,
-                max_tokens=2048,
-                temperature=0.2,
+                max_tokens=4096,
+                thinking={"type": "disabled"},
                 messages=[{"role": "user", "content": prompt}],
             )
             return final_response.content[0].text.strip()
@@ -461,7 +462,11 @@ def generate_hunt_content(
                 "IMPORTANT: The previous attempt to generate a hunt from this CTI was not satisfactory. "
                 "Your task is to generate a NEW and DIFFERENT hunt hypothesis. "
                 "Analyze the CTI report again and focus on a different technique, a more specific behavior, "
-                "or a unique, actionable aspect that was missed before. Do not repeat the previous hypothesis.\n\n"
+                "or a unique, actionable aspect that was missed before. Do not repeat the previous hypothesis.\n"
+                "Deliberately choose an off-distribution angle: pick the technique or behavior you would "
+                "rank second or third most obvious from this report, not the first one that comes to mind. "
+                "Prefer a hypothesis that targets a different ATT&CK tactic or a different stage of the "
+                "intrusion than the most self-evident reading of the report.\n\n"
             )
             temperature = 0.7
 
@@ -475,8 +480,8 @@ def generate_hunt_content(
             full_prompt = f"\n\nHuman: {SYSTEM_PROMPT}\n\n{prompt}\n\nAssistant:"
             response = _anthropic_create_with_retries(
                 model=CLAUDE_MODEL,
-                max_tokens=1200,
-                temperature=temperature,
+                max_tokens=4096,
+                thinking={"type": "disabled"},
                 messages=[{"role": "user", "content": full_prompt}],
             )
             return response.content[0].text.strip()
@@ -492,7 +497,7 @@ def generate_hunt_content(
             )
             return response.choices[0].message.content.strip()
     except Exception as e:
-        print(f"❌ Error generating hunt content: {str(e)}")
+        print(f"❌ Error generating hunt content: {e!s}")
         return None
 
 
@@ -506,13 +511,13 @@ def read_file_content(file_path):
                 text += page.extract_text() + "\n"
             return text.strip()
         except Exception as e:
-            print(f"Error reading PDF {file_path}: {str(e)}")
+            print(f"Error reading PDF {file_path}: {e!s}")
             return None
     else:
         try:
             return file_path.read_text()
         except Exception as e:
-            print(f"Error reading file {file_path}: {str(e)}")
+            print(f"Error reading file {file_path}: {e!s}")
             return None
 
 
