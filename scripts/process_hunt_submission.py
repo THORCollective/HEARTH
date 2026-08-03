@@ -1,11 +1,38 @@
 import os
 import re
 from pathlib import Path
-from openai import OpenAI
+
 from dotenv import load_dotenv
 
+# Add Anthropic (Claude) support
+try:
+    import anthropic
+
+    CLAUDE_AVAILABLE = True
+except ImportError:
+    CLAUDE_AVAILABLE = False
+
 load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+# AI provider selection
+AI_PROVIDER = os.getenv("AI_PROVIDER", "claude").lower()
+
+# Claude model configuration - use environment variable or default to latest
+CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-5-20250929")
+
+if AI_PROVIDER == "claude":
+    if not CLAUDE_AVAILABLE:
+        raise ImportError(
+            "Anthropic (Claude) client not installed. Please install 'anthropic' Python package."
+        )
+    ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
+    if not ANTHROPIC_API_KEY:
+        raise ValueError("ANTHROPIC_API_KEY not set in environment.")
+    anthropic_client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+else:
+    from openai import OpenAI
+
+    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 SYSTEM_PROMPT = """You are an expert threat hunter, and your task is to reformat a manually submitted hunt idea into the official HEARTH markdown format.
 You will be given the raw components of a hunt from a GitHub issue.
@@ -97,6 +124,16 @@ def generate_hunt_file(details):
         references=details.get("references", ""),
         submitter=details.get("submitter", "A Helpful Contributor"),
     )
+
+    if AI_PROVIDER == "claude":
+        response = anthropic_client.messages.create(
+            model=CLAUDE_MODEL,
+            max_tokens=1200,
+            temperature=0.1,
+            system=SYSTEM_PROMPT,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        return response.content[0].text.strip()
 
     response = client.chat.completions.create(
         model="gpt-4",
