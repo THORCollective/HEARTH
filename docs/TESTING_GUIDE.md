@@ -3,6 +3,7 @@
 This guide covers how to test HEARTH locally and validate changes before deploying to production.
 
 ## Table of Contents
+
 1. [Local Development Setup](#local-development-setup)
 2. [Testing CTI Extraction](#testing-cti-extraction)
 3. [Testing Hunt Generation](#testing-hunt-generation)
@@ -37,7 +38,7 @@ Create a `.env` file in the project root:
 # AI Provider Configuration
 AI_PROVIDER=claude  # or 'openai'
 ANTHROPIC_API_KEY=your_api_key_here
-CLAUDE_MODEL=claude-sonnet-4-5-20250929
+CLAUDE_MODEL=claude-sonnet-5
 
 # Optional: OpenAI (if using OpenAI provider)
 OPENAI_API_KEY=your_openai_key_here
@@ -47,6 +48,7 @@ GITHUB_TOKEN=your_github_token_here
 ```
 
 **Get your API keys**:
+
 - Anthropic: https://console.anthropic.com/settings/keys
 - OpenAI: https://platform.openai.com/api-keys
 - GitHub: https://github.com/settings/tokens
@@ -84,6 +86,7 @@ EOF
 ```
 
 **Expected output**:
+
 ```
 Content-Type: text/html; charset=utf-8
 Content-Encoding: zstd
@@ -170,6 +173,7 @@ ls -lh Flames/H-*.md | tail -5
 ```
 
 **Expected output**:
+
 ```
 ✅ Hunt generated successfully!
    File: Flames/H-2025-073.md
@@ -244,6 +248,7 @@ sqlite3 database/hunts.db "SELECT tactic, COUNT(*) as count FROM hunts GROUP BY 
 ```
 
 **Expected output**:
+
 ```
 🗄️  HEARTH Hunt Database Builder
    Database: database/hunts.db
@@ -273,6 +278,7 @@ python scripts/test_database_speed.py
 ```
 
 **Expected output**:
+
 ```
 🔍 HEARTH Database Performance Test
 
@@ -445,6 +451,7 @@ echo -e "\n✅ All integration tests passed!"
 ```
 
 Run the test:
+
 ```bash
 chmod +x test-full-submission.sh
 ./test-full-submission.sh
@@ -457,6 +464,7 @@ chmod +x test-full-submission.sh
 Before submitting a PR or deploying changes:
 
 ### CTI Extraction
+
 - [ ] Test with Brotli compression site
 - [ ] Test with Zstandard compression site
 - [ ] Test with standard Gzip compression
@@ -466,6 +474,7 @@ Before submitting a PR or deploying changes:
 - [ ] Test DOCX file extraction
 
 ### Hunt Generation
+
 - [ ] Generate hunt with Claude
 - [ ] Generate hunt with OpenAI (if applicable)
 - [ ] Verify hunt format (no title heading)
@@ -474,18 +483,21 @@ Before submitting a PR or deploying changes:
 - [ ] Test regeneration with feedback
 
 ### Database Operations
+
 - [ ] Build database from scratch
 - [ ] Update database with new hunt
 - [ ] Test performance improvement vs file-based
 - [ ] Verify database auto-updates on file changes
 
 ### GitHub Actions
+
 - [ ] Test workflows locally with `act`
 - [ ] Verify secrets are properly configured
 - [ ] Test duplicate detection in CI
 - [ ] Verify PR creation works
 
 ### Documentation
+
 - [ ] README updates are accurate
 - [ ] Code examples work as documented
 - [ ] Links to documentation are valid
@@ -539,6 +551,7 @@ act -s ANTHROPIC_API_KEY=sk-... -s GITHUB_TOKEN=ghp_...
 ## Automated Testing (Future)
 
 **Planned improvements**:
+
 - [ ] Unit tests for CTI extraction
 - [ ] Integration tests in CI/CD
 - [ ] Automated format validation
@@ -550,6 +563,7 @@ act -s ANTHROPIC_API_KEY=sk-... -s GITHUB_TOKEN=ghp_...
 ## Questions?
 
 For testing questions or issues:
+
 1. Check [GitHub Issues](https://github.com/THORCollective/HEARTH/issues)
 2. Review [Optimization Guide](OPTIMIZATION_GUIDE.md)
 3. Open a new issue with `[Testing]` prefix
