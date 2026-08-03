@@ -1,398 +1,104 @@
-# HEARTH Scripts Documentation
+# HEARTH Scripts
 
-## Overview
+The automation behind HEARTH: the CTI-to-hunt pipeline, the site data builders, and the hunt-ID integrity checks. Almost everything here runs from a GitHub Actions workflow rather than by hand — the "Run by" column tells you which one.
 
-The HEARTH scripts directory contains a comprehensive suite of Python tools for processing, validating, and managing threat hunting content. The codebase has been completely refactored with enterprise-grade features including error handling, logging, caching, validation, and testing.
+Markdown files in `Flames/`, `Embers/`, and `Alchemy/` are the source of truth. Every artifact these scripts produce (`hunts-data.js`, `database/hunts.db`, everything in `public/`) is derived and safe to regenerate.
 
-## Architecture
+## Layout
 
-### Core Components
+| Path               | What lives there                                                   |
+| :----------------- | :----------------------------------------------------------------- |
+| `scripts/`         | The pipeline, builders, and shared library modules documented here |
+| `scripts/tests/`   | Pytest suite — see [Testing](#testing)                             |
+| `.github/scripts/` | Workflow-only helpers: `process_issue.py`, `notebook_generator.py` |
 
-#### 1. **Configuration Management** (`config_manager.py`)
-- Centralized configuration with environment variable overrides
-- JSON-based configuration files
-- Singleton pattern for global access
-- Type-safe configuration with dataclasses
+## Hunt generation pipeline
 
-```python
-from config_manager import get_config
-config = get_config().config
-print(config.base_directory)
-```
+Turns a CTI link or a manual submission into a drafted hunt and a pull request.
 
-#### 2. **Logging System** (`logger_config.py`)
-- Structured logging with multiple handlers
-- File and console output with different formats
-- Configurable log levels
-- Singleton logger instance
+| Script                       | Purpose                                                                                            | Run by                           |
+| :--------------------------- | :------------------------------------------------------------------------------------------------- | :------------------------------- |
+| `cti_extract.py`             | Extracts clean article text from raw HTML. Library module — no CLI.                                | imported                         |
+| `generate_from_cti.py`       | The core drafting step. Sends extracted CTI to Claude (or OpenAI) and writes a complete hunt file. | `issue-generate-hunts.yml`       |
+| `process_hunt_submission.py` | Parses a submission issue body and drafts a hunt from it.                                          | `process-hunt-submission.yml`    |
+| `duplicate_detection.py`     | AI similarity check against the SQLite index; flags likely duplicates before merge.                | called by the drafting workflows |
+| `reassign_hunt_id.py`        | Reassigns a draft's hunt ID when it collides with one already taken.                               | `pr-from-approval.yml`           |
 
-```python
-from logger_config import get_logger
-logger = get_logger()
-logger.info(\"Processing hunt files\")
-```
+**Environment:** `generate_from_cti.py` reads `AI_PROVIDER`, `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, and `CLAUDE_MODEL`, plus per-run inputs `CTI_SOURCE_URL`, `SUBMITTER_NAME`, `PROFILE_LINK`, `FEEDBACK`, and `EXISTING_HUNT_FILE` (set when regenerating). `process_hunt_submission.py` reads the same provider variables plus `ISSUE_BODY`. `duplicate_detection.py` reads `ANTHROPIC_API_KEY` and `CLAUDE_MODEL`.
 
-#### 3. **Input Validation** (`validators.py`)
-- Comprehensive validation for hunt data
-- URL, file path, and format validation
-- MITRE ATT&CK tactic validation
-- Security-focused input sanitization
+See the Configuration section in the [root README](../README.md) for defaults.
 
-```python
-from validators import HuntValidator
-validator = HuntValidator()
-validator.validate_hunt_id('H001', 'Flames')
-```
+## Hunt ID integrity
 
-#### 4. **Caching System** (`cache_manager.py`)
-- File-based and memory caching
-- TTL (Time To Live) support
-- File modification detection
-- Decorator-based caching
+Hunt IDs get allocated across concurrent PRs, so collisions are caught rather than prevented.
 
-```python
-from cache_manager import cached
+| Script                        | Purpose                                                                              | Run by                     |
+| :---------------------------- | :----------------------------------------------------------------------------------- | :------------------------- |
+| `hunt_ids.py`                 | Shared parsing, allocation, and rewriting helpers. Library module.                   | imported                   |
+| `check_hunt_id_collisions.py` | Fails a PR that introduces a colliding hunt ID.                                      | `validate-hunt-schema.yml` |
+| `recheck_open_prs.py`         | Re-runs the collision check against every open PR after a merge shifts the ID space. | `recheck-open-prs.yml`     |
 
-@cached(ttl=3600)
-def expensive_operation(data):
-    return process_data(data)
-```
+## Parsing and schema
 
-#### 5. **Hunt Parser** (`hunt_parser.py`)
-- Object-oriented hunt file processing
-- Multiple export formats (JSON, JavaScript)
-- Comprehensive error handling
-- Statistics generation
+| Script                      | Purpose                                                                           | Run by   |
+| :-------------------------- | :-------------------------------------------------------------------------------- | :------- |
+| `hunt_parser.py`            | Parses hunt markdown into structured records. Library module.                     | imported |
+| `hunt_schema.py`            | Defines and validates the YAML frontmatter schema. Library module.                | imported |
+| `migrate_to_frontmatter.py` | One-off migration from the legacy 6-cell table format to frontmatter. Idempotent. | manual   |
 
-```python
-from hunt_parser import HuntProcessor
-processor = HuntProcessor()
-hunts = processor.process_all_hunts()
-```
-
-### Utility Modules
-
-#### **Hunt Parser Utils** (`hunt_parser_utils.py`)
-Shared utilities for markdown parsing, file discovery, and data extraction.
-
-#### **Exception Handling** (`exceptions.py`)
-Custom exception classes for different error types:
-- `FileProcessingError`
-- `MarkdownParsingError`
-- `ValidationError`
-- `ConfigurationError`
-- `AIAnalysisError`
-
-## Features
-
-### 🔍 **Enhanced Error Handling**
-- Comprehensive exception hierarchy
-- Graceful error recovery
-- Detailed error logging with context
-- User-friendly error messages
-
-### ⚡ **Performance Optimizations**
-- Multi-level caching (memory + disk)
-- Lazy loading of resources
-- Efficient data structures
-- Debounced operations
-
-### 🛡️ **Security & Validation**
-- Input sanitization and validation
-- Path traversal protection
-- URL validation
-- Secure file handling
-
-### 🔧 **Configuration Management**
-- Environment-based configuration
-- JSON configuration files
-- Runtime configuration updates
-- Type-safe configuration objects
-
-### 📊 **Monitoring & Observability**
-- Structured logging
-- Performance metrics
-- Cache statistics
-- Processing statistics
-
-### 🧪 **Testing Framework**
-- Comprehensive unit tests
-- Integration tests
-- Mock-based testing
-- Test coverage for all components
-
-## Usage Examples
-
-### Basic Hunt Processing
-
-```python
-from hunt_parser import HuntProcessor
-from logger_config import get_logger
-
-logger = get_logger()
-processor = HuntProcessor()
-
-try:
-    # Process all hunt files
-    hunts = processor.process_all_hunts()
-    
-    # Export to JavaScript format
-    processor.export_hunts(hunts)
-    
-    # Generate statistics
-    stats = processor.generate_statistics(hunts)
-    processor.print_statistics(stats)
-    
-except Exception as error:
-    logger.error(f\"Processing failed: {error}\")
-```
-
-### Custom Configuration
-
-```python
-from config_manager import get_config
-
-config_manager = get_config()
-
-# Update configuration
-config_manager.update_config(
-    base_directory=\"/custom/path\",
-    max_hunts_for_comparison=20
-)
-
-# Save configuration
-config_manager.save_config(\"custom_config.json\")
-```
-
-### Validation
-
-```python
-from validators import HuntValidator
-
-validator = HuntValidator()
-
-# Validate hunt data
-hunt_data = {
-    'id': 'H001',
-    'category': 'Flames',
-    'title': 'Test Hunt',
-    'tactic': 'Execution'
-}
-
-validated_data = validator.validate_hunt_data(hunt_data)
-```
-
-### Caching
-
-```python
-from cache_manager import get_cache_manager
-
-cache = get_cache_manager()
-
-# Manual caching
-cache.set('key', data, file_path='source.md')
-cached_data = cache.get('key')
-
-# Decorator caching
-@cached(ttl=1800)
-def process_file(file_path):
-    return expensive_processing(file_path)
-```
-
-## Scripts
-
-### 1. **parse_hunts.py** (Legacy - Use hunt_parser.py)
-Original hunt parsing script, maintained for backward compatibility.
-
-### 2. **hunt_parser.py** (Recommended)
-Enhanced object-oriented hunt parser with full feature set.
+`migrate_to_frontmatter.py` takes flags:
 
 ```bash
-python3 scripts/hunt_parser.py
+python scripts/migrate_to_frontmatter.py --dry-run          # preview
+python scripts/migrate_to_frontmatter.py --path Flames      # limit scope
 ```
 
-### 3. **generate_leaderboard.py**
-Generates contributor leaderboard from hunt submissions.
+Files still in the legacy format emit a `DeprecationWarning` when parsed. A handful remain; the parser handles both formats.
 
-```bash
-python3 scripts/generate_leaderboard.py
-```
+## Site data builders
 
-### 4. **duplicate_detection.py**
-AI-powered duplicate detection for hunt submissions.
+These regenerate the JSON and JS the GitHub Pages site reads. All take no arguments except `build_hunt_database.py`, which accepts `--rebuild`, `--quiet`, and `--db-path`.
 
-### 5. **test_runner.py**
-Comprehensive test suite for all components.
+| Script                      | Writes                                                    | Run by                     |
+| :-------------------------- | :-------------------------------------------------------- | :------------------------- |
+| `rebuild_hunts_data.py`     | `hunts-data.js`                                           | `update-hunts.yml`         |
+| `build_hunt_database.py`    | `database/hunts.db`                                       | `update-hunt-database.yml` |
+| `generate_leaderboard.py`   | `Keepers/Contributors.md`                                 | `update_leaderboard.yml`   |
+| `build_mitre_matrix.py`     | `public/mitre-matrix.json`                                | `refresh-actor-graph.yml`  |
+| `build_actor_mentions.py`   | `public/actor-mentions.json`                              | manual                     |
+| `build_datasource_map.py`   | data-source-to-technique mapping                          | manual                     |
+| `enrich-context-graph.cjs`  | `public/context-graph-data.json`                          | manual                     |
+| `enrich-phase2a.cjs`        | adds threat actor and campaign nodes to the context graph | `refresh-actor-graph.yml`  |
+| `extract-intel-sources.cjs` | adds CVEs and advisory links to the context graph         | manual                     |
+| `fetch_activity.cjs`        | `public/activity.json`                                    | `static.yml`               |
 
-```bash
-python3 scripts/test_runner.py
-```
+`build_mitre_matrix.py` and `enrich-phase2a.cjs` consume `data/enterprise-attack.json` (ATT&CK STIX). `fetch_activity.cjs` reads `GITHUB_TOKEN` and `HEARTH_REPO`, and runs at build time so visitors never hit the GitHub API directly.
 
-## Configuration
-
-### Environment Variables
-
-```bash
-# Base configuration
-export HEARTH_BASE_DIR=\"/path/to/hearth\"
-export HEARTH_OUTPUT_DIR=\"/path/to/output\"
-
-# Processing settings
-export HEARTH_MAX_COMPARISON_HUNTS=15
-export HEARTH_SIMILARITY_THRESHOLD=0.8
-
-# AI settings
-export OPENAI_MODEL=\"gpt-4\"
-export OPENAI_API_KEY=\"your-api-key\"
-
-# GitHub settings
-export GITHUB_REPO_URL=\"https://github.com/your/repo\"
-export GITHUB_BRANCH=\"main\"
-```
-
-### Configuration File (hearth_config.json)
-
-```json
-{
-  \"base_directory\": \".\",
-  \"hunt_directories\": [\"Flames\", \"Embers\", \"Alchemy\"],
-  \"output_directory\": \".\",
-  \"max_hunts_for_comparison\": 10,
-  \"similarity_threshold\": 0.7,
-  \"hunts_data_filename\": \"hunts-data.js\",
-  \"contributors_filename\": \"Keepers/Contributors.md\"
-}
-```
+`rebuild_hunts_data.py` and `generate_leaderboard.py` are pure stdlib — no dependency install needed.
 
 ## Testing
 
-Run the complete test suite:
+The suite lives in `scripts/tests/` and covers the parser, schema, hunt IDs, CTI extraction, collision detection, and the frontmatter migration.
 
 ```bash
-python3 scripts/test_runner.py
+pip install -r requirements.txt
+python -m pytest scripts/tests -q
 ```
 
-Run specific test categories:
+70 tests, roughly a second. `pythonpath = ["."]` in `pyproject.toml` makes `scripts.*` importable from the repo root, so run pytest from there. The `fixtures_dir` fixture in `conftest.py` points at `scripts/tests/fixtures/`.
+
+CI runs this suite on every pull request. `validate-hunt-schema.yml` deliberately carries no path filter — so it can serve as a required status check — and runs the collision check, per-file schema validation, and then `pytest scripts/tests/ -v`.
+
+`ci.yml` is a separate guard covering the Node side: build, type-check, and vitest, plus a flake8 pass over `scripts/` and `.github/scripts/` limited to syntax errors and undefined names (`--select=E9,F63,F7,F82`).
+
+## Regenerating derived data
+
+Safe to re-run at any time; all outputs are derived from the markdown.
 
 ```bash
-python3 -m unittest scripts.test_runner.TestHuntValidator
-python3 -m unittest scripts.test_runner.TestCacheManager
+python scripts/rebuild_hunts_data.py            # site hunt data
+python scripts/build_hunt_database.py           # SQLite index for duplicate detection
+python scripts/generate_leaderboard.py          # contributor leaderboard
 ```
 
-## Performance Monitoring
-
-### Cache Statistics
-
-```python
-from cache_manager import get_cache_manager
-
-cache = get_cache_manager()
-stats = cache.get_cache_stats()
-print(f\"Cache entries: {stats['memory_entries']}\")
-print(f\"Cache size: {stats['total_size_bytes']} bytes\")
-```
-
-### Processing Statistics
-
-```python
-processor = HuntProcessor()
-hunts = processor.process_all_hunts()
-stats = processor.generate_statistics(hunts)
-
-print(f\"Total hunts: {stats['total_hunts']}\")
-print(f\"Categories: {stats['category_counts']}\")
-```
-
-## Error Handling Best Practices
-
-1. **Always use try-catch blocks** for file operations
-2. **Log errors with context** using the centralized logger
-3. **Use specific exception types** for different error conditions
-4. **Provide meaningful error messages** for users
-5. **Implement graceful degradation** when possible
-
-## Contributing
-
-1. Follow the established architecture patterns
-2. Add comprehensive tests for new features
-3. Use type hints for all function signatures
-4. Document new configuration options
-5. Update this README for new features
-
-## Migration Guide
-
-### From Legacy Scripts
-
-If you're migrating from the original scripts:
-
-1. **Replace parse_hunts.py usage:**
-   ```python
-   # Old
-   from parse_hunts import main
-   main()
-   
-   # New
-   from hunt_parser import HuntProcessor
-   processor = HuntProcessor()
-   processor.process_all_hunts()
-   ```
-
-2. **Update configuration:**
-   - Move hardcoded values to configuration files
-   - Use environment variables for sensitive data
-
-3. **Add error handling:**
-   - Wrap operations in try-catch blocks
-   - Use the centralized logger
-
-4. **Enable caching:**
-   - Add @cached decorators to expensive functions
-   - Use cache.get/set for manual caching
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Import Errors:**
-   - Ensure scripts directory is in Python path
-   - Check for missing dependencies
-
-2. **File Permission Errors:**
-   - Verify read/write permissions on directories
-   - Check cache directory permissions
-
-3. **Configuration Issues:**
-   - Validate JSON configuration syntax
-   - Check environment variable names
-
-4. **Performance Issues:**
-   - Monitor cache hit rates
-   - Check log files for bottlenecks
-   - Use profiling tools for optimization
-
-### Debug Mode
-
-Enable debug logging:
-
-```python
-import logging
-logging.getLogger('hearth').setLevel(logging.DEBUG)
-```
-
-## Dependencies
-
-- Python 3.8+
-- pathlib (built-in)
-- json (built-in)
-- re (built-in)
-- typing (built-in)
-- dataclasses (built-in)
-- unittest (built-in)
-
-Optional:
-- openai (for AI analysis)
-- python-dotenv (for environment variables)
-
----
-
-This documentation reflects the enhanced architecture and provides comprehensive guidance for using the improved HEARTH scripts system.
+If duplicate detection behaves oddly, rebuilding the database is the first thing to try. See [database/README.md](../database/README.md).

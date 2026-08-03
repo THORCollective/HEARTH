@@ -3,12 +3,45 @@
 This guide covers how to test HEARTH locally and validate changes before deploying to production.
 
 ## Table of Contents
-1. [Local Development Setup](#local-development-setup)
-2. [Testing CTI Extraction](#testing-cti-extraction)
-3. [Testing Hunt Generation](#testing-hunt-generation)
-4. [Testing Database Operations](#testing-database-operations)
-5. [Testing GitHub Actions Locally](#testing-github-actions-locally)
-6. [Integration Testing](#integration-testing)
+
+1. [Automated Test Suite](#automated-test-suite)
+2. [Local Development Setup](#local-development-setup)
+3. [Testing CTI Extraction](#testing-cti-extraction)
+4. [Testing Hunt Generation](#testing-hunt-generation)
+5. [Testing Database Operations](#testing-database-operations)
+6. [Testing GitHub Actions Locally](#testing-github-actions-locally)
+7. [Integration Testing](#integration-testing)
+
+---
+
+## Automated Test Suite
+
+Start here. Most of this guide covers manual end-to-end checks against live APIs, but the parser, schema, and hunt-ID logic have real unit tests — run those first, since they're fast and need no API keys.
+
+```bash
+pip install -r requirements.txt
+python -m pytest scripts/tests -q
+```
+
+70 tests, roughly a second. Run from the repo root: `pythonpath = ["."]` in `pyproject.toml` is what makes `scripts.*` importable.
+
+| Test file                          | Covers                                                      |
+| :--------------------------------- | :---------------------------------------------------------- |
+| `test_hunt_parser.py`              | Markdown parsing, both frontmatter and legacy table formats |
+| `test_hunt_schema.py`              | Frontmatter schema validation                               |
+| `test_hunt_ids.py`                 | Hunt ID parsing and allocation                              |
+| `test_check_hunt_id_collisions.py` | PR collision detection                                      |
+| `test_cti_extract.py`              | Article text extraction from raw HTML                       |
+| `test_migrate_to_frontmatter.py`   | Legacy-format migration, including idempotency              |
+| `test_build_actor_mentions.py`     | Actor mention extraction                                    |
+
+Shared fixtures live in `scripts/tests/fixtures/`, exposed through the `fixtures_dir` fixture in `conftest.py`.
+
+**CI runs this suite on every pull request**, via `validate-hunt-schema.yml`. That workflow carries no path filter — deliberately, so it can be a required status check — and runs the hunt-ID collision check and per-file schema validation before `pytest scripts/tests/ -v`.
+
+`ci.yml` is a separate guard for the Node side: build, type-check, and vitest, plus a flake8 pass over `scripts/` and `.github/scripts/` limited to syntax errors and undefined names (`--select=E9,F63,F7,F82`).
+
+Some legacy-format hunt files still exist, so a passing run emits `DeprecationWarning`s from the parser. That's expected.
 
 ---
 
@@ -37,7 +70,7 @@ Create a `.env` file in the project root:
 # AI Provider Configuration
 AI_PROVIDER=claude  # or 'openai'
 ANTHROPIC_API_KEY=your_api_key_here
-CLAUDE_MODEL=claude-sonnet-4-5-20250929
+CLAUDE_MODEL=claude-sonnet-5
 
 # Optional: OpenAI (if using OpenAI provider)
 OPENAI_API_KEY=your_openai_key_here
@@ -47,6 +80,7 @@ GITHUB_TOKEN=your_github_token_here
 ```
 
 **Get your API keys**:
+
 - Anthropic: https://console.anthropic.com/settings/keys
 - OpenAI: https://platform.openai.com/api-keys
 - GitHub: https://github.com/settings/tokens
@@ -84,6 +118,7 @@ EOF
 ```
 
 **Expected output**:
+
 ```
 Content-Type: text/html; charset=utf-8
 Content-Encoding: zstd
@@ -170,6 +205,7 @@ ls -lh Flames/H-*.md | tail -5
 ```
 
 **Expected output**:
+
 ```
 ✅ Hunt generated successfully!
    File: Flames/H-2025-073.md
@@ -244,6 +280,7 @@ sqlite3 database/hunts.db "SELECT tactic, COUNT(*) as count FROM hunts GROUP BY 
 ```
 
 **Expected output**:
+
 ```
 🗄️  HEARTH Hunt Database Builder
    Database: database/hunts.db
@@ -267,30 +304,27 @@ total_hunts
 
 ### Test 2: Test Database Performance
 
+The index is what duplicate detection queries against, so the check that matters is whether it's current — every hunt file should have a row.
+
 ```bash
-# Run performance comparison
-python scripts/test_database_speed.py
+python3 - <<'EOF'
+import sqlite3, pathlib
+rows = sqlite3.connect("database/hunts.db").execute("SELECT COUNT(*) FROM hunts").fetchone()[0]
+files = sum(1 for d in ("Flames", "Embers", "Alchemy") for _ in pathlib.Path(d).glob("*.md"))
+print(f"indexed: {rows}\nfiles:   {files}")
+print("✅ current" if rows == files else f"⚠️  stale — rebuild ({files - rows} missing)")
+EOF
 ```
 
-**Expected output**:
+If it reports stale, rebuild:
+
+```bash
+python scripts/build_hunt_database.py --rebuild
 ```
-🔍 HEARTH Database Performance Test
 
-1️⃣  DATABASE QUERY (using SQLite)
-   Retrieved 69 hunts
-   Time: 2.90ms
+`database/hunts.db` is gitignored — it's a local build artifact, so your copy drifts as you pull new hunts. In production `update-hunt-database.yml` rebuilds it on every merge that touches a hunt file.
 
-2️⃣  FILE-BASED SCAN (reading all .md files)
-   Retrieved 69 hunts
-   Time: 7.77ms
-
-📊 PERFORMANCE RESULTS
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   Database:      2.90ms
-   File-based:    7.77ms
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   Speedup:       2.7x faster
-```
+> The README's "30-60x faster" figure refers to duplicate detection's repeated similarity lookups, not a single count query. Don't expect a bare `COUNT(*)` to beat a file scan — at this corpus size it won't.
 
 ### Test 3: Test Duplicate Detection
 
@@ -445,6 +479,7 @@ echo -e "\n✅ All integration tests passed!"
 ```
 
 Run the test:
+
 ```bash
 chmod +x test-full-submission.sh
 ./test-full-submission.sh
@@ -457,6 +492,7 @@ chmod +x test-full-submission.sh
 Before submitting a PR or deploying changes:
 
 ### CTI Extraction
+
 - [ ] Test with Brotli compression site
 - [ ] Test with Zstandard compression site
 - [ ] Test with standard Gzip compression
@@ -466,6 +502,7 @@ Before submitting a PR or deploying changes:
 - [ ] Test DOCX file extraction
 
 ### Hunt Generation
+
 - [ ] Generate hunt with Claude
 - [ ] Generate hunt with OpenAI (if applicable)
 - [ ] Verify hunt format (no title heading)
@@ -474,18 +511,21 @@ Before submitting a PR or deploying changes:
 - [ ] Test regeneration with feedback
 
 ### Database Operations
+
 - [ ] Build database from scratch
 - [ ] Update database with new hunt
 - [ ] Test performance improvement vs file-based
 - [ ] Verify database auto-updates on file changes
 
 ### GitHub Actions
+
 - [ ] Test workflows locally with `act`
 - [ ] Verify secrets are properly configured
 - [ ] Test duplicate detection in CI
 - [ ] Verify PR creation works
 
 ### Documentation
+
 - [ ] README updates are accurate
 - [ ] Code examples work as documented
 - [ ] Links to documentation are valid
@@ -536,12 +576,17 @@ act -s ANTHROPIC_API_KEY=sk-... -s GITHUB_TOKEN=ghp_...
 
 ---
 
-## Automated Testing (Future)
+## Automated Testing — Status
 
-**Planned improvements**:
-- [ ] Unit tests for CTI extraction
-- [ ] Integration tests in CI/CD
-- [ ] Automated format validation
+**Done:**
+
+- [x] Unit tests for CTI extraction — `scripts/tests/test_cti_extract.py`
+- [x] Automated format validation — `test_hunt_schema.py`, plus `validate-hunt-schema.yml` in CI
+
+- [x] Integration tests in CI — `validate-hunt-schema.yml` runs pytest on every PR
+
+**Still open:**
+
 - [ ] Regression tests for duplicate detection
 - [ ] Performance benchmarking in CI
 
@@ -550,6 +595,7 @@ act -s ANTHROPIC_API_KEY=sk-... -s GITHUB_TOKEN=ghp_...
 ## Questions?
 
 For testing questions or issues:
+
 1. Check [GitHub Issues](https://github.com/THORCollective/HEARTH/issues)
 2. Review [Optimization Guide](OPTIMIZATION_GUIDE.md)
 3. Open a new issue with `[Testing]` prefix
