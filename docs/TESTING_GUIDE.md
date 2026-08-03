@@ -4,12 +4,42 @@ This guide covers how to test HEARTH locally and validate changes before deployi
 
 ## Table of Contents
 
-1. [Local Development Setup](#local-development-setup)
-2. [Testing CTI Extraction](#testing-cti-extraction)
-3. [Testing Hunt Generation](#testing-hunt-generation)
-4. [Testing Database Operations](#testing-database-operations)
-5. [Testing GitHub Actions Locally](#testing-github-actions-locally)
-6. [Integration Testing](#integration-testing)
+1. [Automated Test Suite](#automated-test-suite)
+2. [Local Development Setup](#local-development-setup)
+3. [Testing CTI Extraction](#testing-cti-extraction)
+4. [Testing Hunt Generation](#testing-hunt-generation)
+5. [Testing Database Operations](#testing-database-operations)
+6. [Testing GitHub Actions Locally](#testing-github-actions-locally)
+7. [Integration Testing](#integration-testing)
+
+---
+
+## Automated Test Suite
+
+Start here. Most of this guide covers manual end-to-end checks against live APIs, but the parser, schema, and hunt-ID logic have real unit tests — run those first, since they're fast and need no API keys.
+
+```bash
+pip install -r requirements.txt
+python -m pytest scripts/tests -q
+```
+
+70 tests, roughly a second. Run from the repo root: `pythonpath = ["."]` in `pyproject.toml` is what makes `scripts.*` importable.
+
+| Test file                          | Covers                                                      |
+| :--------------------------------- | :---------------------------------------------------------- |
+| `test_hunt_parser.py`              | Markdown parsing, both frontmatter and legacy table formats |
+| `test_hunt_schema.py`              | Frontmatter schema validation                               |
+| `test_hunt_ids.py`                 | Hunt ID parsing and allocation                              |
+| `test_check_hunt_id_collisions.py` | PR collision detection                                      |
+| `test_cti_extract.py`              | Article text extraction from raw HTML                       |
+| `test_migrate_to_frontmatter.py`   | Legacy-format migration, including idempotency              |
+| `test_build_actor_mentions.py`     | Actor mention extraction                                    |
+
+Shared fixtures live in `scripts/tests/fixtures/`, exposed through the `fixtures_dir` fixture in `conftest.py`.
+
+**CI does not run this suite.** `.github/workflows/ci.yml` runs the Node build and vitest, plus a flake8 pass over `scripts/` and `.github/scripts/` limited to syntax errors and undefined names (`--select=E9,F63,F7,F82`). Nothing catches a logic regression in these scripts except running pytest yourself before pushing.
+
+Some legacy-format hunt files still exist, so a passing run emits `DeprecationWarning`s from the parser. That's expected.
 
 ---
 
@@ -272,31 +302,27 @@ total_hunts
 
 ### Test 2: Test Database Performance
 
+The index is what duplicate detection queries against, so the check that matters is whether it's current — every hunt file should have a row.
+
 ```bash
-# Run performance comparison
-python scripts/test_database_speed.py
+python3 - <<'EOF'
+import sqlite3, pathlib
+rows = sqlite3.connect("database/hunts.db").execute("SELECT COUNT(*) FROM hunts").fetchone()[0]
+files = sum(1 for d in ("Flames", "Embers", "Alchemy") for _ in pathlib.Path(d).glob("*.md"))
+print(f"indexed: {rows}\nfiles:   {files}")
+print("✅ current" if rows == files else f"⚠️  stale — rebuild ({files - rows} missing)")
+EOF
 ```
 
-**Expected output**:
+If it reports stale, rebuild:
 
+```bash
+python scripts/build_hunt_database.py --rebuild
 ```
-🔍 HEARTH Database Performance Test
 
-1️⃣  DATABASE QUERY (using SQLite)
-   Retrieved 69 hunts
-   Time: 2.90ms
+`database/hunts.db` is gitignored — it's a local build artifact, so your copy drifts as you pull new hunts. In production `update-hunt-database.yml` rebuilds it on every merge that touches a hunt file.
 
-2️⃣  FILE-BASED SCAN (reading all .md files)
-   Retrieved 69 hunts
-   Time: 7.77ms
-
-📊 PERFORMANCE RESULTS
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   Database:      2.90ms
-   File-based:    7.77ms
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   Speedup:       2.7x faster
-```
+> The README's "30-60x faster" figure refers to duplicate detection's repeated similarity lookups, not a single count query. Don't expect a bare `COUNT(*)` to beat a file scan — at this corpus size it won't.
 
 ### Test 3: Test Duplicate Detection
 
@@ -548,13 +574,16 @@ act -s ANTHROPIC_API_KEY=sk-... -s GITHUB_TOKEN=ghp_...
 
 ---
 
-## Automated Testing (Future)
+## Automated Testing — Status
 
-**Planned improvements**:
+**Done:**
 
-- [ ] Unit tests for CTI extraction
-- [ ] Integration tests in CI/CD
-- [ ] Automated format validation
+- [x] Unit tests for CTI extraction — `scripts/tests/test_cti_extract.py`
+- [x] Automated format validation — `test_hunt_schema.py`, plus `validate-hunt-schema.yml` in CI
+
+**Still open:**
+
+- [ ] Run the pytest suite in CI (see [Automated Test Suite](#automated-test-suite) — it currently runs locally only)
 - [ ] Regression tests for duplicate detection
 - [ ] Performance benchmarking in CI
 
