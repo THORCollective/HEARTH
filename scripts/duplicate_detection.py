@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-5-20250929")
+CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-5")
 HUNT_DIRECTORIES = ("Flames", "Embers", "Alchemy")
 TOP_N = 3
 
@@ -153,8 +153,8 @@ def rank_with_claude(new_hunt: dict, existing: list[dict]) -> list[dict]:
 
     response = client.messages.create(
         model=CLAUDE_MODEL,
-        max_tokens=600,
-        temperature=0.0,
+        max_tokens=2048,
+        thinking={"type": "disabled"},
         messages=[{"role": "user", "content": prompt}],
     )
     raw = response.content[0].text if response.content else ""
