@@ -21,7 +21,7 @@ Turns a CTI link or a manual submission into a drafted hunt and a pull request.
 | `cti_extract.py`             | Extracts clean article text from raw HTML. Library module — no CLI.                                | imported                         |
 | `generate_from_cti.py`       | The core drafting step. Sends extracted CTI to Claude (or OpenAI) and writes a complete hunt file. | `issue-generate-hunts.yml`       |
 | `process_hunt_submission.py` | Parses a submission issue body and drafts a hunt from it.                                          | `process-hunt-submission.yml`    |
-| `duplicate_detection.py`     | AI similarity check against the SQLite index; flags likely duplicates before merge.                | called by the drafting workflows |
+| `duplicate_detection.py`     | AI similarity check against every existing hunt; flags likely duplicates before merge.             | called by the drafting workflows |
 | `reassign_hunt_id.py`        | Reassigns a draft's hunt ID when it collides with one already taken.                               | `pr-from-approval.yml`           |
 
 **Environment:** `generate_from_cti.py` reads `AI_PROVIDER`, `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, and `CLAUDE_MODEL`, plus per-run inputs `CTI_SOURCE_URL`, `SUBMITTER_NAME`, `PROFILE_LINK`, `FEEDBACK`, and `EXISTING_HUNT_FILE` (set when regenerating). `process_hunt_submission.py` reads the same provider variables plus `ISSUE_BODY`. `duplicate_detection.py` reads `ANTHROPIC_API_KEY` and `CLAUDE_MODEL`.
