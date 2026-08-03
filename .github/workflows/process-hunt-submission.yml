@@ -36,6 +36,7 @@ jobs:
         id: generate_draft_file
         env:
           AI_PROVIDER: ${{ vars.AI_PROVIDER || 'claude' }}
+          CLAUDE_MODEL: ${{ vars.CLAUDE_MODEL || 'claude-sonnet-5' }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           ISSUE_BODY: ${{ github.event.issue.body }}
