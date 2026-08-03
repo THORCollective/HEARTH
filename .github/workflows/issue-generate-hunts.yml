@@ -104,7 +104,16 @@ jobs:
         id: find_hunt
         if: github.event.label.name == 'regenerate'
         run: |
-          HUNT_FILE=$(ls Flames/H-*.md | head -n 1)
+          # Find the hunt file added by a previous attempt on THIS draft branch.
+          # A bare glob is wrong twice over: Flames/H-*.md never matches (files
+          # are HNNN.md, not H-NNN.md), and Flames/H*.md would match every hunt
+          # already on main and overwrite a production file.
+          HUNT_FILE=$(git diff --name-only origin/main...HEAD -- 'Flames/H*.md' | head -n 1)
+          if [ -z "$HUNT_FILE" ]; then
+            echo "::error::Regeneration requested but no hunt file was found on draft/issue-${{ github.event.issue.number }}."
+            exit 1
+          fi
+          echo "Regenerating existing hunt file: $HUNT_FILE"
           echo "hunt_file_path=$HUNT_FILE" >> $GITHUB_OUTPUT
 
       - name: "Parse Issue Body"
