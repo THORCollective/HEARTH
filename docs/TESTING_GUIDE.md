@@ -304,15 +304,17 @@ total_hunts
 
 ### Test 2: Test Database Performance
 
-The index is what duplicate detection queries against, so the check that matters is whether it's current — every hunt file should have a row.
+Nothing in the pipeline reads this index at runtime — `duplicate_detection.py` walks the hunt directories directly. The index is built by `update-hunt-database.yml` and used for reporting. The check that matters is still whether it's current.
 
 ```bash
 python3 - <<'EOF'
 import sqlite3, pathlib
-rows = sqlite3.connect("database/hunts.db").execute("SELECT COUNT(*) FROM hunts").fetchone()[0]
-files = sum(1 for d in ("Flames", "Embers", "Alchemy") for _ in pathlib.Path(d).glob("*.md"))
-print(f"indexed: {rows}\nfiles:   {files}")
-print("✅ current" if rows == files else f"⚠️  stale — rebuild ({files - rows} missing)")
+con = sqlite3.connect("database/hunts.db")
+indexed = {r[0] for r in con.execute("SELECT filename FROM hunts")}
+files = {p.name for d in ("Flames", "Embers", "Alchemy") for p in pathlib.Path(d).glob("*.md")}
+missing = sorted(files - indexed - {"secret.md"})
+print(f"indexed: {len(indexed)}\nfiles:   {len(files)}")
+print("✅ current" if not missing else f"⚠️  stale — rebuild, missing: {missing}")
 EOF
 ```
 
@@ -324,7 +326,7 @@ python scripts/build_hunt_database.py --rebuild
 
 `database/hunts.db` is gitignored — it's a local build artifact, so your copy drifts as you pull new hunts. In production `update-hunt-database.yml` rebuilds it on every merge that touches a hunt file.
 
-> The README's "30-60x faster" figure refers to duplicate detection's repeated similarity lookups, not a single count query. Don't expect a bare `COUNT(*)` to beat a file scan — at this corpus size it won't.
+> `Flames/secret.md` is a challenge-coin puzzle page, not a hunt, so the parser skips it. A current index therefore holds one row fewer than the file count.
 
 ### Test 3: Test Duplicate Detection
 
@@ -582,13 +584,12 @@ act -s ANTHROPIC_API_KEY=sk-... -s GITHUB_TOKEN=ghp_...
 
 - [x] Unit tests for CTI extraction — `scripts/tests/test_cti_extract.py`
 - [x] Automated format validation — `test_hunt_schema.py`, plus `validate-hunt-schema.yml` in CI
-
 - [x] Integration tests in CI — `validate-hunt-schema.yml` runs pytest on every PR
+- [x] Regression tests for duplicate detection — `scripts/tests/test_duplicate_detection.py`, 31 tests, no API calls
 
 **Still open:**
 
-- [ ] Regression tests for duplicate detection
-- [ ] Performance benchmarking in CI
+- [ ] Performance benchmarking in CI. Deferred: the obvious target was the SQLite index, but nothing in the pipeline reads it at runtime, so there is currently no hot path worth gating on.
 
 ---
 

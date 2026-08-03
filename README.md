@@ -102,7 +102,7 @@ Maintainers reviewing submissions: see **[Review-Process.md](/Keepers/Review-Pro
 | **Coverage Heatmap**         | [/coverage-heatmap.html](https://hearth.thorcollective.com/coverage-heatmap.html) — the full MITRE ATT&CK matrix, colored by how many community hunts cover each technique. Click a cell to see the hunts (or the gap). Lives alongside the [Coverage Map](https://hearth.thorcollective.com/graph.html) under the [Coverage hub](https://hearth.thorcollective.com/coverage.html). |
 | **AI-Powered CTI Analysis**  | Submit a CTI link — **Claude** reads, analyzes, and drafts a complete hunt hypothesis automatically.                                                                                                                                                                                                                                                                                |
 | **MITRE ATT&CK Integration** | Validates technique IDs against the full Enterprise framework (691 techniques, 99% accuracy).                                                                                                                                                                                                                                                                                       |
-| **Duplicate Detection**      | AI-powered similarity analysis flags potential duplicates before they're merged. 30-60x faster with SQLite indexing.                                                                                                                                                                                                                                                                |
+| **Duplicate Detection**      | AI-powered similarity analysis flags potential duplicates before they're merged, ranked by closeness with an explanation for each.                                                                                                                                                                                                                                                  |
 | **Automated Workflows**      | GitHub Actions manage the full submission lifecycle — from draft to PR to merge.                                                                                                                                                                                                                                                                                                    |
 | **Review & Regeneration**    | Maintainers can re-roll AI-generated hunts by adding a `regenerate` label — iterate until it's right.                                                                                                                                                                                                                                                                               |
 | **Contributor Leaderboard**  | [Automated tracking](/Keepers/Contributors.md) of submissions. We celebrate our community.                                                                                                                                                                                                                                                                                          |
@@ -120,9 +120,9 @@ Maintainers reviewing submissions: see **[Review-Process.md](/Keepers/Review-Pro
 
 ### Database Index
 
-- **SQLite database** (`database/hunts.db`) provides fast querying for duplicate detection
-- Automatically updated when hunt files change
-- **30-60x faster** duplicate detection in GitHub Actions
+- **SQLite database** (`database/hunts.db`) provides a queryable index of every hunt
+- Automatically rebuilt when hunt files change
+- Used for reporting and ad-hoc queries. Duplicate detection reads the hunt files directly rather than this index
 - See [database/README.md](database/README.md) for details
 
 ### CTI Extraction
