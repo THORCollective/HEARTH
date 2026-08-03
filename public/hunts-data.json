@@ -8943,6 +8943,38 @@
     "created": "2026-08-01T12:29:53-05:00"
   },
   {
+    "id": "H258",
+    "category": "Flames",
+    "title": "An activity cluster dubbed \"O-UNC-037\" by Okta Threat Intelligence has successfully phished an employee and intercepted Okta credentials via an AitM toolkit.",
+    "tactic": "Credential Access, Initial Access",
+    "notes": "Uses an SPL query against Okta Audit Logs to detect anomalous multi-IP, multi-operator device enrollment activity indicative of AitM credential interception.",
+    "tags": [
+      "aitm",
+      "okta",
+      "o_unc_037",
+      "sms",
+      "smishing",
+      "phishing",
+      "T1566",
+      "T1557"
+    ],
+    "techniques": [
+      "T1566",
+      "T1557"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Twitter - 0xDroogy",
+      "link": "https://t.co/JHM8u3D9na"
+    },
+    "why": "- This hunt addresses compromised Okta credentials that are highly likely to have been intercepted by an AitM toolkit. \n- If activity is validated by tracing provenance of the activity to a source of either a malicious SMS or email, then the victim's cloud identity can be considered fully compromised and in need of containment and eradication.\n- This hunt connects to a re-emerging campaign that Okta Threat Intelligence has previously reported on.\n- This hunt would be valuable to the community because it utilizes intelligence that is timely and relevant to any English-speaking organization given this activity seems opportunistic and does not target a specific vertical. This hunt has also been validated in a live enterprise environment and successfully yielded true-positive findings.",
+    "references": "- https://www.okta.com/blog/threat-intelligence/phishing-campaigns-use-employee-benefits-lure-logins/\n- https://www.bbb.org/scamtracker/lookupscam/1346648?returnTo=%2Fscamtracker%2Flookupscam%3Fview%3Dmap",
+    "file_path": "Flames/H258.md",
+    "created": "2026-08-03T08:49:16-07:00"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
