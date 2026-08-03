@@ -87,7 +87,9 @@ python -m pytest scripts/tests -q
 
 70 tests, roughly a second. `pythonpath = ["."]` in `pyproject.toml` makes `scripts.*` importable from the repo root, so run pytest from there. The `fixtures_dir` fixture in `conftest.py` points at `scripts/tests/fixtures/`.
 
-> **Note:** CI does not currently run this suite. `.github/workflows/ci.yml` runs the Node build and vitest, plus a flake8 pass over `scripts/` and `.github/scripts/` restricted to syntax errors and undefined names (`--select=E9,F63,F7,F82`). Run pytest locally before pushing changes to these scripts.
+CI runs this suite on every pull request. `validate-hunt-schema.yml` deliberately carries no path filter — so it can serve as a required status check — and runs the collision check, per-file schema validation, and then `pytest scripts/tests/ -v`.
+
+`ci.yml` is a separate guard covering the Node side: build, type-check, and vitest, plus a flake8 pass over `scripts/` and `.github/scripts/` limited to syntax errors and undefined names (`--select=E9,F63,F7,F82`).
 
 ## Regenerating derived data
 

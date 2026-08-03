@@ -37,7 +37,9 @@ python -m pytest scripts/tests -q
 
 Shared fixtures live in `scripts/tests/fixtures/`, exposed through the `fixtures_dir` fixture in `conftest.py`.
 
-**CI does not run this suite.** `.github/workflows/ci.yml` runs the Node build and vitest, plus a flake8 pass over `scripts/` and `.github/scripts/` limited to syntax errors and undefined names (`--select=E9,F63,F7,F82`). Nothing catches a logic regression in these scripts except running pytest yourself before pushing.
+**CI runs this suite on every pull request**, via `validate-hunt-schema.yml`. That workflow carries no path filter — deliberately, so it can be a required status check — and runs the hunt-ID collision check and per-file schema validation before `pytest scripts/tests/ -v`.
+
+`ci.yml` is a separate guard for the Node side: build, type-check, and vitest, plus a flake8 pass over `scripts/` and `.github/scripts/` limited to syntax errors and undefined names (`--select=E9,F63,F7,F82`).
 
 Some legacy-format hunt files still exist, so a passing run emits `DeprecationWarning`s from the parser. That's expected.
 
@@ -581,9 +583,10 @@ act -s ANTHROPIC_API_KEY=sk-... -s GITHUB_TOKEN=ghp_...
 - [x] Unit tests for CTI extraction — `scripts/tests/test_cti_extract.py`
 - [x] Automated format validation — `test_hunt_schema.py`, plus `validate-hunt-schema.yml` in CI
 
+- [x] Integration tests in CI — `validate-hunt-schema.yml` runs pytest on every PR
+
 **Still open:**
 
-- [ ] Run the pytest suite in CI (see [Automated Test Suite](#automated-test-suite) — it currently runs locally only)
 - [ ] Regression tests for duplicate detection
 - [ ] Performance benchmarking in CI
 

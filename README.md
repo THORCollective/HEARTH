@@ -73,11 +73,24 @@ Have a great threat intel report? Paste the URL and let our AI pipeline do the w
 
 Already have a hypothesis? Submit it directly.
 
-1. **[Open a Manual Submission &rarr;](https://github.com/THORCollective/HEARTH/issues/new?assignees=&labels=manual-submission%2C+needs-triage&template=hunt_submission_form.yml&title=%5BHunt%5D+Brief+Description+of+Hunt+Idea)**
+1. **[Open a Manual Submission &rarr;](https://github.com/THORCollective/HEARTH/issues/new?template=hunt_template.yaml&title=%5BHunt%5D+Brief+Description+of+Hunt+Idea)**
 2. Fill out the template with your hypothesis, tactic, and references.
 3. Maintainers review and merge.
 
 > All approved submissions are credited on the **[Contributors Leaderboard](/Keepers/Contributors.md)**.
+
+### Templates
+
+Running a hunt in your own environment? `Kindling/` has the working templates:
+
+| Template                                           | Use it for                                             |
+| :------------------------------------------------- | :----------------------------------------------------- |
+| **[PEAK-Template.md](/Kindling/PEAK-Template.md)** | Planning, executing, and documenting a hunt end to end |
+| **[Hunt-Review.md](/Kindling/Hunt-Review.md)**     | Writing up findings once the hunt is done              |
+| **[Hunt-Template.md](/Kindling/Hunt-Template.md)** | The frontmatter format for submitting a hunt to HEARTH |
+| **[Resources.md](/Kindling/Resources.md)**         | Reference material and further reading                 |
+
+Maintainers reviewing submissions: see **[Review-Process.md](/Keepers/Review-Process.md)**.
 
 ---
 
