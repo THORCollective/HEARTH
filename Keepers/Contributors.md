@@ -41,6 +41,7 @@ Everyone listed below has submitted ideas that have been added to HEARTH. This l
 | 33 | young6x7 | 1 |
 | 34 | th3CyF0x | 1 |
 | 35 | Kelly Lehman | 1 |
-| 36 | Claire Stromboe | 1 |
-| 37 | Jon Perez | 1 |
-| 38 | Collin McClaine | 1 |
+| 36 | - [Twitter - 0xDroogy](https://t.co/JHM8u3D9na), [Github - Droogy](https://github.com/Droogy) | 1 |
+| 37 | Claire Stromboe | 1 |
+| 38 | Jon Perez | 1 |
+| 39 | Collin McClaine | 1 |
