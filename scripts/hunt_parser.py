@@ -5,15 +5,16 @@ Single entry point for converting a hunt markdown file into a structured dict.
 Prefers YAML frontmatter (canonical). Falls back to the legacy 6-cell table
 format during the transition period — emits a DeprecationWarning when it does.
 """
+
 from __future__ import annotations
 
 import datetime as _dt
 import re
+import sys as _sys
 import warnings
 from pathlib import Path
 from typing import Any
 
-import sys as _sys
 _REPO_ROOT = str(Path(__file__).resolve().parent.parent)
 if _REPO_ROOT not in _sys.path:
     _sys.path.insert(0, _REPO_ROOT)
@@ -76,19 +77,38 @@ def _split_tactics(raw: str) -> list[str]:
 
 
 def _split_table_row(row: str) -> list[str]:
-    """Split a markdown table row on unescaped pipes; treat `\\|` as a literal pipe.
+    """Split a markdown table row on unescaped pipes outside code spans.
+
+    Two things are treated as literal pipes rather than delimiters:
+
+    * ``\\|`` — the conventional markdown escape.
+    * a raw ``|`` inside a backtick code span, e.g. ```a | b```. Authors write
+      these because they render correctly in a code span, but splitting on them
+      shifts every following cell and silently mangles the row (see #384 — it
+      moved Notes text into ``submitter.name`` on 12 hunts).
+
+    Code-span protection is skipped when the row has an odd number of backticks,
+    since an unbalanced span would otherwise swallow the rest of the row.
 
     Unlike the leaderboard helper, this one PRESERVES empty cells so positional
     alignment is maintained (we drop only the leading/trailing bookend cells).
     """
+    # Only honour code spans when they are balanced across the row.
+    protect_code = row.count("`") % 2 == 0
+
     cells: list[str] = []
     current: list[str] = []
+    in_code = False
     i = 0
     while i < len(row):
         if row[i] == "\\" and i + 1 < len(row) and row[i + 1] == "|":
             current.append("|")
             i += 2
-        elif row[i] == "|":
+        elif row[i] == "`" and protect_code:
+            in_code = not in_code
+            current.append("`")
+            i += 1
+        elif row[i] == "|" and not in_code:
             cells.append("".join(current).strip())
             current = []
             i += 1
@@ -120,7 +140,18 @@ def _parse_legacy_table(content: str, hunt_id: str, category: str) -> dict[str, 
     cells: list[str] = ["", "", "", "", "", ""]
     if table_start is not None and table_start + 2 < len(lines):
         raw = _split_table_row(lines[table_start + 2])
-        for j, c in enumerate(raw[:6]):
+        # A legacy row is exactly 6 cells. More means an unescaped delimiter
+        # split one of them; truncating to raw[:6] would silently shift every
+        # later field (#384 put Notes text into submitter.name on 12 hunts).
+        # Fail closed instead — a shifted row must not parse as a valid hunt.
+        if len(raw) > 6:
+            raise HuntValidationError(
+                f"{category}/{hunt_id}.md: legacy table row split into "
+                f"{len(raw)} cells, expected 6 — an unescaped '|' in one of "
+                f"them is shifting the later fields. Escape it as '\\|' or "
+                f"wrap the cell's pipes in a balanced code span."
+            )
+        for j, c in enumerate(raw):
             cells[j] = c
 
     tactics = _split_tactics(re.sub(r"\*\*", "", cells[2])) if cells[2] else []

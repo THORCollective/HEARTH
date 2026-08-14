@@ -1,4 +1,6 @@
-from scripts.hunt_parser import parse_hunt_file
+import pytest
+
+from scripts.hunt_parser import HuntValidationError, parse_hunt_file
 
 
 def test_parses_frontmatter_format(fixtures_dir):
@@ -43,7 +45,9 @@ def test_raises_on_missing_required_frontmatter_field(tmp_path):
     f = tmp_path / "H998.md"
     f.write_text("---\nid: H998\ncategory: Flames\n---\n# body\n")
     import pytest
+
     from scripts.hunt_parser import HuntValidationError
+
     with pytest.raises(HuntValidationError) as exc:
         parse_hunt_file(f, "Flames")
     assert "hypothesis" in str(exc.value)
@@ -157,6 +161,62 @@ def test_escaped_pipe_in_notes_does_not_shift_cells(tmp_path):
     assert "execution" in hunt["tags"]
     assert "macos" in hunt["tags"]
     assert hunt["submitter"]["name"] == "X"
+
+
+def test_raw_pipe_inside_code_span_does_not_shift_cells(tmp_path):
+    """A raw | inside backticks is content, not a delimiter — see #384.
+
+    H148 and 11 others wrote KQL/shell inside a code span with an unescaped
+    pipe. The row split into 7-8 cells, raw[:6] truncated the overflow, and
+    Notes text landed in submitter.name — destroying attribution silently.
+    """
+    f = tmp_path / "H992.md"
+    f.write_text(
+        "# H992\n\n"
+        "| Hunt # | Hypothesis | Tactic | Notes | Tags | Submitter |\n"
+        "|---|---|---|---|---|---|\n"
+        "| H992 | A hypothesis | Persistence | Run "
+        "`launchctl list | grep -E '(com\\.apple|com\\.google)'` to check | "
+        "#persistence #macos | [Lauren Proehl](https://x.com/jotunvillur) |\n"
+    )
+    hunt = parse_hunt_file(f, "Flames")
+    assert hunt["id"] == "H992"
+    assert hunt["tactics"] == ["Persistence"]
+    assert "persistence" in hunt["tags"]
+    # The attribution that #384 destroyed.
+    assert hunt["submitter"]["name"] == "Lauren Proehl"
+    assert hunt["submitter"]["link"] == "https://x.com/jotunvillur"
+    # The pipes stay in Notes as content.
+    assert "grep -E" in hunt["notes"]
+
+
+def test_unbalanced_backtick_falls_back_to_pipe_splitting(tmp_path):
+    """An odd backtick count must not swallow the rest of the row."""
+    f = tmp_path / "H993.md"
+    f.write_text(
+        "# H993\n\n"
+        "| Hunt # | Hypothesis | Tactic | Notes | Tags | Submitter |\n"
+        "|---|---|---|---|---|---|\n"
+        "| H993 | A hypothesis | Execution | A stray ` backtick | "
+        "#execution | [X](https://example.com/x) |\n"
+    )
+    hunt = parse_hunt_file(f, "Flames")
+    assert hunt["submitter"]["name"] == "X"
+    assert "execution" in hunt["tags"]
+
+
+def test_overlong_legacy_row_fails_closed(tmp_path):
+    """A genuinely shifted row must raise, not silently truncate to 6 cells."""
+    f = tmp_path / "H994.md"
+    f.write_text(
+        "# H994\n\n"
+        "| Hunt # | Hypothesis | Tactic | Notes | Tags | Submitter |\n"
+        "|---|---|---|---|---|---|\n"
+        "| H994 | A hypothesis | Execution | an | unescaped | pipe | storm | "
+        "[X](https://example.com/x) |\n"
+    )
+    with pytest.raises(HuntValidationError, match="expected 6"):
+        parse_hunt_file(f, "Flames")
 
 
 def test_command_and_control_is_single_tactic(tmp_path):
