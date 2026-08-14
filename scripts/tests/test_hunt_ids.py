@@ -1,10 +1,13 @@
 from pathlib import Path
 
 from scripts.hunt_ids import (
+    CATEGORY_PREFIXES,
+    existing_numbers,
     find_id_problems,
     format_hunt_id,
     next_free_number,
     parse_hunt_number,
+    prefix_for_category,
     rewrite_hunt_id,
 )
 
@@ -20,6 +23,24 @@ def test_parse_hunt_number():
     assert parse_hunt_number("not-an-id") is None
 
 
+def test_parse_hunt_number_honours_prefix():
+    # Regression for #380: Embers/Alchemy stems were unparseable, so the
+    # reassigner skipped them and their collisions survived to CI.
+    assert parse_hunt_number("B035", "B") == 35
+    assert parse_hunt_number("M007", "M") == 7
+    # A prefix reads only its own namespace.
+    assert parse_hunt_number("H035", "B") is None
+    assert parse_hunt_number("B035", "H") is None
+
+
+def test_prefix_for_category():
+    assert prefix_for_category("Flames") == "H"
+    assert prefix_for_category("Embers") == "B"
+    assert prefix_for_category("Alchemy") == "M"
+    assert prefix_for_category("Unknown") == "H"  # safe default
+    assert CATEGORY_PREFIXES == {"Flames": "H", "Embers": "B", "Alchemy": "M"}
+
+
 def test_next_free_number():
     assert next_free_number(set()) == 1
     assert next_free_number({1, 2}) == 3
@@ -30,6 +51,20 @@ def test_next_free_number():
 def test_format_hunt_id():
     assert format_hunt_id(3) == "H003"
     assert format_hunt_id(200) == "H200"
+
+
+def test_format_hunt_id_honours_prefix():
+    assert format_hunt_id(36, "B") == "B036"
+    assert format_hunt_id(7, "M") == "M007"
+
+
+def test_existing_numbers_is_namespaced():
+    # Mixed listing: each prefix sees only its own IDs, so an Embers draft is
+    # never blocked by a Flames number that happens to match.
+    names = ["Flames/H035.md", "Embers/B035.md", "Alchemy/M002.md", "README.md"]
+    assert existing_numbers(names, "H") == {35}
+    assert existing_numbers(names, "B") == {35}
+    assert existing_numbers(names, "M") == {2}
 
 
 def _write_hunt(path: Path, hunt_id: str, hunt_cell: str = "") -> None:
@@ -63,6 +98,19 @@ def test_rewrite_hunt_id_updates_populated_table_cell(tmp_path):
     text = new_path.read_text()
     assert "| H203 |" in text
     assert "H201" not in text
+
+
+def test_rewrite_hunt_id_renames_an_embers_hunt(tmp_path):
+    # Regression for #380: the B035 -> B036 rename that had to be done by hand.
+    src = tmp_path / "B035.md"
+    _write_hunt(src, "B035", hunt_cell="B035")
+    new_path = rewrite_hunt_id(src, "B036")
+    assert new_path.name == "B036.md"
+    assert not src.exists()
+    text = new_path.read_text()
+    assert text.splitlines()[0] == "# B036"
+    assert "| B036 |" in text
+    assert "B035" not in text
 
 
 def test_find_id_problems_flags_main_collision():
