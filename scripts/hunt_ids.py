@@ -62,17 +62,30 @@ def format_hunt_id(num: int, prefix: str = "H") -> str:
 def rewrite_hunt_id(path: Path, new_id: str) -> Path:
     """Rename a hunt file to ``new_id`` and rewrite the ID embedded inside it.
 
-    Rewrites the line-1 ``# <old_id>`` heading and any populated ``| <old_id> |``
-    Hunt# table cell. The ID does not appear elsewhere in the body. Removes the
-    old file and returns the new path.
+    Rewrites the frontmatter ``id:`` field, the ``# <old_id>`` heading (line 1 in
+    legacy hunts, below the frontmatter in canonical ones), and any populated
+    ``| <old_id> |`` Hunt# table cell. The ID does not appear elsewhere in the
+    body. Removes the old file and returns the new path.
     """
     path = Path(path)
     old_id = path.stem
     text = path.read_text(encoding="utf-8")
 
     lines = text.split("\n")
-    if lines and lines[0].strip() == f"# {old_id}":
-        lines[0] = f"# {new_id}"
+    # Frontmatter `id:` — scoped to the block so prose that looks like a
+    # metadata line is left alone. Absent in legacy (table-format) hunts.
+    if lines and lines[0].strip() == "---":
+        for i, line in enumerate(lines[1:], start=1):
+            if line.strip() == "---":
+                break
+            if line.strip() == f"id: {old_id}":
+                lines[i] = f"id: {new_id}"
+                break
+
+    for i, line in enumerate(lines):
+        if line.strip() == f"# {old_id}":
+            lines[i] = f"# {new_id}"
+            break
     text = "\n".join(lines)
 
     # Replace a populated Hunt# cell (e.g. "| H200 |"); a no-op for the

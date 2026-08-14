@@ -100,6 +100,54 @@ def test_rewrite_hunt_id_updates_populated_table_cell(tmp_path):
     assert "H201" not in text
 
 
+def _write_frontmatter_hunt(path: Path, hunt_id: str, category: str = "Flames") -> None:
+    path.write_text(
+        "---\n"
+        f"id: {hunt_id}\n"
+        f"category: {category}\n"
+        "title: A specific bad thing done to a specific target\n"
+        "hypothesis: >-\n"
+        "  An adversary does the thing, so hunt for the artifact it leaves.\n"
+        "tags:\n"
+        "  - collection\n"
+        "---\n\n"
+        f"# {hunt_id}\n\n"
+        "## Why\n- reason\n\n## References\n- link\n",
+        encoding="utf-8",
+    )
+
+
+def test_rewrite_hunt_id_updates_frontmatter_id_and_heading(tmp_path):
+    # Regression for #383: the canonical format carries the ID in frontmatter
+    # and in a heading below it, so neither the old line-1 check nor the table
+    # cell caught them — the renamed file kept declaring its old ID.
+    src = tmp_path / "H263.md"
+    _write_frontmatter_hunt(src, "H263")
+    new_path = rewrite_hunt_id(src, "H267")
+    assert new_path.name == "H267.md"
+    assert not src.exists()
+    text = new_path.read_text()
+    assert "\nid: H267\n" in text
+    assert "\n# H267\n" in text
+    assert "H263" not in text
+    assert "hypothesis: >-" in text  # YAML formatting preserved verbatim
+    assert "## Why" in text and "## References" in text
+
+
+def test_rewrite_hunt_id_leaves_a_matching_id_outside_frontmatter(tmp_path):
+    # The `id:` rewrite is scoped to the frontmatter block, so prose that
+    # happens to look like a metadata line is left alone.
+    src = tmp_path / "B035.md"
+    _write_frontmatter_hunt(src, "B035", category="Embers")
+    src.write_text(
+        src.read_text(encoding="utf-8") + "\nThe report labels this id: B035 too.\n",
+        encoding="utf-8",
+    )
+    text = rewrite_hunt_id(src, "B036").read_text()
+    assert "\nid: B036\n" in text
+    assert "The report labels this id: B035 too." in text
+
+
 def test_rewrite_hunt_id_renames_an_embers_hunt(tmp_path):
     # Regression for #380: the B035 -> B036 rename that had to be done by hand.
     src = tmp_path / "B035.md"
