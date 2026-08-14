@@ -9135,6 +9135,43 @@
     "created": "2026-08-11T17:00:55-05:00"
   },
   {
+    "id": "H262",
+    "category": "Flames",
+    "title": "Local passkey state access before key-based cloud sign-in and account persistence",
+    "tactic": "Credential Access, Initial Access, Persistence",
+    "notes": "Endpoint EDR process and file telemetry - Core filter: non-browser or script-host process opens `%LocalAppData%\\Google\\Chrome\\User Data\\<Profile>\\Sync Data\\LevelDB`, `passkey_enclave_state`, or browser credential stores. Triage values: `process command line`, `parent process command line`, `file path`, `process integrity`, `loaded module`. Strong red flags: `powershell.exe`, `wscript.exe`, `cscript.exe`, `rundll32.exe`, or an unknown user process reading passkey state shortly before a passkey sign-in.\nEndpoint cryptographic API and memory telemetry - Core filter: same process tree loads CNG or touches Chrome memory around passkey state access. Triage values: `process command line`, `module path`, `target process`, `file path`. Pivot: look for `NCryptOpenStorageProvider`, `NCryptImportKey`, `NCryptSignHash`, access to `wrapped_identity_private_key`, or memory reads against `chrome.exe`. Strong red flags: deletion or recreation of `passkey_enclave_state` followed by browser memory access.\nIdentity sign-in and cloud account audit logs - Core filter: key-based or WebAuthn sign-in for the same user and device shortly after endpoint passkey access. Triage values: `authentication method`, `device identity`, `source IP address`, `user agent`, `session ID`, `client request ID`. Correlation: require a same-account persistence event such as `MFA method registration`, `recovery method change`, `OAuth grant`, `app password creation`, or `access policy exclusion` after the sign-in. Strong red flags: source change, no fresh user interaction signal, or same-session account changes.\n",
+    "tags": [
+      "passkey",
+      "passwordless",
+      "webauthn",
+      "chrome",
+      "credential_access",
+      "account_persistence",
+      "identity",
+      "T1550",
+      "T1555",
+      "T1098",
+      "T1078"
+    ],
+    "techniques": [
+      "T1550",
+      "T1555",
+      "T1098",
+      "T1078"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Joshua Strickland",
+      "link": "https://novasky.io"
+    },
+    "why": "- Unit 42's Pass-ta-key research depends on malware reading local passkey state and using device-bound key material to obtain authentication assertions, so the local access happens before the target account or relying-party domain matters.\n- The hunt survives URL, relying-party, and campaign changes because it starts with local passkey store access and CNG signing behavior, then asks whether the same user obtained key-based cloud access.\n- The chain is visible to a mature MDR through endpoint file and process telemetry plus identity sign-in and audit logs when those logs include authentication method, device identity, session ID, and client request ID values.\n- False positives are controllable because browser processes and planned enrollment workflows are expected, while a script host or unknown process reading passkey state followed by MFA, recovery, OAuth, app password, or access policy changes is not a normal user flow.",
+    "references": "- [Pass the Passkey: A Novel Attack Surface in Passwordless Authentication](https://unit42.paloaltonetworks.com/passwordless-authentication-security-risks/)\n- [MITRE ATT&CK T1550: Use Alternate Authentication Material](https://attack.mitre.org/techniques/T1550/)\n- [MITRE ATT&CK T1555: Credentials from Password Stores](https://attack.mitre.org/techniques/T1555/)\n- [MITRE ATT&CK T1098: Account Manipulation](https://attack.mitre.org/techniques/T1098/)\n- [MITRE ATT&CK T1078: Valid Accounts](https://attack.mitre.org/techniques/T1078/)",
+    "file_path": "Flames/H262.md",
+    "created": "2026-08-14T14:13:35-04:00"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
