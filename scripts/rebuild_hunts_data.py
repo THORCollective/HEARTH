@@ -15,7 +15,16 @@ HUNT_FILE_RE = re.compile(r"^[HBM]\d+\.md$")
 
 # Directories that legitimately contain no hunts; skipped when scanning for
 # hunt files that have been filed outside a category directory.
-NON_HUNT_DIRS = {".git", ".github", "node_modules", ".venv", "public", "scripts", "assets", "docs"}
+NON_HUNT_DIRS = {
+    ".git",
+    ".github",
+    "node_modules",
+    ".venv",
+    "public",
+    "scripts",
+    "assets",
+    "docs",
+}
 
 _REPO_ROOT = str(Path(__file__).resolve().parent.parent)
 if _REPO_ROOT not in sys.path:
@@ -120,7 +129,10 @@ def parse_submitter_from_dict(submitter):
         if override is None:
             return {"name": "Anonymous", "link": ""}
         return override
-    return {"name": name or "Anonymous", "link": submitter.get("link", "")}
+    result = {"name": name or "Anonymous", "link": submitter.get("link", "")}
+    if submitter.get("links"):
+        result["links"] = list(submitter["links"])
+    return result
 
 
 def find_stray_hunts(base, categories):
@@ -150,7 +162,9 @@ def main():
 
     stray = find_stray_hunts(base, categories)
     if stray:
-        print("ERROR: hunt files found outside the category directories:", file=sys.stderr)
+        print(
+            "ERROR: hunt files found outside the category directories:", file=sys.stderr
+        )
         for rel in stray:
             print(f"  {rel}", file=sys.stderr)
         print(
