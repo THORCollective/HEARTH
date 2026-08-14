@@ -1097,6 +1097,40 @@
     "created": "2026-08-11T17:00:55-05:00"
   },
   {
+    "id": "B036",
+    "category": "Embers",
+    "title": "The goal is to detect interactive logons to service accounts. Typical service account authentication behavior involves Type 4/5 logons (batch, service). However for the purpose of a hunt you want to be able to identify suspicious activity which involves Type 2 or Type 10. A service account is meant to be isolated from interactive attempts. The service itself should be running free of a user being involved for the purpose of ensuring the integrity of the service running.",
+    "tactic": "Persistence",
+    "notes": "Requires a baseline of expected service account behavior and the ability to attribute logons to service accounts via EDR telemetry (e.g., Defender for Endpoint DeviceProcessEvents/DeviceLogonEvents) or Windows Event ID 4624 with Logon Type 2 or 10.",
+    "tags": [
+      "persistence",
+      "windows",
+      "baseline",
+      "service_accounts",
+      "interactive_logon",
+      "logon_type_2",
+      "logon_type_10",
+      "windows_audit_logs",
+      "T1078.003",
+      "T1543.003"
+    ],
+    "techniques": [
+      "T1078.003",
+      "T1543.003"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Max Margolis",
+      "link": ""
+    },
+    "why": "This hunt helps uncover misconfigurations and potential abuse by adversaries when it comes to service account logons. Identifying users doing this in an organization can help close a potential threat surface from existing for a future adversary.",
+    "references": "https://attack.mitre.org/techniques/T1078/\nhttps://reliaquest.com/blog/service-account-abuse/\nhttps://www.crowdstrike.com/en-us/blog/service-accounts-performing-interactive-logins/",
+    "file_path": "Embers/B036.md",
+    "created": "2026-08-14T11:30:36-07:00"
+  },
+  {
     "id": "H001",
     "category": "Flames",
     "title": "An adversary is attempting to brute force the admin account on the externally facing VPN gateway.",
@@ -9170,6 +9204,109 @@
     "references": "- [Pass the Passkey: A Novel Attack Surface in Passwordless Authentication](https://unit42.paloaltonetworks.com/passwordless-authentication-security-risks/)\n- [MITRE ATT&CK T1550: Use Alternate Authentication Material](https://attack.mitre.org/techniques/T1550/)\n- [MITRE ATT&CK T1555: Credentials from Password Stores](https://attack.mitre.org/techniques/T1555/)\n- [MITRE ATT&CK T1098: Account Manipulation](https://attack.mitre.org/techniques/T1098/)\n- [MITRE ATT&CK T1078: Valid Accounts](https://attack.mitre.org/techniques/T1078/)",
     "file_path": "Flames/H262.md",
     "created": "2026-08-14T14:13:35-04:00"
+  },
+  {
+    "id": "H263",
+    "category": "Flames",
+    "title": "Remote-control session on a managed endpoint installs a Cloudflare Tunnel service and runs svchost.exe from a user Documents folder",
+    "tactic": "Persistence, Command and Control, Lateral Movement, Stealth, Execution",
+    "notes": "Endpoint service-creation telemetry (EDR service events, or Windows System log `Event ID 7045` / Security `Event ID 4697`) - Core filter: service installations where the service name or display name contains `Cloudflared`, OR where the `service image path` references `cloudflared.exe`, `tunnel run`, `service install`, or `--token`. Triage values: `service name`, `display name`, `service image path`, `start type`, `installing account name`, `file path` of the service binary, `parent process command line` of the installing process. Strong red flags: an image path resolving under a user-writable directory — `C:\\Users\\<user>\\Documents\\`, `C:\\Users\\<user>\\Downloads\\`, `C:\\Users\\Public\\`, `%APPDATA%`, or `%PROGRAMDATA%` — instead of `%ProgramFiles%`; an image path carrying an inline connector token, e.g. `cloudflared.exe service install <base64 token>` or `cloudflared.exe tunnel run --token <base64>`; `start type` of auto on a host with no sanctioned tunnel deployment; the service installed by an account that is not a software-deployment or configuration-management identity. Pivot: registry telemetry for writes to `HKLM\\SYSTEM\\CurrentControlSet\\Services\\Cloudflared\\ImagePath`, and for connector configuration staged at `C:\\Windows\\System32\\config\\systemprofile\\.cloudflared\\` or `%USERPROFILE%\\.cloudflared\\` — look for `config.yml`, `cert.pem`, and a `<tunnel-uuid>.json` credentials file. False positive: sanctioned tunnel connectors installed by IT will normally live under `%ProgramFiles%`, appear in software inventory, and be installed by a deployment account — pin those to an allowlist of host plus image path rather than suppressing the service name globally.\n\nEndpoint process and file telemetry (EDR process create and file create) - Core filter: any process named `svchost.exe` whose `file path` is neither `C:\\Windows\\System32\\svchost.exe` nor `C:\\Windows\\SysWOW64\\svchost.exe`. Triage values: `file path`, `process command line`, `parent process name`, `parent process command line`, publisher/signer, `original filename` metadata, `file hash`. Strong red flags: genuine `svchost.exe` is always launched by `services.exe` and always carries a service-group argument such as `-k netsvcs` or `-k LocalServiceNetworkRestricted` — a `svchost.exe` with no `-k` argument, or with any parent other than `services.exe`, is a masquerade regardless of path; a `svchost.exe` whose `original filename` metadata does not read `svchost.exe`; a process claiming to be `svchost.exe` while carrying connector argument vocabulary such as `--token`, `tunnel run`, `--protocol quic`, `--edge-ip-version`, or `--no-autoupdate`. Correlation: find the file-write that created the binary and pull the writing process — in this campaign the write lands minutes before the service install and is parented by a remote-control or RMM agent lineage rather than by a browser or installer. Pivot: hash the binary and sweep the estate for the same hash under any user-writable path, since one console reaches many endpoints and many tenants.\n\nRemote-control and RMM agent telemetry (Windows Application event log plus vendor agent logs on the endpoint) - Core filter: remote-control session records on managed endpoints — for N-central Take Control these are Windows Application log `Event ID 8192` (session start) and `Event ID 8193` (session end), plus `Event ID 4102`, under the default operator account name `MSP Support`. Triage values: `account name`, `session start time`, `session end time`, `viewer source IP address`, `device name`. Pivot: file-creation telemetry for `C:\\ProgramData\\GetSupportService_N-Central\\Logs\\BASupSrvc_*.log.gz` — each new archived log bounds a session window; join that window by host and time to process, file, service, and network events and treat everything inside it as operator-attributable. Correlation: on the console side, review `ui_access_control.log` for administrator logins and remote-control launches from source IPs with no history for that operator, for out-of-hours sessions, and for use of the built-in vendor support identity `mspsupport@n-able.com`; every device touched in those sessions is in scope. Strong red flags: a remote-control session targeting a domain controller, hypervisor, or backup server outside a change window; scripting and job execution pushed through the management agent — `AutomationManager.AgentService.exe`, `AutomationManager.ScriptRunner64.exe`, `AutomationManager.ScriptRunner32.exe`, or `agent.exe` — spawning `cmd.exe` or `powershell.exe` inside the same window; local administrator account creation or modification on the endpoint during the session.\n\nNetwork egress telemetry (DNS, proxy, firewall, and EDR network events) - Core filter: outbound resolution of or connection to `region1.v2.argotunnel.com` and `region2.v2.argotunnel.com` (or the `us-region1` / `us-region2` equivalents), and any session to destination port `7844` — TCP for the http2 transport, UDP for the QUIC transport, which is the default. Triage values: `initiating process name`, `file path` of the initiating process, `destination hostname`, `destination port`, transport protocol, session duration, bytes sent versus bytes received. Strong red flags: `7844/udp` egress originating from a workstation, domain controller, or server rather than from a sanctioned connector host; a session that survives a reboot and re-establishes without user logon; an initiating process whose `file path` is a user Documents or AppData directory; a small number of very long-lived sessions rather than short bursts. Correlation: join egress by host and time back to the service-install event and the remote-control session window — the three together are the confirmation, and any one alone is only a lead. Scoping pivot: the reported infrastructure — `173.249.252[.]200`, `87.249.138[.]34`, `37.19.210[.]32`, `68.235.46[.]214`, `37.153.90[.]88`, `92.118.112[.]181`, `173.249.252[.]176`, `185.156.46[.]150`, `23.234.94[.]43`, `68.235.46[.]235`, and the domains `mousears.synology[.]me`, `wagoosh.direct.quickconnect[.]to`, `who-ripped-one.direct.quickconnect[.]to` — should be used to scope which console sessions and which endpoints to examine first, not as the hunt itself; these rotate, the service-plus-tunnel chain does not.\n\nFalse positive - Development and IT teams legitimately run tunnel connectors, so drive triage from three qualifiers rather than from the connector's presence: image path outside `%ProgramFiles%`, an installing lineage that traces to a remote-control or agent session rather than to a deployment tool, and absence from software inventory. Build a one-time baseline of every host with a `Cloudflared` service and every host with `7844` egress, get each entry owner-confirmed, then alert only on additions to that baseline. Genuine `svchost.exe` outside `System32`/`SysWOW64` effectively does not occur, so that filter needs no tuning; the parent-and-argument check catches renamed connectors even when the path looks plausible.\n",
+    "tags": [
+      "persistence",
+      "command_and_control",
+      "lateral_movement",
+      "windows",
+      "rmm_abuse",
+      "n_central",
+      "n_able",
+      "take_control",
+      "cve_2026_18577",
+      "cve_2026_18556",
+      "cloudflare_tunnel",
+      "cloudflared",
+      "tunnel_persistence",
+      "service_persistence",
+      "masquerading",
+      "svchost",
+      "msp",
+      "t1543_003",
+      "t1036_005",
+      "T1219",
+      "T1572",
+      "T1543.003",
+      "T1036.005",
+      "T1105",
+      "T1078"
+    ],
+    "techniques": [
+      "T1219",
+      "T1572",
+      "T1543.003",
+      "T1036.005",
+      "T1105",
+      "T1078"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Joshua Strickland",
+      "link": "https://novasky.io"
+    },
+    "why": "- Access via a compromised RMM console is one-to-many by construction, and this chain converts it into access that outlives the fix: patching N-central to 2026.3.1.7 or 2026.3.1.10 and rotating console credentials removes the adversary's front door but does nothing to the tunnel service already running on the endpoints. Huntress documented one compromised self-hosted instance reaching nine downstream organisations, so a defender who patched and closed the incident on August 3 may still have standing operator access in customer environments today.\n- The chain forces the adversary through steps that cannot be renamed away. Outbound-only tunnel persistence requires an auto-start service pointing at a binary the adversary controls, and reaching the tunnel provider's edge requires connecting to `region1.v2.argotunnel.com` or `region2.v2.argotunnel.com` on port `7844`. The tunnel token, the service display name, the dropped filename, and every IP in the current reporting can all rotate, but a service whose image path lands in a user profile directory and a long-lived `7844` session from a host that had neither yesterday survive all of it.\n- Every link is visible in telemetry organisations already collect, with no specialised tooling: service installation is a standard Windows System-log record, the masqueraded binary appears in ordinary process-creation events, and the remote-control session is bounded precisely by Application-log session-start and session-stop records plus the archived `BASupSrvc_*.log.gz` files on disk. That last artifact is the pivot that makes this practical — it converts a vague 'were we accessed?' question into a specific time window per host that can be joined to process, service, and network events.\n- The false positives are bounded and resolvable rather than statistical. A `svchost.exe` outside `System32` or `SysWOW64`, or one lacking a `-k` service-group argument, effectively does not occur on healthy Windows, and sanctioned tunnel connectors are few, owner-attributable, and separable by install path and installing lineage — so a one-time baseline reduces this to alert-on-addition instead of a tuning exercise that decays.",
+    "references": "- [Rapid7 - CVE-2026-18577: N-able N-central Authentication Bypass Exploited in the Wild](https://www.rapid7.com/blog/post/etr-cve-2026-18577-n-able-n-central-authentication-bypass-exploited-in-the-wild/)\n- [Huntress - Critical N-able N-central Vulnerability and Active Exploitation](https://www.huntress.com/blog/n-able-vulnerability-exploitation)\n- [Beazley Security - N-central Authorization Bypass exploited in the wild (CVE-2026-18577)](https://beazley.security/alerts-advisories/n-central-authorization-bypass-exploited-in-the-wild-cve-2026-18577)\n- [N-able Status - N-central 2026.3 Hotfix 1, mitigation for CVE-2026-18577](https://status.n-able.com/2026/08/02/n-central-2026-3-hotfix-1-mitigation-for-cve-2026-18577/)\n- [Help Net Security - Attackers exploit N-able N-central flaw to reach managed endpoints (CVE-2026-18577)](https://www.helpnetsecurity.com/2026/08/03/cve-2026-18577-n-able-n-central-vulnerability/)\n- [CISA Known Exploited Vulnerabilities Catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog)\n- [Cloudflare Docs - Tunnel with firewall (edge endpoints and port 7844)](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/configure-tunnels/tunnel-with-firewall/)\n- [Cloudflare Docs - Tunnel run parameters (--token, --protocol, --edge-ip-version)](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/configure-tunnels/run-parameters/)\n- [Cloudflare Docs - Run cloudflared as a service on Windows](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/downloads/)\n- [GuidePoint Security - Tunnel Vision: cloudflared Abused in the Wild](https://www.guidepointsecurity.com/blog/tunnel-vision-cloudflared-abused-in-the-wild/)\n- [MITRE ATT&CK T1219 - Remote Access Tools](https://attack.mitre.org/techniques/T1219/)\n- [MITRE ATT&CK T1572 - Protocol Tunneling](https://attack.mitre.org/techniques/T1572/)\n- [MITRE ATT&CK T1543.003 - Create or Modify System Process: Windows Service](https://attack.mitre.org/techniques/T1543/003/)\n- [MITRE ATT&CK T1036.005 - Masquerading: Match Legitimate Name or Location](https://attack.mitre.org/techniques/T1036/005/)\n- [N-able Documentation - Automation Manager agent and Windows agent components](https://documentation.n-able.com/N-central/userguide/Content/Automation/AutoMgr_Overview.html)",
+    "file_path": "Flames/H263.md",
+    "created": "2026-08-14T14:13:39-04:00"
+  },
+  {
+    "id": "H264",
+    "category": "Flames",
+    "title": "npm lifecycle hook launches an alternate runtime before harvesting developer and CI secrets",
+    "tactic": "Initial Access, Execution, Credential Access, Collection, Persistence, Command and Control, Exfiltration",
+    "notes": "Endpoint process and network telemetry - Core filter: package-manager ancestry such as `npm install`, `npm ci`, `pnpm install`, or `yarn install` spawning `node setup.mjs`, followed by `bun`, `Math_Symbol.js`, or `math_init.js`. Triage values: `process command line`, `parent process command line`, `executable path`, `working directory`, `user`, `repository path`, `CI job ID`. Pivot/Correlation: follow the same process tree for a download from `github.com/oven-sh/bun/releases/download/bun-v1.3.13/`, execution from `/tmp/bun-dl-*` or another writable directory, and outbound connections before the install process exits. Strong red flags: a package lifecycle script introducing a previously absent runtime, Bun launched from a temporary path, or the alternate runtime making connections unrelated to the configured package registry.\n\nEndpoint file-access telemetry - Core filter: a process descended from the install chain opening `~/.npmrc`, `~/.config/gh/hosts.yml`, `~/.aws/credentials`, `~/.kube/config`, `~/.vault-token`, `~/.ssh/id_rsa`, `~/.ssh/id_ed25519`, `.env`, or `/var/run/secrets/kubernetes.io/serviceaccount/token`. Triage values: `file path`, `access type`, `process command line`, `parent process command line`, `file owner`, `repository path`. Correlation: require multiple credential families, high-rate file enumeration, or a sensitive-file read followed by archive creation or outbound HTTPS from the same process lineage. Strong red flags: install-time access to credentials that the build stage does not require, reads across home directories, access to `/proc/<pid>/mem`, or simultaneous collection of package-publishing and cloud credentials.\n\nPersistence and repository-write telemetry - Core filter: creation or modification of `~/.local/bin/gh-token-monitor.sh`, `~/.config/gh-token-monitor/token`, `~/.config/gh-token-monitor/handler`, `~/.config/systemd/user/gh-token-monitor.service`, `~/Library/LaunchAgents/com.user.gh-token-monitor.plist`, or `.vscode/tasks.json` by `node`, `bun`, a package manager, or their shell children. Triage values: `file path`, `write process`, `service label`, `unit description`, `RunAtLoad`, `KeepAlive`, `runOn`, `folderOpen`. Pivot: inspect service creation, `loginctl enable-linger`, `launchctl` activity, a polling interval near `60` seconds, and requests to `api.github.com/user`. Strong red flags: a service described as `GitHub Token Validity Monitor`, a handler evaluated after an HTTP `4xx`, or repository configuration that launches a setup script when a folder opens.\n\nIdentity, registry, and source-control audit telemetry - Core filter: after the host-side chain, find token validation or publishing activity involving `/-/whoami`, `/-/npm/v1/tokens`, `/-/npm/v1/oidc/token/exchange/package/`, `POST /user/repos`, or repository commits and package publications outside the normal release workflow. Triage values: `principal`, `token type`, `package name`, `version`, `repository`, `workflow identity`, `source IP address`, `user agent`. Correlation: join activity to the affected developer, runner, repository, and install interval; then compare package-publication and repository-write events against approved release jobs. Strong red flags: one identity publishing newly patched versions across unrelated packages, adding `preinstall: node setup.mjs`, creating repositories used only for encrypted uploads, or writing development-tool trigger files across many branches.\n\nPost-compromise cloud and resource-access telemetry - Core filter: the affected identity or runner accesses `169.254.169.254`, `169.254.170.2`, `/v1/sys/mounts`, or the Kubernetes API shortly after the install chain. Triage values: `principal`, `source workload`, `API path`, `resource`, `namespace`, `region`, `source IP address`, `session identifier`. Pivot/Correlation: connect credential-file reads to subsequent secret enumeration, cloud API calls, Vault KV access, Kubernetes secret reads, or package-registry changes using the host, user, runner, and time window. Strong red flags: metadata access from `node` or `bun`, secrets enumeration by a build identity that normally only downloads dependencies, or cross-service access beginning immediately after dependency installation.\n",
+    "tags": [
+      "npm",
+      "software_supply_chain",
+      "developer_workstation",
+      "ci_runner",
+      "lifecycle_hook",
+      "bun_runtime",
+      "credential_theft",
+      "developer_tooling",
+      "launch_agent",
+      "systemd_user_service",
+      "T1195.001",
+      "T1059.007",
+      "T1059.004",
+      "T1552.001",
+      "T1105",
+      "T1005",
+      "T1543.001",
+      "T1543.002",
+      "T1041"
+    ],
+    "techniques": [
+      "T1195.001",
+      "T1059.007",
+      "T1059.004",
+      "T1552.001",
+      "T1105",
+      "T1005",
+      "T1543.001",
+      "T1543.002",
+      "T1041"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Joshua Strickland",
+      "link": "https://novasky.io"
+    },
+    "why": "- The incident demonstrates that valid package provenance does not prevent malicious execution when the trusted source or release path is already compromised; install-time behavior must therefore be observed on developer systems and runners.\n- The chain survives package, hash, and destination rotation because the attacker still needs a lifecycle trigger, an executable runtime, access to credential stores, and a way to use or persist the stolen access.\n- Process ancestry, sensitive-file opens, temporary-runtime execution, service-file writes, registry activity, and cloud API access are observable across endpoint, CI, identity, and control-plane telemetry, allowing independent signals to reinforce one another.\n- False positives are controllable by scoping activity to the dependency-install interval and requiring behavior that normal builds rarely combine, such as alternate-runtime execution plus unrelated credential reads, token-monitor persistence, or unapproved package publication.",
+    "references": "- [Inside the keyv npm Compromise: preinstall Malware, Trusted Provenance, and IDE Hooks](https://snyk.io/blog/inside-keyv-npm-compromise-preinstall-malware-trusted-provenance-ide-hooks/)\n- [Popular npm Packages in the keyv and Cacheable Namespaces Compromised in Active Supply Chain Attack](https://socket.dev/blog/popular-npm-packages-in-the-keyv-and-cacheable-namespaces-compromised-in-active-supply-chain)\n- [Keyv and friends compromised in active Shai-Hulud supply chain attack](https://www.aikido.dev/blog/keyv-and-friends-compromised-in-npm-supply-chain-attack)\n- [keyv and cacheable npm Package Hijacked in Supply Chain Attack](https://www.wiz.io/blog/keyv-and-cacheable-npm-supply-chain-attack)",
+    "file_path": "Flames/H264.md",
+    "created": "2026-08-14T14:13:42-04:00"
   },
   {
     "id": "M001",
