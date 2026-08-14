@@ -5408,15 +5408,28 @@ const HUNTS_DATA = [
     "category": "Flames",
     "title": "Threat actors persist macOS infostealers via LaunchAgent plists in ~/Library/LaunchAgents/ that masquerade as Apple/Google update services and reference unsigned binaries under user-writable paths.",
     "tactic": "Persistence",
-    "notes": "macOS only — TCLBANKER's macOS cousin and Microsoft's ClickFix (May 2026) both used `~/Library/LaunchAgents/com.google.keystone.agent.plist` referencing `~/Library/Application Support/Google/GoogleUpdate.app/Contents/MacOS/GoogleUpdate`, plus `~/LaunchAgents/com.<random>.plist` variants. Detection: ESF (ES_EVENT_TYPE_NOTIFY_CREATE / _RENAME) on file paths matching `~/Library/LaunchAgents/*.plist` and `/Library/LaunchAgents/*.plist`; Unified Log subsystem predicate `subsystem == \"com.apple.xpc.launchd\" AND eventMessage CONTAINS \"load\"`; runtime check via `launchctl list",
-    "tags": [],
-    "techniques": [],
+    "notes": "macOS only — TCLBANKER's macOS cousin and Microsoft's ClickFix (May 2026) both used `~/Library/LaunchAgents/com.google.keystone.agent.plist` referencing `~/Library/Application Support/Google/GoogleUpdate.app/Contents/MacOS/GoogleUpdate`, plus `~/LaunchAgents/com.<random>.plist` variants. Detection: ESF (ES_EVENT_TYPE_NOTIFY_CREATE / _RENAME) on file paths matching `~/Library/LaunchAgents/*.plist` and `/Library/LaunchAgents/*.plist`; Unified Log subsystem predicate `subsystem == \"com.apple.xpc.launchd\" AND eventMessage CONTAINS \"load\"`; runtime check via `launchctl list | grep -E '(com\\.apple|com\\.google)'` followed by `codesign -dvvv <referenced binary>` — flag plists pointing to unsigned, ad-hoc-signed, or non-notarized binaries. KQL on Defender for Endpoint macOS: `DeviceFileEvents | where FileName endswith \".plist\" and FolderPath has_any (\"/Library/LaunchAgents\",\"/Library/LaunchDaemons\") | where InitiatingProcessFileName !in (\"Installer\",\"installd\",\"softwareupdated\",\"System Events\")`. Cross-reference T1036.005 (Match Legitimate Name or Location) — `com.google.keystone.agent` and `com.apple.*` plists from non-Apple/non-Google processes are the masquerade signal. Cross-reference T1543.004 (Launch Daemon) when persistence lands in `/Library/LaunchDaemons/com.finder.helper.plist` instead.",
+    "tags": [
+      "persistence",
+      "macos",
+      "clickfix",
+      "launch_agent",
+      "masquerading",
+      "T1036.005",
+      "T1543.004",
+      "T1543.001"
+    ],
+    "techniques": [
+      "T1036.005",
+      "T1543.004",
+      "T1543.001"
+    ],
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
     "submitter": {
-      "name": "com\\.google)'` followed by `codesign -dvvv <referenced binary>` — flag plists pointing to unsigned, ad-hoc-signed, or non-notarized binaries. KQL on Defender for Endpoint macOS: `DeviceFileEvents | where FileName endswith \".plist\" and FolderPath has_any (\"/Library/LaunchAgents\",\"/Library/LaunchDaemons\") | where InitiatingProcessFileName !in (\"Installer\",\"installd\",\"softwareupdated\",\"System Events\")`. Cross-reference T1036.005 (Match Legitimate Name or Location) — `com.google.keystone.agent` and `com.apple.*` plists from non-Apple/non-Google processes are the masquerade signal. Cross-reference T1543.004 (Launch Daemon) when persistence lands in `/Library/LaunchDaemons/com.finder.helper.plist` instead.",
-      "link": ""
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
     },
     "why": "- LaunchAgent plists are the dominant macOS user-mode persistence mechanism in 2026 — adversaries from APTs to commodity infostealers (AMOS, SHub, Atomic) all converge here, so a strong detection on this single path covers the majority of macOS post-compromise persistence\n- Masquerading as `com.apple.*` or `com.google.keystone.agent` defeats name-based allowlists that trust Apple/Google service names — verifying that the referenced binary is signed and notarized is the required additional check\n- Plist creation in LaunchAgents/Daemons folders by `Terminal`, `osascript`, `curl`, `Python`, or any non-installer process is rare and high-signal in practice — Elastic's prebuilt rule set has flagged this since 2022 with low false-positive rates\n- Persistence detection lets defenders catch the campaign even if the initial-access ClickFix or trojanized-installer step is missed, providing a second-chance opportunity before C2 beaconing or credential theft completes",
     "references": "- [MITRE ATT&CK T1543.001 - Create or Modify System Process: Launch Agent](https://attack.mitre.org/techniques/T1543/001/)\n- [Microsoft Threat Intelligence - ClickFix Campaign Uses Fake macOS Utilities Lures to Deliver Infostealers](https://www.microsoft.com/en-us/security/blog/2026/05/06/clickfix-campaign-uses-fake-macos-utilities-lures-deliver-infostealers/)\n- [Elastic Detection Rules - Persistence via Suspicious Launch Agent or Launch Daemon](https://www.elastic.co/guide/en/security/8.19/persistence-via-suspicious-launch-agent-or-launch-daemon.html)\n- [Elastic Detection Rules - Creation of Hidden Launch Agent or Daemon](https://elastic.co/guide/en/security/current/creation-of-hidden-launch-agent-or-daemon.html)\n- [Elastic Security Labs - Sinking macOS Pirate Ships with Elastic Behavior Detections](https://www.elastic.co/security-labs/sinking-macos-pirate-ships)\n- [Detection.FYI - Persistence via Suspicious Launch Agent or Launch Daemon](https://detection.fyi/elastic/detection-rules/macos/persistence_suspicious_launch_agent_or_launch_daemon/)\n- [Red Canary Atomic Red Team - T1543.001 Launch Agent](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1543.001/T1543.001.md)",
@@ -6512,8 +6525,14 @@ const HUNTS_DATA = [
     "category": "Flames",
     "title": "Adversaries (UNC3753 / Luna Moth) use spearphishing voice (vishing) posing as IT help desk to drive victims into a screen-share, then install RMM tools; hunt RMM/remote-access binaries spawned by collaboration apps plus access to privnote and lookalike help-desk domains.",
     "tactic": "Initial Access",
-    "notes": "Platform: Windows / M365. Source: Mandiant/GTIG UNC3753 (Luna Moth) vs US law firms (June 5, 2026). T1566.004 itself (the phone call) is not in telemetry, so hunt the observable downstream chain: (1) an RMM / remote-access binary — `anydesk.exe`, `bomgar*`/`beyondtrust`, `zoho*`/`ZA_*`, SuperOps, `winscp.exe`, `rclone.exe` — whose ParentImage is a screen-share/collab app (`Teams.exe`, `ms-teams.exe`, `Zoom.exe`, `quickassist.exe`, `msra.exe`/Terminal Services) via Sysmon Event ID 1 / Security 4688; (2) RMM binary running from a non-standard path (`%USERPROFILE%\\Downloads`, `%TEMP%`) rather than `%ProgramFiles%`; (3) proxy/`DeviceNetworkEvents` hits to `privnote.com` (self-destructing install links/commands) and to lookalike help-desk domains (`<org>-itdesk[.]com`, `<org>-it[.]com`, `<org>-helpdesk[.]com`) from a user workstation; (4) M365 sign-in / UAL showing Quick Assist or new RMM access shortly after a flurry of Teams calls to a single user (report noted 5 Teams calls over 3 days). Mandiant Sigma keys on RMM `Image",
+    "notes": "Platform: Windows / M365. Source: Mandiant/GTIG UNC3753 (Luna Moth) vs US law firms (June 5, 2026). T1566.004 itself (the phone call) is not in telemetry, so hunt the observable downstream chain: (1) an RMM / remote-access binary — `anydesk.exe`, `bomgar*`/`beyondtrust`, `zoho*`/`ZA_*`, SuperOps, `winscp.exe`, `rclone.exe` — whose ParentImage is a screen-share/collab app (`Teams.exe`, `ms-teams.exe`, `Zoom.exe`, `quickassist.exe`, `msra.exe`/Terminal Services) via Sysmon Event ID 1 / Security 4688; (2) RMM binary running from a non-standard path (`%USERPROFILE%\\Downloads`, `%TEMP%`) rather than `%ProgramFiles%`; (3) proxy/`DeviceNetworkEvents` hits to `privnote.com` (self-destructing install links/commands) and to lookalike help-desk domains (`<org>-itdesk[.]com`, `<org>-it[.]com`, `<org>-helpdesk[.]com`) from a user workstation; (4) M365 sign-in / UAL showing Quick Assist or new RMM access shortly after a flurry of Teams calls to a single user (report noted 5 Teams calls over 3 days). Mandiant Sigma keys on RMM `Image|endswith` with `ParentImage` of `zoom.exe`/`teams.exe`/`cmd.exe`. Cross-ref T1219 (Remote Access Software), T1204.002 (user-executed installer), T1059.003 (the curl→msiexec delivery, [[H181]]); baseline normal collab/RMM use with [[B021]].",
     "tags": [
+      "initial_access",
+      "vishing",
+      "rmm",
+      "help_desk",
+      "luna_moth",
+      "windows",
       "T1566.004",
       "T1219",
       "T1204.002",
@@ -6529,8 +6548,8 @@ const HUNTS_DATA = [
     "status": "current",
     "related_hunt_ids": [],
     "submitter": {
-      "name": "#initial_access #T1566_004 #vishing #rmm #help_desk #luna_moth #windows",
-      "link": ""
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
     },
     "why": "- Vishing is invisible to almost every control — there is no link, no attachment, no malicious payload in email — so the phone call itself can never be hunted; the durable detection surface is the *consequence* on the endpoint and in M365, where an RMM tool suddenly appears as a child of the app the attacker used to talk the victim through installing it.\n- Parent-child lineage is the discriminator that separates malicious from sanctioned RMM: legitimate help-desk software is pushed by deployment tooling and runs from Program Files, whereas a victim-installed tool during a fake support call is launched interactively from a browser/collab process and runs from Downloads or Temp.\n- The actor's supporting infrastructure leaves complementary, low-false-positive web telemetry — `privnote.com` to pass self-destructing commands and `<org>-helpdesk[.]`-style lookalike domains — so correlating the host install chain with these network artifacts raises confidence well above either signal alone.\n- This is the signature entry technique of a financially motivated cluster actively hitting law and professional-services firms; detecting the post-call install gives responders a window to cut access before the bulk document collection (see [[M018]]) and exfil that follow within hours.",
     "references": "- [MITRE ATT&CK T1566.004 - Phishing: Spearphishing Voice](https://attack.mitre.org/techniques/T1566/004/)\n- [Mandiant / GTIG - Seeking Counsel: Ongoing Targeted Campaign Against US Law Firms (source report)](https://cloud.google.com/blog/topics/threat-intelligence/targeted-campaign-us-law-firms/)\n- [Unit 42 - Threat Assessment: Luna Moth Callback Phishing Campaign](https://unit42.paloaltonetworks.com/luna-moth-callback-phishing/)\n- [Red Canary - You're invited: Four phishing lures in campaigns dropping RMM tools](https://redcanary.com/blog/threat-intelligence/phishing-rmm-tools/)\n- [Intel 471 - Understanding and threat hunting for RMM software misuse](https://www.intel471.com/blog/understanding-and-threat-hunting-for-rmm-software-misuse)\n- [BleepingComputer - Luna Moth extortion hackers pose as IT help desks to breach US firms](https://www.bleepingcomputer.com/news/security/luna-moth-extortion-hackers-pose-as-it-help-desks-to-breach-us-firms/)\n- [Dark Reading - FBI: Silent Ransom Group vishing law firms](https://www.darkreading.com/endpoint-security/fbi-silent-ransom-group-vishing-law-firms)",
@@ -6890,19 +6909,27 @@ const HUNTS_DATA = [
     "category": "Flames",
     "title": "A BYOVD EDR-killer (Gentlemen / GentleKiller) installs a vulnerable or malicious kernel driver as a Windows service and loads it to terminate security processes; hunt the service-install -> driver-load chain.",
     "tactic": "Defense Evasion",
-    "notes": "Endpoint: pivot on Windows Security EID 7045 (service install) and 4697 where `ServiceType`/`Service Type` = `kernel mode driver` (0x1) and `ImagePath` points outside `%SystemRoot%\\System32\\drivers` (e.g. `%TEMP%`, `%PROGRAMDATA%`, `%PUBLIC%`, user dirs) or carries a short/random service name. Correlate with Sysmon EID 6 (DriverLoad) for the same `ImageLoaded` minutes later, and Sysmon EID 13 (registry) writes to `HKLM\\SYSTEM\\CurrentControlSet\\Services\\<svc>\\ImagePath` + `\\Type`=1 + `\\Start`. Process lineage (Sysmon EID 1 / 4688): a console-based, recently-dropped EXE (GentleKiller is interactive) -> `sc.exe create … type= kernel binPath= …` / `sc.exe start` OR direct `CreateService`/`NtLoadDriver` without `sc.exe`. KQL Defender: `DeviceEvents",
+    "notes": "Endpoint: pivot on Windows Security EID 7045 (service install) and 4697 where `ServiceType`/`Service Type` = `kernel mode driver` (0x1) and `ImagePath` points outside `%SystemRoot%\\System32\\drivers` (e.g. `%TEMP%`, `%PROGRAMDATA%`, `%PUBLIC%`, user dirs) or carries a short/random service name. Correlate with Sysmon EID 6 (DriverLoad) for the same `ImageLoaded` minutes later, and Sysmon EID 13 (registry) writes to `HKLM\\SYSTEM\\CurrentControlSet\\Services\\<svc>\\ImagePath` + `\\Type`=1 + `\\Start`. Process lineage (Sysmon EID 1 / 4688): a console-based, recently-dropped EXE (GentleKiller is interactive) -> `sc.exe create … type= kernel binPath= …` / `sc.exe start` OR direct `CreateService`/`NtLoadDriver` without `sc.exe`. KQL Defender: `DeviceEvents | where ActionType == \"DriverLoad\"` join `DeviceRegistryEvents` on `RegistryKey contains \"CurrentControlSet\\\\Services\"` and `DeviceProcessEvents` for `sc.exe` create/start; flag drivers whose SHA1/path match LOLDrivers. Cross-ref T1562.001 (the driver's purpose is to disable tools) and [[H195]] (invalid/revoked signature on the dropped driver). Known driver names to seed (rotate, do not rely on): `eb.sys`, `nseckrnl.sys`, `GameDriverX64.sys`, `stpm_old.sys`, `stpm_new.sys`, `dmx.sys` (CVE-2022-42045), `360netmon_wfp.sys`, `IMFForceDelete` (CVE-2025-26125), `googleApiUtil64.sys`, `ThrottleBlood.sys`, `havoc.sys`, `G11.sys`.",
     "tags": [
-      "T1562.001"
+      "defense_evasion",
+      "byovd",
+      "vulnerable_driver",
+      "edr_killer",
+      "gentlemen",
+      "windows",
+      "T1562.001",
+      "T1543.003"
     ],
     "techniques": [
-      "T1562.001"
+      "T1562.001",
+      "T1543.003"
     ],
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
     "submitter": {
-      "name": "#defense_evasion #T1543_003 #T1562_001 #byovd #vulnerable_driver #edr_killer #gentlemen #windows",
-      "link": ""
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
     },
     "why": "- Every GentleKiller variant (8+ documented, plus integrated HexKiller/ThrottleBlood/HavocKiller) converges on the same kernel-mode primitive: register a driver as a service and load it. Hunting the service-install -> driver-load chain catches the technique even as operators swap the underlying driver to dodge hash/name blocklists.\n- A kernel-mode service (`Type`=1) whose `ImagePath` is a freshly dropped file outside `System32\\drivers` is rare in healthy environments and is exactly what BYOVD requires — high-signal, low-volume.\n- The events are reliably logged: 7045 in the System log, 4697 with audit policy, and Sysmon EID 6 is low-volume and high-value, so a standing hunt is cheap to run and hard for the adversary to avoid emitting.\n- BYOVD is the enabling step before mass security-process termination (400+ processes here), so detecting the load gives defenders a window before EDR blinding completes.",
     "references": "- [MITRE ATT&CK T1543.003 — Create or Modify System Process: Windows Service](https://attack.mitre.org/techniques/T1543/003/)\n- [source report — ESET: Killing me gently — Inside Gentlemen's EDR killer framework](https://www.welivesecurity.com/en/eset-research/killing-me-gently-inside-gentlemens-edr-killer-framework/)\n- [Splunk — Detection: Windows Vulnerable Driver Installed (EventCode 7045)](https://research.splunk.com/endpoint/1dda7586-57be-4a1b-8de1-a9ad802b9a7f/)\n- [Splunk — These Are The Drivers You Are Looking For: Detect and Prevent Malicious Drivers](https://www.splunk.com/en_us/blog/security/these-are-the-drivers-you-are-looking-for-detect-and-prevent-malicious-drivers.html)\n- [Atomic Red Team — T1543.003 Windows Service (sc.exe service creation tests)](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1543.003/T1543.003.md)\n- [LOLDrivers.io — Living Off The Land Drivers (vulnerable/malicious driver list, hashes, Sigma/Sysmon)](https://www.loldrivers.io/)\n- [TrustedSec — Sysmon Community Guide: Driver Loading (EID 6)](https://github.com/trustedsec/SysmonCommunityGuide/blob/master/chapters/driver-loading.md)",
@@ -6914,19 +6941,28 @@ const HUNTS_DATA = [
     "category": "Flames",
     "title": "A BYOVD EDR-killer loads a kernel driver whose code signature is invalid/unsigned/expired, or whose signing cert is revoked/abused, while masquerading as a legitimate vendor driver; hunt driver loads by signature status.",
     "tactic": "Defense Evasion",
-    "notes": "Endpoint: pivot on Sysmon EID 6 (DriverLoad) fields `Signature`, `Signed`, `SignatureStatus` — flag `Signed=false`, `SignatureStatus != Valid` (Unsigned/Expired/Revoked/`Error`), or a `Signature` (signer) string that does not match the impersonated vendor in the file's version info / `OriginalFileName`. Enable Sysmon `<CheckRevocation/>` so `SignatureStatus=Revoked` is populated for drivers signed with stolen/abused certs (e.g. revoked anti-cheat / Zemana / IObit certs). Cross-reference loaded driver SHA256/Authentihash against LOLDrivers known-vulnerable + known-malicious lists. KQL Defender: `DeviceEvents",
+    "notes": "Endpoint: pivot on Sysmon EID 6 (DriverLoad) fields `Signature`, `Signed`, `SignatureStatus` — flag `Signed=false`, `SignatureStatus != Valid` (Unsigned/Expired/Revoked/`Error`), or a `Signature` (signer) string that does not match the impersonated vendor in the file's version info / `OriginalFileName`. Enable Sysmon `<CheckRevocation/>` so `SignatureStatus=Revoked` is populated for drivers signed with stolen/abused certs (e.g. revoked anti-cheat / Zemana / IObit certs). Cross-reference loaded driver SHA256/Authentihash against LOLDrivers known-vulnerable + known-malicious lists. KQL Defender: `DeviceEvents | where ActionType == \"DriverLoad\"` and project `FolderPath`, `SHA256`, `InitiatingProcessFolderPath` then join a watchlist of LOLDrivers hashes and signer/cert revocation data (DeviceEvents does not expose full cert state, so pair with Sysmon EID 6 for `SignatureStatus`). Windows Security EID 7045 for the install + EID 5038 / Code Integrity EID 3001-3023 (driver image hash mismatch / unsigned load attempts) as corroboration. Hunt mismatch cases: driver named/versioned as a legit vendor (`GameDriverX64.sys`, `360netmon_wfp.sys`, `googleApiUtil64.sys`) but `SignatureStatus` invalid/revoked or signer ≠ stated vendor. Cross-ref [[H194]] (service install/load chain) and T1562.001 (driver loaded to disable security tools).",
     "tags": [
-      "T1562.001"
+      "defense_evasion",
+      "byovd",
+      "invalid_signature",
+      "revoked_certificate",
+      "vulnerable_driver",
+      "loldrivers",
+      "windows",
+      "T1562.001",
+      "T1036.001"
     ],
     "techniques": [
-      "T1562.001"
+      "T1562.001",
+      "T1036.001"
     ],
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
     "submitter": {
-      "name": "#defense_evasion #T1036_001 #T1562_001 #byovd #invalid_signature #revoked_certificate #vulnerable_driver #loldrivers #windows",
-      "link": ""
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
     },
     "why": "- ESET explicitly ties Gentlemen to T1036.001 (invalid signatures copied from legitimate executables) and to BYOVD; signature status is therefore a direct, behavior-anchored pivot rather than a guess.\n- Kernel drivers are one of the few file classes where Windows still loads improperly-signed or revoked-cert images under certain conditions, so an Invalid/Revoked `SignatureStatus` on a loaded driver is both rare and high-fidelity.\n- Sysmon EID 6 with `<CheckRevocation/>` catches the common BYOVD pattern of a once-valid cert that has since been revoked — the exact lifecycle of abused anti-cheat and utility-driver certs in this campaign.\n- Cross-referencing the loaded driver hash against LOLDrivers turns this into a maintainable, hash-rotating-resistant hunt that fires on the kernel foothold before EDR is blinded.",
     "references": "- [MITRE ATT&CK T1036.001 — Masquerading: Invalid Code Signature](https://attack.mitre.org/techniques/T1036/001/)\n- [source report — ESET: Killing me gently — Inside Gentlemen's EDR killer framework](https://www.welivesecurity.com/en/eset-research/killing-me-gently-inside-gentlemens-edr-killer-framework/)\n- [LOLDrivers.io — Living Off The Land Drivers (vulnerable/malicious driver hashes, certs, Sigma/Yara/Sysmon)](https://www.loldrivers.io/)\n- [Splunk — Detection: Windows Vulnerable Driver Loaded (Sysmon EID 6 hash cross-reference)](https://research.splunk.com/endpoint/a2b1f1ef-221f-4187-b2a4-d4b08ec745f4/)\n- [TrustedSec — Sysmon Community Guide: Driver Loading (Signature / SignatureStatus / CheckRevocation)](https://github.com/trustedsec/SysmonCommunityGuide/blob/master/chapters/driver-loading.md)\n- [MagicSword — LOLDrivers: Tracking Malicious and Vulnerable Drivers](https://www.magicsword.io/blog/loldrivers-malicious-drivers)\n- [Cisco Talos — Exploring vulnerable Windows drivers (BYOVD signing/abuse)](https://blog.talosintelligence.com/exploring-vulnerable-windows-drivers/)",
@@ -7181,21 +7217,29 @@ const HUNTS_DATA = [
     "category": "Flames",
     "title": "A LaunchAgent plist impersonating an Apple `com.apple.*` label points its `ProgramArguments` at an ad-hoc-signed, non-notarized Rust Mach-O, indicating Gaslight-style login persistence.",
     "tactic": "Persistence",
-    "notes": "Enumerate `~/Library/LaunchAgents/*.plist` and `/Library/LaunchAgents/*.plist`; flag any where `Label`/`ProgramArguments[0]` references `com.apple.*` or `com.apple.system.*` yet the binary resolves outside `/System/`, `/usr/libexec/`, `/usr/sbin/`, or a notarized `.app`. Validate signature: `codesign -dvvv --verbose=4 <binary>` (Gaslight is ad-hoc: look for `Signature=adhoc`/`linker-signed`, no `Authority=` chain, signing identifier `endpoint-macos-aarch64-*`) and `spctl -a -vvv -t install <binary>` (expect `rejected`/`source=no usable signature`). ESF: hunt `ES_EVENT_TYPE_NOTIFY_CREATE` / `ES_EVENT_TYPE_NOTIFY_WRITE` / `ES_EVENT_TYPE_NOTIFY_RENAME` on paths under `*/Library/LaunchAgents/` followed by `ES_EVENT_TYPE_NOTIFY_EXEC` of an ad-hoc-signed Mach-O (correlate via `es_message.event.exec.target.codesigning_flags` lacking `CS_VALID`/notarization, `is_platform_binary=false`). Suspicious writer lineage: plist created by a Python interpreter, `bash`, `osascript`, or a binary in `temp/`, `/tmp`, `~/Downloads`. Unified Log: `log show --predicate 'subsystem == \"com.apple.xpc.launchd\"' --info --last 24h` and `log stream --predicate 'process == \"launchd\" AND eventMessage CONTAINS \"LaunchAgents\"'` to catch the load/bootstrap. Live state: `launchctl list",
+    "notes": "Enumerate `~/Library/LaunchAgents/*.plist` and `/Library/LaunchAgents/*.plist`; flag any where `Label`/`ProgramArguments[0]` references `com.apple.*` or `com.apple.system.*` yet the binary resolves outside `/System/`, `/usr/libexec/`, `/usr/sbin/`, or a notarized `.app`. Validate signature: `codesign -dvvv --verbose=4 <binary>` (Gaslight is ad-hoc: look for `Signature=adhoc`/`linker-signed`, no `Authority=` chain, signing identifier `endpoint-macos-aarch64-*`) and `spctl -a -vvv -t install <binary>` (expect `rejected`/`source=no usable signature`). ESF: hunt `ES_EVENT_TYPE_NOTIFY_CREATE` / `ES_EVENT_TYPE_NOTIFY_WRITE` / `ES_EVENT_TYPE_NOTIFY_RENAME` on paths under `*/Library/LaunchAgents/` followed by `ES_EVENT_TYPE_NOTIFY_EXEC` of an ad-hoc-signed Mach-O (correlate via `es_message.event.exec.target.codesigning_flags` lacking `CS_VALID`/notarization, `is_platform_binary=false`). Suspicious writer lineage: plist created by a Python interpreter, `bash`, `osascript`, or a binary in `temp/`, `/tmp`, `~/Downloads`. Unified Log: `log show --predicate 'subsystem == \"com.apple.xpc.launchd\"' --info --last 24h` and `log stream --predicate 'process == \"launchd\" AND eventMessage CONTAINS \"LaunchAgents\"'` to catch the load/bootstrap. Live state: `launchctl list | grep -i com.apple.system.services.activity` and `launchctl print gui/$(id -u)/com.apple.system.services.activity`. Corroborating Gaslight artifacts: child exec of `cpython-3.10.18` fetched from `astral-sh/python-build-standalone`, a `collected_data.zip` under `temp/`, reads/copies of `login.keychain-db`, an `IOPMAssertionCreateWithName` no-sleep assertion, and Telegram Bot API `getUpdates` C2 egress. Cross-ref T1036.005 (Match Legitimate Name) for the `com.apple.*` masquerade and T1497 for the LLM prompt-injection anti-analysis blob.",
     "tags": [
+      "persistence",
+      "macos",
+      "launchagent",
+      "adhoc_signing",
+      "dprk",
+      "gaslight",
       "T1036.005",
-      "T1497"
+      "T1497",
+      "T1543.001"
     ],
     "techniques": [
       "T1036.005",
-      "T1497"
+      "T1497",
+      "T1543.001"
     ],
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
     "submitter": {
-      "name": "#persistence #T1543_001 #T1036_005 #macos #launchagent #adhoc_signing #dprk #gaslight",
-      "link": ""
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
     },
     "why": "- Why it matters: Login persistence is Gaslight's foothold for keychain theft, browser-credential harvesting, and Telegram-based C2; catching the plist denies the implant its reboot survival. DPRK-aligned tooling (RustBucket lineage) reuses this exact pattern.\n- Why detectable: macOS centralizes user persistence in two well-known directories, and ESF/FSEvents emit a discrete create/write event plus a subsequent exec of the referenced binary — a tight, low-volume, high-fidelity event pair on managed endpoints.\n- Why this technique ID is accurate: T1543.001 (Launch Agent) is macOS-only (ATT&CK Platforms line: \"Platforms: macOS\", current v1.5, not deprecated) and explicitly describes `.plist` placement in `~/Library/LaunchAgents` with `RunAtLoad`/`KeepAlive` plus name-disguising as related-OS/benign software — exactly Gaslight's behavior. Masquerade is captured as the secondary tag T1036.005.\n- Why this telemetry surface: Code-signature posture (`codesign`/`spctl`) and the platform-binary flag are the discriminator — Apple's real LaunchAgents are platform binaries living in `/System`/`/usr/libexec`, so an ad-hoc-signed payload under a user or `temp/` path with an Apple-namespace label is anomalous by construction, not by baseline.",
     "references": "- [MITRE ATT&CK T1543.001 — Launch Agent](https://attack.mitre.org/techniques/T1543/001/)\n- [SentinelOne Labs — macOS.Gaslight: Rust Backdoor Turns Prompt Injection on the Analyst, Not the Sandbox](https://www.sentinelone.com/labs/macos-gaslight-rust-backdoor-turns-prompt-injection-on-the-analyst-not-the-sandbox/)\n- [Atomic Red Team — T1543.001 Launch Agent atomics](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1543.001/T1543.001.md)\n- [Elastic — Persistence via Suspicious Launch Agent or Launch Daemon (detection rule)](https://www.elastic.co/guide/en/security/current/persistence-via-suspicious-launch-agent-or-launch-daemon.html)\n- [Elastic — Creation of Hidden Launch Agent or Daemon (detection rule)](https://www.elastic.co/docs/reference/security/prebuilt-rules/rules/macos/persistence_evasion_hidden_launch_agent_deamon_creation)\n- [WithSecure Labs — ESFang: Exploring the macOS Endpoint Security Framework for Threat Detection](https://labs.withsecure.com/publications/esfang-exploring-the-macos-endpoint-security-framework-for-threat-detection)\n- [Sigma / Detection.FYI — Launch Agent/Daemon Execution via Launchctl](https://detection.fyi/sigmahq/sigma/macos/process_creation/proc_creation_macos_launchctl_execution/)",
@@ -7241,19 +7285,29 @@ const HUNTS_DATA = [
     "category": "Flames",
     "title": "Amadey (Operation Endgame infostealer) creates a new local account via command `0x19`, adds it to the Administrators group, and disables password expiration to establish privileged persistence. Hunt for local privileged-account creation correlated with execution of binaries in user-writable paths.",
     "tactic": "Persistence",
-    "notes": "Primary Windows Security events: EID 4720 (a user account was created) → 4732 (member added to a security-enabled *local* group; watch for Group SID S-1-5-32-544 = Administrators) → 4724 (password reset) → 4722 (account enabled) → 4738 (account changed). In 4720/4738 inspect the `UserAccountControl` flags for 0x10000 DONT_EXPIRE_PASSWD and 0x0040 PASSWD_CANT_CHANGE, which match Amadey's \"disable password expiration / prevent password change\" behavior exactly. Note: Amadey can create the account via the NetUserAdd / NetLocalGroupAddMembers APIs, so a `net.exe`/`net1.exe` command line may be ABSENT — do not rely on process telemetry alone; the 4720+4732 pair is the durable signal. When present, Sysmon EID 1: `net.exe`/`net1.exe` with `user <name> <pass> /add` and `localgroup administrators <name> /add`. Lineage pivot: correlate the 4720/4732 events with a parent/creator process executing from a user-writable path consistent with Amadey staging, e.g. `C:\\Users\\<user>\\e079729711\\nudwee.exe` or `%TEMP%`/`%APPDATA%`. Defender KQL: `IdentityDirectoryEvents`/`SecurityEvent` for 4720/4732, and `DeviceProcessEvents",
+    "notes": "Primary Windows Security events: EID 4720 (a user account was created) → 4732 (member added to a security-enabled *local* group; watch for Group SID S-1-5-32-544 = Administrators) → 4724 (password reset) → 4722 (account enabled) → 4738 (account changed). In 4720/4738 inspect the `UserAccountControl` flags for 0x10000 DONT_EXPIRE_PASSWD and 0x0040 PASSWD_CANT_CHANGE, which match Amadey's \"disable password expiration / prevent password change\" behavior exactly. Note: Amadey can create the account via the NetUserAdd / NetLocalGroupAddMembers APIs, so a `net.exe`/`net1.exe` command line may be ABSENT — do not rely on process telemetry alone; the 4720+4732 pair is the durable signal. When present, Sysmon EID 1: `net.exe`/`net1.exe` with `user <name> <pass> /add` and `localgroup administrators <name> /add`. Lineage pivot: correlate the 4720/4732 events with a parent/creator process executing from a user-writable path consistent with Amadey staging, e.g. `C:\\Users\\<user>\\e079729711\\nudwee.exe` or `%TEMP%`/`%APPDATA%`. Defender KQL: `IdentityDirectoryEvents`/`SecurityEvent` for 4720/4732, and `DeviceProcessEvents | where FileName in~ (\"net.exe\",\"net1.exe\") and ProcessCommandLine has_any(\"user \",\"localgroup administrators\")`. Pivot suspicious new account into 4624 Type 10 (RemoteInteractive/RDP) and Type 2 logons to catch the account being used (cross-ref Amadey RDP-enable command `0x18`, `fDenyTSConnections=0`, T1219.002). High-fidelity combo: account created + added to Administrators + DONT_EXPIRE_PASSWD set, all within a short window of a non-system binary. Cross-ref [[B027]] (Amadey security-software discovery baseline) — recon precedes this persistence on the same host.",
     "tags": [
-      "T1219.002"
+      "persistence",
+      "windows",
+      "amadey",
+      "stealc",
+      "operation_endgame",
+      "local_admin",
+      "event_4720",
+      "event_4732",
+      "T1219.002",
+      "T1136.001"
     ],
     "techniques": [
-      "T1219.002"
+      "T1219.002",
+      "T1136.001"
     ],
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
     "submitter": {
-      "name": "#persistence #T1136_001 #windows #amadey #stealc #operation_endgame #local_admin #event_4720 #event_4732",
-      "link": ""
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
     },
     "why": "- Operation Endgame reporting (ESET + Microsoft, June 2026) documents Amadey command `0x19` creating a local admin account from backdoor-supplied credentials and explicitly disabling password expiration/change — a concrete, repeatable behavior rather than a generic capability.\n- Local account creation in a domain environment is inherently rare and high-signal; the 4720→4732(Administrators)→4738(DONT_EXPIRE_PASSWD) sequence is hard for an attacker to avoid and easy to baseline to near-zero false positives.\n- This persistence outlives the stealer payload itself (which self-deletes via `cmd /C RMDIR /s/q`), so it is the artifact most likely to remain on-disk/in-logs after the noisy infostealer activity is gone.\n- Microsoft Defender for Endpoint already surfaces \"User account created under suspicious circumstances\" and \"New group added suspiciously\" alerts for this exact chain, giving hunters a corroborating signal and a tuning anchor.",
     "references": "- [MITRE ATT&CK T1136.001 — Create Account: Local Account](https://attack.mitre.org/techniques/T1136/001/)\n- [ESET — ESET takes part in Operation Endgame to disrupt Amadey and Stealc](https://www.welivesecurity.com/en/eset-research/eset-takes-part-operation-endgame-disrupt-amadey-stealc/)\n- [Microsoft — StealC and Amadey: Breaking down infostealers and the cybercrime services that deliver them](https://www.microsoft.com/en-us/security/blog/2026/06/24/stealc-and-amadey-breaking-down-infostealers-and-the-cybercrime-services-that-deliver-them/)\n- [Splunk Security Content — Detect New Local Admin account](https://research.splunk.com/endpoint/b25f6f62-0712-43c1-b203-083231ffd97d/)\n- [Atomic Red Team — T1136.001 Create Account: Local Account](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1136.001/T1136.001.md)\n- [Detection.FYI / SigmaHQ — Hidden Local User Creation (EID 4720, TargetUserName ends in `$`)](https://detection.fyi/sigmahq/sigma/windows/builtin/security/win_security_hidden_user_creation/)",
@@ -7265,19 +7319,28 @@ const HUNTS_DATA = [
     "category": "Flames",
     "title": "A Windows scripting interpreter (powershell.exe, wscript.exe, cscript.exe, mshta.exe, or other non-browser binary) makes an outbound DNS/HTTPS request to a known dead-drop platform (telegra.ph, teletype.in, t.me, rentry.co, write.as, nopaste.net, pastee.dev, lesma.eu, dev.to, mastodon.social) to resolve a next-stage C2 address — often chained to a Cloudflare Tunnel/Worker, devtunnels, or Loophole domain — indicating Gamaredon dead-drop resolver activity.",
     "tactic": "Command and Control",
-    "notes": "Process lineage is the discriminator — these domains are benign from a browser but suspicious from a script host. Sysmon EID 22 (DNS query): `QueryName` in (`telegra.ph`,`teletype.in`,`t.me`,`telegram.me`,`rentry.co`,`write.as`,`nopaste.net`,`pastee.dev`,`paste.ee`,`lesma.eu`,`dev.to`,`mastodon.social`) AND `Image` ends with `powershell.exe`/`wscript.exe`/`cscript.exe`/`mshta.exe`/`curl.exe`. Also alert on `QueryName` matching `*.trycloudflare.com`, `*.workers.dev`, `*.devtunnels.ms`, `loophole.site`, `*.cleverapps.io`, `*.supabase.co` from the same process set. Sysmon EID 3 (network connection): same Image set with `DestinationPort`=443 to those hosts; pivot on `ProcessGuid` to find the follow-on tunnel/worker connection within seconds. Sysmon EID 1 / Security 4688: command lines containing `Invoke-WebRequest`/`Invoke-RestMethod`/`Net.WebClient`/`DownloadString`/`Start-BitsTransfer` referencing `api.telegra.ph` or the domains above; flag mshta.exe launched from a Startup-folder HTA (post-CVE-2025-8088 WinRAR delivery). PowerShell 4104 ScriptBlock logging: `Invoke-RestMethod`/`iwr` to `telegra.ph/api`, base64/regex decode of fetched body into a hostname/IP. Defender KQL: `DeviceNetworkEvents",
+    "notes": "Process lineage is the discriminator — these domains are benign from a browser but suspicious from a script host. Sysmon EID 22 (DNS query): `QueryName` in (`telegra.ph`,`teletype.in`,`t.me`,`telegram.me`,`rentry.co`,`write.as`,`nopaste.net`,`pastee.dev`,`paste.ee`,`lesma.eu`,`dev.to`,`mastodon.social`) AND `Image` ends with `powershell.exe`/`wscript.exe`/`cscript.exe`/`mshta.exe`/`curl.exe`. Also alert on `QueryName` matching `*.trycloudflare.com`, `*.workers.dev`, `*.devtunnels.ms`, `loophole.site`, `*.cleverapps.io`, `*.supabase.co` from the same process set. Sysmon EID 3 (network connection): same Image set with `DestinationPort`=443 to those hosts; pivot on `ProcessGuid` to find the follow-on tunnel/worker connection within seconds. Sysmon EID 1 / Security 4688: command lines containing `Invoke-WebRequest`/`Invoke-RestMethod`/`Net.WebClient`/`DownloadString`/`Start-BitsTransfer` referencing `api.telegra.ph` or the domains above; flag mshta.exe launched from a Startup-folder HTA (post-CVE-2025-8088 WinRAR delivery). PowerShell 4104 ScriptBlock logging: `Invoke-RestMethod`/`iwr` to `telegra.ph/api`, base64/regex decode of fetched body into a hostname/IP. Defender KQL: `DeviceNetworkEvents | where RemoteUrl has_any (ddrDomains) and InitiatingProcessFileName in~ (\"powershell.exe\",\"wscript.exe\",\"cscript.exe\",\"mshta.exe\",\"curl.exe\")` joined to `DeviceProcessEvents` on `DeviceId`/`InitiatingProcessId`. Exclude browser images (msedge/chrome/firefox) and known dev usage of trycloudflare/devtunnels to cut noise. Cross-ref T1572 (Protocol Tunneling) for the downstream tunnel/worker chaining.",
     "tags": [
-      "T1572"
+      "command_and_control",
+      "windows",
+      "gamaredon",
+      "dead_drop_resolver",
+      "dns",
+      "sysmon",
+      "defender",
+      "T1572",
+      "T1102.001"
     ],
     "techniques": [
-      "T1572"
+      "T1572",
+      "T1102.001"
     ],
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
     "submitter": {
-      "name": "#command_and_control #T1102_001 #T1572 #windows #gamaredon #dead_drop_resolver #dns #sysmon #defender",
-      "link": ""
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
     },
     "why": "- ESET's 2025 report identifies the hard-coded dead-drop resolver as the most critical and most durable indicator in Gamaredon samples — the actor rotates downstream tunnel/worker C2 constantly, but the DDR fetch is the one behavior every Pterodo loader must perform first, making it the highest-leverage hunt pivot.\n- The signal is high-fidelity because of process lineage, not domain reputation: telegra.ph/t.me/rentry.co are legitimately popular, but a script interpreter or Startup-folder HTA resolving them is anomalous and rarely benign, so the hunt avoids the false-positive trap of blocklisting popular platforms.\n- It is fully observable on standard Windows telemetry (Sysmon EID 1/3/22, Security 4688, PowerShell 4104, Defender DeviceNetworkEvents/DeviceProcessEvents) — no specialized tooling required — and the DDR→tunnel/worker chain gives a second confirmatory connection to corroborate true positives.\n- Mapping the resolver platforms and the downstream `*.trycloudflare.com` / `*.workers.dev` / `*.devtunnels.ms` infrastructure produces reusable detections and a watchlist that survive the actor's frequent C2 rotation, raising long-term cost for Gamaredon and any copycat abusing the same dead-drop pattern.",
     "references": "- [MITRE ATT&CK T1102.001 — Web Service: Dead Drop Resolver](https://attack.mitre.org/techniques/T1102/001/)\n- [MITRE ATT&CK T1572 — Protocol Tunneling](https://attack.mitre.org/techniques/T1572/)\n- [ESET WeLiveSecurity — Gamaredon in 2025: Leveraging tunnels, workers, dead drops, and new alliances](https://www.welivesecurity.com/en/eset-research/gamaredon-2025-leveraging-tunnels-workers-dead-drops-new-alliances/)\n- [HarfangLab — Inside Gamaredon's PteroLNK: Dead Drop Resolvers and evasive Infrastructure](https://harfanglab.io/insidethelab/gamaredons-pterolnk-analysis/)\n- [SOC Prime — GammaSteel: Inside Gamaredon's Unfolding Malware Chain (Registry PowerShell + Tebi)](https://socprime.com/active-threats/gammasteel-inside-gamaredons-unfolding-malware-chain/)\n- [PwnDefend — Detecting 'Dark Tunnels' (Cloudflare/dev tunnels) with Microsoft Defender using KQL](https://www.pwndefend.com/2025/11/02/detecting-dark-tunnels-with-microsoft-defender-using-kql/)\n- [Securonix — SERPENTINE#CLOUD: Threat Actors Abuse Cloudflare Tunnels](https://www.securonix.com/blog/analyzing_serpentinecloud-threat-actors-abuse-cloudflare-tunnels-threat-research/)",
@@ -7289,15 +7352,26 @@ const HUNTS_DATA = [
     "category": "Flames",
     "title": "An adversary phished a user into completing the OAuth device authorization grant, yielding attacker-held access/refresh tokens that bypass MFA. Successful Entra sign-ins with `authenticationProtocol == \"deviceCode\"` from an unexpected user, location, client app, or resource indicate device-code phishing token theft.",
     "tactic": "Credential Access",
-    "notes": "Entra ID Sign-in logs — Hunt interactive + non-interactive sign-ins. Core filter: `AuthenticationProtocol == \"deviceCode\"`; on later refreshes also `OriginalTransferMethod == \"deviceCodeFlow\"`. Triage fields: `AppId`/`AppDisplayName`, `ResourceDisplayName`, `ConditionalAccessStatus`, `IPAddress`, `DeviceDetail`, `UserAgent`, `Location`, `SessionId`, `UniqueTokenIdentifier`, `RiskLevelDuringSignIn`. Commonly abused client AppIds: Microsoft Authentication Broker `29d9ed98-a469-4536-ade2-f981bc1d605e` (Storm-2372 PRT/device-registration path), Microsoft Office `d3590ed6-52b3-4102-aeff-aad2292ab01c`, Azure CLI `04b07795-8ddb-461a-bbee-02f9e1bf7b46`, Azure PowerShell `1950a258-227b-4e31-a9cf-717495945fc2`, Visual Studio Code `aebc6443-996d-45c2-90f0-388ff96faa56`. Base KQL: `SigninLogs",
-    "tags": [],
-    "techniques": [],
+    "notes": "Entra ID Sign-in logs — Hunt interactive + non-interactive sign-ins. Core filter: `AuthenticationProtocol == \"deviceCode\"`; on later refreshes also `OriginalTransferMethod == \"deviceCodeFlow\"`. Triage fields: `AppId`/`AppDisplayName`, `ResourceDisplayName`, `ConditionalAccessStatus`, `IPAddress`, `DeviceDetail`, `UserAgent`, `Location`, `SessionId`, `UniqueTokenIdentifier`, `RiskLevelDuringSignIn`. Commonly abused client AppIds: Microsoft Authentication Broker `29d9ed98-a469-4536-ade2-f981bc1d605e` (Storm-2372 PRT/device-registration path), Microsoft Office `d3590ed6-52b3-4102-aeff-aad2292ab01c`, Azure CLI `04b07795-8ddb-461a-bbee-02f9e1bf7b46`, Azure PowerShell `1950a258-227b-4e31-a9cf-717495945fc2`, Visual Studio Code `aebc6443-996d-45c2-90f0-388ff96faa56`. Base KQL: `SigninLogs | where ResultType == 0 | where AuthenticationProtocol == \"deviceCode\"` then summarize by `UserPrincipalName, AppDisplayName, ResourceDisplayName, IPAddress, Location`. Non-interactive: repeat against `AADNonInteractiveUserSignInLogs` to catch token refreshes. Strong red flags: Office/Authentication-Broker token used against Azure Resource Manager or Microsoft Graph; IP / user-agent mismatch between the interactive leg and the polling leg; a user who never uses device-code flow; sign-in followed by new device registration (Entra Devices), inbox-rule creation, or burst Graph activity. Pivot to UAL: take `UniqueTokenIdentifier` from device-code sign-ins and filter `CloudAppEvents` / Unified Audit Log (e.g. `New-InboxRule`, `Set-Mailbox`, `Add device`, `MailItemsAccessed`) to scope post-token actions. Check `ConditionalAccessStatus` to confirm whether any device-code-flow blocking CA policy was in effect/bypassed.",
+    "tags": [
+      "credential_access",
+      "m365",
+      "entra_id",
+      "oauth",
+      "device_code",
+      "mfa_bypass",
+      "identity",
+      "T1528"
+    ],
+    "techniques": [
+      "T1528"
+    ],
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
     "submitter": {
-      "name": "where AuthenticationProtocol == \"deviceCode\"` then summarize by `UserPrincipalName, AppDisplayName, ResourceDisplayName, IPAddress, Location`. **Non-interactive:** repeat against `AADNonInteractiveUserSignInLogs` to catch token refreshes. **Strong red flags:** Office/Authentication-Broker token used against Azure Resource Manager or Microsoft Graph; IP / user-agent mismatch between the interactive leg and the polling leg; a user who never uses device-code flow; sign-in followed by new device registration (Entra Devices), inbox-rule creation, or burst Graph activity. **Pivot to UAL:** take `UniqueTokenIdentifier` from device-code sign-ins and filter `CloudAppEvents` / Unified Audit Log (e.g. `New-InboxRule`, `Set-Mailbox`, `Add device`, `MailItemsAccessed`) to scope post-token actions. Check `ConditionalAccessStatus` to confirm whether any device-code-flow blocking CA policy was in effect/bypassed.",
-      "link": ""
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
     },
     "why": "- Device-code phishing steals fully-formed OAuth tokens on Microsoft's legitimate portal, so it bypasses MFA and leaves no failed-credential or impossible-travel artifacts — the only reliable signal is the `deviceCode` authentication protocol value itself in Entra Sign-in logs.\n- The device-code grant is near-zero in normal enterprise use (it targets input-constrained CLI/IoT devices), making its presence a discrete, low-false-positive Flames signal rather than something requiring volumetric baselining.\n- Active, scaling threat: Storm-2372 popularized the technique and phishing-as-a-service kits (e.g. EvilTokens) have driven a sharp 2025–2026 surge, so most tenants are now in-scope targets.\n- The telemetry this hunt queries (successful `deviceCode` sign-ins = the token-acquisition event), not the email link delivery, is why it maps to T1528 token theft rather than the spearphishing-link delivery technique.",
     "references": "- [MITRE ATT&CK T1528 — Steal Application Access Token](https://attack.mitre.org/techniques/T1528/)\n- [Huntress — We Need to Talk About Device Code Phishing](https://www.huntress.com/blog/tradecraft-tuesday-device-code-phishing-explained)\n- [Elastic Security Labs — Microsoft Entra ID OAuth Phishing and Detections](https://www.elastic.co/security-labs/entra-id-oauth-phishing-detection)\n- [Silverfort — Detecting device code phishing attacks in Azure: from exploitation to detection](https://www.silverfort.com/blog/device-code-attacks-in-azure-from-exploitation-to-detection/)\n- [Eye Security — Device Code Phishing Forensics: What We Learned from BEC Investigations in the Wild](https://research.eye.security/device-code-phishing-forensics/)\n- [Wiz — 3 OAuth TTPs Seen This Month and How to Detect Them with Entra ID Logs](https://www.wiz.io/blog/recent-oauth-attacks-detection-strategies)",
@@ -7437,21 +7511,28 @@ const HUNTS_DATA = [
     "category": "Flames",
     "title": "A signed .NET host process (`RegAsm.exe`, and by extension `InstallUtil.exe`/`aspnet_compiler.exe`/`MSBuild.exe`/`jsc.exe`) is spawned suspended and hollowed to run AsyncRAT, with the parent lineage tracing back to `ScreenConnect.ClientService.exe` → `powershell.exe`/`wscript.exe`; the hollowed binary runs with an empty/absent command line and then beacons to C2.",
     "tactic": "Defense Evasion",
-    "notes": "Sysmon EID 1: `RegAsm.exe` (or `InstallUtil.exe`/`aspnet_compiler.exe`/`MSBuild.exe`/`jsc.exe`) process-create with an empty or trivial CommandLine and an anomalous ParentImage (`ScreenConnect.ClientService.exe`, `powershell.exe`, `wscript.exe`, `cscript.exe`) — these .NET utilities almost never launch bare with no arguments. Sysmon EID 10 (ProcessAccess) into the target with `GrantedAccess` `0x1F0FFF`/`0x1FFFFF`/`0x1478`/`0x143A` (VM_WRITE+VM_OPERATION+SUSPEND_RESUME+SET_CONTEXT) from an unusual/unsigned source; Sysmon EID 8 (CreateRemoteThread) into the same target; Sysmon EID 25 (ProcessTampering, \"Image is replaced\") is the highest-fidelity signal for the hollow itself. Windows Security 4688 for the same suspicious `RegAsm.exe` lineage where 4688 shows a signed .NET binary with no command line. Correlate the hollowed process making outbound connections (Sysmon EID 3 / DeviceNetworkEvents) — a signed .NET compiler-utility that beacons is high-signal. KQL: `DeviceProcessEvents",
+    "notes": "Sysmon EID 1: `RegAsm.exe` (or `InstallUtil.exe`/`aspnet_compiler.exe`/`MSBuild.exe`/`jsc.exe`) process-create with an empty or trivial CommandLine and an anomalous ParentImage (`ScreenConnect.ClientService.exe`, `powershell.exe`, `wscript.exe`, `cscript.exe`) — these .NET utilities almost never launch bare with no arguments. Sysmon EID 10 (ProcessAccess) into the target with `GrantedAccess` `0x1F0FFF`/`0x1FFFFF`/`0x1478`/`0x143A` (VM_WRITE+VM_OPERATION+SUSPEND_RESUME+SET_CONTEXT) from an unusual/unsigned source; Sysmon EID 8 (CreateRemoteThread) into the same target; Sysmon EID 25 (ProcessTampering, \"Image is replaced\") is the highest-fidelity signal for the hollow itself. Windows Security 4688 for the same suspicious `RegAsm.exe` lineage where 4688 shows a signed .NET binary with no command line. Correlate the hollowed process making outbound connections (Sysmon EID 3 / DeviceNetworkEvents) — a signed .NET compiler-utility that beacons is high-signal. KQL: `DeviceProcessEvents | where InitiatingProcessFileName in~ (\"ScreenConnect.ClientService.exe\",\"powershell.exe\",\"wscript.exe\") and FileName in~ (\"regasm.exe\",\"installutil.exe\",\"aspnet_compiler.exe\",\"msbuild.exe\",\"jsc.exe\") and (isempty(ProcessCommandLine) or ProcessCommandLine !contains \"\\\\\")`; pivot `DeviceImageLoadEvents` for `clr.dll`/`mscoree.dll` loading into an unexpected host and `DeviceNetworkEvents` for the follow-on beacon. Source-article detections: Kaspersky EDR `code_injection_to_unusual_process` (flags RegAsm.exe injection) and `suspicious_assembly_loading_into_powershell_via_reflection_amsi`; Sigma for ScreenConnect spawning `powershell.exe`/`cmd.exe`/`schtasks.exe`/`msiexec.exe`. IOCs: C2 `mora1987[.]work[.]gd`, `install.res.1033.dll`, `installer_method3_stream.vbs`, `Fj5NmEsp9EuKrun.ps1`. Cross-reference T1055 (parent injection) and T1218 (signed-binary/RegAsm proxy execution) — the abuse of a signed .NET utility is the durable pivot.",
     "tags": [
+      "defense_evasion",
+      "process_hollowing",
+      "windows",
+      "asyncrat",
+      "screenconnect",
       "T1055",
-      "T1218"
+      "T1218",
+      "T1055.012"
     ],
     "techniques": [
       "T1055",
-      "T1218"
+      "T1218",
+      "T1055.012"
     ],
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
     "submitter": {
-      "name": "#defense_evasion #T1055_012 #T1055 #T1218 #process_hollowing #windows #asyncrat #screenconnect",
-      "link": ""
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
     },
     "why": "- Process hollowing lets AsyncRAT execute inside a Microsoft-signed .NET binary (`RegAsm.exe`), so the malicious process inherits a trusted image name/signature and slips past image-name allowlists and casual triage — high impact, low visibility without behavioral detection.\n- The behavior is inherently detectable: the hollow requires a suspended child plus cross-process `VM_WRITE`/`SET_CONTEXT` access (Sysmon EID 10 GrantedAccess), and `RegAsm.exe`/`InstallUtil.exe`/`MSBuild.exe` launching with no command line and an interpreter/RAT-tool parent is a rare, high-signal anomaly. Sysmon EID 25 (ProcessTampering) catches the image replacement directly.\n- The chain is durable across the campaign: even as installers, hashes, and C2 rotate, the structural lineage (ScreenConnect → PowerShell/VBScript reflective load → hollowed signed .NET host → outbound beacon) stays constant, making the parent-child + no-command-line + network-beacon correlation resilient to IOC churn.\n- Anchoring on host-process lineage rather than payload signatures generalizes to other loaders that abuse the same signed .NET utilities (T1218), so the hunt keeps value beyond this single AsyncRAT variant.",
     "references": "- [MITRE ATT&CK T1055.012 - Process Injection: Process Hollowing](https://attack.mitre.org/techniques/T1055/012/)\n- [Source CTI Report — Securelist ScreenConnect/AsyncRAT campaign](https://securelist.com/tr/the-soc-files-screenconnect-campaign-with-asyncrat/120472/)\n- [FalconForce — Sysmon 13: Process Tampering Detection (EventID 25)](https://medium.com/falconforce/sysmon-13-process-tampering-detection-820366138a6c)\n- [Splunk Security Content — Detect Regasm Spawning a Process](https://research.splunk.com/endpoint/72170ec5-f7d2-42f5-aefb-2b8be6aad15f/)\n- [Elastic — Execution from Unusual Directory / Command Line (RegAsm, InstallUtil abuse)](https://www.elastic.co/guide/en/security/current/execution-from-unusual-directory-command-line.html)\n- [Red Canary — Process Hollowing and Portable Executable relocations](https://redcanary.com/blog/threat-detection/process-hollowing/)",
@@ -7463,15 +7544,29 @@ const HUNTS_DATA = [
     "category": "Flames",
     "title": "An adversary evades command-line detection by executing obfuscated commands — Base64 `-e`/`-EncodedCommand` PowerShell run via WMI, mixed-case `pOWerShELl.exE`/`CmD.eXe` interpreter names, and runtime string reconstruction — matching the BumbleBee→AdaptixC2→Akira tradecraft from the DFIR Report (SEO-poisoned MSI, `consent.exe` sideloading `msimg32.dll`).",
     "tactic": "Defense Evasion",
-    "notes": "Primary telemetry: PowerShell Script Block Logging EID 4104 (Microsoft-Windows-PowerShell/Operational) — engine logs post-deobfuscation clear text, so `Invoke-Expression` of a decoded blob spawns its own readable 4104; enable Module Logging EID 4103 and Windows Security 4688 (require \"Include command line in process creation events\") + Sysmon EID 1 for full command lines. Obfuscation indicators to hunt: `-e`/`-enc`/`-EncodedCommand`/`-ec` with a long Base64 string (e.g. `powershell.exe -e JABQAG8...`); high entropy / non-uniform char distribution in ProcessCommandLine; runtime reassembly tokens `[char]`, `-join`, `[string]::join`, format operator `-f`, backtick escaping; cmd/batch caret `^` escaping and `%VAR:~x,y%` env-var substring; mixed/toggled case interpreter names (`pOWerShELl.exE`, `CmD.eXe`). Example KQL: `DeviceProcessEvents",
-    "tags": [],
-    "techniques": [],
+    "notes": "Primary telemetry: PowerShell Script Block Logging EID 4104 (Microsoft-Windows-PowerShell/Operational) — engine logs post-deobfuscation clear text, so `Invoke-Expression` of a decoded blob spawns its own readable 4104; enable Module Logging EID 4103 and Windows Security 4688 (require \"Include command line in process creation events\") + Sysmon EID 1 for full command lines. Obfuscation indicators to hunt: `-e`/`-enc`/`-EncodedCommand`/`-ec` with a long Base64 string (e.g. `powershell.exe -e JABQAG8...`); high entropy / non-uniform char distribution in ProcessCommandLine; runtime reassembly tokens `[char]`, `-join`, `[string]::join`, format operator `-f`, backtick escaping; cmd/batch caret `^` escaping and `%VAR:~x,y%` env-var substring; mixed/toggled case interpreter names (`pOWerShELl.exE`, `CmD.eXe`). Example KQL: `DeviceProcessEvents | where FileName has_any (\"powershell.exe\",\"pwsh.exe\",\"cmd.exe\") | where ProcessCommandLine has_any (\"-e \",\"-enc\",\"-EncodedCommand\",\"-ec \",\"FromBase64String\",\"[char]\",\"-join\",\"Invoke-Expression\",\"iex\") or ProcessCommandLine matches regex @\"[pP][oO][wW][eE][rR]\"` then filter by base64 length/entropy. Source-article detections: DFIR private Sigma `410f5c82-…` (Veeam creds via psql), YARA `SUSP_PS1_JAB_Pattern_Jun22_1` (PS Base64 `JAB` pattern), `BumblebeeC2`/`CAPE_Bumblebee2024`, Suricata 2056726/2056727 (BumbleBee C2), AdaptixC2 IP `172.96.137[.]160`. Decode captured Base64 and rescore with Revoke-Obfuscation (`Measure-RvoObfuscation`). Cross-ref T1059.001 (PowerShell) and T1059.003 (Windows cmd) — the obfuscation rides on those interpreters; validate against legit encoded-command use (SCCM/Defender/GPO).",
+    "tags": [
+      "defense_evasion",
+      "command_obfuscation",
+      "powershell",
+      "windows",
+      "akira",
+      "adaptixc2",
+      "T1059.001",
+      "T1059.003",
+      "T1027.010"
+    ],
+    "techniques": [
+      "T1059.001",
+      "T1059.003",
+      "T1027.010"
+    ],
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
     "submitter": {
-      "name": "where ProcessCommandLine has_any (\"-e \",\"-enc\",\"-EncodedCommand\",\"-ec \",\"FromBase64String\",\"[char]\",\"-join\",\"Invoke-Expression\",\"iex\") or ProcessCommandLine matches regex @\"[pP][oO][wW][eE][rR]\"` then filter by base64 length/entropy. Source-article detections: DFIR private Sigma `410f5c82-…` (Veeam creds via psql), YARA `SUSP_PS1_JAB_Pattern_Jun22_1` (PS Base64 `JAB` pattern), `BumblebeeC2`/`CAPE_Bumblebee2024`, Suricata 2056726/2056727 (BumbleBee C2), AdaptixC2 IP `172.96.137[.]160`. Decode captured Base64 and rescore with Revoke-Obfuscation (`Measure-RvoObfuscation`). Cross-ref **T1059.001** (PowerShell) and **T1059.003** (Windows cmd) — the obfuscation rides on those interpreters; validate against legit encoded-command use (SCCM/Defender/GPO).",
-      "link": ""
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
     },
     "why": "- Directly models the observed Akira tradecraft: Base64 `-e` PowerShell executed via WMI and mixed-case `CmD.eXe`/`pOWerShELl.exE` are concrete command-obfuscation behaviors from the 2026-06-29 DFIR Report, not generic theory.\n- EID 4104 Script Block Logging defeats the obfuscation by design — it records the deobfuscated script the engine actually ran — so this is a high-fidelity, low-cost hunt where logging is enabled, with 4688/Sysmon 1 catching the outer encoded launcher.\n- Obfuscation is an interpreter-agnostic evasion layer sitting on top of T1059.001/T1059.003; hunting the encoding/case/reconstruction indicators catches BumbleBee/AdaptixC2 loaders and any commodity actor reusing `-enc`, `Invoke-Obfuscation`, or `Invoke-DOSfuscation`.\n- Entropy/character-ratio scoring separates malicious obfuscation from benign long command lines, keeping the hunt tunable against known-good encoded-command tooling (SCCM, Defender, GPO scripts).",
     "references": "- [MITRE ATT&CK T1027.010 - Command Obfuscation](https://attack.mitre.org/techniques/T1027/010/)\n- [Source CTI Report — The DFIR Report: Bumblebee and AdaptixC2 Deliver Akira](https://thedfirreport.com/2026/06/29/from-bing-search-to-ransomware-bumblebee-and-adaptixc2-deliver-akira-3/)\n- [Elastic — Potential PowerShell Obfuscated Script via High Entropy (Detection.FYI)](https://detection.fyi/elastic/detection-rules/windows/defense_evasion_posh_high_entropy/)\n- [Splunk Security Content — PowerShell 4104 Hunting](https://research.splunk.com/endpoint/d6f2b006-0041-11ec-8885-acde48001122/)\n- [Splunk — Hunting for Malicious PowerShell using Script Block Logging](https://www.splunk.com/en_us/blog/security/hunting-for-malicious-powershell-using-script-block-logging.html)\n- [TrustedSec — Building a Detection Foundation Part 3: PowerShell and Script Logging (EID 4104/4103)](https://trustedsec.com/blog/building-a-detection-foundation-part-3-powershell-and-script-logging)\n- [Daniel Bohannon — Revoke-Obfuscation: PowerShell Obfuscation Detection Framework](https://github.com/danielbohannon/Revoke-Obfuscation)",
@@ -7483,15 +7578,35 @@ const HUNTS_DATA = [
     "category": "Flames",
     "title": "Akira operators inhibit system recovery on Windows immediately before encryption by deleting Volume Shadow Copies (WMI/PowerShell, vssadmin, wmic), tampering with boot recovery via bcdedit, and deleting the backup catalog via wbadmin — hunt for these LOLBin invocations with destructive arguments, spawned from ransomware or an anomalous parent.",
     "tactic": "Impact",
-    "notes": "Look in Windows Security EID 4688 (New Process Created, requires command-line auditing) and Sysmon EID 1 (ProcessCreate) for `vssadmin.exe`, `wmic.exe`, `bcdedit.exe`, `wbadmin.exe`, and `powershell.exe` executing recovery-inhibition arguments. Source-article command (confirmed): `powershell.exe -Command \"Get-WmiObject Win32_Shadowcopy",
-    "tags": [],
-    "techniques": [],
+    "notes": "Look in Windows Security EID 4688 (New Process Created, requires command-line auditing) and Sysmon EID 1 (ProcessCreate) for `vssadmin.exe`, `wmic.exe`, `bcdedit.exe`, `wbadmin.exe`, and `powershell.exe` executing recovery-inhibition arguments. Source-article command (confirmed): `powershell.exe -Command \"Get-WmiObject Win32_Shadowcopy | Remove-WmiObject\"` firing ~1s after `locker.exe` on each host (Sigma `87df9ee1-5416-453a-8a08-e8d4a51e9ce1` \"Delete Volume Shadow Copies Via WMI With PowerShell\"). Broader Akira/ransomware repertoire to sweep (not all observed in this intrusion — standard Akira tradecraft): `vssadmin.exe delete shadows /all /quiet`, `vssadmin resize shadowstorage /for=c: /on=c: /maxsize=...`, `wmic shadowcopy delete`, `bcdedit /set {default} recoveryenabled no`, `bcdedit /set {default} bootstatuspolicy ignoreallfailures`, `wbadmin delete catalog -quiet`, `wbadmin delete systemstatebackup`. KQL (Defender/MDE): `DeviceProcessEvents | where ProcessCommandLine has_any (\"delete shadows\",\"shadowcopy delete\",\"Win32_Shadowcopy\",\"Remove-WmiObject\",\"recoveryenabled no\",\"bootstatuspolicy ignoreallfailures\",\"delete catalog\",\"delete systemstatebackup\",\"resize shadowstorage\")`. Pivot on parent-process lineage — legitimate admin use is rare and interactive; ransomware spawns these non-interactively from the locker or a suspicious parent (loader, script host, remote WMI). Correlate with T1489 Service Stop — the same actor disabled SQL/IIS across hosts via `wmic /node:@C:\\temp\\hosts1.txt /failfast:on service where \"Name Like '%sql%'\" call ChangeStartmode Disabled` and `wmic /node:@C:\\temp1\\hosts.txt /failfast:on process where \"CommandLine Like '%sql%'\" delete` — watch Service Control Manager (System log EID 7040 service start-type changed to disabled). Also watch Windows Backup EID 524 (backup catalog deleted) for shadow-copy loss. Because Akira chains T1490 + T1489 + T1486, treat any of these as part of the encryption kill-chain and escalate to ransomware IR. Tune out narrow, single-volume admin deletions with a snapshot/volume filter; escalate on `/all`, remote `/node:`, or no filter.",
+    "tags": [
+      "impact",
+      "inhibit_system_recovery",
+      "windows",
+      "akira",
+      "ransomware",
+      "bumblebee",
+      "adaptixc2",
+      "vssadmin",
+      "wmic",
+      "bcdedit",
+      "wbadmin",
+      "lolbin",
+      "T1489",
+      "T1490",
+      "T1486"
+    ],
+    "techniques": [
+      "T1489",
+      "T1490",
+      "T1486"
+    ],
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
     "submitter": {
-      "name": "where ProcessCommandLine has_any (\"delete shadows\",\"shadowcopy delete\",\"Win32_Shadowcopy\",\"Remove-WmiObject\",\"recoveryenabled no\",\"bootstatuspolicy ignoreallfailures\",\"delete catalog\",\"delete systemstatebackup\",\"resize shadowstorage\")`. Pivot on **parent-process lineage** — legitimate admin use is rare and interactive; ransomware spawns these non-interactively from the locker or a suspicious parent (loader, script host, remote WMI). **Correlate with T1489 Service Stop** — the same actor disabled SQL/IIS across hosts via `wmic /node:@C:\\temp\\hosts1.txt /failfast:on service where \"Name Like '%sql%'\" call ChangeStartmode Disabled` and `wmic /node:@C:\\temp1\\hosts.txt /failfast:on process where \"CommandLine Like '%sql%'\" delete` — watch Service Control Manager (System log **EID 7040** service start-type changed to disabled). Also watch **Windows Backup EID 524** (backup catalog deleted) for shadow-copy loss. Because Akira chains **T1490 + T1489 + T1486**, treat any of these as part of the encryption kill-chain and escalate to ransomware IR. Tune out narrow, single-volume admin deletions with a snapshot/volume filter; escalate on `/all`, remote `/node:`, or no filter.",
-      "link": ""
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
     },
     "why": "- **Directly observed tradecraft, not theory:** The DFIR Report intrusion shows Akira's `locker.exe` auto-deleting shadow copies via `Get-WmiObject Win32_Shadowcopy | Remove-WmiObject` ~1 second after execution on every host — a tight, high-fidelity signal that fires just before mass encryption, giving defenders a narrow window to isolate hosts.\n- **Recovery inhibition is the ransomware pivot point:** Deleting shadow copies, wiping the backup catalog, and disabling boot-time recovery (`bcdedit`) removes the victim's ability to restore without paying — catching it converts a \"we restore from backup\" incident into a contained one.\n- **LOLBins make this behavior-detectable, not IOC-dependent:** `vssadmin`, `wmic`, `bcdedit`, `wbadmin`, and `powershell` are signed native tools, so the detection lives in the command-line arguments and parent lineage rather than file hashes — durable across Akira builds, loaders (Bumblebee), and C2 (AdaptixC2).\n- **Akira runs T1490 + T1489 + T1486 together:** Recovery inhibition co-occurs with mass service stop (SQL/IIS teardown via remote WMIC) and encryption; correlating these three raises confidence and reduces the false positives that any single vssadmin/wmic hit generates.",
     "references": "- [MITRE ATT&CK T1490 - Inhibit System Recovery](https://attack.mitre.org/techniques/T1490/)\n- [Source CTI Report — The DFIR Report: Bumblebee and AdaptixC2 Deliver Akira](https://thedfirreport.com/2026/06/29/from-bing-search-to-ransomware-bumblebee-and-adaptixc2-deliver-akira-3/)\n- [Atomic Red Team — T1490 Inhibit System Recovery (vssadmin, WMI, wbadmin, recovery console atomics)](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1490/T1490.md)\n- [Splunk Security Content — Windows WMIC Shadowcopy Delete](https://research.splunk.com/endpoint/0a8c4b26-a4e2-4ef1-b0d9-62af6d36bdc8/)\n- [Splunk Security Content — Deleting Shadow Copies (vssadmin/wmic)](https://research.splunk.com/endpoint/b89919ed-ee5f-492c-b139-95dbb162039e/)\n- [Elastic Prebuilt Rule — Volume Shadow Copy Deletion via WMIC](https://www.elastic.co/docs/reference/security/prebuilt-rules/rules/windows/impact_volume_shadow_copy_deletion_via_wmic)\n- [Red Canary — It's all fun and games until ransomware deletes the shadow copies](https://redcanary.com/blog/threat-detection/its-all-fun-and-games-until-ransomware-deletes-the-shadow-copies/)",
@@ -7503,8 +7618,15 @@ const HUNTS_DATA = [
     "category": "Flames",
     "title": "A process that is not a legitimate Windows authentication service (lsass.exe, services.exe, winlogon.exe) creates a new access token via `LogonUser` and impersonates a user, then spawns a child process (notably a browser) under the new token context — matching ToddyCat's Umbrij tool minting/impersonating a token to run headless Chrome and steal Gmail OAuth tokens.",
     "tactic": "Privilege Escalation",
-    "notes": "Primary tells (Windows Security): 4624 New Logon with LogonType 9 (NewCredentials) — the classic make-token / `runas /netonly` signature where a process mints a fresh token for a user; 4648 explicit-credential logon (alternate creds supplied); 4672 special privileges assigned at logon (SeImpersonatePrivilege, SeAssignPrimaryTokenPrivilege, SeTcbPrivilege — SeTcb is required to fully populate a made token); 4688 process create where the new process runs under a LogonId/SID that differs from its parent, and command line shows browser flags `--remote-debugging-port` / `--headless`. ETW/API telemetry: a non-auth-service process calling LogonUser(W) followed by SetThreadToken / ImpersonateLoggedOnUser / DuplicateTokenEx / CreateProcessWithTokenW. Sysmon: EID 1 (process create — parent/child token mismatch, browser child with remote-debugging) and EID 10 (ProcessAccess — handle to explorer.exe with token-dup rights; Umbrij locates and duplicates explorer.exe's token). Correlate LogonUser -> SetThreadToken/Impersonate -> child-process create as a behavior chain. Sub-technique note: the source describes Umbrij *duplicating* explorer.exe's existing token (behaviorally closer to T1134.001 Token Impersonation/Theft) while Securelist labels it T1134.003; hunt both the mint-and-impersonate (`LogonUser`→`SetThreadToken`) and duplicate-and-impersonate (`OpenProcessToken`→`DuplicateTokenEx`) variants. KQL: `DeviceLogonEvents",
+    "notes": "Primary tells (Windows Security): 4624 New Logon with LogonType 9 (NewCredentials) — the classic make-token / `runas /netonly` signature where a process mints a fresh token for a user; 4648 explicit-credential logon (alternate creds supplied); 4672 special privileges assigned at logon (SeImpersonatePrivilege, SeAssignPrimaryTokenPrivilege, SeTcbPrivilege — SeTcb is required to fully populate a made token); 4688 process create where the new process runs under a LogonId/SID that differs from its parent, and command line shows browser flags `--remote-debugging-port` / `--headless`. ETW/API telemetry: a non-auth-service process calling LogonUser(W) followed by SetThreadToken / ImpersonateLoggedOnUser / DuplicateTokenEx / CreateProcessWithTokenW. Sysmon: EID 1 (process create — parent/child token mismatch, browser child with remote-debugging) and EID 10 (ProcessAccess — handle to explorer.exe with token-dup rights; Umbrij locates and duplicates explorer.exe's token). Correlate LogonUser -> SetThreadToken/Impersonate -> child-process create as a behavior chain. Sub-technique note: the source describes Umbrij *duplicating* explorer.exe's existing token (behaviorally closer to T1134.001 Token Impersonation/Theft) while Securelist labels it T1134.003; hunt both the mint-and-impersonate (`LogonUser`→`SetThreadToken`) and duplicate-and-impersonate (`OpenProcessToken`→`DuplicateTokenEx`) variants. KQL: `DeviceLogonEvents | where LogonType == \"NewCredentials\"` and `DeviceProcessEvents | where InitiatingProcessFileName !in (\"lsass.exe\",\"services.exe\",\"winlogon.exe\") and ProcessCommandLine has_any (\"--remote-debugging-port\",\"--headless\")` correlated on token/SID.",
     "tags": [
+      "privilege_escalation",
+      "defense_evasion",
+      "access_token_manipulation",
+      "windows",
+      "toddycat",
+      "umbrij",
+      "oauth_theft",
       "T1134.001",
       "T1134.003"
     ],
@@ -7516,8 +7638,8 @@ const HUNTS_DATA = [
     "status": "current",
     "related_hunt_ids": [],
     "submitter": {
-      "name": "where InitiatingProcessFileName !in (\"lsass.exe\",\"services.exe\",\"winlogon.exe\") and ProcessCommandLine has_any (\"--remote-debugging-port\",\"--headless\")` correlated on token/SID.",
-      "link": ""
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
     },
     "why": "- ToddyCat's Umbrij tool escalates into a user's context by manufacturing/duplicating and impersonating an access token, then runs a headless browser with `--remote-debugging-port` to steal Gmail OAuth tokens — a token-manipulation abuse that produces distinctive logon and process-lineage artifacts.\n- The make-and-impersonate pattern is high-signal on Windows: a LogonType 9 (NewCredentials) 4624 and a child process running under a different LogonId/SID than its parent are rare in normal endpoint activity outside admin `runas /netonly` usage, giving a hunter a tight, tunable anchor.\n- Legitimate token creation is concentrated in a small set of authentication services (lsass.exe, services.exe, winlogon.exe); any other process invoking `LogonUser` + `SetThreadToken`/`ImpersonateLoggedOnUser` is inherently suspicious and worth review.\n- The browser-specific tail (headless Chrome + remote debugging launched under an impersonated user token, no interactive desktop) ties the generic token-manipulation primitive to the specific ToddyCat OAuth-theft objective, sharpening the hunt beyond the raw technique.",
     "references": "- [MITRE ATT&CK T1134.003 - Access Token Manipulation: Make and Impersonate Token](https://attack.mitre.org/techniques/T1134/003/)\n- [MITRE ATT&CK T1134.001 - Access Token Manipulation: Token Impersonation/Theft (cross-reference)](https://attack.mitre.org/techniques/T1134/001/)\n- [Source CTI Report — Securelist ToddyCat Part 2 (Umbrij tool and OAuth)](https://securelist.com/toddycat-apt-umbrij-tool-and-oauth/120251/)\n- [Elastic Blog — How attackers abuse Access Token Manipulation (ATT&CK T1134)](https://www.elastic.co/blog/how-attackers-abuse-access-token-manipulation)\n- [Atomic Red Team — T1134.001 Token Impersonation/Theft (cross-ref atomics)](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1134.001/T1134.001.md)\n- [Red Canary — Better know a data source: Access tokens](https://redcanary.com/blog/threat-detection/better-know-a-data-source/access-tokens/)",
