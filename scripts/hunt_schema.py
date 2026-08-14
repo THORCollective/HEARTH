@@ -4,6 +4,7 @@ HEARTH hunt frontmatter schema.
 Canonical definition of the YAML frontmatter that every hunt markdown file
 must carry. Used by the parser at runtime and by the validator in CI.
 """
+
 from __future__ import annotations
 
 from jsonschema import Draft202012Validator, FormatChecker
@@ -49,6 +50,13 @@ HUNT_SCHEMA: dict = {
             "properties": {
                 "name": {"type": "string", "minLength": 1},
                 "link": {"type": "string"},
+                # Set only when a submitter listed more than one profile. `link`
+                # remains the primary so existing consumers are unaffected.
+                "links": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "minItems": 2,
+                },
             },
         },
         "severity": {"enum": list(SEVERITIES)},

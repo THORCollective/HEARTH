@@ -231,3 +231,42 @@ def test_command_and_control_is_single_tactic(tmp_path):
     )
     hunt = parse_hunt_file(f, "Flames")
     assert hunt["tactics"] == ["Command and Control", "Exfiltration"]
+
+
+def test_multiple_submitter_links_are_preserved(tmp_path):
+    """A submitter listing several profiles keeps them all — see H258 / #386.
+
+    `link` stays the primary as a plain string so existing consumers are
+    unaffected; the full set lands in `links`.
+    """
+    f = tmp_path / "H997.md"
+    f.write_text(
+        "# H997\n\n"
+        "| Hunt # | Hypothesis | Tactic | Notes | Tags | Submitter |\n"
+        "|---|---|---|---|---|---|\n"
+        "| H997 | A hypothesis | Persistence | n | #persistence | "
+        "[Twitter - 0xDroogy](https://t.co/JHM8u3D9na), "
+        "[Github - Droogy](https://github.com/Droogy) |\n"
+    )
+    hunt = parse_hunt_file(f, "Flames")
+    assert hunt["submitter"]["name"] == "Twitter - 0xDroogy"
+    assert hunt["submitter"]["link"] == "https://t.co/JHM8u3D9na"
+    assert hunt["submitter"]["links"] == [
+        "https://t.co/JHM8u3D9na",
+        "https://github.com/Droogy",
+    ]
+
+
+def test_single_submitter_link_sets_no_links_key(tmp_path):
+    """The common case is unchanged — no empty `links` key on single-profile hunts."""
+    f = tmp_path / "H998.md"
+    f.write_text(
+        "# H998\n\n"
+        "| Hunt # | Hypothesis | Tactic | Notes | Tags | Submitter |\n"
+        "|---|---|---|---|---|---|\n"
+        "| H998 | A hypothesis | Persistence | n | #persistence | "
+        "[X](https://example.com/x) |\n"
+    )
+    hunt = parse_hunt_file(f, "Flames")
+    assert hunt["submitter"]["link"] == "https://example.com/x"
+    assert "links" not in hunt["submitter"]

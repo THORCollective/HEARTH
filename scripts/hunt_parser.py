@@ -160,9 +160,15 @@ def _parse_legacy_table(content: str, hunt_id: str, category: str) -> dict[str, 
     submitter_raw = cells[5]
 
     submitter = {"name": submitter_raw.strip(), "link": ""}
-    m = _SUBMITTER_LINK_RE.search(submitter_raw)
-    if m:
-        submitter = {"name": m.group(1).strip(), "link": m.group(2).strip()}
+    # A submitter cell may carry several profiles, e.g.
+    # "[Twitter - 0xDroogy](...), [Github - Droogy](...)". The first is primary
+    # so `link` stays a plain string for existing consumers; any extras are
+    # kept in `links` rather than dropped (see #386).
+    matches = _SUBMITTER_LINK_RE.findall(submitter_raw)
+    if matches:
+        submitter = {"name": matches[0][0].strip(), "link": matches[0][1].strip()}
+        if len(matches) > 1:
+            submitter["links"] = [url.strip() for _, url in matches]
 
     return {
         "id": cells[0].strip() or hunt_id,
