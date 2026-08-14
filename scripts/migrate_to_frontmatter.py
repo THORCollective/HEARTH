@@ -5,6 +5,7 @@ frontmatter. Idempotent: re-running on an already-migrated file is a no-op.
 Usage:
     python scripts/migrate_to_frontmatter.py [--dry-run] [--path PATH]
 """
+
 from __future__ import annotations
 
 import argparse
@@ -22,22 +23,36 @@ import frontmatter
 from scripts.hunt_parser import _parse_legacy_table
 from scripts.hunt_schema import validate_hunt
 
-
 CATEGORY_DIRS = ("Flames", "Embers", "Alchemy")
 SKIP_FILENAMES = {"secret.md"}  # Easter egg / non-hunt files
 
-_TABLE_BLOCK_RE = re.compile(
-    r"^\|.*Hunt\s*#.*\n\|.*\n\|.*\n", re.MULTILINE
-)
+_TABLE_BLOCK_RE = re.compile(r"^\|.*Hunt\s*#.*\n\|.*\n\|.*\n", re.MULTILINE)
+
+
+_INTRO_RE = re.compile(r"^([^\n#].*?)\n+(?=## )", re.DOTALL)
 
 
 def _build_body(raw: str) -> str:
-    """Strip leading HTML comments, the H1, the legacy table, and intro paragraph; keep the rest."""
+    """Strip leading HTML comments, the H1 and the legacy table; keep the rest.
+
+    The intro paragraph between the H1 and the first ``##`` heading is promoted
+    to a ``## Summary`` section rather than dropped. On 13 of the 66 legacy
+    hunts it is the only place certain CVEs, registry paths, IOC filenames and
+    API names appear (see #386); dropping it silently lost that content. Where
+    it merely paraphrases the hypothesis the section is redundant but harmless
+    — losing detection detail is not.
+    """
     no_html_comment = re.sub(r"^<!--.*?-->\s*\n", "", raw, count=1, flags=re.DOTALL)
     no_table = _TABLE_BLOCK_RE.sub("", no_html_comment, count=1)
     no_h1 = re.sub(r"^# .+\n+", "", no_table, count=1)
-    no_intro = re.sub(r"^[^\n#].*?\n+(?=## )", "", no_h1, count=1, flags=re.DOTALL)
-    return no_intro.strip() + "\n"
+
+    match = _INTRO_RE.match(no_h1)
+    if not match:
+        return no_h1.strip() + "\n"
+
+    intro = match.group(1).strip()
+    rest = no_h1[match.end() :]
+    return f"## Summary\n\n{intro}\n\n{rest}".strip() + "\n"
 
 
 def migrate_file(path: Path, category: str, dry_run: bool) -> bool:
@@ -95,7 +110,9 @@ def migrate_file(path: Path, category: str, dry_run: bool) -> bool:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true")
-    parser.add_argument("--path", type=Path, help="Single file (overrides directory scan)")
+    parser.add_argument(
+        "--path", type=Path, help="Single file (overrides directory scan)"
+    )
     args = parser.parse_args()
 
     targets: list[tuple[Path, str]] = []
