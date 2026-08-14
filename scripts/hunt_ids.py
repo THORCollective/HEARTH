@@ -1,30 +1,46 @@
 """Shared helpers for HEARTH hunt-ID parsing, allocation, and rewriting.
 
-Flames hunt IDs use the format ``HNNN`` (e.g. ``H200``), one monotonic sequence
-across the whole catalog. Embers/Alchemy use ``BNNN``/``MNNN`` in their own
-namespaces; this allocator is Flames-only and ignores them.
+Each category owns an independent, monotonic sequence: Flames ``HNNN``
+(e.g. ``H200``), Embers ``BNNN``, Alchemy ``MNNN``. The number spaces do not
+interact — ``H200`` and ``B200`` are unrelated IDs — so every helper here takes
+the category's prefix and reasons within that one namespace.
+
+The prefix defaults to ``"H"`` so Flames-only callers read unchanged.
 """
 
 from __future__ import annotations
 
 import re
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
+
+#: Directory -> ID prefix. Mirrors the allocation map in
+#: ``scripts/process_hunt_submission.py``; keep the two in sync.
+CATEGORY_PREFIXES = {"Flames": "H", "Embers": "B", "Alchemy": "M"}
 
 HUNT_STEM_RE = re.compile(r"^H(\d+)$")
 
 
-def parse_hunt_number(stem: str) -> int | None:
-    """Return the numeric part of an ``HNNN`` stem, or None if it isn't one."""
-    match = HUNT_STEM_RE.match(stem)
+def prefix_for_category(category: str) -> str:
+    """ID prefix for a category directory name. Unknown categories -> ``"H"``."""
+    return CATEGORY_PREFIXES.get(category, "H")
+
+
+def parse_hunt_number(stem: str, prefix: str = "H") -> int | None:
+    """Return the numeric part of a ``<prefix>NNN`` stem, or None if it isn't one.
+
+    Only matches the given prefix: ``parse_hunt_number("B001")`` is None because
+    the default prefix is ``H``. Pass ``prefix="B"`` to read Embers stems.
+    """
+    match = re.match(rf"^{re.escape(prefix)}(\d+)$", stem)
     return int(match.group(1)) if match else None
 
 
-def existing_numbers(names: Iterable[str]) -> set[int]:
-    """Collect the numeric IDs from an iterable of ``HNNN(.md)`` names/paths."""
+def existing_numbers(names: Iterable[str], prefix: str = "H") -> set[int]:
+    """Collect the numeric IDs from an iterable of ``<prefix>NNN(.md)`` names."""
     nums: set[int] = set()
     for name in names:
-        num = parse_hunt_number(Path(name).stem)
+        num = parse_hunt_number(Path(name).stem, prefix)
         if num is not None:
             nums.add(num)
     return nums
@@ -39,8 +55,8 @@ def next_free_number(existing: set[int]) -> int:
     return max(existing) + 1 if existing else 1
 
 
-def format_hunt_id(num: int) -> str:
-    return f"H{num:03d}"
+def format_hunt_id(num: int, prefix: str = "H") -> str:
+    return f"{prefix}{num:03d}"
 
 
 def rewrite_hunt_id(path: Path, new_id: str) -> Path:
