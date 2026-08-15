@@ -9,7 +9,7 @@ Everyone listed below has submitted ideas that have been added to HEARTH. This l
 | 1 | Lauren Proehl | 172 |
 | 2 | Jinx (THOR Collective) | 39 |
 | 3 | Sydney Marrone | 29 |
-| 4 | Joshua Strickland | 17 |
+| 4 | Joshua Strickland | 20 |
 | 5 | John Grageda | 6 |
 | 6 | Jamie Williams | 3 |
 | 7 | Azrara | 3 |
@@ -41,7 +41,8 @@ Everyone listed below has submitted ideas that have been added to HEARTH. This l
 | 33 | young6x7 | 1 |
 | 34 | th3CyF0x | 1 |
 | 35 | Kelly Lehman | 1 |
-| 36 | - [Twitter - 0xDroogy](https://t.co/JHM8u3D9na), [Github - Droogy](https://github.com/Droogy) | 1 |
+| 36 | Twitter - 0xDroogy | 1 |
 | 37 | Claire Stromboe | 1 |
 | 38 | Jon Perez | 1 |
 | 39 | Collin McClaine | 1 |
+| 40 | Max Margolis | 1 |
