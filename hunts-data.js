@@ -9963,6 +9963,45 @@ const HUNTS_DATA = [
     "created": "2026-08-31T00:35:32-04:00"
   },
   {
+    "id": "H273",
+    "category": "Flames",
+    "title": "Privileged Entra identity dismantles Azure recovery controls before destructive changes",
+    "tactic": "Defense Impairment, Impact",
+    "notes": "Azure Activity Logs (guardrail removal) - Core filter: successful operations `Microsoft.Authorization/locks/delete` or `Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies/delete`, or Recovery Services vault security-setting downgrades (soft-delete or immutability disabled). Triage values: `caller identity`, `caller IP address`, `correlation ID`, `client request ID`, `subscription`, `resource ID`. Strong red flags: multiple locks or immutability policies removed across different resource groups by one principal within an hour, especially a hybrid/synced admin account or a principal that has never before performed authorization or backup-policy operations.\nAzure Activity Logs (recovery destruction and encryption change) - Core filter: `Microsoft.RecoveryServices/vaults/delete`, `Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers/delete`, `Microsoft.Compute/snapshots/delete`, `Microsoft.Compute/restorePointCollections/delete`, or `Microsoft.Storage/storageAccounts/delete`, plus `Microsoft.KeyVault/vaults/write` followed by `Microsoft.Storage/storageAccounts/encryptionScopes/write` binding storage to a newly created customer-managed key. Correlation: join to the guardrail-removal events on `caller identity`, `caller IP address`, and `subscription` within a 24-hour window; the invariant sequence is guardrail removal preceding destruction or encryption change on the same or related `resource ID`. Strong red flags: bulk snapshot/restore-point deletion at machine speed, a brand-new Key Vault immediately referenced by an encryption scope, or destruction that begins minutes after the first lock deletion.\nEntra ID sign-in and audit logs (preceding access) - Core filter: for each flagged `caller identity`, review sign-ins in the preceding 24 hours. Triage values: `source IP address`, `user agent`, `conditional access status`, `MFA result`, `application ID`, `session ID`. Pivot: Entra audit events for role assignment changes, MFA method registration, or federation/domain-sync setting changes touching the same principal shortly before the control-plane activity. Strong red flags: first-seen ASN or hosting-provider IP, single-factor or freshly-registered-MFA sessions on a Global Administrator or Owner-equivalent identity, or a directory-sync service account performing interactive control-plane operations.\nAzure Key Vault logs (attacker-key staging) - Core filter: vault creation plus key creation and immediate access-policy or RBAC grants to the same acting principal. Correlation: match the new key resource against subsequent `Microsoft.Storage/storageAccounts/encryptionScopes/write` payloads; legitimate customer-managed-key rollouts reference change-managed, pre-existing vaults rather than a vault created minutes earlier by the same caller.\n",
+    "tags": [
+      "azure",
+      "entra_id",
+      "cloud_ransomware",
+      "storm_0501",
+      "backup_destruction",
+      "resource_locks",
+      "immutability",
+      "encryption_scopes",
+      "control_plane",
+      "T1490",
+      "T1486",
+      "T1485",
+      "T1078.004"
+    ],
+    "techniques": [
+      "T1490",
+      "T1486",
+      "T1485",
+      "T1078.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Joshua Strickland",
+      "link": "https://novasky.io"
+    },
+    "why": "- Storm-0501 shows ransomware crews moving impact fully into the Azure control plane — deleting backups and encrypting storage with their own key instead of dropping endpoint binaries — so hunts anchored on host telemetry miss the entire destructive phase.\n- The guardrail-removal-then-destroy ordering is an invariant chokepoint: locked immutable vaults and resource locks block deletion by design, so any actor intent on destroying recoverability must emit lock and immutability-policy delete operations first, regardless of which IPs, tools, or accounts they rotate through.\n- Every step is an Azure Resource Manager operation that lands in Azure Activity Logs with caller, source IP, correlation ID, and resource ID by default — no agent deployment or extra licensing is required to hunt this in most tenants.\n- False positives are tractable because the detection unit is a same-principal ordered sequence rather than a single event; legitimate decommissioning maps to change records and known IaC identities, letting hunters triage on chain shape, caller type, and change-window alignment rather than suppressing whole operation classes.",
+    "references": "- [Detecting cloud ransomware in Azure with Tenable One's cloud detection and response capabilities (Tenable, Aug 17 2026)](https://www.tenable.com/blog/detecting-cloud-ransomware-in-azure-with-tenable-ones-cloud-detection-and-response)\n- [Storm-0501's evolving techniques lead to cloud-based ransomware (Microsoft Security Blog)](https://www.microsoft.com/en-us/security/blog/2025/08/27/storm-0501s-evolving-techniques-lead-to-cloud-based-ransomware/)\n- [Azure Backup security overview — immutable vaults and soft delete (Microsoft Docs)](https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/backup/security-overview.md)",
+    "file_path": "Flames/H273.md",
+    "created": "2026-08-31T00:35:43-04:00"
+  },
+  {
     "id": "H274",
     "category": "Flames",
     "title": "Server-side payload deleting its own class file, its output files, and the application log on an exploited Java app server",
@@ -10421,6 +10460,35 @@ const HUNTS_DATA = [
     "references": "- [MITRE ATT&CK T1554: Compromise Host Software Binary](https://attack.mitre.org/techniques/T1554/)\n- [Huntress: MacSync Stealer — how a Google search for Claude led to a macOS infostealer (source report)](https://www.huntress.com/blog/fake-claude-macsync)\n- [Jamf Threat Labs: MacSync Stealer evolves — from ClickFix to code-signed Swift malware](https://www.jamf.com/blog/macsync-stealer-evolution-code-signed-swift-malware-analysis/)\n- [Red Canary: How to thwart application bundle manipulation on macOS](https://redcanary.com/blog/threat-detection/mac-application-bundles/)\n- [Elastic Security Labs: Sinking macOS pirate ships with Elastic behavior detections (ESF-based bundle tampering)](https://www.elastic.co/security-labs/sinking-macos-pirate-ships)\n- [Mysk: Silent replacement of trusted macOS app executables](https://mysk.blog/2026/07/23/macos-overwrite-app-executables/)\n- [Intego: OSX/Amos — hunting C2s in trojanized Electron ASAR payloads](https://www.intego.com/mac-security-blog/osx-amos-hunting-c2s-in-trojanized-electron-asar-payloads/)\n- [Apple: Endpoint Security framework event types](https://developer.apple.com/documentation/endpointsecurity/es_event_type_t)",
     "file_path": "Flames/H284.md",
     "created": "2026-08-30T23:14:05-05:00"
+  },
+  {
+    "id": "H285",
+    "category": "Flames",
+    "title": "Threat actors are embedding malicious build.rs scripts in Rust crate dependencies that decode base64-fragmented URLs, disable TLS certificate validation via a custom AcceptAllServerCertVerifier, and silently fetch second-stage binaries during the `cargo build` compile-time process to achieve pre-execution code execution on developer and CI machines without any application code ever running.",
+    "tactic": "Execution",
+    "notes": "Based on ATT&CK technique T1195.002 (Compromise Software Supply Chain / Compromise Software Dependencies and Development Tools). Generated by [hearth-auto-intel](https://github.com/THORCollective/HEARTH).",
+    "tags": [
+      "execution",
+      "rust",
+      "supplychain",
+      "cargo",
+      "buildscript",
+      "T1195.002"
+    ],
+    "techniques": [
+      "T1195.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "DejaWh0",
+      "link": "_No response_"
+    },
+    "why": "- Rust build scripts (`build.rs`) execute automatically at compile time with the full privileges of the building user, before any application logic runs and before `cargo audit` or dependency scanners can meaningfully inspect behavior, making this an especially stealthy and high-trust execution vector.\n- A single `cargo build` or `cargo update` on a poisoned lockfile is sufficient to trigger payload download and execution; the compromised crate's own source code is never called, meaning traditional \"does this library get invoked\" review misses the threat entirely.\n- The technique bypasses supply-chain hygiene controls that focus on published package code rather than transitive build-time dependencies, and the detached process spawn with `std::mem::forget(child)` allows the payload to persist and communicate with C2 after the build step exits successfully, leaving CI logs and Actions UI green.\n- This pattern (build-time dropper as a typosquatted \"helper\" dependency) is directly reusable against any language ecosystem with build hooks (npm postinstall, Python setup.py, Rust build.rs, Go generate), so detecting it in Rust telemetry now hardens hunting playbooks for future ecosystem-agnostic supply-chain campaigns.\n- Rotating credentials and rebuilding artifacts is only effective if the initial build-time execution is detected quickly; egress monitoring for anomalous outbound connections during build steps is the most reliable way to catch this class of attack before secrets are exfiltrated.",
+    "references": "- [MITRE ATT&CK T1195.002 – Compromise Software Supply Chain](https://attack.mitre.org/techniques/T1195/002/)\n- [Source CTI Report](https://www.stepsecurity.io/blog/arrayref-rust-crate-supply-chain-attack)",
+    "file_path": "Flames/H285.md",
+    "created": "2026-08-30T21:38:29-07:00"
   },
   {
     "id": "M001",
