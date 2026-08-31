@@ -37,6 +37,34 @@ def get_user_agent():
     ]
     return random.choice(user_agents)
 
+# Scheme is OPTIONAL on purpose. Submitters routinely paste a bare
+# "example.com/post" — browsers and curl both accept it, so it does not look
+# wrong. Requiring "https?://" made process_issue return before issuing a single
+# HTTP request, and the downstream workflow then told the submitter "the website
+# is blocking automated access" — sending them off to hand-copy an article that
+# was in fact perfectly reachable (issue #395, ox.security, HTTP 200).
+# The optional <...> wrapper covers markdown autolinking.
+SOURCE_URL_RE = re.compile(
+    r'### Link to Original Source\s*\n\s*'
+    r'<?((?:https?://)?[^\s<>]+\.[a-zA-Z]{2,}(?:/[^\s<>]*)?)>?'
+)
+
+
+def parse_source_url(issue_body):
+    """Extract the submitted source URL, normalised to an absolute https URL.
+
+    Returns None when no URL can be parsed — a PARSE failure, which is a
+    different thing from a fetch failure and must not be reported as one.
+    """
+    m = SOURCE_URL_RE.search(issue_body or "")
+    if not m:
+        return None
+    url = m.group(1).strip()
+    if not url.lower().startswith(("http://", "https://")):
+        url = "https://" + url
+    return url
+
+
 def get_medium_content(url):
     """
     Special handling for Medium articles which often block scrapers.
@@ -373,12 +401,15 @@ def main():
         return
 
     # Find the URL in the issue body
-    url_match = re.search(r'### Link to Original Source\s*\n\s*(https?://[^\s]+)', issue_body)
-    if not url_match:
-        print("No CTI link found in the issue body.")
+    cti_url = parse_source_url(issue_body)
+    if not cti_url:
+        print(
+            "No CTI link found in the issue body — could not parse a URL from "
+            "the '### Link to Original Source' section. This is a PARSE failure, "
+            "not a fetch failure: no request was attempted."
+        )
         return
 
-    cti_url = url_match.group(1).strip()
     print(f"Processing CTI link: {cti_url}")
 
     # Check if the content has already been processed
