@@ -1376,6 +1376,52 @@ const HUNTS_DATA = [
     "created": "2026-08-30T23:14:05-05:00"
   },
   {
+    "id": "B043",
+    "category": "Embers",
+    "title": "Baseline of Entra ID service principals holding mail and chat application permissions — who owns them, what they read, and from where",
+    "tactic": "Collection, Persistence",
+    "notes": "",
+    "tags": [
+      "collection",
+      "persistence",
+      "m365",
+      "saas",
+      "entra_id",
+      "embers",
+      "baseline",
+      "t1213_005",
+      "t1098_001",
+      "t1550_001",
+      "service_principal",
+      "microsoft_graph",
+      "application_permissions",
+      "workload_identity",
+      "cisa_red_team",
+      "T1213.005",
+      "T1098.001",
+      "T1550.001"
+    ],
+    "techniques": [
+      "T1213.005",
+      "T1098.001",
+      "T1550.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [
+      "H286",
+      "H288"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **Both compromises in the source report ran through applications, and neither organization could see\n  them.** CISA's finding is that both tenants used broad application permissions for most apps and that\n  neither had Conditional Access for workload identities — a control the red team reports never having\n  seen deployed anywhere. When the preventive control is effectively absent industry-wide, the inventory\n  is the control.\n- **Detection here is a change-detection problem, and change detection requires a prior state.** Volume,\n  endpoint and permission scope all look identical between a compliance product and an operator reading\n  the tenant. What differs is that the operator's access is *new*: new secret, newly exercised permission,\n  new source. None of those are computable without a recorded baseline, which is why this must be an\n  Ember rather than a rule.\n- **Two permissions in the collection set are tenant-level escalation primitives.** `Application.ReadWrite.All`\n  allows adding credentials to any other application, and `AppRoleAssignment.ReadWrite.All` allows a\n  service principal to grant itself `Chat.Read.All` or `RoleManagement.ReadWrite.Directory`. An\n  application holding either is equivalent to a privileged account, and most inventories do not treat it\n  that way. Simply enumerating who holds them is often the highest-value hour in this exercise.\n- **Ownership is an unmonitored privilege, and disabled owners are not safe owners.** Both organizations\n  were reached through the application's owner rather than the application, and in one case the owner was\n  a disabled AD-synced account that the operators re-enabled and DCSynced. Owner identity and owner\n  account state belong in the register as first-class fields, not as metadata.\n- **Dormant permissions are the cheapest high-signal feature available.** Applications routinely hold\n  permissions they have never used. Recording which of a service principal's declared permissions were\n  actually exercised during the window converts a static permission list into a behavioural expectation,\n  and makes first-use of a dormant permission a near-conclusive event at effectively zero cost.\n- **Without this register, Graph telemetry is unreadable.** MicrosoftGraphActivityLogs is keyed on AppId\n  and ServicePrincipalId GUIDs, and Microsoft's own IdentityInfo enrichment does not cover service\n  principals. Any team attempting to triage app-only Graph access without a local name-and-owner mapping\n  is reading hex during an incident.\n- **Token revocation depends on knowing what to revoke.** Both organizations lacked processes for\n  revoking compromised access and refresh tokens, so cloud access outlived on-prem eviction. The credential\n  inventory in this register is the eviction checklist.",
+    "references": "- [MITRE ATT&CK T1213.005: Data from Information Repositories — Messaging Applications](https://attack.mitre.org/techniques/T1213/005/)\n- [MITRE ATT&CK T1098.001: Account Manipulation — Additional Cloud Credentials](https://attack.mitre.org/techniques/T1098/001/)\n- [CISA AA26-237A: A Tale of Two SOCs — Insights From Two Red Team Assessments (source report)](https://www.cisa.gov/news-events/cybersecurity-advisories/aa26-237a)\n- [Practical365: Detect and report high-priority permissions in Entra ID apps](https://practical365.com/entra-id-apps-review-permissions/)\n- [Quarkslab: Auditing application permissions in Microsoft Entra ID — hidden risks and pitfalls](https://blog.quarkslab.com/auditing-application-permissions-in-microsoft-entra-id-hidden-risks-pitfalls-and-quarkslabs-qazpt-tool.html)\n- [Red Canary: Entra ID service principals in business email compromise schemes](https://redcanary.com/blog/threat-detection/entra-id-service-principals/)\n- [Invictus IR: MicrosoftGraphActivityLogs — the complete guide](https://www.invictus-ir.com/news/everything-you-need-to-know-about-the-microsoftgraphactivitylogs)\n- [Microsoft: Conditional Access for workload identities](https://learn.microsoft.com/en-us/entra/identity/conditional-access/workload-identity)",
+    "file_path": "Embers/B043.md",
+    "created": null
+  },
+  {
     "id": "H001",
     "category": "Flames",
     "title": "An adversary is attempting to brute force the admin account on the externally facing VPN gateway.",
@@ -10491,6 +10537,131 @@ const HUNTS_DATA = [
     "created": "2026-08-30T21:38:29-07:00"
   },
   {
+    "id": "H286",
+    "category": "Flames",
+    "title": "Kerberos service ticket requested for the Entra ID Seamless SSO computer account and replayed from proxied infrastructure",
+    "tactic": "Credential Access, Lateral Movement, Defense Evasion",
+    "notes": "",
+    "tags": [
+      "credential_access",
+      "lateral_movement",
+      "defense_evasion",
+      "windows",
+      "flames",
+      "t1558",
+      "t1550_003",
+      "t1003_006",
+      "kerberos",
+      "seamless_sso",
+      "entra_id",
+      "hybrid_identity",
+      "azureadssoacc",
+      "cisa_red_team",
+      "T1558",
+      "T1550.003",
+      "T1003.006"
+    ],
+    "techniques": [
+      "T1558",
+      "T1550.003",
+      "T1003.006"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **The published detection for this technique does not cover the way it was actually used.** Nearly all\n  Seamless SSO abuse guidance targets the forged-ticket variant and keys on the *absence* of a KDC event.\n  An operator who already holds DCSync does not need to forge anything — they request a genuine ticket\n  with a stolen key, producing exactly the KDC event the detection expects to be missing. Building the\n  hunt around ticket provenance rather than ticket forgery closes a gap that a correlation rule alone\n  leaves open.\n- **`AZUREADSSOACC$` falls inside the standard 4769 tuning exclusion.** The near-universal advice for\n  making 4769 tractable is to drop machine accounts by filtering `ServiceName` ending in `$`. That single\n  filter removes the Seamless SSO account from view, which means many environments that believe they\n  monitor Kerberos service ticket activity have no coverage of the one SPN that bridges on-prem AD to the\n  cloud. This is worth checking as a standalone exercise even before running the hunt.\n- **It is the hinge between an on-prem compromise and a tenant compromise.** Seamless SSO exists\n  specifically to let a Kerberos ticket serve as the first factor for Entra ID. That makes the SSO\n  computer account a Tier 0 asset with cloud reach, and it means an AD compromise is a cloud compromise\n  by default unless MFA covers the second phase. CISA's red team found MFA coverage gaps concentrated\n  precisely where they mattered least to users and most to attackers: synced service accounts.\n- **The proxied source IP defeats location-based conditional access and analyst intuition.** By tunnelling\n  through a SOCKS proxy on an internal host, the operator makes the sign-in appear to originate from\n  trusted corporate space. Any control or triage habit that treats \"came from our IP range\" as\n  reassurance is inverted here. The durable signal is device and user-agent mismatch against a known\n  asset inventory, not network location.\n- **The stage is cheap to instrument relative to what it prevents.** Compared to broad Kerberos anomaly\n  detection, scoping to one service name yields a small, reviewable event set in most environments, and\n  the account/source-host pivot needs only a few weeks of history to become meaningful. Pairing it with\n  the 4662 replication check gives two independent tripwires on the same kill chain.\n- **HEARTH had no T1558 coverage.** Existing Kerberos-adjacent hunts address NTLM relay and\n  post-NTDS-dump credential reuse ([[M035]]), not Kerberos ticket theft and reuse as an identity-boundary\n  crossing.",
+    "references": "- [MITRE ATT&CK T1558: Steal or Forge Kerberos Tickets](https://attack.mitre.org/techniques/T1558/)\n- [CISA AA26-237A: A Tale of Two SOCs — Insights From Two Red Team Assessments (source report)](https://www.cisa.gov/news-events/cybersecurity-advisories/aa26-237a)\n- [DSInternals: Impersonating Office 365 users with Mimikatz (the original Seamless SSO ticket research)](https://www.dsinternals.com/en/impersonating-office-365-users-mimikatz/)\n- [SpecterOps Rubeus documentation: the asktgs command and its detection considerations](https://docs.specterops.io/ghostpack-docs/Rubeus-mdx/commands/ticket-requests/asktgs)\n- [Splunk: Detecting Active Directory Kerberos attacks — threat research release](https://www.splunk.com/en_us/blog/security/detecting-active-directory-kerberos-attacks-threat-research-release-march-2022.html)\n- [Microsoft: Understanding the Primary Refresh Token (PRT) in Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/identity/devices/concept-primary-refresh-token)\n- [Microsoft: Entra Connect Seamless SSO — technical deep dive and AZUREADSSOACC$ key rollover](https://learn.microsoft.com/en-us/entra/identity/hybrid/connect/how-to-connect-sso-how-it-works)\n- [Ultimate Windows Security: Event ID 4769 — a Kerberos service ticket was requested](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventid=4769)",
+    "file_path": "Flames/H286.md",
+    "created": null
+  },
+  {
+    "id": "H287",
+    "category": "Flames",
+    "title": "SCCM user-device affinity queried to map privileged users to their workstations before lateral movement",
+    "tactic": "Discovery",
+    "notes": "",
+    "tags": [
+      "discovery",
+      "windows",
+      "flames",
+      "t1033",
+      "t1018",
+      "sccm",
+      "configuration_manager",
+      "adminservice",
+      "wmi",
+      "tier_zero",
+      "user_device_affinity",
+      "sharpsccm",
+      "cisa_red_team",
+      "T1033",
+      "T1018"
+    ],
+    "techniques": [
+      "T1033",
+      "T1018"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **This is the rare form of T1033 that is genuinely huntable.** Generic system-owner discovery is\n  unhuntable because the commands are indistinguishable from administration and the population issuing\n  them is everyone. Scoping to the SCCM provider inverts both properties: the query shape is narrow and\n  named, and the set of hosts and identities that should ever issue it is small enough to write down.\n  The technique becomes actionable only because of where it is asked.\n- **It sits at a decision point in the intrusion, before lateral movement rather than after.** The\n  operator queries affinity specifically to choose where to go next. Catching it means catching them\n  between owning the management plane and owning the target user's workstation — one of the few moments\n  in a modern intrusion where detection buys real time rather than confirming a completed step.\n- **Endpoint management platforms are Tier 0 and are rarely monitored like it.** SCCM can execute code on\n  every managed endpoint, holds credentials in policies, task sequences and collection variables, and\n  publishes its own location in AD via the System Management container. CISA flagged exactly this class\n  of system as an under-secured escalation path. Most organizations instrument domain controllers\n  carefully and site servers not at all.\n- **The report shows what happens when the alert has no owner.** The SOC in Organization A saw SCCM-related\n  activity, could not establish what the system was for or who ran it, and closed the ticket. Building the\n  console/RBAC allowlist this hunt requires produces that missing context as a durable artifact — the\n  denominator is as valuable as the detection.\n- **The AdminService path is newer than most detection content.** Published SCCM tradecraft has moved\n  toward the AdminService REST API, and offensive tooling (SharpSCCM, sccmhunter) supports it directly,\n  but IIS logs from the SMS Provider are frequently not collected. Adding that one log source covers a\n  path that WMI-based monitoring cannot see at all.\n- **HEARTH had no hunt with SCCM as its primary subject** — Configuration Manager appears only\n  incidentally in existing hunts, despite being a standard objective in current red team and ransomware\n  tradecraft alike.",
+    "references": "- [MITRE ATT&CK T1033: System Owner/User Discovery](https://attack.mitre.org/techniques/T1033/)\n- [CISA AA26-237A: A Tale of Two SOCs — Insights From Two Red Team Assessments (source report)](https://www.cisa.gov/news-events/cybersecurity-advisories/aa26-237a)\n- [SpecterOps Misconfiguration Manager: SCCM attack technique catalog (RECON-1 through RECON-5)](https://github.com/subat0mik/Misconfiguration-Manager/blob/main/attack-techniques/README.md)\n- [SpecterOps SharpSCCM documentation: device/user discovery and AdminService abuse](https://docs.specterops.io/sharpsccm-docs/overview)\n- [Microsoft: Link users and devices with user device affinity in Configuration Manager](https://learn.microsoft.com/en-us/intune/configmgr/apps/deploy-use/link-users-and-devices-with-user-device-affinity)\n- [Microsoft: Configuration Manager AdminService REST API overview](https://learn.microsoft.com/en-us/intune/configmgr/develop/adminservice/overview)\n- [Microsoft: WMI-Activity operational log and WMI event tracing](https://learn.microsoft.com/en-us/windows/win32/wmisdk/tracing-wmi-activity)\n- [Icex0: SCCM recon — enumerating site systems, users and device relationships](https://ice0.blog/docs/sccm-2-recon)",
+    "file_path": "Flames/H287.md",
+    "created": null
+  },
+  {
+    "id": "H288",
+    "category": "Flames",
+    "title": "Service principal reading Teams chat messages tenant-wide via Microsoft Graph after a client secret is added",
+    "tactic": "Collection, Persistence, Defense Evasion",
+    "notes": "",
+    "tags": [
+      "collection",
+      "persistence",
+      "defense_evasion",
+      "m365",
+      "saas",
+      "flames",
+      "t1213_005",
+      "t1550_001",
+      "t1098_001",
+      "microsoft_teams",
+      "microsoft_graph",
+      "service_principal",
+      "oauth",
+      "chat_read_all",
+      "counter_incident_response",
+      "cisa_red_team",
+      "T1213.005",
+      "T1550.001",
+      "T1098.001"
+    ],
+    "techniques": [
+      "T1213.005",
+      "T1550.001",
+      "T1098.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **Reading the SOC's messages changes the incident, not just the impact assessment.** This is\n  collection used as counter-response. If an operator can read the defenders' Teams channels and mail,\n  they know when containment is being planned and can move first — and the defenders' own\n  coordination becomes an attacker data source. The practical consequence is that any confirmed\n  compromise of a service principal with chat or mail permissions should trigger out-of-band incident\n  communications immediately, which makes this hunt worth running proactively rather than after the fact.\n- **Application permissions sit outside the controls people believe cover them.** App-only access has no\n  user, so no MFA, no user risk policy, and no ordinary Conditional Access. The control that does cover\n  it — Conditional Access for workload identities — CISA reports having never seen deployed at an\n  assessed organization. That gap is systemic rather than incidental, which makes detection the load-\n  bearing control rather than the backstop.\n- **The credential-add is a small, rare, high-fidelity event that precedes the damage.** Reading chat\n  messages is high volume and hard to distinguish from a compliance product. Adding a client secret to an\n  existing application is low volume, discrete, appears cleanly in the Entra audit log, and happens\n  *before* any data is read. Hunting the reads finds the collection; alerting on the credential-add finds\n  it in time to matter.\n- **`getAllMessages` is a tenant-wide export endpoint with a small legitimate population.** Unlike\n  `/chats`, which any integration touches, the export API is used almost exclusively by backup and\n  compliance vendors. Enumerating that population once turns a broad collection technique into a\n  narrow allowlist question.\n- **Token revocation gaps make this persist past eviction.** Both assessed organizations lacked processes\n  to revoke access and refresh tokens after a cloud compromise. An operator removed from the on-prem\n  estate retains tenant access through the application until its credentials are explicitly rotated —\n  which means detecting the reads is also how you discover what still needs revoking.\n- **The disabled-account assumption fails here.** The application owner in Organization B was disabled in\n  AD and simply re-enabled by the operators, who then DCSynced it. Disabled synced accounts that own\n  privileged applications are a live attack surface, and enumerating them is a cheap by-product of this\n  hunt.",
+    "references": "- [MITRE ATT&CK T1213.005: Data from Information Repositories — Messaging Applications](https://attack.mitre.org/techniques/T1213/005/)\n- [CISA AA26-237A: A Tale of Two SOCs — Insights From Two Red Team Assessments (source report)](https://www.cisa.gov/news-events/cybersecurity-advisories/aa26-237a)\n- [Microsoft Security Experts: Threat hunting with Microsoft Graph activity logs](https://techcommunity.microsoft.com/blog/microsoftsecurityexperts/cloud-forensics-why-enabling-microsoft-azure-graph-activity-logs-matters/4234632)\n- [Invictus IR: MicrosoftGraphActivityLogs — the complete guide (app-only isolation and the Roles column)](https://www.invictus-ir.com/news/everything-you-need-to-know-about-the-microsoftgraphactivitylogs)\n- [Red Canary: Entra ID service principals in business email compromise schemes](https://redcanary.com/blog/threat-detection/entra-id-service-principals/)\n- [Practical365: Investigating OAuth app abuse with the Graph activity log](https://practical365.com/investigating-oauth-app-abuse-with-the-graph-activity-log/)\n- [Thomas Naunheim: Analyzing workload identity activity through token-based hunting](https://www.cloud-architekt.net/token-hunting-workload-identity-activity/)\n- [Microsoft: Conditional Access for workload identities](https://learn.microsoft.com/en-us/entra/identity/conditional-access/workload-identity)",
+    "file_path": "Flames/H288.md",
+    "created": null
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
@@ -11546,5 +11717,47 @@ const HUNTS_DATA = [
     "references": "- [MITRE ATT&CK T1684.001: Social Engineering — Impersonation](https://attack.mitre.org/techniques/T1684/001/)\n- [MITRE ATT&CK T1566.003: Phishing — Spearphishing via Service](https://attack.mitre.org/techniques/T1566/003/)\n- [Unit 42: Identity abuse through trusted communication channels (source report)](https://unit42.paloaltonetworks.com/communication-channel-identity-risks/)\n- [Microsoft Security Blog: Cross-tenant helpdesk impersonation to data exfiltration — a human-operated intrusion playbook](https://www.microsoft.com/en-us/security/blog/2026/04/18/crosstenant-helpdesk-impersonation-data-exfiltration-human-operated-intrusion-playbook/)\n- [Microsoft Security Blog: Disrupting threats targeting Microsoft Teams](https://www.microsoft.com/en-us/security/blog/2025/10/07/disrupting-threats-targeting-microsoft-teams/)\n- [Sergio Albea: Hunting one-on-one Teams chats by domains (CloudAppEvents KQL)](https://github.com/Sergio-Albea-Git/Threat-Hunting-KQL-Queries/blob/main/Microsoft_DefenderXDR/CloudAppEvents/Teams/Hunting%20OneOnOne%20chats%20by%20Domains.md)\n- [Hunters: Detecting Microsoft Teams phishing — hunting the fake IT helpdesk threat](https://www.hunters.security/en/blog/microsoft-teams-phishing-fake-it-helpdesk)\n- [Microsoft: CloudAppEvents table schema (Defender XDR advanced hunting)](https://learn.microsoft.com/en-us/defender-xdr/advanced-hunting-cloudappevents-table)\n- [Microsoft: Set-CsTenantFederationConfiguration (-BlockAllSubdomains)](https://learn.microsoft.com/en-us/powershell/module/teams/set-cstenantfederationconfiguration)",
     "file_path": "Alchemy/M037.md",
     "created": "2026-08-30T23:14:05-05:00"
+  },
+  {
+    "id": "M038",
+    "category": "Alchemy",
+    "title": "Scoring LDAP sessions on object-class breadth and visited-to-returned ratio to surface EDR-evading directory collectors",
+    "tactic": "Discovery",
+    "notes": "",
+    "tags": [
+      "discovery",
+      "windows",
+      "active_directory",
+      "alchemy",
+      "t1615",
+      "t1087_002",
+      "t1069_002",
+      "ldap",
+      "bloodhound",
+      "sharphound",
+      "group_policy_discovery",
+      "anomaly_detection",
+      "edr_evasion",
+      "cisa_red_team",
+      "T1615",
+      "T1087.002",
+      "T1069.002"
+    ],
+    "techniques": [
+      "T1615",
+      "T1087.002",
+      "T1069.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **The collector was purpose-built to defeat the detection layer most organizations rely on.** The source\n  report is explicit that the BloodHound collector was customized to evade static EDR signatures. Any\n  approach anchored to a known binary, hash or command line is a known-quantity control against an\n  adversary who has already accounted for it. Query-shape modelling does not care what the binary is\n  called or whether it was recompiled.\n- **Twenty minutes of dwell was enough to lose the entire directory.** Organization B's response was\n  genuinely fast by any operational standard, and the domain was still fully enumerated first. This sets\n  the detection budget: the signal has to be present in the enumeration itself, because everything\n  downstream is too late.\n- **The two numbers on Event ID 1644 are close to a purpose-built feature pair.** Visited-versus-returned\n  is a direct measure of how indiscriminate a query is, which is precisely the difference between a lookup\n  and a collection. Few detection problems come with a native telemetry field that encodes the concept\n  you actually want to measure. The cost is that 1644 must be deliberately enabled and tuned, which is\n  the real work of adopting this hunt.\n- **Volume-only thresholds fail in both directions, which is what makes this Alchemy rather than Flames.**\n  Set a static query-count threshold and IAM sync, backup and vulnerability scanners cross it every night\n  while a paced collector stays under it. Normal LDAP volume varies by orders of magnitude between a\n  branch office and a datacentre. The comparison has to be per-source and multi-feature, which is a model,\n  not a rule.\n- **SDFlags 0x5 is a rare, cheap, high-weight term.** Requesting the Owner component of the security\n  descriptor is something SharpHound does structurally and administrative tooling does not. It is\n  avoidable by a careful operator and so cannot stand alone, but it costs nothing to include and sharply\n  separates the default tooling case.\n- **Group Policy Discovery had no primary coverage in HEARTH.** T1615 appeared only as a cross-reference\n  in [[H267]], despite GPO enumeration being a standard early step in AD attack-path collection and a\n  direct precursor to the SYSVOL credential sweep that hunt covers.",
+    "references": "- [MITRE ATT&CK T1615: Group Policy Discovery](https://attack.mitre.org/techniques/T1615/)\n- [CISA AA26-237A: A Tale of Two SOCs — Insights From Two Red Team Assessments (source report)](https://www.cisa.gov/news-events/cybersecurity-advisories/aa26-237a)\n- [Huntress: From code to coverage (part 3) — SDFlags, the log field I could not ignore](https://www.huntress.com/blog/ldap-active-directory-detection-part-three)\n- [Huntress: Hunting SOAPHound — the (!FALSE) pattern](https://www.huntress.com/blog/ldap-active-directory-detection-part-four)\n- [Unit 42: LDAP enumeration — unveiling the double-edged sword of Active Directory](https://unit42.paloaltonetworks.com/lightweight-directory-access-protocol-based-attacks/)\n- [Securonix: Detecting LDAP enumeration and BloodHound's SharpHound collector using AD decoys](https://medium.com/securonix-tech-blog/detecting-ldap-enumeration-and-bloodhound-s-sharphound-collector-using-active-directory-decoys-dfc840f2f644)\n- [Wazuh: Detecting SharpHound Active Directory activities](https://wazuh.com/blog/detecting-sharphound-active-directory-activities/)\n- [iPurple Team: SharpHound detection](https://ipurple.team/2024/07/15/sharphound-detection/)",
+    "file_path": "Alchemy/M038.md",
+    "created": null
   }
 ];
