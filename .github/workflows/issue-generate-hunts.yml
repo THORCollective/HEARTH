@@ -232,7 +232,14 @@ jobs:
           body: |
             ## 📋 Manual Content Required
 
-            The automatic download failed because the website is blocking automated access.
+            The automatic download didn't return usable article text. Common causes,
+            roughly in order:
+
+            - the link is malformed or points somewhere unexpected — worth re-checking first
+            - the site blocked the request
+            - the page renders its content with JavaScript and served no readable text
+
+            If the link looks correct, pasting the text manually is the quickest way forward.
 
             **Please manually paste the article content to proceed:**
 
