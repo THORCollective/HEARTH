@@ -9924,6 +9924,45 @@ const HUNTS_DATA = [
     "created": "2026-08-20T20:35:33-07:00"
   },
   {
+    "id": "H272",
+    "category": "Flames",
+    "title": "Device Code Redemption Followed by Rogue Entra Device Registration",
+    "tactic": "Credential Access, Persistence, Collection",
+    "notes": "Entra ID sign-in logs - Core filter: sign-ins where `authentication protocol` is `Device Code` with a successful result, especially to broker/registration-capable clients such as `Microsoft Authentication Broker` (`29d9ed98-a469-4536-ade2-f981bc1d605e`) or `Microsoft Office`. Triage values: `user principal name`, `application ID`, `resource name`, `source IP address`, `autonomous system / ISP`, `user agent`, `session ID`, `correlation ID`, `conditional access status`. Strong red flags: redemption `source IP address` from hosting/VPS ASNs (Wiz cited `3.149.231.11` on AWS reused across multiple victims) while the same user's normal interactive sign-ins originate from corporate or residential ranges; the code was surfaced to the victim at `login.microsoftonline.com/common/oauth2/deviceauth` from one network while token redemption occurs from another.\nEntra ID audit logs - Core filter: activity `Add device` or `Add registered owner to device` initiated by `Device Registration Service` (`01cb2876-7ebd-4aa4-9cc9-d28bd4d359a9`) within roughly `0-60 minutes` of a device code redemption for the same identity. Correlation: join on `user principal name`, `session ID`, `correlation ID`, or redemption `source IP address`. Triage values: `device display name`, `device trust type`, `operating system version`, initiating `user agent`. Strong red flags: registration `user agent` of `Dsreg/10.0 (Windows 10.0.19041.928)` from a non-Windows-looking network context; device names following `DESKTOP-XXXXXXXX` or `microsoft-XXXXXXXX` patterns; first-ever device registration for a long-tenured account minutes after an anomalous device code sign-in. Do not gate on the name pattern alone — Wiz shows attackers now use plausible names like `Work PC`, so treat naming as triage color, not the filter.\nMicrosoft 365 resource-access telemetry - Core filter: mailbox sync, `MailItemsAccessed`, eDiscovery/search, or SharePoint/OneDrive bulk file access where the presenting `device ID` matches a device registered in the prior `24 hours`. Pivot: from the rogue `device ID`, enumerate every access it satisfied under Conditional Access and every token refresh it anchored; from the redemption `source IP address`, sweep tenant-wide for other accounts with device code redemptions or device joins from the same infrastructure, since Wiz observed shared phishing/sign-in infrastructure across victims. Strong red flags: newly registered device accessing Exchange Online with no corresponding Intune enrollment, no interactive MFA claim after registration, or access continuing while the victim's known devices remain active elsewhere.\nContainment validation - after triage, confirm scope by listing all sessions anchored to the rogue `device ID` and verifying that device deletion plus token revocation actually terminates resource access; attackers registered via this chain retain access through the device object, not the original code.\n",
+    "tags": [
+      "entra_id",
+      "device_code_phishing",
+      "device_registration",
+      "conditional_access_bypass",
+      "oauth",
+      "m365",
+      "identity",
+      "token_theft",
+      "persistence",
+      "T1528",
+      "T1098.005",
+      "T1114.002",
+      "T1078.004"
+    ],
+    "techniques": [
+      "T1528",
+      "T1098.005",
+      "T1114.002",
+      "T1078.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Joshua Strickland",
+      "link": "https://novasky.io"
+    },
+    "why": "- Prevalence is measured, not anecdotal: Wiz observed this exact chain in nearly 1 in 7 Entra environments over 90 days, and the DESKTOP-pattern registration alone touched almost 1 in 10 customers — this is a current, high-frequency intrusion path, not a theoretical one.\n- The hunt targets an invariant chokepoint rather than rotating IOCs: attackers can freely vary device names, user agents, and infrastructure, but they cannot avoid the sequence of code redeemed from non-victim infrastructure, then device join on the same identity, then access anchored to that device — because Conditional Access itself forces the device registration step.\n- Every stage is natively observable in standard tenant telemetry: device code protocol is an explicit sign-in log attribute, `Add device` is a first-class audit activity attributable to the Device Registration Service, and M365 access events carry the presenting device ID, so the full chain can be joined on identity, session, and source IP without third-party sensors.\n- False positives are controllable by construction: legitimate device-code clients form a small, baselinable set per tenant, and the compound condition (source mismatch AND fresh registration AND new-device resource access) almost never occurs in benign enrollment workflows, keeping triage volume low enough for a weekly hunt cadence.",
+    "references": "- [Wiz - How to Spot and Stop Rogue Device Joins (Aug 18, 2026)](https://www.wiz.io/blog/detecting-entra-device-registration-abuse)\n- [Push Security - Analyzing the rise in device code phishing attacks in 2026](https://pushsecurity.com/blog/device-code-phishing)\n- [Huntress - We Need to Talk About Device Code Phishing](https://www.huntress.com/blog/tradecraft-tuesday-device-code-phishing-explained)\n- [Microsoft Learn - How Microsoft Entra device registration works](https://learn.microsoft.com/en-us/entra/identity/devices/device-registration-how-it-works)",
+    "file_path": "Flames/H272.md",
+    "created": "2026-08-31T00:35:32-04:00"
+  },
+  {
     "id": "H274",
     "category": "Flames",
     "title": "Server-side payload deleting its own class file, its output files, and the application log on an exploited Java app server",
