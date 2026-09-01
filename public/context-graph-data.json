@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-08-01T07:59:48.852Z",
+  "generated_at": "2026-09-01T12:35:28.041Z",
   "stats": {
-    "totalNodes": 509,
-    "totalEdges": 3868,
+    "totalNodes": 511,
+    "totalEdges": 3896,
     "hypotheses": 121,
     "techniques": 101,
     "dataSources": 29,
@@ -13,7 +13,7 @@
       "newest": "2026-03-10T12:04:11.000Z"
     },
     "averageHypothesisAgeDays": 255,
-    "threat_actors": 0,
+    "threat_actors": 2,
     "campaigns": 0,
     "hottest_technique": "T1105",
     "hottest_technique_score": 1,
@@ -3802,8 +3802,8 @@
       "tactics": [
         "Credential Access"
       ],
-      "prevalence_score": 0.129,
-      "actor_count": 15,
+      "prevalence_score": 0.134,
+      "actor_count": 16,
       "campaign_count": 2
     },
     {
@@ -3813,8 +3813,8 @@
       "tactics": [
         "Command and Control"
       ],
-      "prevalence_score": 0.109,
-      "actor_count": 12,
+      "prevalence_score": 0.114,
+      "actor_count": 13,
       "campaign_count": 2
     },
     {
@@ -3824,7 +3824,7 @@
       "tactics": [
         "Exfiltration"
       ],
-      "prevalence_score": 0.068,
+      "prevalence_score": 0.06,
       "actor_count": 5,
       "campaign_count": 2
     },
@@ -3835,7 +3835,7 @@
       "tactics": [
         "Collection"
       ],
-      "prevalence_score": 0.435,
+      "prevalence_score": 0.43,
       "actor_count": 39,
       "campaign_count": 11
     },
@@ -3880,7 +3880,7 @@
       "tactics": [
         "Execution"
       ],
-      "prevalence_score": 0.177,
+      "prevalence_score": 0.174,
       "actor_count": 17,
       "campaign_count": 4
     },
@@ -3889,7 +3889,7 @@
       "type": "technique",
       "label": "T1136.002",
       "tactics": [],
-      "prevalence_score": 0.061,
+      "prevalence_score": 0.06,
       "actor_count": 5,
       "campaign_count": 2
     },
@@ -3900,7 +3900,7 @@
       "tactics": [
         "Defense Evasion"
       ],
-      "prevalence_score": 0.143,
+      "prevalence_score": 0.141,
       "actor_count": 17,
       "campaign_count": 2
     },
@@ -3922,7 +3922,7 @@
       "tactics": [
         "Exfiltration"
       ],
-      "prevalence_score": 0.014,
+      "prevalence_score": 0.013,
       "actor_count": 2,
       "campaign_count": 0
     },
@@ -3933,7 +3933,7 @@
       "tactics": [
         "Command and Control"
       ],
-      "prevalence_score": 0.095,
+      "prevalence_score": 0.094,
       "actor_count": 11,
       "campaign_count": 1
     },
@@ -3944,7 +3944,7 @@
       "tactics": [
         "Execution"
       ],
-      "prevalence_score": 0.823,
+      "prevalence_score": 0.812,
       "actor_count": 85,
       "campaign_count": 17
     },
@@ -3964,7 +3964,7 @@
       "tactics": [
         "Command and Control"
       ],
-      "prevalence_score": 0.286,
+      "prevalence_score": 0.282,
       "actor_count": 19,
       "campaign_count": 10
     },
@@ -3984,7 +3984,7 @@
       "tactics": [
         "Defense Evasion"
       ],
-      "prevalence_score": 0.279,
+      "prevalence_score": 0.275,
       "actor_count": 29,
       "campaign_count": 5
     },
@@ -3995,8 +3995,8 @@
       "tactics": [
         "Initial Access"
       ],
-      "prevalence_score": 0.476,
-      "actor_count": 45,
+      "prevalence_score": 0.477,
+      "actor_count": 47,
       "campaign_count": 11
     },
     {
@@ -4004,7 +4004,7 @@
       "type": "technique",
       "label": "T1068",
       "tactics": [],
-      "prevalence_score": 0.184,
+      "prevalence_score": 0.181,
       "actor_count": 22,
       "campaign_count": 2
     },
@@ -4013,8 +4013,8 @@
       "type": "technique",
       "label": "T1098",
       "tactics": [],
-      "prevalence_score": 0.041,
-      "actor_count": 4,
+      "prevalence_score": 0.047,
+      "actor_count": 5,
       "campaign_count": 1
     },
     {
@@ -4035,7 +4035,7 @@
       "tactics": [
         "Execution"
       ],
-      "prevalence_score": 0.463,
+      "prevalence_score": 0.456,
       "actor_count": 42,
       "campaign_count": 12
     },
@@ -4057,7 +4057,7 @@
       "tactics": [
         "Initial Access"
       ],
-      "prevalence_score": 0.68,
+      "prevalence_score": 0.671,
       "actor_count": 78,
       "campaign_count": 10
     },
@@ -4068,7 +4068,7 @@
       "tactics": [
         "Execution"
       ],
-      "prevalence_score": 0.762,
+      "prevalence_score": 0.752,
       "actor_count": 86,
       "campaign_count": 12
     },
@@ -4079,8 +4079,8 @@
       "tactics": [
         "Execution"
       ],
-      "prevalence_score": 0.197,
-      "actor_count": 18,
+      "prevalence_score": 0.195,
+      "actor_count": 19,
       "campaign_count": 4
     },
     {
@@ -4088,7 +4088,7 @@
       "type": "technique",
       "label": "T1070.004",
       "tactics": [],
-      "prevalence_score": 0.51,
+      "prevalence_score": 0.503,
       "actor_count": 47,
       "campaign_count": 13
     },
@@ -4099,7 +4099,7 @@
       "tactics": [
         "Initial Access"
       ],
-      "prevalence_score": 0.449,
+      "prevalence_score": 0.443,
       "actor_count": 46,
       "campaign_count": 9
     },
@@ -4111,7 +4111,7 @@
         "Defense Evasion",
         "Discovery"
       ],
-      "prevalence_score": 0.014,
+      "prevalence_score": 0.013,
       "actor_count": 0,
       "campaign_count": 1
     },
@@ -4122,7 +4122,7 @@
       "tactics": [
         "Privilege Escalation"
       ],
-      "prevalence_score": 0.211,
+      "prevalence_score": 0.208,
       "actor_count": 15,
       "campaign_count": 7
     },
@@ -4144,8 +4144,8 @@
       "tactics": [
         "Collection"
       ],
-      "prevalence_score": 0.531,
-      "actor_count": 45,
+      "prevalence_score": 0.523,
+      "actor_count": 46,
       "campaign_count": 15
     },
     {
@@ -4167,8 +4167,8 @@
         "Persistence",
         "Privilege Escalation"
       ],
-      "prevalence_score": 0.02,
-      "actor_count": 0,
+      "prevalence_score": 0.027,
+      "actor_count": 1,
       "campaign_count": 1
     },
     {
@@ -4201,7 +4201,7 @@
       "tactics": [
         "Command and Control"
       ],
-      "prevalence_score": 0.116,
+      "prevalence_score": 0.114,
       "actor_count": 9,
       "campaign_count": 3
     },
@@ -4212,7 +4212,7 @@
       "tactics": [
         "Defense Evasion"
       ],
-      "prevalence_score": 0.184,
+      "prevalence_score": 0.181,
       "actor_count": 18,
       "campaign_count": 4
     },
@@ -4223,7 +4223,7 @@
       "tactics": [
         "Collection"
       ],
-      "prevalence_score": 0.088,
+      "prevalence_score": 0.087,
       "actor_count": 13,
       "campaign_count": 0
     },
@@ -4234,7 +4234,7 @@
       "tactics": [
         "Reconnaissance"
       ],
-      "prevalence_score": 0.048,
+      "prevalence_score": 0.04,
       "actor_count": 2,
       "campaign_count": 1
     },
@@ -4245,7 +4245,7 @@
       "tactics": [
         "Credential Access"
       ],
-      "prevalence_score": 0.116,
+      "prevalence_score": 0.114,
       "actor_count": 11,
       "campaign_count": 2
     },
@@ -4256,7 +4256,7 @@
       "tactics": [
         "Defense Evasion"
       ],
-      "prevalence_score": 0.469,
+      "prevalence_score": 0.463,
       "actor_count": 38,
       "campaign_count": 14
     },
@@ -4267,7 +4267,7 @@
       "tactics": [
         "Command and Control"
       ],
-      "prevalence_score": 0.197,
+      "prevalence_score": 0.195,
       "actor_count": 15,
       "campaign_count": 6
     },
@@ -4277,7 +4277,7 @@
       "label": "T1105",
       "tactics": [],
       "prevalence_score": 1,
-      "actor_count": 86,
+      "actor_count": 88,
       "campaign_count": 29
     },
     {
@@ -4287,7 +4287,7 @@
       "tactics": [
         "Defense Evasion"
       ],
-      "prevalence_score": 0.252,
+      "prevalence_score": 0.242,
       "actor_count": 20,
       "campaign_count": 7
     },
@@ -4298,7 +4298,7 @@
       "tactics": [
         "Defense Evasion"
       ],
-      "prevalence_score": 0.014,
+      "prevalence_score": 0.013,
       "actor_count": 2,
       "campaign_count": 0
     },
@@ -4309,7 +4309,7 @@
       "tactics": [
         "Defense Evasion"
       ],
-      "prevalence_score": 0.014,
+      "prevalence_score": 0.013,
       "actor_count": 2,
       "campaign_count": 0
     },
@@ -4331,7 +4331,7 @@
       "tactics": [
         "Credential Access"
       ],
-      "prevalence_score": 0.075,
+      "prevalence_score": 0.074,
       "actor_count": 4,
       "campaign_count": 3
     },
@@ -4353,8 +4353,8 @@
       "tactics": [
         "Discovery"
       ],
-      "prevalence_score": 0.599,
-      "actor_count": 57,
+      "prevalence_score": 0.591,
+      "actor_count": 58,
       "campaign_count": 14
     },
     {
@@ -4362,8 +4362,8 @@
       "type": "technique",
       "label": "T1550.001",
       "tactics": [],
-      "prevalence_score": 0.027,
-      "actor_count": 2,
+      "prevalence_score": 0.04,
+      "actor_count": 4,
       "campaign_count": 1
     },
     {
@@ -4373,7 +4373,7 @@
       "tactics": [
         "Discovery"
       ],
-      "prevalence_score": 0.17,
+      "prevalence_score": 0.161,
       "actor_count": 16,
       "campaign_count": 4
     },
@@ -4384,8 +4384,8 @@
       "tactics": [
         "Exfiltration"
       ],
-      "prevalence_score": 0.102,
-      "actor_count": 4,
+      "prevalence_score": 0.101,
+      "actor_count": 5,
       "campaign_count": 4
     },
     {
@@ -4404,8 +4404,8 @@
       "tactics": [
         "Defense Evasion"
       ],
-      "prevalence_score": 0.639,
-      "actor_count": 61,
+      "prevalence_score": 0.644,
+      "actor_count": 63,
       "campaign_count": 15
     },
     {
@@ -4426,8 +4426,8 @@
       "tactics": [
         "Credential Access"
       ],
-      "prevalence_score": 0.034,
-      "actor_count": 2,
+      "prevalence_score": 0.04,
+      "actor_count": 4,
       "campaign_count": 1
     },
     {
@@ -4446,7 +4446,7 @@
       "tactics": [
         "Initial Access"
       ],
-      "prevalence_score": 0.095,
+      "prevalence_score": 0.094,
       "actor_count": 9,
       "campaign_count": 2
     },
@@ -4457,7 +4457,7 @@
       "tactics": [
         "Defense Evasion"
       ],
-      "prevalence_score": 0.041,
+      "prevalence_score": 0.04,
       "actor_count": 6,
       "campaign_count": 0
     },
@@ -4468,7 +4468,7 @@
       "tactics": [
         "Command and Control"
       ],
-      "prevalence_score": 0.156,
+      "prevalence_score": 0.154,
       "actor_count": 16,
       "campaign_count": 2
     },
@@ -4479,8 +4479,8 @@
       "tactics": [
         "Execution"
       ],
-      "prevalence_score": 0.361,
-      "actor_count": 41,
+      "prevalence_score": 0.362,
+      "actor_count": 42,
       "campaign_count": 5
     },
     {
@@ -4502,7 +4502,7 @@
       "tactics": [
         "Defense Evasion"
       ],
-      "prevalence_score": 0.014,
+      "prevalence_score": 0.013,
       "actor_count": 2,
       "campaign_count": 0
     },
@@ -4513,7 +4513,7 @@
       "tactics": [
         "Credential Access"
       ],
-      "prevalence_score": 0.014,
+      "prevalence_score": 0.013,
       "actor_count": 2,
       "campaign_count": 0
     },
@@ -4533,7 +4533,7 @@
       "tactics": [
         "Discovery"
       ],
-      "prevalence_score": 0.306,
+      "prevalence_score": 0.302,
       "actor_count": 32,
       "campaign_count": 5
     },
@@ -4544,7 +4544,7 @@
       "tactics": [
         "Execution"
       ],
-      "prevalence_score": 0.537,
+      "prevalence_score": 0.53,
       "actor_count": 46,
       "campaign_count": 16
     },
@@ -4567,7 +4567,7 @@
       "tactics": [
         "Command and Control"
       ],
-      "prevalence_score": 0.163,
+      "prevalence_score": 0.161,
       "actor_count": 15,
       "campaign_count": 4
     },
@@ -4578,7 +4578,7 @@
       "tactics": [
         "Privilege Escalation"
       ],
-      "prevalence_score": 0.095,
+      "prevalence_score": 0.094,
       "actor_count": 5,
       "campaign_count": 3
     },
@@ -4587,7 +4587,7 @@
       "type": "technique",
       "label": "T1106",
       "tactics": [],
-      "prevalence_score": 0.211,
+      "prevalence_score": 0.208,
       "actor_count": 20,
       "campaign_count": 5
     },
@@ -4598,7 +4598,7 @@
       "tactics": [
         "Credential Access"
       ],
-      "prevalence_score": 0.129,
+      "prevalence_score": 0.128,
       "actor_count": 12,
       "campaign_count": 2
     },
@@ -4609,7 +4609,7 @@
       "tactics": [
         "Collection"
       ],
-      "prevalence_score": 0.245,
+      "prevalence_score": 0.235,
       "actor_count": 21,
       "campaign_count": 6
     },
@@ -4620,8 +4620,8 @@
       "tactics": [
         "Initial Access"
       ],
-      "prevalence_score": 0,
-      "actor_count": 0,
+      "prevalence_score": 0.013,
+      "actor_count": 2,
       "campaign_count": 0
     },
     {
@@ -4631,8 +4631,8 @@
       "tactics": [
         "Execution"
       ],
-      "prevalence_score": 0.17,
-      "actor_count": 10,
+      "prevalence_score": 0.174,
+      "actor_count": 11,
       "campaign_count": 6
     },
     {
@@ -4662,8 +4662,8 @@
       "tactics": [
         "Credential Access"
       ],
-      "prevalence_score": 0.156,
-      "actor_count": 14,
+      "prevalence_score": 0.154,
+      "actor_count": 15,
       "campaign_count": 3
     },
     {
@@ -4684,7 +4684,7 @@
       "tactics": [
         "Command and Control"
       ],
-      "prevalence_score": 0.687,
+      "prevalence_score": 0.678,
       "actor_count": 57,
       "campaign_count": 21
     },
@@ -4695,7 +4695,7 @@
       "tactics": [
         "Exfiltration"
       ],
-      "prevalence_score": 0.333,
+      "prevalence_score": 0.329,
       "actor_count": 27,
       "campaign_count": 10
     },
@@ -4707,8 +4707,8 @@
         "Persistence",
         "Privilege Escalation"
       ],
-      "prevalence_score": 0.435,
-      "actor_count": 56,
+      "prevalence_score": 0.436,
+      "actor_count": 57,
       "campaign_count": 3
     },
     {
@@ -4727,7 +4727,7 @@
       "tactics": [
         "Defense Evasion"
       ],
-      "prevalence_score": 0.293,
+      "prevalence_score": 0.289,
       "actor_count": 26,
       "campaign_count": 8
     },
@@ -4758,7 +4758,7 @@
       "tactics": [
         "Exfiltration"
       ],
-      "prevalence_score": 0.109,
+      "prevalence_score": 0.101,
       "actor_count": 7,
       "campaign_count": 3
     },
@@ -4778,7 +4778,7 @@
       "tactics": [
         "Defense Evasion"
       ],
-      "prevalence_score": 0.014,
+      "prevalence_score": 0.013,
       "actor_count": 2,
       "campaign_count": 0
     },
@@ -4789,8 +4789,8 @@
       "tactics": [
         "Initial Access"
       ],
-      "prevalence_score": 0.129,
-      "actor_count": 10,
+      "prevalence_score": 0.141,
+      "actor_count": 12,
       "campaign_count": 3
     },
     {
@@ -4802,7 +4802,7 @@
         "Persistence",
         "Privilege Escalation"
       ],
-      "prevalence_score": 0.544,
+      "prevalence_score": 0.537,
       "actor_count": 54,
       "campaign_count": 12
     },
@@ -4813,7 +4813,7 @@
       "tactics": [
         "Initial Access"
       ],
-      "prevalence_score": 0.048,
+      "prevalence_score": 0.04,
       "actor_count": 4,
       "campaign_count": 1
     },
@@ -4824,7 +4824,7 @@
       "tactics": [
         "Resource Development"
       ],
-      "prevalence_score": 0.075,
+      "prevalence_score": 0.074,
       "actor_count": 4,
       "campaign_count": 3
     },
@@ -4835,7 +4835,7 @@
       "tactics": [
         "Command and Control"
       ],
-      "prevalence_score": 0.014,
+      "prevalence_score": 0.013,
       "actor_count": 2,
       "campaign_count": 0
     },
@@ -4857,8 +4857,8 @@
       "tactics": [
         "Resource Development"
       ],
-      "prevalence_score": 0.517,
-      "actor_count": 44,
+      "prevalence_score": 0.523,
+      "actor_count": 46,
       "campaign_count": 15
     },
     {
@@ -4868,7 +4868,7 @@
       "tactics": [
         "Resource Development"
       ],
-      "prevalence_score": 0.129,
+      "prevalence_score": 0.128,
       "actor_count": 6,
       "campaign_count": 5
     },
@@ -5491,10 +5491,10 @@
         "T1033",
         "T1074.001",
         "T1059.001",
-        "T1210",
         "T1059.006",
         "T1018",
-        "T1087.002"
+        "T1087.002",
+        "T1210"
       ],
       "mitre_technique_count": 56
     },
@@ -5532,7 +5532,6 @@
         "T1530",
         "T1018",
         "T1110",
-        "T1210",
         "T1136.001",
         "T1560.001",
         "T1027.010",
@@ -5567,7 +5566,8 @@
         "T1585.001",
         "T1036.005",
         "T1059.001",
-        "T1083"
+        "T1083",
+        "T1210"
       ],
       "mitre_technique_count": 41
     },
@@ -6179,9 +6179,9 @@
         "T1218.011",
         "T1552.001",
         "T1190",
-        "T1210",
         "T1203",
-        "T1003.005"
+        "T1003.005",
+        "T1210"
       ],
       "mitre_technique_count": 68
     },
@@ -6221,7 +6221,6 @@
         "T1112",
         "T1049",
         "T1070.004",
-        "T1036.006",
         "T1056.001",
         "T1518.001",
         "T1543.003",
@@ -6270,7 +6269,8 @@
         "T1218.007",
         "T1569.002",
         "T1480.002",
-        "T1057"
+        "T1057",
+        "T1036.006"
       ],
       "mitre_technique_count": 56
     },
@@ -6482,7 +6482,6 @@
         "T1543.003",
         "T1608.001",
         "T1059.003",
-        "T1610",
         "T1613",
         "T1048",
         "T1057",
@@ -6519,7 +6518,8 @@
         "T1552.001",
         "T1685.006",
         "T1587.001",
-        "T1102"
+        "T1102",
+        "T1610"
       ],
       "mitre_technique_count": 56
     },
@@ -6669,7 +6669,6 @@
         "T1480.002",
         "T1036.005",
         "T1132.002",
-        "T1593.002",
         "T1036.007",
         "T1055.012",
         "T1588.003",
@@ -6683,7 +6682,8 @@
         "T1505.003",
         "T1680",
         "T1114.002",
-        "T1124"
+        "T1124",
+        "T1593.002"
       ],
       "mitre_technique_count": 130
     },
@@ -6858,11 +6858,11 @@
         "T1059.003",
         "T1005",
         "T1059.001",
-        "T1210",
         "T1021.004",
         "T1119",
         "T1583.001",
-        "T1574.001"
+        "T1574.001",
+        "T1210"
       ],
       "mitre_technique_count": 46
     },
@@ -6918,7 +6918,6 @@
         "T1053.005",
         "T1592.002",
         "T1021.001",
-        "T1087.003",
         "T1105",
         "T1190",
         "T1204.002",
@@ -6975,7 +6974,8 @@
         "T1047",
         "T1583.006",
         "T1685",
-        "T1189"
+        "T1189",
+        "T1087.003"
       ],
       "mitre_technique_count": 78
     },
@@ -7515,7 +7515,6 @@
         "T1005",
         "T1059.001",
         "T1115",
-        "T1003",
         "T1553.006",
         "T1546.010",
         "T1547.009",
@@ -7559,7 +7558,8 @@
         "T1021.002",
         "T1190",
         "T1059.005",
-        "T1021.004"
+        "T1021.004",
+        "T1003"
       ],
       "mitre_technique_count": 53
     },
@@ -7953,7 +7953,6 @@
         "T1560.001",
         "T1573.001",
         "T1071.001",
-        "T1087.003",
         "T1587.001",
         "T1087.001",
         "T1056.002",
@@ -7975,7 +7974,8 @@
         "T1555.003",
         "T1059.006",
         "T1003.001",
-        "T1046"
+        "T1046",
+        "T1087.003"
       ],
       "mitre_technique_count": 41
     },
@@ -8006,14 +8006,14 @@
         "T1059.005",
         "T1090.003",
         "T1204.002",
-        "T1564.008",
         "T1204.001",
         "T1056.001",
         "T1056.002",
         "T1566.002",
         "T1566.001",
         "T1071.001",
-        "T1114.002"
+        "T1114.002",
+        "T1564.008"
       ],
       "mitre_technique_count": 12
     },
@@ -8406,8 +8406,8 @@
         "T1195.002",
         "T1113",
         "T1567.002",
-        "T1210",
-        "T1587.001"
+        "T1587.001",
+        "T1210"
       ],
       "mitre_technique_count": 67
     },
@@ -8542,7 +8542,6 @@
         "T1012",
         "T1059.001",
         "T1041",
-        "T1003",
         "T1569.002",
         "T1135",
         "T1140",
@@ -8559,7 +8558,8 @@
         "T1518.001",
         "T1219",
         "T1047",
-        "T1018"
+        "T1018",
+        "T1003"
       ],
       "mitre_technique_count": 48
     },
@@ -8649,9 +8649,9 @@
         "T1685.001",
         "T1608.002",
         "T1112",
-        "T1210",
         "T1074.002",
-        "T1049"
+        "T1049",
+        "T1210"
       ],
       "mitre_technique_count": 57
     },
@@ -8689,15 +8689,15 @@
         "T1059.006",
         "T1069.001",
         "T1056.001",
-        "T1003",
         "T1505.003",
         "T1203",
         "T1204.002",
         "T1566.001",
-        "T1210",
         "T1059.001",
         "T1068",
-        "T1105"
+        "T1105",
+        "T1210",
+        "T1003"
       ],
       "mitre_technique_count": 15
     },
@@ -8938,7 +8938,6 @@
         "T1068",
         "T1621",
         "T1098.003",
-        "T1003.006",
         "T1586.002",
         "T1213.005",
         "T1589.002",
@@ -8950,7 +8949,8 @@
         "T1597.002",
         "T1578.002",
         "T1078.004",
-        "T1111"
+        "T1111",
+        "T1003.006"
       ],
       "mitre_technique_count": 43
     },
@@ -9309,7 +9309,6 @@
         "T1542.003",
         "T1071.003",
         "T1036",
-        "T1210",
         "T1014",
         "T1204.002",
         "T1550.001",
@@ -9318,7 +9317,6 @@
         "T1074.002",
         "T1092",
         "T1098.002",
-        "T1003",
         "T1040",
         "T1068",
         "T1137.002",
@@ -9337,7 +9335,9 @@
         "T1588.007",
         "T1110",
         "T1684.001",
-        "T1021.002"
+        "T1021.002",
+        "T1210",
+        "T1003"
       ],
       "mitre_technique_count": 93
     },
@@ -9486,7 +9486,6 @@
         "T1608.004",
         "T1041",
         "T1036.004",
-        "T1003",
         "T1078.003",
         "T1589",
         "T1070.006",
@@ -9533,7 +9532,8 @@
         "T1203",
         "T1204.002",
         "T1547.001",
-        "T1102"
+        "T1102",
+        "T1003"
       ],
       "mitre_technique_count": 78
     },
@@ -9564,7 +9564,6 @@
         }
       ],
       "mitre_techniques": [
-        "T1087.003",
         "T1583.001",
         "T1553.005",
         "T1218.007",
@@ -9597,7 +9596,8 @@
         "T1559.002",
         "T1055.001",
         "T1071.001",
-        "T1059.003"
+        "T1059.003",
+        "T1087.003"
       ],
       "mitre_technique_count": 34
     },
@@ -9929,7 +9929,6 @@
         "T1087.002",
         "T1484.002",
         "T1087",
-        "T1564.008",
         "T1585.001",
         "T1539",
         "T1588.002",
@@ -9978,7 +9977,8 @@
         "T1578.002",
         "T1552.001",
         "T1114",
-        "T1588.001"
+        "T1588.001",
+        "T1564.008"
       ],
       "mitre_technique_count": 64
     },
@@ -10443,13 +10443,11 @@
         "T1027.003",
         "T1608.001",
         "T1098.004",
-        "T1003.006",
         "T1059.005",
         "T1189",
         "T1018",
         "T1584.006",
         "T1059.007",
-        "T1210",
         "T1036.005",
         "T1140",
         "T1583.001",
@@ -10482,7 +10480,9 @@
         "T1016",
         "T1588.001",
         "T1584.004",
-        "T1204.001"
+        "T1204.001",
+        "T1210",
+        "T1003.006"
       ],
       "mitre_technique_count": 44
     },
@@ -10770,7 +10770,6 @@
         }
       ],
       "mitre_techniques": [
-        "T1001.002",
         "T1005",
         "T1560",
         "T1584.005",
@@ -10785,6 +10784,7 @@
         "T1546.008",
         "T1566",
         "T1190",
+        "T1001.002",
         "T1003"
       ],
       "mitre_technique_count": 16
@@ -10820,7 +10820,6 @@
       ],
       "mitre_techniques": [
         "T1018",
-        "T1003",
         "T1090.003",
         "T1114",
         "T1583",
@@ -10846,7 +10845,6 @@
         "T1585",
         "T1491.002",
         "T1053.005",
-        "T1210",
         "T1059.001",
         "T1112",
         "T1071.004",
@@ -10865,7 +10863,9 @@
         "T1003.004",
         "T1003.002",
         "T1078.001",
-        "T1046"
+        "T1046",
+        "T1210",
+        "T1003"
       ],
       "mitre_technique_count": 47
     },
@@ -11002,7 +11002,6 @@
       "mitre_techniques": [
         "T1136.001",
         "T1588.003",
-        "T1210",
         "T1560.001",
         "T1059.003",
         "T1047",
@@ -11063,7 +11062,8 @@
         "T1547.001",
         "T1021.006",
         "T1055.001",
-        "T1197"
+        "T1197",
+        "T1210"
       ],
       "mitre_technique_count": 64
     },
@@ -11241,8 +11241,6 @@
         "T1027.007",
         "T1585.002",
         "T1219.002",
-        "T1003",
-        "T1003.006",
         "T1218.004",
         "T1586.002",
         "T1560.001",
@@ -11303,7 +11301,9 @@
         "T1205",
         "T1036.005",
         "T1587.001",
-        "T1027.012"
+        "T1027.012",
+        "T1003",
+        "T1003.006"
       ],
       "mitre_technique_count": 85
     },
@@ -11716,7 +11716,6 @@
         "T1571",
         "T1070.004",
         "T1047",
-        "T1087.003",
         "T1021.002",
         "T1204.001",
         "T1505.003",
@@ -11753,7 +11752,8 @@
         "T1005",
         "T1195",
         "T1593",
-        "T1036.005"
+        "T1036.005",
+        "T1087.003"
       ],
       "mitre_technique_count": 79
     },
@@ -12089,13 +12089,13 @@
       ],
       "mitre_techniques": [
         "T1049",
-        "T1003",
         "T1007",
         "T1087.002",
         "T1087.001",
         "T1057",
         "T1036.005",
-        "T1059.001"
+        "T1059.001",
+        "T1003"
       ],
       "mitre_technique_count": 8
     },
@@ -12213,8 +12213,8 @@
         "T1572",
         "T1204.001",
         "T1133",
-        "T1003",
-        "T1586.002"
+        "T1586.002",
+        "T1003"
       ],
       "mitre_technique_count": 50
     },
@@ -12328,7 +12328,6 @@
         "T1485",
         "T1053.005",
         "T1087.004",
-        "T1003.006",
         "T1526",
         "T1567.002",
         "T1059.009",
@@ -12358,9 +12357,10 @@
         "T1587.003",
         "T1588.006",
         "T1556.009",
-        "T1003",
         "T1110",
-        "T1098.001"
+        "T1098.001",
+        "T1003.006",
+        "T1003"
       ],
       "mitre_technique_count": 42
     },
@@ -12541,7 +12541,6 @@
         "T1003.004",
         "T1190",
         "T1553.005",
-        "T1649",
         "T1087.004",
         "T1098.002",
         "T1078.003",
@@ -12551,7 +12550,8 @@
         "T1204.002",
         "T1685.002",
         "T1548.002",
-        "T1027.002"
+        "T1027.002",
+        "T1649"
       ],
       "mitre_technique_count": 66
     },
@@ -13567,7 +13567,6 @@
         "T1482",
         "T1036.005",
         "T1078",
-        "T1558",
         "T1018",
         "T1021.001",
         "T1059.001",
@@ -13577,7 +13576,8 @@
         "T1027.001",
         "T1685",
         "T1219",
-        "T1560.001"
+        "T1560.001",
+        "T1558"
       ],
       "mitre_technique_count": 17
     },
@@ -13930,8 +13930,8 @@
         "T1059.003",
         "T1078",
         "T1046",
-        "T1003",
-        "T1553.002"
+        "T1553.002",
+        "T1003"
       ],
       "mitre_technique_count": 5
     },
@@ -14047,8 +14047,8 @@
         "T1056.001",
         "T1135",
         "T1036.005",
-        "T1003",
-        "T1082"
+        "T1082",
+        "T1003"
       ],
       "mitre_technique_count": 9
     },
@@ -15091,6 +15091,149 @@
       "last_seen": "2024-07-01T04:00:00.000Z",
       "technique_count": 3,
       "stix_id": "campaign--75ea699b-bff5-4541-b9b7-df4996c9db3c"
+    },
+    {
+      "id": "actor:G1056",
+      "type": "threat_actor",
+      "label": "TeamPCP",
+      "aliases": [
+        "PCPCat",
+        "ShellForce",
+        "DeadCatx3",
+        "SHADOW-WATER-058",
+        "UNC6780"
+      ],
+      "description": "[TeamPCP](https://attack.mitre.org/groups/G1056) is a financially-motivated, cloud-native threat group that has been active since at least September 2025.",
+      "technique_count": 14,
+      "mitre_techniques": [
+        "T1027.003",
+        "T1036.005",
+        "T1543.002",
+        "T1555.006",
+        "T1583.001",
+        "T1528",
+        "T1059.006",
+        "T1547.001",
+        "T1552.004",
+        "T1105",
+        "T1486",
+        "T1190",
+        "T1078",
+        "T1587.001",
+        "T1583.006",
+        "T1195.001",
+        "T1098",
+        "T1550.001",
+        "T1684.001",
+        "T1078.004",
+        "T1546.016",
+        "T1564.001",
+        "T1485",
+        "T1683.001",
+        "T1585.001",
+        "T1059.007",
+        "T1553.002",
+        "T1005",
+        "T1657",
+        "T1059.013",
+        "T1059.004",
+        "T1583.004",
+        "T1608.001",
+        "T1677",
+        "T1583",
+        "T1176.002"
+      ],
+      "mitre_technique_count": 36,
+      "stix_id": "intrusion-set--20f26558-e05d-46cf-8847-c2b5a83ee779",
+      "external_references": [
+        {
+          "source": "mitre-attack",
+          "url": "https://attack.mitre.org/groups/G1056"
+        },
+        {
+          "source": "Aqua Security Trivy Compromise MAR 2026",
+          "url": "https://github.com/aquasecurity/trivy/security/advisories/GHSA-69fq-xp46-6x23"
+        },
+        {
+          "source": "Aqua Security Blog Trivy Compromise APR 2026",
+          "url": "https://www.aquasec.com/blog/trivy-supply-chain-attack-what-you-need-to-know"
+        }
+      ]
+    },
+    {
+      "id": "actor:G1057",
+      "type": "threat_actor",
+      "label": "ShinyHunters",
+      "aliases": [
+        "UNC6240",
+        "Bling Libra"
+      ],
+      "description": "[ShinyHunters](https://attack.mitre.org/groups/G1057) is a cyber criminal collective that has been active since at least 2019 operating under the ShinyCorp persona.",
+      "technique_count": 14,
+      "mitre_techniques": [
+        "T1560.002",
+        "T1550.001",
+        "T1573.002",
+        "T1585.002",
+        "T1082",
+        "T1105",
+        "T1190",
+        "T1530",
+        "T1059.007",
+        "T1078",
+        "T1567",
+        "T1598.003",
+        "T1203",
+        "T1528",
+        "T1083",
+        "T1588.002",
+        "T1213.003",
+        "T1684",
+        "T1552.001",
+        "T1078.004",
+        "T1078.002",
+        "T1016",
+        "T1491.001",
+        "T1036.005",
+        "T1219",
+        "T1598",
+        "T1195.001",
+        "T1657",
+        "T1580",
+        "T1018",
+        "T1059.009",
+        "T1583.004",
+        "T1072",
+        "T1588.007",
+        "T1110",
+        "T1213.006",
+        "T1589.001",
+        "T1593.003",
+        "T1583.001",
+        "T1090.003",
+        "T1587.004",
+        "T1485",
+        "T1619",
+        "T1595.002",
+        "T1069.003",
+        "T1210"
+      ],
+      "mitre_technique_count": 46,
+      "stix_id": "intrusion-set--5e30362d-935b-4b1c-8bf2-96c7b7b7e299",
+      "external_references": [
+        {
+          "source": "mitre-attack",
+          "url": "https://attack.mitre.org/groups/G1057"
+        },
+        {
+          "source": "ElecticIQ Buyukkaya_ShinyHunters_Sept2025",
+          "url": "https://blog.eclecticiq.com/shinyhunters-calling-financially-motivated-data-extortion-group-targeting-enterprise-cloud-applications"
+        },
+        {
+          "source": "FBI_SHLMS_May2026",
+          "url": "https://www.ic3.gov/PSA/2026/PSA260515"
+        }
+      ]
     }
   ],
   "edges": [
@@ -34612,7 +34755,147 @@
       "source": "M014",
       "target": "campaign:C0062",
       "type": "MOTIVATED_BY"
+    },
+    {
+      "source": "actor:G1056",
+      "target": "T1036.005",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1056",
+      "target": "T1583.001",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1056",
+      "target": "T1528",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1056",
+      "target": "T1059.006",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1056",
+      "target": "T1547.001",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1056",
+      "target": "T1105",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1056",
+      "target": "T1078",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1056",
+      "target": "T1195.001",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1056",
+      "target": "T1098",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1056",
+      "target": "T1550.001",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1056",
+      "target": "T1078.004",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1056",
+      "target": "T1546.016",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1056",
+      "target": "T1005",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1056",
+      "target": "T1059.004",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1057",
+      "target": "T1550.001",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1057",
+      "target": "T1082",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1057",
+      "target": "T1105",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1057",
+      "target": "T1078",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1057",
+      "target": "T1567",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1057",
+      "target": "T1203",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1057",
+      "target": "T1528",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1057",
+      "target": "T1552.001",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1057",
+      "target": "T1078.004",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1057",
+      "target": "T1036.005",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1057",
+      "target": "T1219",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1057",
+      "target": "T1195.001",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1057",
+      "target": "T1110",
+      "type": "EMPLOYS"
+    },
+    {
+      "source": "actor:G1057",
+      "target": "T1583.001",
+      "type": "EMPLOYS"
     }
   ],
-  "phase2a_enriched_at": "2026-08-01T07:59:48.852Z"
+  "phase2a_enriched_at": "2026-09-01T12:35:28.041Z"
 }
