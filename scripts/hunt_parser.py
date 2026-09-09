@@ -21,7 +21,7 @@ if _REPO_ROOT not in _sys.path:
 
 import frontmatter
 
-from scripts.hunt_schema import validate_hunt
+from scripts.hunt_schema import validate_draft, validate_hunt
 
 
 class HuntValidationError(ValueError):
@@ -182,6 +182,56 @@ def _parse_legacy_table(content: str, hunt_id: str, category: str) -> dict[str, 
     }
 
 
+def _coerce_dates(data: dict[str, Any]) -> dict[str, Any]:
+    """Coerce date/datetime metadata to ISO strings for schema validation
+    (PyYAML auto-parses ISO dates into datetime.date objects)."""
+    for k, v in list(data.items()):
+        if isinstance(v, (_dt.date, _dt.datetime)):
+            data[k] = v.isoformat()
+    return data
+
+
+def parse_draft_file(path: str | Path) -> dict[str, Any]:
+    """Parse an ID-less draft from ``Incoming/`` into a structured dict.
+
+    A draft carries the full hunt frontmatter minus ``id``; its ``category``
+    field names the directory it will land in, so unlike `parse_hunt_file`
+    there is no directory to infer it from and a missing one is fatal.
+
+    Frontmatter is mandatory here. `parse_hunt_file` falls back to the legacy
+    table format for a file with none, and that path adopts ``path.stem`` as
+    the hunt ID — which for a draft would silently mint a hunt whose ID is its
+    slug. Rejecting it is the point, not an incidental strictness.
+    """
+    path = Path(path)
+    raw = path.read_text(encoding="utf-8")
+    post = frontmatter.loads(raw)
+
+    if not post.metadata:
+        raise HuntValidationError(
+            f"{path.name}: drafts require YAML frontmatter (the legacy table "
+            "format is not accepted in Incoming/)"
+        )
+    if re.fullmatch(r"[HBM]\d+", path.stem):
+        raise HuntValidationError(
+            f"{path.name}: a draft must not be named like a hunt ID; use a "
+            "descriptive slug (the ID is assigned when your PR merges)"
+        )
+
+    data = _coerce_dates(dict(post.metadata))
+    errors = validate_draft(data)
+    if errors:
+        raise HuntValidationError(
+            f"{path.name}: invalid draft frontmatter:\n  - " + "\n  - ".join(errors)
+        )
+
+    body = post.content
+    data["why"] = _extract_section(body, "Why")
+    data["references"] = _extract_section(body, "References")
+    data["file_path"] = f"Incoming/{path.name}"
+    return data
+
+
 def parse_hunt_file(path: str | Path, category: str) -> dict[str, Any]:
     """Parse a hunt markdown file into a structured dict.
 
@@ -193,12 +243,7 @@ def parse_hunt_file(path: str | Path, category: str) -> dict[str, Any]:
     post = frontmatter.loads(raw)
 
     if post.metadata:
-        data = dict(post.metadata)
-        # Coerce date/datetime metadata to ISO strings for schema validation
-        # (PyYAML auto-parses ISO dates into datetime.date objects).
-        for k, v in list(data.items()):
-            if isinstance(v, (_dt.date, _dt.datetime)):
-                data[k] = v.isoformat()
+        data = _coerce_dates(dict(post.metadata))
         data.setdefault("category", category)
         errors = validate_hunt(data)
         if errors:

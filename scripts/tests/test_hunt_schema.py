@@ -1,9 +1,11 @@
 """Lock in the contract of scripts.hunt_schema (especially FormatChecker)."""
 from scripts.hunt_schema import (
     CATEGORIES,
+    DRAFT_SCHEMA,
     SEVERITIES,
     STATUSES,
     HUNT_SCHEMA,
+    validate_draft,
     validate_hunt,
 )
 
@@ -136,3 +138,53 @@ def test_short_hypothesis_rejected():
     hunt["hypothesis"] = "too short"  # under 10 chars
     errors = validate_hunt(hunt)
     assert any("hypothesis" in e for e in errors)
+
+
+# --- drafts ----------------------------------------------------------------
+#
+# A draft is a hunt submitted without an ID; assign_hunt_ids.py mints one at
+# merge so two PRs can never name the same file.
+
+
+def _valid_draft() -> dict:
+    draft = _valid_hunt()
+    draft.pop("id")
+    draft["title"] = "Some hunt title"
+    return draft
+
+
+def test_hunt_schema_is_not_mutated_by_draft_schema():
+    # DRAFT_SCHEMA is built by unpacking HUNT_SCHEMA; a nested mutation here
+    # would silently make `id` optional for real hunts everywhere.
+    assert "id" in HUNT_SCHEMA["required"]
+    assert "not" not in HUNT_SCHEMA
+    assert "id" not in DRAFT_SCHEMA["required"]
+
+
+def test_valid_draft_passes():
+    assert validate_draft(_valid_draft()) == []
+
+
+def test_draft_must_not_declare_an_id():
+    errors = validate_draft({**_valid_draft(), "id": "H295"})
+    assert any("must not declare an 'id'" in e for e in errors)
+    # The raw jsonschema `not` failure dumps the whole document; suppress it.
+    assert not any("should not be valid under" in e for e in errors)
+
+
+def test_draft_requires_title():
+    draft = _valid_draft()
+    draft.pop("title")
+    assert any("'title' is a required property" in e for e in validate_draft(draft))
+
+
+def test_draft_requires_category_and_rejects_unknown_one():
+    draft = _valid_draft()
+    draft.pop("category")
+    assert any("'category' is a required property" in e for e in validate_draft(draft))
+    assert validate_draft({**_valid_draft(), "category": "Bonfire"}) != []
+
+
+def test_draft_without_id_still_fails_full_hunt_validation():
+    # The two validators must stay distinct: a draft is not a publishable hunt.
+    assert any("'id' is a required property" in e for e in validate_hunt(_valid_draft()))
