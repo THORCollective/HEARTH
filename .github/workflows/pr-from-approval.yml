@@ -30,10 +30,14 @@ jobs:
       - name: "Fetch main"
         run: git fetch origin main
 
-      - name: "Reassign hunt ID if it collides with main or another draft"
+      - name: "Reassign hunt ID if it collides with main or another open PR"
         id: reassign
         env:
           ISSUE_NUMBER: ${{ github.event.issue.number }}
+          # The script lists open PRs via `gh` to find competing hunt-ID
+          # claims, including from forks. Without a token it silently falls
+          # back to scanning draft/* branches, which misses those claims.
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python scripts/reassign_hunt_id.py
 
       - name: "Commit and push reassigned hunt ID"

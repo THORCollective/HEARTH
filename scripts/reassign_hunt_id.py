@@ -3,10 +3,17 @@
 
 Run on a checked-out draft branch with ``origin/main`` fetched. A draft's ID
 collides if the same number is already on ``main`` OR is claimed by another
-open ``draft/issue-*`` branch belonging to a lower-numbered issue (lower issue
-== earlier submission == priority). Colliding files are renamed to the next
-free number — considering main and every other draft branch — and the rename is
-staged.
+open pull request. Colliding files are renamed to the next free number —
+considering main and every other open PR — and the rename is staged.
+
+Other open PRs are enumerated via ``refs/pull/<n>/head``, not via branch refs:
+a PR from a fork has no branch under ``origin``, and merged draft branches are
+deleted, so a branch glob sees almost nothing. Claims are ranked two ways:
+
+* Another ``draft/issue-*`` PR yields to the lower-numbered issue (lower issue
+  == earlier submission == priority), as before.
+* A PR outside the draft scheme always wins. This script only ever runs on a
+  draft branch, so the draft is the only party that *can* renumber itself.
 
 Covers all three categories (Flames ``HNNN``, Embers ``BNNN``, Alchemy
 ``MNNN``). Each is an independent number space, so a draft's ``B035`` is only
@@ -23,6 +30,7 @@ to ``$GITHUB_OUTPUT``. Always exits 0 — no collision is a no-op.
 
 from __future__ import annotations
 
+import json
 import os
 import re
 import subprocess
@@ -81,40 +89,111 @@ def _added_files(category: str) -> list[Path]:
     return [Path(p) for p in out.splitlines() if p.endswith(".md")]
 
 
-def _fetch_draft_refs() -> None:
-    """Mirror every draft branch locally. Offline/empty is a safe no-op."""
+def _open_pull_refs() -> list[tuple[str, int | None]]:
+    """Mirror every OPEN pull request head locally.
+
+    Returns ``(local_ref, issue_number_or_None)`` per PR — the issue number is
+    parsed from a ``draft/issue-<n>`` head branch, and is ``None`` for any PR
+    outside that scheme. Fork PRs have no branch under ``origin``, so heads are
+    fetched from ``refs/pull/<n>/head``, which GitHub exposes for every PR.
+
+    Degrades to the old ``draft/*`` branch scan when the ``gh`` CLI is
+    unavailable: without it we cannot tell open PRs from the hundreds of closed
+    ones, and treating every closed PR as a live claim would drift IDs upward.
+    """
+    listed = subprocess.run(
+        ["gh", "pr", "list", "--state", "open", "--json", "number,headRefName"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if listed.returncode != 0:
+        print("warning: `gh` unavailable; falling back to draft/* branch refs")
+        return _draft_branch_refs()
+
+    refs: list[tuple[str, int | None]] = []
+    specs: list[str] = []
+    for pr in json.loads(listed.stdout or "[]"):
+        number = pr["number"]
+        local = f"refs/remotes/origin/pr/{number}"
+        specs.append(f"+refs/pull/{number}/head:{local}")
+        match = _DRAFT_RE.search(pr.get("headRefName") or "")
+        refs.append((local, int(match.group(1)) if match else None))
+
+    if specs:
+        subprocess.run(
+            ["git", "fetch", "origin", *specs],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+    return refs
+
+
+def _draft_branch_refs() -> list[tuple[str, int | None]]:
+    """Old behaviour: mirror ``draft/*`` branches and read issue numbers off
+    them. Offline/empty is a safe no-op."""
     subprocess.run(
         ["git", "fetch", "origin", "refs/heads/draft/*:refs/remotes/origin/draft/*"],
         check=False,
         capture_output=True,
         text=True,
     )
-
-
-def _other_draft_claims(
-    current_issue: int, category: str, prefix: str
-) -> dict[int, int]:
-    """Map each hunt number claimed by another open draft branch to the lowest
-    issue number claiming it. Scoped to one category. Assumes draft refs are
-    already fetched."""
-    claims: dict[int, int] = {}
     out = subprocess.run(
         ["git", "for-each-ref", "--format=%(refname)", "refs/remotes/origin/draft/"],
         check=False,
         capture_output=True,
         text=True,
     ).stdout
+    refs: list[tuple[str, int | None]] = []
     for ref in out.splitlines():
         match = _DRAFT_RE.search(ref)
-        if not match:
+        if match:
+            refs.append((ref, int(match.group(1))))
+    return refs
+
+
+def _ref_exists(ref: str) -> bool:
+    return (
+        subprocess.run(
+            ["git", "rev-parse", "--verify", "--quiet", f"{ref}^{{commit}}"],
+            check=False,
+            capture_output=True,
+            text=True,
+        ).returncode
+        == 0
+    )
+
+
+def _other_pr_claims(
+    pull_refs: list[tuple[str, int | None]],
+    current_issue: int,
+    category: str,
+    prefix: str,
+) -> tuple[dict[int, int], set[int]]:
+    """Numbers claimed by other open PRs, scoped to one category.
+
+    Returns ``(draft_claims, hard_claims)``: ``draft_claims`` maps a number to
+    the lowest issue number claiming it (this draft yields only to a lower
+    one), while ``hard_claims`` holds numbers taken by PRs outside the draft
+    scheme, which this draft must always yield to.
+    """
+    draft_claims: dict[int, int] = {}
+    hard_claims: set[int] = set()
+    for ref, issue in pull_refs:
+        if issue is not None and issue == current_issue:
             continue
-        issue = int(match.group(1))
-        if issue == current_issue:
+        if not _ref_exists(ref):
+            # A head that failed to fetch is skipped rather than fatal: a
+            # missing claim can cost a later rename, a crash costs the run.
+            print(f"warning: {ref} unavailable; not counting its claims")
             continue
         for num in _added_numbers(ref, category, prefix):
-            if num not in claims or issue < claims[num]:
-                claims[num] = issue
-    return claims
+            if issue is None:
+                hard_claims.add(num)
+            elif num not in draft_claims or issue < draft_claims[num]:
+                draft_claims[num] = issue
+    return draft_claims, hard_claims
 
 
 def _set_output(changed: bool, hunt_id: str) -> None:
@@ -128,7 +207,7 @@ def _set_output(changed: bool, hunt_id: str) -> None:
 
 def main() -> int:
     current_issue = int(os.environ.get("ISSUE_NUMBER", "0") or "0")
-    _fetch_draft_refs()
+    pull_refs = _open_pull_refs()
 
     changed = False
     final_id = ""
@@ -140,14 +219,19 @@ def main() -> int:
             continue
 
         main_nums = _main_numbers(category, prefix)
-        other_claims = _other_draft_claims(current_issue, category, prefix)
+        draft_claims, hard_claims = _other_pr_claims(
+            pull_refs, current_issue, category, prefix
+        )
 
-        # Must not KEEP a number on main or held by a lower-numbered issue.
-        blocked = set(main_nums) | {
-            num for num, issue in other_claims.items() if issue < current_issue
-        }
+        # Must not KEEP a number on main, held by a lower-numbered issue, or
+        # held by a PR outside the draft scheme (which cannot renumber itself).
+        blocked = (
+            set(main_nums)
+            | hard_claims
+            | {num for num, issue in draft_claims.items() if issue < current_issue}
+        )
         # When allocating a fresh number, avoid everything known to be claimed.
-        claimed = set(main_nums) | set(other_claims)
+        claimed = set(main_nums) | hard_claims | set(draft_claims)
 
         for path in added:
             num = parse_hunt_number(path.stem, prefix)
