@@ -17,6 +17,9 @@ HUNT_FILE_RE = re.compile(r"^[HBM]\d+\.md$")
 # hunt files that have been filed outside a category directory.
 NON_HUNT_DIRS = {
     ".git",
+    # Drafts awaiting an ID. Never contains [HBM]NNN.md names (parse_draft_file
+    # rejects them), but listed so a stray one is a clear skip, not an exit 1.
+    "Incoming",
     ".github",
     "node_modules",
     ".venv",

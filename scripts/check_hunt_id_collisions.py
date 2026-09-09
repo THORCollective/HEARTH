@@ -39,9 +39,13 @@ from scripts.hunt_ids import (
     parse_hunt_number,
 )
 from scripts.hunt_parser import _parse_legacy_table
+from scripts.hunt_policy import REQUIRE_DRAFT_SUBMISSIONS
 
 DIRS = ("Flames", "Embers", "Alchemy")
 _HUNT_PATH_RE = re.compile(r"^(?:Flames|Embers|Alchemy)/([HBM]\d+)\.md$")
+# A draft claims its filename, not an ID; two PRs adding the same slug would
+# otherwise only conflict at merge.
+_DRAFT_PATH_RE = re.compile(r"^Incoming/([^/]+)\.md$")
 
 
 def _git(*args: str) -> str:
@@ -131,7 +135,8 @@ def open_pr_claims(current_pr: int) -> dict[str, int]:
         for entry in pr.get("files") or []:
             if entry.get("changeType") != "ADDED":
                 continue
-            match = _HUNT_PATH_RE.match(entry.get("path", ""))
+            path = entry.get("path", "")
+            match = _HUNT_PATH_RE.match(path) or _DRAFT_PATH_RE.match(path)
             if not match:
                 continue
             stem = match.group(1)
@@ -174,6 +179,27 @@ def cross_pr_problems(
     return problems
 
 
+def legacy_submission_notes(added_paths: list[Path]) -> list[str]:
+    """Notes for hunts submitted with an ID in the filename.
+
+    Only ADDED files: editing an existing ``Flames/H100.md`` is legitimate
+    forever and must never warn. Phase 1 prints these; phase 2 fails on them
+    (see scripts/hunt_policy.py).
+    """
+    notes = []
+    for path in added_paths:
+        match = _HUNT_PATH_RE.match(path.as_posix())
+        if not match:
+            continue
+        notes.append(
+            f"{path.as_posix()} names a hunt ID directly. Submit hunts as an "
+            f"ID-less draft in Incoming/ instead (e.g. Incoming/<slug>.md with "
+            f"no 'id:' field); the ID is assigned when your PR merges, so two "
+            f"PRs can never claim the same one."
+        )
+    return notes
+
+
 def main() -> int:
     # Establish the baseline first, and fail closed if it looks empty. ``main``
     # always has hunts, so an empty result means ``origin/main`` didn't resolve
@@ -210,7 +236,15 @@ def main() -> int:
 
     all_stems = [p.stem for d in DIRS for p in Path(d).glob("*.md")]
 
-    problems = find_id_problems(added, main_ids, all_stems, modified)
+    notes = legacy_submission_notes(added_paths)
+    if REQUIRE_DRAFT_SUBMISSIONS:
+        problems = list(notes)
+    else:
+        for note in notes:
+            print(f"  warning: {note}")
+        problems = []
+
+    problems += find_id_problems(added, main_ids, all_stems, modified)
     problems += cross_pr_problems(
         added, main_ids, int(os.environ.get("PR_NUMBER", "0") or "0")
     )

@@ -1,6 +1,7 @@
 """Tests for identity extraction used by the hunt-ID collision check."""
 
 import json
+from pathlib import Path
 
 import pytest
 
@@ -163,3 +164,33 @@ def test_suggestion_skips_ids_claimed_by_other_open_prs():
         "H294", {"H292", "H293"}, {"H294": 404, "H295": 406}
     )
     assert suggestion == "H296"
+
+
+# --- draft submission policy ----------------------------------------------
+
+
+def test_legacy_notes_fire_on_added_id_named_hunts():
+    notes = collisions.legacy_submission_notes([Path("Flames/H295.md")])
+    assert len(notes) == 1
+    assert "Incoming/" in notes[0]
+
+
+def test_legacy_notes_ignore_drafts_and_non_hunt_paths():
+    paths = [Path("Incoming/artifactory.md"), Path("scripts/hunt_ids.py")]
+    assert collisions.legacy_submission_notes(paths) == []
+
+
+@pytest.mark.parametrize("enforce", [False, True])
+def test_policy_flip_is_the_only_difference(monkeypatch, enforce):
+    # Phase 2 is proven green here before the constant is ever flipped.
+    monkeypatch.setattr(collisions, "REQUIRE_DRAFT_SUBMISSIONS", enforce)
+    notes = collisions.legacy_submission_notes([Path("Flames/H295.md")])
+    problems = list(notes) if collisions.REQUIRE_DRAFT_SUBMISSIONS else []
+    assert bool(problems) is enforce
+
+
+def test_open_pr_claims_counts_draft_filenames(monkeypatch):
+    # Two PRs adding Incoming/artifactory.md would otherwise only conflict at
+    # merge; the newer one should be told to rename.
+    _stub_gh(monkeypatch, [_pr(404, "Incoming/artifactory.md")])
+    assert collisions.open_pr_claims(405) == {"artifactory": 404}
