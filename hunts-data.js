@@ -1422,6 +1422,54 @@ const HUNTS_DATA = [
     "created": "2026-09-04T12:50:00-05:00"
   },
   {
+    "id": "B044",
+    "category": "Embers",
+    "title": "Baseline of shared objects mapped into long-running Linux network daemons, and of every preload path that can put one there",
+    "tactic": "Persistence, Defense Evasion, Privilege Escalation",
+    "notes": "",
+    "tags": [
+      "persistence",
+      "defense_evasion",
+      "privilege_escalation",
+      "linux",
+      "embers",
+      "baseline",
+      "t1574_006",
+      "t1554",
+      "t1543",
+      "ld_preload",
+      "shared_object",
+      "dynamic_linker",
+      "haproxy",
+      "daemon_integrity",
+      "apt37",
+      "dprk",
+      "T1574.006",
+      "T1554",
+      "T1543"
+    ],
+    "techniques": [
+      "T1574.006",
+      "T1554",
+      "T1543"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [
+      "H289",
+      "H290",
+      "H291"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **The persistence lives in the loading, not in a file, so file-centric controls report clean.** Package\n  verification, file-integrity monitoring and hash inventories all answer the question \"did a binary\n  change\". In the source campaign nothing in `/usr/sbin` had changed — the backdoor was compiled into a\n  legitimately-installed HAProxy and loaded through a supported API. The only place the implant was\n  visible was in the process's mapping set, which nothing was recording.\n- **There is no rule to write, because the malicious event is the normal event.** A shared object being\n  mapped into a daemon has no command line, no child process, no network connection and often no unusual\n  path. Every discriminating property is comparative: this object, in this service, was not here before.\n  That is the definition of a baseline problem, and attempting it as a rule produces either an alert on\n  every library load or an allowlist that was never actually built.\n- **`/etc/ld.so.preload` is a near-binary signal and almost nobody inventories it.** The file is absent on\n  the great majority of production hosts. Its population is not small, it is usually zero. A single\n  fleet-wide query for its existence is cheap enough to run before any of the rest of this work and\n  frequently finds either an implant or an undocumented agent that should have been known about.\n- **Writable directories on the linker search path are a standing escalation primitive.** Independent of\n  any current compromise, a group-writable directory in `ld.so.conf.d` resolution order means any user\n  who can write there can execute code inside every process that subsequently loads a library. Enumerating\n  search-path directory permissions is a by-product of this baseline and often the most immediately\n  actionable thing it produces.\n- **Recording restart timing separates two findings that need very different responses.** A mapping set\n  that changed at a service restart points at configuration — a unit file, a drop-in, a plugin directive\n  — and the fix is a configuration fix. A mapping set that changed with no restart means code was injected\n  into a live process, which is a different severity and a different containment path. Only the restart\n  timeline distinguishes them, and only a baseline makes the change visible at all.\n- **Scoping to the dynamic linker is the mistake this campaign was built to survive.** Published guidance\n  concentrates on `LD_PRELOAD` because it is the classic route. The Ted backdoor used a service plugin\n  API. A baseline that records the resulting mapping set rather than only the known mechanisms stays\n  correct when the next implant picks a route nobody has written up yet — which is the whole reason to\n  capture the outcome alongside the configuration.\n- **The inventory gap it exposes is itself the first deliverable.** Most teams cannot currently answer\n  which shared objects load into their production `sshd`, let alone whether that set changed last month.\n  The first run surfaces mostly legitimate but undocumented libraries, and closing that gap is what\n  converts every subsequent month's diff from a research project into a one-line question.",
+    "references": "- [MITRE ATT&CK T1574.006: Hijack Execution Flow — Dynamic Linker Hijacking](https://attack.mitre.org/techniques/T1574/006/)\n- [Rapid7: DPRK APTs — Ted backdoor and curlRAT target South Korean media and automotive sectors (source report)](https://www.rapid7.com/blog/post/tr-dprk-apts-ted-backdoor-curlrat-target-south-korean-media-automotive-sectors)\n- [SentinelLabs: Leveraging LD_AUDIT to beat the traditional Linux library preloading technique](https://www.sentinelone.com/labs/leveraging-ld_audit-to-beat-the-traditional-linux-library-preloading-technique/)\n- [Velociraptor artifact walkthrough: detecting LD_PRELOAD abuse via /proc/*/environ and /etc/ld.so.preload](https://medium.com/@dfirloading/detecting-ld-preload-abuse-with-velociraptor-da5522fe4bac)\n- [Elastic Security Labs: Linux Detection Engineering — Approaching the Summit on Persistence Mechanisms](https://www.elastic.co/security-labs/approaching-the-summit-on-persistence)\n- [Atomic Red Team: T1574.006 atomic tests](https://www.atomicredteam.io/docs/atomics/T1574.006)\n- [Systems Hardening: Linux shared library security — LD_PRELOAD attacks, library hijacking and hardened linking](https://www.systemshardening.com/articles/linux/linux-shared-library-security/)\n- [HAProxy documentation: filters and the master-worker process model](https://docs.haproxy.org/2.8/configuration.html)\n- [MITRE ATT&CK T1554: Compromise Host Software Binary](https://attack.mitre.org/techniques/T1554/)",
+    "file_path": "Embers/B044.md",
+    "created": null
+  },
+  {
     "id": "H001",
     "category": "Flames",
     "title": "An adversary is attempting to brute force the admin account on the externally facing VPN gateway.",
@@ -10662,6 +10710,214 @@ const HUNTS_DATA = [
     "created": "2026-09-04T12:50:00-05:00"
   },
   {
+    "id": "H289",
+    "category": "Flames",
+    "title": "sshd replaced with a build that captures plaintext passwords at userauth_passwd and writes them to an encrypted file under /var/lib/sshd",
+    "tactic": "Credential Access, Persistence, Defense Evasion",
+    "notes": "",
+    "tags": [
+      "credential_access",
+      "persistence",
+      "defense_evasion",
+      "linux",
+      "flames",
+      "t1556_003",
+      "t1554",
+      "t1543",
+      "sshd",
+      "openssh",
+      "pam",
+      "credential_harvesting",
+      "trojanized_binary",
+      "apt37",
+      "dprk",
+      "T1556.003",
+      "T1554",
+      "T1543"
+    ],
+    "techniques": [
+      "T1556.003",
+      "T1554",
+      "T1543"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **It converts every future administrative login into a credential the operator owns.** Unlike a\n  one-shot credential dump, a patched `sshd` keeps producing. On a bastion, a jump host, or any box the\n  platform team touches daily, the yield after a week is the working password of everyone who\n  administers the estate — including accounts that were never on the host at the time of compromise.\n  Dwell time and damage scale together, which makes the detection latency here matter more than usual.\n- **There is no failure signal to alert on.** The technique is invisible to every control that watches\n  for authentication going wrong: no failed logons, no account lockouts, no anomalous privilege use, no\n  new account. It succeeds by letting authentication work exactly as designed. That removes the entire\n  authentication-anomaly detection class from play and leaves host integrity as the only place it can be\n  caught.\n- **The chosen hiding place is a directory that is supposed to be empty, which is a gift.** Most Linux\n  hunting fights a noise floor. `/var/empty/sshd` and `/var/lib/sshd` have essentially none — they are\n  privilege-separation chroots, and emptiness is their function. A standing check for regular files in\n  them costs nothing to run, needs no baseline, and would have caught this campaign on the first pass.\n  That check is worth deploying whether or not this specific actor is in scope.\n- **Encryption of the credential log defeats the intuitive hunt and pushes you to the better one.**\n  Grepping the estate for known passwords on disk would have returned clean. The operators used a custom\n  substitution cipher plus Base64 specifically so that content-based searching fails. Hunting the\n  structure instead — wrong file in the wrong directory, wrong process doing the writing, package that\n  no longer verifies — is both what works here and what generalizes to the next implant with a different\n  encoding.\n- **Package verification is an underused, high-yield control on Linux estates.** Most organizations have\n  file-integrity monitoring on Windows and nothing equivalent on Linux. `rpm -Va` and `debsums` are\n  already installed, already know the vendor hashes, and answer the question directly. The work is not\n  building the check, it is enumerating the legitimate exceptions once — source builds, appliances,\n  third-party repositories — so the result is readable.\n- **A replaced binary requires a restart, which puts a second event in the timeline.** The write alone\n  can be argued about. A write to `/usr/sbin/sshd` followed within seconds by a service restart, outside\n  any change window, cannot. Correlating the two turns a moderate-confidence integrity finding into a\n  high-confidence one and gives the investigation an anchor timestamp that the timestomping in [[H290]]\n  cannot erase.",
+    "references": "- [MITRE ATT&CK T1556.003: Modify Authentication Process — Pluggable Authentication Modules](https://attack.mitre.org/techniques/T1556/003/)\n- [Rapid7: DPRK APTs — Ted backdoor and curlRAT target South Korean media and automotive sectors (source report)](https://www.rapid7.com/blog/post/tr-dprk-apts-ted-backdoor-curlrat-target-south-korean-media-automotive-sectors)\n- [Elastic Security Labs: Linux Detection Engineering — Approaching the Summit on Persistence Mechanisms](https://www.elastic.co/security-labs/approaching-the-summit-on-persistence)\n- [Detection.FYI / Elastic: Potential Backdoor Execution Through PAM_EXEC](https://detection.fyi/elastic/detection-rules/linux/persistence_pluggable_authentication_module_pam_exec_backdoor_exec/)\n- [Atomic Red Team: T1556.003 atomic tests](https://www.atomicredteam.io/docs/atomics/T1556.003)\n- [Systems Hardening: PAM module integrity verification — detecting backdoors like PamDOORa](https://www.systemshardening.com/articles/cross-cutting/pam-module-integrity-verification/)\n- [Google Cloud Threat Intelligence (Mandiant): Financially motivated threat actor BREEZE COMET targets Brazil — corroborating PAM manipulation](https://cloud.google.com/blog/topics/threat-intelligence/financially-motivated-threat-actor-breeze-comet-targets-brazil/)\n- [MITRE ATT&CK T1554: Compromise Host Software Binary](https://attack.mitre.org/techniques/T1554/)",
+    "file_path": "Flames/H289.md",
+    "created": null
+  },
+  {
+    "id": "H290",
+    "category": "Flames",
+    "title": "Replaced Linux system daemon timestomped to a reference binary, leaving mtime older than ctime on a package-verification failure",
+    "tactic": "Defense Evasion",
+    "notes": "",
+    "tags": [
+      "defense_evasion",
+      "linux",
+      "flames",
+      "t1070_006",
+      "t1554",
+      "t1036_005",
+      "timestomp",
+      "anti_forensics",
+      "file_integrity",
+      "trojanized_binary",
+      "apt37",
+      "dprk",
+      "T1070.006",
+      "T1554",
+      "T1036.005"
+    ],
+    "techniques": [
+      "T1070.006",
+      "T1554",
+      "T1036.005"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **The forgery cannot be completed, and the gap it leaves is deterministic.** Every other anti-forensic\n  technique in this campaign — log erasure, encrypted configs, counter scrubbing — genuinely destroys\n  data. Timestomping does not. The syscall that backdates mtime necessarily advances ctime, so the act\n  of hiding produces the artifact that reveals it. Detections built on a structural property of the\n  kernel rather than on a tool signature do not decay, which makes this worth building once and running\n  indefinitely.\n- **It is the pivot that turns one compromised binary into the full inventory.** Operators reuse a donor\n  timestamp. Clustering system binaries by identical mtime and inspecting clusters with scattered ctimes\n  found `crond`, `atd`, `agetty`, `polkitd` and `sshd` together in the source campaign. During an\n  incident this is the difference between remediating the daemon you happened to find and remediating\n  the set, and it costs one query.\n- **It directly undermines the timeline the rest of the investigation is built on.** Responders anchor\n  on file modification times constantly — first-seen, dwell time, patient zero. A successful timestomp\n  does not merely hide a file, it inserts a false anchor that pulls the reconstructed timeline years off.\n  Establishing early whether mtimes on a host are trustworthy is prerequisite work for every other\n  question, not an optional extra.\n- **Linux estates usually have no file-integrity control, but they do ship the tooling.** `rpm -Va` and\n  `debsums` already know every vendor checksum and are installed by default. The reason this is not\n  routinely hunted is not capability, it is that nobody enumerated the legitimate exceptions — source\n  builds, appliances, third-party repositories — so the output looks unreadable. That enumeration is a\n  one-time cost, and afterwards the `5`-without-`T` correlation is close to a free high-fidelity signal.\n- **The mass-update shape cleanly separates the benign explanations.** The standard objection to this\n  hunt is that ctime moves all the time, and it does — for relabels, mode enforcement and attribute\n  writes. But those hit directories, not individual daemons. Ranking by rarity within the directory\n  converts the technique from something with an unmanageable false-positive rate into something with a\n  handful of results per fleet sweep.\n- **It corroborates findings that are otherwise arguable in isolation.** A single package-verification\n  mismatch invites a shrug about a source build. A package-verification mismatch on a binary whose\n  mtime was restored to match an unrelated system file does not. This hunt is most valuable not standing\n  alone but as the second signal that makes [[H289]] and any other integrity finding actionable.",
+    "references": "- [MITRE ATT&CK T1070.006: Indicator Removal — Timestomp](https://attack.mitre.org/techniques/T1070/006/)\n- [Rapid7: DPRK APTs — Ted backdoor and curlRAT target South Korean media and automotive sectors (source report)](https://www.rapid7.com/blog/post/tr-dprk-apts-ted-backdoor-curlrat-target-south-korean-media-automotive-sectors)\n- [Inversecos: Detecting Linux anti-forensics — timestomping](https://www.inversecos.com/2022/08/detecting-linux-anti-forensics.html)\n- [CyberEngage: Timestomping in Linux — techniques, detection and forensic insights](https://www.cyberengage.org/post/timestomping-in-linux-techniques-detection-and-forensic-insights)\n- [InfoSec Notes: Timestomping — Linux TTP analysis](https://notes.qazeer.io/dfir/linux/ttps_analysis/timestomping)\n- [Atomic Red Team: T1070.006 atomic tests](https://www.atomicredteam.io/docs/atomics/T1070.006)\n- [HackTricks: Linux forensics — filesystem timeline and package verification](https://hacktricks.wiki/en/generic-methodologies-and-resources/basic-forensic-methodology/linux-forensics.html)\n- [MITRE ATT&CK T1554: Compromise Host Software Binary](https://attack.mitre.org/techniques/T1554/)",
+    "file_path": "Flames/H290.md",
+    "created": null
+  },
+  {
+    "id": "H291",
+    "category": "Flames",
+    "title": "Linux authentication and shell-history logs rewritten in place to remove only the attacker's lines, leaving a shrinking file with a fresh inode",
+    "tactic": "Defense Evasion",
+    "notes": "",
+    "tags": [
+      "defense_evasion",
+      "linux",
+      "flames",
+      "t1685_006",
+      "t1070_003",
+      "t1685_004",
+      "anti_forensics",
+      "log_tampering",
+      "auth_log",
+      "bash_history",
+      "auditd",
+      "apt37",
+      "dprk",
+      "T1685.006",
+      "T1070.003",
+      "T1685.004"
+    ],
+    "techniques": [
+      "T1685.006",
+      "T1070.003",
+      "T1685.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **It defeats every check that asks whether logging is working.** Monitoring for absent, empty or\n  stalled logs is common and catches the crude version of this technique. Selective filtering passes all\n  of it: the file exists, has a normal size, has a recent timestamp, and is still being written to. The\n  only way to see it is to compare what the file contains against what it should contain, which is a\n  different question from whether it exists.\n- **The append-only invariant is a real structural property, not a heuristic.** Authentication and system\n  logs are only ever added to during normal operation. Any decrease in size is therefore anomalous by\n  construction, and the single benign cause — rotation — announces itself by creating an archive file.\n  Detections resting on an invariant rather than a pattern hold up against tool changes, which is what\n  makes this worth building rather than signaturing.\n- **Log forwarding converts the technique from an evidence-destruction problem into a diff.** This is the\n  highest-value point in the hunt and it is an architecture decision, not a detection one. Lines shipped\n  the moment they were written cannot be recalled. Replaying the central copy against the host copy does\n  not just detect the tampering, it recovers the exact content the operator judged worth removing —\n  which names their tooling, their staging paths and often their source address.\n- **What they chose to filter is intelligence about how they work.** The source campaign matched on\n  `tmp`, `wget`, `cron` and `crond` — a tooling-shaped keyword set, not an identity-shaped one. That is\n  a deliberate choice for completeness over precision, it tells you the operator expected their download\n  and persistence steps to be logged, and it points directly at the artifacts to hunt next on the same\n  host.\n- **`audit.log` being in the target list reorders the detection dependency.** If the auditd log is\n  something the operator edits, then auditd cannot be the sole witness to its own tampering. This forces\n  the same conclusion the rest of the hunt reaches from a different direction: the evidence has to live\n  somewhere the operator does not control, and watches on the auditd unit and binary have to exist\n  alongside the watches on the logs.\n- **Shell history is the cheapest and most commonly skipped half.** `/root/.bash_history` on a jump host\n  is a plaintext record of hands-on-keyboard activity, and it was first in the source campaign target\n  list. It is also the file least likely to be forwarded anywhere. Shipping shell history off-host, or at\n  minimum recording its size over time, costs almost nothing and closes the gap where the most\n  investigation-relevant content lives.",
+    "references": "- [MITRE ATT&CK T1685.006: Disable or Modify Tools — Clear Linux or Mac System Logs](https://attack.mitre.org/techniques/T1685/006/)\n- [Rapid7: DPRK APTs — Ted backdoor and curlRAT target South Korean media and automotive sectors (source report)](https://www.rapid7.com/blog/post/tr-dprk-apts-ted-backdoor-curlrat-target-south-korean-media-automotive-sectors)\n- [Inversecos: Detecting Linux anti-forensics — log tampering](https://www.inversecos.com/2022/06/detecting-linux-anti-forensics-log.html)\n- [Elastic Security Labs: Linux Detection Engineering — a primer on persistence and defense evasion telemetry](https://www.elastic.co/security-labs/approaching-the-summit-on-persistence)\n- [Atomic Red Team: T1070.003 Clear Command History atomic tests](https://www.atomicredteam.io/docs/atomics/T1070.003)\n- [Hermes Codex: Artifact analysis — Linux authentication logs (auth.log and secure)](https://hermes-codex.vercel.app/forensics/linux/linux-auth-logs/)\n- [MITRE ATT&CK T1685.004: Disable or Modify Linux Audit System Log](https://attack.mitre.org/techniques/T1685/004/)\n- [MITRE ATT&CK T1070.003: Indicator Removal — Clear Command History](https://attack.mitre.org/techniques/T1070/003/)",
+    "file_path": "Flames/H291.md",
+    "created": null
+  },
+  {
+    "id": "H292",
+    "category": "Flames",
+    "title": "takeown and icacls used to seize Windows Update service DLLs and rename them out of the way, then hand ownership back to TrustedInstaller",
+    "tactic": "Defense Evasion, Impact",
+    "notes": "",
+    "tags": [
+      "defense_evasion",
+      "impact",
+      "windows",
+      "flames",
+      "t1222_001",
+      "t1685",
+      "t1489",
+      "icacls",
+      "takeown",
+      "windows_update",
+      "lolbin",
+      "patch_suppression",
+      "silver_fox",
+      "T1222.001",
+      "T1685",
+      "T1489"
+    ],
+    "techniques": [
+      "T1222.001",
+      "T1685",
+      "T1489"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **It defeats the self-healing that most defenders are implicitly relying on.** Detections for update\n  tampering usually watch service state, and service state is exactly what Windows Update Medic Service\n  restores. Removing the Medic service's own DLL from disk takes the repair mechanism out of the loop\n  entirely, which turns a temporary evasion into a permanent one and makes the file layer, not the\n  service layer, the place this has to be caught.\n- **The cleanup steps mean the obvious detection returns clean.** Restoring TrustedInstaller ownership\n  and stripping the Everyone grant after the rename serves no operational purpose except to defeat a\n  later permissions review. Any hunt built on \"find System32 files with weak ACLs\" reports nothing on a\n  compromised host. Recognising that the ACL is transient — and pivoting to file absence and to the\n  historical 4670 and command-line records — is the difference between this hunt working and quietly\n  failing.\n- **Absence is the version of this that survives the next campaign.** `_BAK` is a naming choice, `WaaSMedicSvc`\n  is one target among several, and both will change. A servicing-derived inventory question — which\n  packaged system DLLs are not present at their expected paths — needs no attacker knowledge at all,\n  runs as a fleet sweep rather than an event query, and catches every variant including ones that\n  delete rather than rename.\n- **`*S-1-1-0` on a System32 path is close to a free high-fidelity signal.** Granting Everyone full\n  control over a Windows system binary is not a thing competent administrative tooling does. It is one\n  string, it is cheap to search across process command lines, and its benign population is small enough\n  to enumerate. Even where the rest of this hunt is out of reach, that single query is worth deploying.\n- **The damage is cumulative, silent, and gets attributed to something else.** An unpatched host is not\n  an incident anyone opens. It reports no update errors, because the component that would report them\n  has been removed, so patch-compliance dashboards show a stale timestamp rather than a failure. Months\n  later the host is exploited through a vulnerability that was patched long ago, and the root cause looks\n  like a compliance gap rather than the deliberate act it was.\n- **The cluster is what makes it conclusive, and the cluster is free once you have the process tree.**\n  Individually, `takeown` is administrative, `sc config` is administrative, a registry policy write is\n  administrative. Together, inside one process tree, within seconds, descending from a randomly-named\n  executable in a world-writable directory, they form a sequence with no legitimate analogue. Hunting the\n  tree rather than the tool is what separates this from the deployment scripts that share its binaries.",
+    "references": "- [MITRE ATT&CK T1222.001: File and Directory Permissions Modification — Windows File and Directory Permissions Modification](https://attack.mitre.org/techniques/T1222/001/)\n- [Microsoft Security Blog: Counterfeit installers to system compromise — tracking a deceptive software download campaign (source report)](https://www.microsoft.com/en-us/security/blog/2026/09/01/counterfeit-installers-system-compromise-tracking-deceptive-software-download-campaign/)\n- [The Hacker News: Fake software installers disable Windows Update and weaken Microsoft Defender](https://thehackernews.com/2026/09/fake-software-installers-disable.html)\n- [Atomic Red Team: T1222.001 atomic tests](https://www.atomicredteam.io/docs/atomics/T1222.001)\n- [SS64: icacls reference — well-known SIDs, /setowner and /remove semantics](https://ss64.com/nt/icacls.html)\n- [Microsoft Learn: Audit Authorization Policy Change and Event ID 4670 — permissions on an object were changed](https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4670)\n- [Microsoft Learn: takeown command reference — seizing ownership from TrustedInstaller](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/takeown)\n- [MITRE ATT&CK T1685: Disable or Modify Tools](https://attack.mitre.org/techniques/T1685/)",
+    "file_path": "Flames/H292.md",
+    "created": null
+  },
+  {
+    "id": "H293",
+    "category": "Flames",
+    "title": "Python interpreter staged in ProgramData sweeping SMB then coercing the domain controller over EFSRPC into an NTLM relay",
+    "tactic": "Credential Access, Lateral Movement, Discovery",
+    "notes": "",
+    "tags": [
+      "credential_access",
+      "lateral_movement",
+      "discovery",
+      "windows",
+      "active_directory",
+      "flames",
+      "t1557_001",
+      "t1187",
+      "t1046",
+      "ntlm_relay",
+      "petitpotam",
+      "efsrpc",
+      "coerced_authentication",
+      "vishing",
+      "microsoft_teams",
+      "T1557.001",
+      "T1187",
+      "T1046"
+    ],
+    "techniques": [
+      "T1557.001",
+      "T1187",
+      "T1046"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **Nothing in the chain looks like credential theft, because no credential is stolen.** The operator\n  never reads a hash, never touches LSASS, never triggers a failed logon. They ask a domain controller\n  to authenticate, and it does, correctly. Every detection built around credential access or\n  authentication failure is blind to this, which is why the coercion call itself has to be the\n  detection point.\n- **The coercion has no semantic justification, which is rare and worth exploiting.** Most Windows\n  hunting fights protocols with large legitimate populations. A workstation invoking EFSRPC against a\n  domain controller has essentially none — the protocol exists for a purpose that endpoints do not\n  exercise against DCs. Filtering 5145 to `IPC$` and `efsrpc` produces a result set small enough to read\n  by hand, which is an unusually good position to be in for a domain-escalation technique.\n- **The audit policy this depends on is off by default, and that gap is the finding.** Event ID 5145\n  requires Advanced Audit Policy `Audit Detailed File Share` to be enabled, and most estates have not\n  enabled it. Running this hunt therefore either detects coercion or discovers that coercion would be\n  undetectable — and the second outcome is the more common and more important one. Enabling it on\n  domain controllers and Tier 0 first is a small, bounded change with a large payoff.\n- **The interpreter-plus-SMB-fanout conjunction is a strong signal available to everyone right now.**\n  It needs no audit policy change and no domain controller instrumentation. Developer machines have\n  Python in odd places, and plenty of processes talk to a file server, but a private interpreter under\n  `C:\\ProgramData` opening SMB to dozens of internal hosts is the relay-target sweep and very little\n  else. Expressing it as a conjunction rather than two alerts is what makes it deployable.\n- **The relay target selection reveals a systemic weakness worth fixing while you are in there.** The\n  sweep is looking for hosts that accept relayed authentication, which is to say hosts without SMB\n  signing enforced. Running the same enumeration defensively — which of our servers would accept a relay\n  — converts a detection exercise into a hardening backlog, and SMB signing enforcement plus Extended\n  Protection for Authentication on ADCS removes the escalation path rather than merely observing it.\n- **Initial access here bypasses email entirely, so the usual gate never sees it.** The lure arrives as\n  a Teams chat from an external tenant and escalates to a voice call within minutes. No attachment, no\n  link in mail, no secure email gateway involvement. Organizations that measure phishing exposure through\n  mail flow have no visibility into this path at all, which makes the external-federation and\n  external-chat telemetry a genuinely new surface to be watching rather than an incremental one.",
+    "references": "- [MITRE ATT&CK T1557.001: Adversary-in-the-Middle — Name Resolution Poisoning and SMB Relay](https://attack.mitre.org/techniques/T1557/001/)\n- [Unit 42 (Palo Alto Networks): Spring Ring — an inside look at voice phishing campaigns in Microsoft Teams (source report)](https://unit42.paloaltonetworks.com/spring-ring-voice-phishing-campaigns/)\n- [NCC Group / Fox-IT: Detecting and hunting for the PetitPotam NTLM relay attack](https://www.nccgroup.com/research-blog/detecting-and-hunting-for-the-petitpotam-ntlm-relay-attack/)\n- [SOC Prime: PetitPotam NTLM relay attack detection — Sigma rules](https://socprime.com/blog/petitpotam-ntlm-relay-attack-detection/)\n- [Microsoft Learn: Event ID 5145 — a network share object was checked to see whether the client can be granted desired access](https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-5145)\n- [topotam/PetitPotam — the coercion tool observed in the source campaign](https://github.com/topotam/PetitPotam)\n- [Microsoft Learn: Mitigating NTLM relay attacks on Active Directory Certificate Services (KB5005413)](https://support.microsoft.com/en-us/topic/kb5005413-mitigating-ntlm-relay-attacks-on-active-directory-certificate-services-ad-cs-3612b773-4043-4aa9-b23d-b87910cd3429)\n- [MITRE ATT&CK T1187: Forced Authentication](https://attack.mitre.org/techniques/T1187/)",
+    "file_path": "Flames/H293.md",
+    "created": null
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
@@ -11759,5 +12015,90 @@ const HUNTS_DATA = [
     "references": "- [MITRE ATT&CK T1615: Group Policy Discovery](https://attack.mitre.org/techniques/T1615/)\n- [CISA AA26-237A: A Tale of Two SOCs — Insights From Two Red Team Assessments (source report)](https://www.cisa.gov/news-events/cybersecurity-advisories/aa26-237a)\n- [Huntress: From code to coverage (part 3) — SDFlags, the log field I could not ignore](https://www.huntress.com/blog/ldap-active-directory-detection-part-three)\n- [Huntress: Hunting SOAPHound — the (!FALSE) pattern](https://www.huntress.com/blog/ldap-active-directory-detection-part-four)\n- [Unit 42: LDAP enumeration — unveiling the double-edged sword of Active Directory](https://unit42.paloaltonetworks.com/lightweight-directory-access-protocol-based-attacks/)\n- [Securonix: Detecting LDAP enumeration and BloodHound's SharpHound collector using AD decoys](https://medium.com/securonix-tech-blog/detecting-ldap-enumeration-and-bloodhound-s-sharphound-collector-using-active-directory-decoys-dfc840f2f644)\n- [Wazuh: Detecting SharpHound Active Directory activities](https://wazuh.com/blog/detecting-sharphound-active-directory-activities/)\n- [iPurple Team: SharpHound detection](https://ipurple.team/2024/07/15/sharphound-detection/)",
     "file_path": "Alchemy/M038.md",
     "created": "2026-09-04T12:50:00-05:00"
+  },
+  {
+    "id": "M039",
+    "category": "Alchemy",
+    "title": "Scoring trusted web services on direction and payload shape to surface cloud object storage used for staging and paste sites used for exfiltration",
+    "tactic": "Resource Development, Command and Control, Exfiltration",
+    "notes": "",
+    "tags": [
+      "resource_development",
+      "command_and_control",
+      "exfiltration",
+      "alchemy",
+      "t1583_006",
+      "t1567_003",
+      "t1105",
+      "web_services",
+      "cloud_object_storage",
+      "paste_site",
+      "living_off_trusted_sites",
+      "rarity_scoring",
+      "silver_fox",
+      "breeze_comet",
+      "T1583.006",
+      "T1567.003",
+      "T1105"
+    ],
+    "techniques": [
+      "T1583.006",
+      "T1567.003",
+      "T1105"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **Blocklists and reputation scoring both fail here by construction, not by lag.** The usual objection\n  to IOC-based defence is that indicators go stale. This is a different and harder problem: the indicator\n  is a service with genuinely excellent reputation, enormous legitimate traffic, valid TLS, and very\n  likely an existing proxy allowlist entry. There is no version of the blocklist that works, which is\n  what forces a scoring model rather than making one merely preferable.\n- **Direction is a strong, cheap feature that most log pipelines throw away.** Bytes-sent and\n  bytes-received per transaction are usually normalized out or aggregated to session totals. Restoring\n  them makes the analytic possible, because an endpoint uploading to a paste site is anomalous by the\n  service's role regardless of size — and size is exactly what will not help, since a few kilobytes of\n  stolen cloud credentials sits far below any volumetric threshold anyone has configured.\n- **Tenancy ownership is the highest-yield feature and almost nobody has expressed it.** Most\n  organizations use cloud object storage and can enumerate their own buckets quickly, yet very few have\n  told any control which storage tenancies are theirs. Once that list exists, \"our provider, not our\n  bucket\" becomes a single high-signal feature that requires no behavioural modelling at all and would\n  have flagged the Microsoft campaign's staging on the first request.\n- **Server-side payload regeneration makes content-based indicators structurally useless.** Microsoft\n  observed two content-distinct copies of the same-named archive written roughly 69 seconds apart. At\n  that cadence, hashes describe one download and nothing else. Modelling the shape of the transaction —\n  who fetched, from where, what class of object, in which direction — is not a fallback for when the\n  hash is unavailable, it is the only stable description of the behaviour.\n- **Two unrelated actors converged on this in the same reporting week, from opposite directions.** A\n  Chinese-speaking commodity-malware operation used it for delivery and a Brazilian financially motivated\n  group used it for exfiltration. That convergence suggests the pattern is being adopted because it works\n  generally against current controls, not because of any shared tooling — which makes an analytic that\n  generalizes across services considerably more valuable than a rule for either campaign.\n- **Scoring the sub-resource rather than the domain is what keeps the model alive as buckets rotate.**\n  Buckets and paste URLs are cheap and disposable; the provider is not. Keying rarity to the bucket or\n  URL path, and pinning it to the initiating process, means the model does not need to have seen this\n  campaign before — a first-seen bucket serving an archive to a browser scores the same whether it is\n  Silver Fox or whoever replaces them.",
+    "references": "- [MITRE ATT&CK T1583.006: Acquire Infrastructure — Web Services](https://attack.mitre.org/techniques/T1583/006/)\n- [Microsoft Security Blog: Counterfeit installers to system compromise — tracking a deceptive software download campaign (source report)](https://www.microsoft.com/en-us/security/blog/2026/09/01/counterfeit-installers-system-compromise-tracking-deceptive-software-download-campaign/)\n- [Google Cloud Threat Intelligence (Mandiant): Financially motivated threat actor BREEZE COMET targets Brazil (source report)](https://cloud.google.com/blog/topics/threat-intelligence/financially-motivated-threat-actor-breeze-comet-targets-brazil/)\n- [Microsoft Defender for Endpoint: hunting tip — browser downloads with FileOriginUrl and FileOriginReferrerUrl](https://techcommunity.microsoft.com/blog/microsoftdefenderatpblog/hunting-tip-of-the-month-browser-downloads/220454)\n- [Microsoft 365 Defender hunting queries: pivot from detections to related downloads](https://github.com/microsoft/Microsoft-365-Defender-Hunting-Queries/blob/master/Delivery/Pivot%20from%20detections%20to%20related%20downloads.txt)\n- [MITRE ATT&CK T1567.003: Exfiltration Over Web Service — Exfiltration to Text Storage Sites](https://attack.mitre.org/techniques/T1567/003/)\n- [Microsoft Defender for Endpoint: hunting tip — downloads originating from email links](https://techcommunity.microsoft.com/blog/microsoftdefenderatpblog/hunting-tip-of-the-month-downloads-originating-from-email-links/239594)\n- [MITRE ATT&CK T1105: Ingress Tool Transfer](https://attack.mitre.org/techniques/T1105/)",
+    "file_path": "Alchemy/M039.md",
+    "created": null
+  },
+  {
+    "id": "M040",
+    "category": "Alchemy",
+    "title": "Scoring managed LLM inference calls per principal on enumerate-then-invoke sequence, region novelty and burst shape to surface stolen-key model hijacking",
+    "tactic": "Impact, Defense Evasion",
+    "notes": "",
+    "tags": [
+      "impact",
+      "defense_evasion",
+      "cloud",
+      "saas",
+      "iaas",
+      "alchemy",
+      "t1496_004",
+      "t1552_001",
+      "t1078_004",
+      "llmjacking",
+      "bedrock",
+      "cloud_service_hijacking",
+      "stolen_credentials",
+      "anomaly_scoring",
+      "ai_security",
+      "T1496.004",
+      "T1552.001",
+      "T1078.004"
+    ],
+    "techniques": [
+      "T1496.004",
+      "T1552.001",
+      "T1078.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **The compute being stolen is now operational tooling, not just a resale commodity.** Earlier\n  LLMjacking cases monetized access. In Unit 42's investigation the actor used the victim's inference\n  capacity to run the attack against the victim. That changes the severity calculation: this is not a\n  billing problem with a security label, it is an active intrusion using infrastructure the defender\n  owns, logs and pays for — and every request is authorized, so nothing objects.\n- **The denied-to-allowed ratio is a strong feature that is already being collected.** A deployed\n  workload was configured with the models it may call and produces essentially no authorization\n  failures. A principal exploring what a found key can reach produces a scatter of them, which is exactly\n  the \"rapid 401/200 state shifts\" the source report describes. CloudTrail captures this by default, so\n  the feature costs nothing to compute and is one of the few that separates the populations cleanly on\n  its own.\n- **Enumeration before invocation is a behavioural tell that legitimate workloads never produce.**\n  Applications do not list the foundation model catalogue at runtime; their model IDs are in\n  configuration. An actor must enumerate because they do not know what the key reaches. Ordering, not\n  volume, is the discriminator — which matters because volume is where the benign and malicious\n  distributions overlap most.\n- **First-use anomaly detection alone will fail, and it is worth designing around that rather than\n  discovering it in production.** Organizational AI adoption is growing fast enough that new principals\n  invoking models for the first time is an everyday event. Any analytic weighted primarily on first-use\n  will produce a steady stream of false positives and be switched off within a month. Weighting the\n  ordering and failure-ratio features heavily and first-use lightly is the difference between something\n  that survives and something that does not.\n- **`callWithBearerToken` is a free, unmodelled discriminator sitting unused in most estates.** It is a\n  single boolean that separates long-lived API-key authentication from role-assumed workload\n  authentication. Long-lived keys are the ones that leak into repositories, which is precisely how this\n  intrusion began. Simply reporting on which principals use bearer-token authentication against\n  inference endpoints is a useful exercise independent of any scoring.\n- **The credential source is a hunt of its own, and rotation is not the end of it.** The keys came from\n  hard-coded tokens and service passwords in code repositories. Most organizations run secret scanning\n  and treat a hit as a rotation ticket. Joining every discovered key to the inference history described\n  here answers the question rotation does not: whether it was used before it was found, and what it\n  reached.\n- **This is where resource hijacking detection has to change technique.** Cryptomining could be caught by\n  sustained resource consumption and characteristic network destinations. Inference abuse produces\n  ordinary API traffic to the provider's own endpoints in bursts that resemble legitimate batch work.\n  The consumption signal that carried the older detections is gone, which is what forces the identity and\n  sequence modelling here.",
+    "references": "- [MITRE ATT&CK T1496.004: Resource Hijacking — Cloud Service Hijacking](https://attack.mitre.org/techniques/T1496/004/)\n- [Unit 42 (Palo Alto Networks): An AI-assisted cyber attack — inside a Unit 42 investigation (source report)](https://unit42.paloaltonetworks.com/ai-assisted-cyber-attack-inside-a-unit-42-investigation/)\n- [Sysdig Threat Research: LLMjacking — stolen cloud credentials used in new AI attack](https://www.sysdig.com/blog/llmjacking-stolen-cloud-credentials-used-in-new-ai-attack)\n- [BeyondTrust: AWS Bedrock API keys security guide part 2 — detection and response](https://www.beyondtrust.com/blog/entry/aws-bedrock-security-guide-api-keys-detection-response)\n- [Abstract Security: Detecting AWS Bedrock abuse — from LLMjacking to hidden attack vectors](https://www.abstract.security/blog/detecting-aws-bedrock-abuse-from-llmjacking-to-the-hidden-attack-vectors)\n- [MITRE ATLAS AML.T0043: LLM invocations via stolen API keys](https://atlas.mitre.org/techniques/AML.T0043)\n- [AWS documentation: Bedrock model invocation logging and CloudTrail event reference](https://docs.aws.amazon.com/bedrock/latest/userguide/model-invocation-logging.html)\n- [MITRE ATT&CK T1552.001: Unsecured Credentials — Credentials In Files](https://attack.mitre.org/techniques/T1552/001/)",
+    "file_path": "Alchemy/M040.md",
+    "created": null
   }
 ];
