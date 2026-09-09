@@ -6,7 +6,9 @@ Run on a PR with the head checked out and ``origin/main`` fetched. Detects:
   2. an added or modified file whose declared ID disagrees with its filename,
   3. a hunt file MODIFIED in place whose submitter changed — i.e. one
      contributor's hunt overwritten by a different hunt under the same ID,
-  4. two files in the working tree sharing an ID.
+  4. two files in the working tree sharing an ID,
+  5. a hunt file ADDED by the PR whose ID is also claimed by an older open PR
+     (lower PR number == earlier claim == priority).
 
 Fails closed if ``origin/main`` yields no hunts, since an empty baseline (an
 unresolved base ref) would otherwise let every colliding ID pass.
@@ -16,6 +18,9 @@ Exits 1 (printing each problem) on any collision, else 0.
 
 from __future__ import annotations
 
+import json
+import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -26,10 +31,17 @@ if _REPO_ROOT not in sys.path:
 
 import frontmatter
 
-from scripts.hunt_ids import find_id_problems
+from scripts.hunt_ids import (
+    existing_numbers,
+    find_id_problems,
+    format_hunt_id,
+    next_free_number,
+    parse_hunt_number,
+)
 from scripts.hunt_parser import _parse_legacy_table
 
 DIRS = ("Flames", "Embers", "Alchemy")
+_HUNT_PATH_RE = re.compile(r"^(?:Flames|Embers|Alchemy)/([HBM]\d+)\.md$")
 
 
 def _git(*args: str) -> str:
@@ -80,6 +92,88 @@ def _show_main(path: str) -> str:
         return ""
 
 
+def open_pr_claims(current_pr: int) -> dict[str, int]:
+    """Map each hunt ID ADDED by another open PR to the lowest PR number
+    claiming it.
+
+    Read from the GitHub API rather than git refs: a PR from a fork has no
+    branch under ``origin``, and merged draft branches are deleted, so a branch
+    scan sees almost nothing. Only ADDED files count — modifying an existing
+    hunt is not a claim on a new ID.
+
+    Returns ``{}`` when ``gh`` is unavailable or returns nothing usable. This
+    check then degrades to its main-only behaviour rather than blocking: a real
+    duplicate still collides on filename when the second PR merges.
+    """
+    listed = subprocess.run(
+        ["gh", "pr", "list", "--state", "open", "--json", "number,files"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if listed.returncode != 0:
+        print(
+            "note: `gh` unavailable; skipping the cross-PR hunt ID check "
+            "(main-only checks still apply)."
+        )
+        return {}
+
+    try:
+        prs = json.loads(listed.stdout or "[]")
+    except json.JSONDecodeError:
+        return {}
+
+    claims: dict[str, int] = {}
+    for pr in prs:
+        number = pr.get("number")
+        if number is None or number == current_pr:
+            continue
+        for entry in pr.get("files") or []:
+            if entry.get("changeType") != "ADDED":
+                continue
+            match = _HUNT_PATH_RE.match(entry.get("path", ""))
+            if not match:
+                continue
+            stem = match.group(1)
+            if stem not in claims or number < claims[stem]:
+                claims[stem] = number
+    return claims
+
+
+def suggest_free_id(stem: str, main_ids: set[str], claims: dict[str, int]) -> str:
+    """Next unclaimed ID sharing ``stem``'s prefix, given main and open PRs."""
+    prefix = stem[0]
+    taken = existing_numbers(main_ids, prefix) | existing_numbers(claims, prefix)
+    num = parse_hunt_number(stem, prefix)
+    if num is not None:
+        taken.add(num)
+    return format_hunt_id(next_free_number(taken), prefix)
+
+
+def cross_pr_problems(
+    added: list[tuple[str, str | None]], main_ids: set[str], current_pr: int
+) -> list[str]:
+    """Problems for IDs this PR adds that an OLDER open PR already claims.
+
+    Only the newer PR is failed, so a contested ID has exactly one side to fix
+    and an untouched PR never starts failing because a later one appeared.
+    """
+    if not current_pr:
+        return []
+    claims = open_pr_claims(current_pr)
+    problems = []
+    for stem, _declared in added:
+        other = claims.get(stem)
+        if other is not None and other < current_pr:
+            suggestion = suggest_free_id(stem, main_ids, claims)
+            problems.append(
+                f"{stem} is already claimed by the older PR #{other}. "
+                f"Renumber this hunt to {suggestion} "
+                f"(scripts/reassign_hunt_id.py rewrites the ID in place)."
+            )
+    return problems
+
+
 def main() -> int:
     # Establish the baseline first, and fail closed if it looks empty. ``main``
     # always has hunts, so an empty result means ``origin/main`` didn't resolve
@@ -117,6 +211,9 @@ def main() -> int:
     all_stems = [p.stem for d in DIRS for p in Path(d).glob("*.md")]
 
     problems = find_id_problems(added, main_ids, all_stems, modified)
+    problems += cross_pr_problems(
+        added, main_ids, int(os.environ.get("PR_NUMBER", "0") or "0")
+    )
     if problems:
         print("Hunt ID collision check FAILED:")
         for problem in problems:

@@ -14,6 +14,8 @@ on:
 
 permissions:
   contents: read
+  # Required by the cross-PR hunt ID check, which lists open PRs via `gh`.
+  pull-requests: read
 
 jobs:
   validate:
@@ -30,6 +32,13 @@ jobs:
       - run: pip install -r requirements.txt
       - name: Check for hunt ID collisions
         if: github.event_name == 'pull_request'
+        env:
+          # Lets the check see hunt IDs claimed by other open PRs, including
+          # ones from forks. Without these it silently falls back to comparing
+          # against main only, and a cross-PR duplicate is not caught until the
+          # second PR conflicts at merge time.
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git fetch origin main
           python scripts/check_hunt_id_collisions.py
