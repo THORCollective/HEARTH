@@ -1,7 +1,10 @@
 from pathlib import Path
 
+import pytest
+
 from scripts.hunt_ids import (
     CATEGORY_PREFIXES,
+    assign_draft_id,
     existing_numbers,
     find_id_problems,
     format_hunt_id,
@@ -231,3 +234,76 @@ def test_find_id_problems_skips_identity_when_submitter_unknown():
         [], main_ids={"H210"}, all_stems=["H210"], modified=modified
     )
     assert problems == []
+
+
+# --- draft assignment ------------------------------------------------------
+
+DRAFT = """---
+category: Flames
+title: Artifactory admin token minting
+hypothesis: An adversary mints admin tokens.
+---
+
+# Artifactory admin token minting
+
+## Why
+- Because.
+"""
+
+
+def _draft(tmp_path, name="artifactory-token.md", text=DRAFT):
+    incoming = tmp_path / "Incoming"
+    incoming.mkdir(exist_ok=True)
+    path = incoming / name
+    path.write_text(text, encoding="utf-8")
+    return path
+
+
+def test_assign_draft_id_inserts_id_first_in_frontmatter(tmp_path):
+    out = assign_draft_id(_draft(tmp_path), "H296", tmp_path / "Flames")
+    lines = out.read_text().split("\n")
+    assert out.name == "H296.md"
+    assert lines[0] == "---"
+    assert lines[1] == "id: H296"
+    assert "category: Flames" in lines
+
+
+def test_assign_draft_id_normalises_the_body_heading(tmp_path):
+    out = assign_draft_id(_draft(tmp_path), "H296", tmp_path / "Flames")
+    body = out.read_text()
+    assert "# H296" in body
+    assert "# Artifactory admin token minting" not in body
+    # The title survives in frontmatter, which is why the schema requires it.
+    assert "title: Artifactory admin token minting" in body
+
+
+def test_assign_draft_id_inserts_a_heading_when_absent(tmp_path):
+    text = "---\ncategory: Flames\ntitle: T\n---\n\nJust prose.\n"
+    out = assign_draft_id(_draft(tmp_path, text=text), "H297", tmp_path / "Flames")
+    assert "# H297" in out.read_text()
+
+
+def test_assign_draft_id_leaves_body_tables_alone(tmp_path):
+    # An empty cell in a prose table must not be mistaken for a Hunt# cell.
+    text = DRAFT + "\n| a |  | c |\n|---|---|---|\n"
+    out = assign_draft_id(_draft(tmp_path, text=text), "H296", tmp_path / "Flames")
+    assert "| a |  | c |" in out.read_text()
+
+
+def test_assign_draft_id_moves_the_file(tmp_path):
+    draft = _draft(tmp_path)
+    out = assign_draft_id(draft, "H296", tmp_path / "Flames")
+    assert not draft.exists()
+    assert out == tmp_path / "Flames" / "H296.md"
+
+
+def test_assign_draft_id_refuses_to_clobber(tmp_path):
+    (tmp_path / "Flames").mkdir()
+    (tmp_path / "Flames" / "H296.md").write_text("existing")
+    with pytest.raises(FileExistsError):
+        assign_draft_id(_draft(tmp_path), "H296", tmp_path / "Flames")
+
+
+def test_assign_draft_id_requires_frontmatter(tmp_path):
+    with pytest.raises(ValueError, match="no frontmatter"):
+        assign_draft_id(_draft(tmp_path, text="# Nope\n"), "H296", tmp_path / "Flames")
