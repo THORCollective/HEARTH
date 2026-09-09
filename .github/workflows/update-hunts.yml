@@ -8,6 +8,9 @@ on:
       - "Flames/**.md"
       - "Embers/**.md"
       - "Alchemy/**.md"
+  # Dispatched by assign-hunt-ids.yml. Its push uses GITHUB_TOKEN, which does
+  # not trigger workflows, so a newly assigned hunt would never be indexed here.
+  workflow_dispatch:
 
 # Serialize runs of this workflow so two rebuilds never race each other on the
 # same generated files. Don't cancel in-progress runs — each carries a real data
