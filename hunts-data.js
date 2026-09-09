@@ -10918,6 +10918,48 @@ const HUNTS_DATA = [
     "created": "2026-09-08T22:39:48-05:00"
   },
   {
+    "id": "H294",
+    "category": "Flames",
+    "title": "Artifactory Admin Token Minting Without Prior Authenticated Session (CVE-2026-82329 Phantom Join Key Abuse)",
+    "tactic": "Initial Access, Credential Access, Discovery, Persistence, Impact",
+    "notes": "Artifactory access service logs - Core filter: successful token creation requests to `/access/api/v1/tokens` where the requesting `source IP address` has no successful interactive login or existing session in the preceding lookback window, especially token records with `scope` containing `applied-permissions/admin` or a `subject` mapped to an admin group. Triage values: `source IP address`, `token subject`, `token scope`, `token expiry`, `user agent`, `request ID`. Strong red flags: external or never-before-seen source IP, non-CI user agent, admin scope with long or no expiry, and issuance outside change windows.\nReverse proxy / HTTP logs fronting Artifactory - Core filter: a burst from one `source IP address` or `request ID` chain hitting security-model enumeration endpoints such as `/api/security/users`, `/api/security/groups`, `/api/security/permissions`, and federation or credential-set paths under `/access/api/v1/` within minutes of the token mint. Pivot: join enumeration requests to the minting event by `source IP address`, `authorization subject`, and `user agent`. Correlation: enumeration followed by `PUT`/`POST` writes to permission targets, replication configuration, or existing artifact paths is the escalation chain that separates scanning from hands-on-keyboard staging.\nArtifactory audit trail - Core filter: security configuration changes (new admin user, group membership change, new access token for another subject, new replication target, permission target edit) attributed to a `subject` whose credential was minted rather than issued through normal login. Triage values: `event type`, `acting subject`, `target object`, `source IP address`, `timestamp delta` from the token mint. Strong red flags: new replication or federation targets pointing at external hosts, and overwrites of previously stable release artifacts shortly after an anomalous token mint.\nHost EDR process telemetry - Core filter: new child processes of the Artifactory Java service where `parent process command line` contains `java` with `artifactory` or `jf` service arguments and the child is a shell or network utility. Triage values: `process command line`, `parent process command line`, `file path`, `process user`. Strong red flags: shells such as `/bin/sh`, `bash`, or `cmd.exe` spawned by the service account, outbound connections from those children to untrusted hosts, or writes outside the Artifactory data directory. Pivot: tie process start times back to the token mint and enumeration window on the same host.\n",
+    "tags": [
+      "artifactory",
+      "jfrog",
+      "cve_2026_82329",
+      "supply_chain",
+      "token_abuse",
+      "authentication_bypass",
+      "artifact_repository",
+      "federation",
+      "T1190",
+      "T1195.002",
+      "T1098.001",
+      "T1087",
+      "T1552",
+      "T1059"
+    ],
+    "techniques": [
+      "T1190",
+      "T1195.002",
+      "T1098.001",
+      "T1087",
+      "T1552",
+      "T1059"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Joshua Strickland",
+      "link": "https://novasky.io"
+    },
+    "why": "- Exploitation moved from disclosure (Aug 28) to observed in-the-wild admin token minting (Sep 1) in four days, and Artifactory sits upstream of build and release pipelines, so a missed intrusion becomes a substitution attack against every downstream consumer.\n- The hunt keys on an invariant chokepoint rather than rotating IOCs: to profit from the phantom join key the attacker must mint a privileged token without a preceding authenticated session and then touch the security model, a sequence legitimate workflows almost never produce in that order from one source.\n- Every stage is natively observable in telemetry defenders already have: JFrog Access logs record token issuance with subject/scope/source, the audit trail records security and replication changes, proxy logs capture the enumeration burst, and EDR captures anomalous children of the Java service.\n- False positives are controllable because legitimate CI minting is highly regular (stable service principals, recurring internal IPs, narrow scopes, scheduled cadence), letting hunters baseline and suppress automation identities instead of the endpoint, keeping the anomalous-provenance join high-precision.",
+    "references": "- [Exploited JFrog Artifactory bug puts software supply chain on alert (CSO Online, Sep 2, 2026)](https://www.csoonline.com/article/4217534/exploited-jfrog-artifactory-bug-puts-software-supply-chain-on-alert.html)\n- [JFrog Security Advisories (CVE-2026-82329 vendor advisory)](https://docs.jfrog.com/releases/docs/jfrog-security-advisories)\n- [Critical JFrog Artifactory Vulnerability Reportedly Exploited in the Wild (SecurityWeek)](https://www.securityweek.com/critical-jfrog-artifactory-vulnerability-reportedly-exploited-in-the-wild/)\n- [Attackers Exploit Critical JFrog Artifactory Flaw to Mint Admin Tokens Days After Disclosure (The Hacker News)](https://thehackernews.com/2026/09/attackers-exploit-critical-jfrog.html)",
+    "file_path": "Flames/H294.md",
+    "created": "2026-09-09T13:45:07-04:00"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
