@@ -41,6 +41,21 @@ If you prefer to write your own hunt hypothesis from scratch:
 
 The hunt will be reviewed and, if approved, added to the appropriate directory.
 
+### Option 3: Open a Pull Request Directly
+
+If you'd rather write the file yourself, add a draft to
+[`Incoming/`](../Incoming/README.md) and open a PR.
+
+A draft is a normal hunt file with **no `id:` field** and a descriptive
+filename (`artifactory-admin-token.md`, not `H294.md`). When your PR merges,
+the next free hunt ID is assigned automatically, the file moves into its
+category directory, and a comment on your PR tells you which ID you got.
+
+Don't name a hunt ID yourself. An ID chosen while your PR is open is chosen
+against a `main` that keeps moving — two PRs picking the same number collide at
+merge and one has to be renumbered by hand. `Incoming/README.md` has the full
+format and an example.
+
 ### Tips for Better Submissions
 
 - **Be specific**: Include technical details about the threat actor's behavior
