@@ -1,6 +1,13 @@
 import os
 import re
+import sys
 from pathlib import Path
+
+_REPO_ROOT = str(Path(__file__).resolve().parent.parent)
+if _REPO_ROOT not in sys.path:
+    sys.path.insert(0, _REPO_ROOT)
+
+from scripts.drafts import draft_from_legacy_markdown
 
 from dotenv import load_dotenv
 
@@ -162,17 +169,6 @@ def generate_hunt_file(details):
     return response.choices[0].message.content.strip()
 
 
-def get_next_hunt_id(hunt_type_prefix, hunt_dir):
-    """Next number for a prefix: max existing ``<prefix>NNN`` + 1 (1 if none)."""
-    stem_re = re.compile(rf"^{re.escape(hunt_type_prefix)}(\d+)$")
-    numbers = [
-        int(m.group(1))
-        for f in Path(hunt_dir).glob(f"{hunt_type_prefix}*.md")
-        if (m := stem_re.match(f.stem))
-    ]
-    return max(numbers) + 1 if numbers else 1
-
-
 if __name__ == "__main__":
     issue_body = os.getenv("ISSUE_BODY")
     if not issue_body:
@@ -192,27 +188,22 @@ if __name__ == "__main__":
     else:
         prefix, directory = "H", "Flames"  # Default to Flames
 
-    Path(directory).mkdir(exist_ok=True)
-
-    # 3. Determine next hunt ID (HNNN / BNNN / MNNN, continuing the sequence)
-    next_id = get_next_hunt_id(prefix, directory)
-    hunt_id = f"{prefix}{next_id:03d}"
-    out_md_path = Path(f"{directory}/{hunt_id}.md")
-
-    # 4. Generate the core content
+    # 3. Generate the core content
     hunt_content = generate_hunt_file(hunt_details)
 
-    # 5. Assemble the final file
-    final_content = f"# {hunt_id}\n\n"
-    final_content += hunt_content.replace("| [Leave blank] |", f"| {hunt_id}    |")
+    # 4. Emit an ID-less draft. No ID is allocated here: one chosen now is
+    #    chosen against a main that keeps moving while the PR is open, which is
+    #    how two PRs came to claim H294. assign_hunt_ids.py mints it at merge.
+    filename, draft_text = draft_from_legacy_markdown(hunt_content, directory)
+    incoming = Path("Incoming")
+    incoming.mkdir(exist_ok=True)
+    out_md_path = incoming / filename
 
-    # 6. Save the file
-    with open(out_md_path, "w") as f:
-        f.write(final_content)
-    print(f"✅ Successfully wrote hunt to {out_md_path}")
+    # 5. Save the file
+    out_md_path.write_text(draft_text, encoding="utf-8")
+    print(f"✅ Successfully wrote draft to {out_md_path}")
 
-    # 7. Set output for the workflow
+    # 6. Set output for the workflow
     if "GITHUB_OUTPUT" in os.environ:
         with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             print(f"HUNT_FILE_PATH={out_md_path}", file=f)
-            print(f"HUNT_ID={hunt_id}", file=f)

@@ -47,7 +47,7 @@ jobs:
         run: |
           git config --global user.name 'hearthbot'
           git config --global user.email 'hearthbot@users.noreply.github.com'
-          git add Flames/*.md Embers/*.md Alchemy/*.md
+          git add Incoming/
           git commit -m "feat(draft): Create hunt from submission form in issue #${{ github.event.issue.number }}"
           git remote set-url origin https://x-access-token:${{ secrets.HEARTH_TOKEN }}@github.com/${{ github.repository }}
           git push --set-upstream origin draft/issue-${{ github.event.issue.number }}
