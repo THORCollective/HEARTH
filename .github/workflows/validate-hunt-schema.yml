@@ -8,6 +8,7 @@ on:
   push:
     branches: [main]
     paths:
+      - "Incoming/**.md"
       - "Flames/**.md"
       - "Embers/**.md"
       - "Alchemy/**.md"
@@ -42,6 +43,32 @@ jobs:
         run: |
           git fetch origin main
           python scripts/check_hunt_id_collisions.py
+      # Catches a bad or missing `category` before merge. Post-merge the assign
+      # job can only leave the draft in Incoming/ and go red.
+      - name: Validate incoming drafts
+        run: |
+          python - <<'PY'
+          import sys
+          from pathlib import Path
+          from scripts.hunt_parser import parse_draft_file, HuntValidationError
+
+          failures = []
+          for f in sorted(Path("Incoming").glob("*.md")):
+              if f.name.lower() == "readme.md":
+                  continue
+              try:
+                  parse_draft_file(f)
+              except HuntValidationError as e:
+                  failures.append(str(e))
+
+          if failures:
+              print("Invalid drafts in Incoming/:")
+              for failure in failures:
+                  print(f"  - {failure}")
+              sys.exit(1)
+          print("Incoming drafts valid.")
+          PY
+
       - name: Validate every hunt file
         run: |
           python - <<'PY'

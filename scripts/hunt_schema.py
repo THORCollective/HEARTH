@@ -91,13 +91,47 @@ HUNT_SCHEMA: dict = {
     },
 }
 
+# A draft is a hunt submitted without an ID. The ID is assigned by
+# scripts/assign_hunt_ids.py when the PR merges, so that two PRs can never name
+# the same file and collide. `title` is required here (but not on a full hunt)
+# because assignment rewrites the body H1 to `# <new_id>`; the human-readable
+# name has to survive somewhere.
+DRAFT_SCHEMA: dict = {
+    **HUNT_SCHEMA,
+    "title": "HEARTH Hunt Draft",
+    "required": sorted(set(HUNT_SCHEMA["required"]) - {"id"} | {"title"}),
+    # `id` stays in `properties` so a stray one still reports a pattern error
+    # alongside this, rather than only an opaque "not allowed".
+    "not": {"required": ["id"]},
+}
+
 _VALIDATOR = Draft202012Validator(HUNT_SCHEMA, format_checker=FormatChecker())
+_DRAFT_VALIDATOR = Draft202012Validator(DRAFT_SCHEMA, format_checker=FormatChecker())
+
+
+def _format_errors(validator: Draft202012Validator, data: dict) -> list[str]:
+    errors = []
+    for err in sorted(validator.iter_errors(data), key=lambda e: list(e.path)):
+        path = ".".join(str(p) for p in err.path) or "<root>"
+        errors.append(f"{path}: {err.message}")
+    return errors
 
 
 def validate_hunt(data: dict) -> list[str]:
     """Return a list of human-readable validation errors (empty if valid)."""
-    errors = []
-    for err in sorted(_VALIDATOR.iter_errors(data), key=lambda e: list(e.path)):
-        path = ".".join(str(p) for p in err.path) or "<root>"
-        errors.append(f"{path}: {err.message}")
+    return _format_errors(_VALIDATOR, data)
+
+
+def validate_draft(data: dict) -> list[str]:
+    """Validate an ID-less draft. Errors are empty if valid."""
+    errors = _format_errors(_DRAFT_VALIDATOR, data)
+    if "id" in data:
+        # The raw `not` failure dumps the whole document and reads as "should
+        # not be valid under {'required': ['id']}", which tells a contributor
+        # nothing actionable. Replace it with the reason.
+        errors = [e for e in errors if "should not be valid under" not in e]
+        errors.append(
+            "<root>: drafts must not declare an 'id'; it is assigned "
+            "automatically when your PR merges"
+        )
     return errors

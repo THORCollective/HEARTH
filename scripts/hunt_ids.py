@@ -99,6 +99,54 @@ def rewrite_hunt_id(path: Path, new_id: str) -> Path:
     return new_path
 
 
+def assign_draft_id(path: Path, new_id: str, dest_dir: Path) -> Path:
+    """Stamp ``new_id`` onto an ID-less draft and move it into ``dest_dir``.
+
+    The counterpart to `rewrite_hunt_id`, which cannot be reused here: that one
+    *replaces* three occurrences of ``path.stem`` (frontmatter ``id:``, the
+    ``# <old_id>`` heading, a ``| <old_id> |`` cell), and a draft has none of
+    them — its stem is a slug and its H1 is a title. This one *inserts*.
+
+    Rewriting the ID is safe precisely because the ID is minted here: no body
+    text anywhere in the repo can reference a hunt that did not have an ID
+    until this moment. (Renaming an established hunt is not safe in that way —
+    374 hunt files carry bare CROSS-REF tokens that nothing rewrites.)
+
+    Returns the new path; removes the draft.
+    """
+    path = Path(path)
+    text = path.read_text(encoding="utf-8")
+    lines = text.split("\n")
+
+    # `id:` goes first inside the frontmatter fence, matching canonical hunts.
+    if not (lines and lines[0].strip() == "---"):
+        raise ValueError(f"{path.name}: draft has no frontmatter block")
+    lines.insert(1, f"id: {new_id}")
+
+    # Normalise the body H1 to `# <id>`. Unlike rewrite_hunt_id, which matches
+    # an exact `# <old_id>`, a draft's heading is arbitrary prose.
+    fence_end = next(
+        (i for i, line in enumerate(lines[2:], start=2) if line.strip() == "---"),
+        1,
+    )
+    for i in range(fence_end + 1, len(lines)):
+        if re.match(r"^#\s+\S", lines[i]):
+            lines[i] = f"# {new_id}"
+            break
+    else:
+        lines[fence_end + 1 : fence_end + 1] = ["", f"# {new_id}"]
+    text = "\n".join(lines)
+
+    dest_dir = Path(dest_dir)
+    dest_dir.mkdir(parents=True, exist_ok=True)
+    new_path = dest_dir / f"{new_id}.md"
+    if new_path.exists():
+        raise FileExistsError(f"{new_path} already exists")
+    new_path.write_text(text, encoding="utf-8")
+    path.unlink()
+    return new_path
+
+
 def _norm_submitter(name: str | None) -> str:
     """Case/space-insensitive submitter name for identity comparison."""
     return re.sub(r"\s+", " ", (name or "").strip()).casefold()

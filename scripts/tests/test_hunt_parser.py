@@ -1,6 +1,10 @@
 import pytest
 
-from scripts.hunt_parser import HuntValidationError, parse_hunt_file
+from scripts.hunt_parser import (
+    HuntValidationError,
+    parse_draft_file,
+    parse_hunt_file,
+)
 
 
 def test_parses_frontmatter_format(fixtures_dir):
@@ -270,3 +274,67 @@ def test_single_submitter_link_sets_no_links_key(tmp_path):
     hunt = parse_hunt_file(f, "Flames")
     assert hunt["submitter"]["link"] == "https://example.com/x"
     assert "links" not in hunt["submitter"]
+
+
+# --- drafts ----------------------------------------------------------------
+
+DRAFT = """---
+category: Flames
+title: Artifactory admin token minting
+hypothesis: An adversary mints admin tokens with no prior authenticated session.
+tactics:
+  - Initial Access
+tags:
+  - artifactory
+submitter:
+  name: Test Submitter
+---
+
+# Artifactory admin token minting
+
+## Why
+- Because it is worth hunting.
+"""
+
+
+def _write(tmp_path, name, text):
+    path = tmp_path / name
+    path.write_text(text, encoding="utf-8")
+    return path
+
+
+def test_parse_draft_file_returns_no_id(tmp_path):
+    draft = parse_draft_file(_write(tmp_path, "artifactory-token.md", DRAFT))
+    assert "id" not in draft
+    assert draft["category"] == "Flames"
+    assert draft["file_path"] == "Incoming/artifactory-token.md"
+    assert draft["why"]
+
+
+def test_draft_without_frontmatter_is_rejected_not_treated_as_legacy(tmp_path):
+    # The regression that matters most: parse_hunt_file falls back to the
+    # legacy table format for a file with no frontmatter, and that path adopts
+    # path.stem as the hunt ID. For a draft that would mint a hunt whose ID is
+    # its slug, silently.
+    path = _write(tmp_path, "artifactory-token.md", "# Heading\n\nno frontmatter\n")
+    with pytest.raises(HuntValidationError, match="require YAML frontmatter"):
+        parse_draft_file(path)
+
+
+def test_draft_named_like_a_hunt_id_is_rejected(tmp_path):
+    # find_stray_hunts() sys.exit(1)s on any [HBM]NNN.md outside a category dir.
+    with pytest.raises(HuntValidationError, match="must not be named like a hunt ID"):
+        parse_draft_file(_write(tmp_path, "H295.md", DRAFT))
+
+
+def test_draft_declaring_an_id_is_rejected(tmp_path):
+    text = DRAFT.replace("category: Flames", "id: H295\ncategory: Flames")
+    with pytest.raises(HuntValidationError, match="must not declare an 'id'"):
+        parse_draft_file(_write(tmp_path, "artifactory-token.md", text))
+
+
+def test_draft_without_category_is_rejected(tmp_path):
+    # Unlike parse_hunt_file there is no directory to infer a category from.
+    text = DRAFT.replace("category: Flames\n", "")
+    with pytest.raises(HuntValidationError, match="'category' is a required property"):
+        parse_draft_file(_write(tmp_path, "artifactory-token.md", text))
