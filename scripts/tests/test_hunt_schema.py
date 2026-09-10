@@ -172,10 +172,13 @@ def test_draft_must_not_declare_an_id():
     assert not any("should not be valid under" in e for e in errors)
 
 
-def test_draft_requires_title():
+def test_draft_title_is_optional():
+    # Generated hunts have no heading and no title: both generator prompts say
+    # "DO NOT include a title or markdown heading". Requiring one blocked them
+    # while preserving nothing.
     draft = _valid_draft()
     draft.pop("title")
-    assert any("'title' is a required property" in e for e in validate_draft(draft))
+    assert validate_draft(draft) == []
 
 
 def test_draft_requires_category_and_rejects_unknown_one():

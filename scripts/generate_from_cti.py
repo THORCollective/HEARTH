@@ -1,8 +1,15 @@
 import os
 import random
 import re
+import sys
 import time
 from pathlib import Path
+
+_REPO_ROOT = str(Path(__file__).resolve().parent.parent)
+if _REPO_ROOT not in sys.path:
+    sys.path.insert(0, _REPO_ROOT)
+
+from scripts.drafts import draft_from_legacy_markdown
 
 from dotenv import load_dotenv
 from pypdf import PdfReader
@@ -191,19 +198,6 @@ def extract_technique_and_tactic(content: str) -> tuple:
         return (None, "Credential Access", 0.3)
     else:
         return (None, "Command And Control", 0.2)  # Default fallback
-
-
-def get_next_hunt_id():
-    """Next Flames hunt number: max existing ``HNNN`` + 1."""
-    flames_dir = Path("Flames/")
-    flames_dir.mkdir(exist_ok=True)
-    max_id = 0
-    hunt_pattern = re.compile(r"^H(\d+)$")
-    for f in flames_dir.glob("H*.md"):
-        match = hunt_pattern.match(f.stem)
-        if match:
-            max_id = max(max_id, int(match.group(1)))
-    return max_id + 1
 
 
 SYSTEM_PROMPT = """You are a threat hunter generating HEARTH markdown files.
@@ -530,10 +524,10 @@ if __name__ == "__main__":
         hunt_id = out_md_path.stem
         print(f"🔄 Regenerating hunt for {hunt_id} at {out_md_path}")
     else:
-        # Determine the next hunt number (HNNN, continuing the Flames sequence)
-        hunt_id = f"H{get_next_hunt_id():03d}"
-        out_md_path = Path(f"Flames/{hunt_id}.md")
-        print(f"🌱 Generating new hunt: {hunt_id}")
+        # No ID and no path yet: both are settled once the draft is rendered.
+        hunt_id = None
+        out_md_path = None
+        print("🌱 Generating new hunt draft (ID assigned at merge)")
 
     cti_source_url = os.getenv("CTI_SOURCE_URL")
     if not cti_source_url:
@@ -583,22 +577,36 @@ if __name__ == "__main__":
                 # Remove markdown headers
                 hypothesis = hypothesis.lstrip("#").strip()
 
-            # 4. Construct the final markdown content
-            final_content = f"# {hunt_id}\n\n"
-            final_content += cleaned_body.replace(
-                "| [Leave blank] |", f"| {hunt_id}    |"
-            )
+            # 4. Construct the final content.
+            #    A regeneration keeps its existing ID and file; a new hunt is
+            #    written as an ID-less draft, because an ID chosen now is
+            #    chosen against a main that keeps moving while the PR is open
+            #    (which is how two PRs came to claim H294). assign_hunt_ids.py
+            #    mints it at merge instead.
+            if is_regeneration:
+                final_content = f"# {hunt_id}\n\n"
+                final_content += cleaned_body.replace(
+                    "| [Leave blank] |", f"| {hunt_id}    |"
+                )
+            else:
+                filename, final_content = draft_from_legacy_markdown(
+                    cleaned_body, "Flames"
+                )
+                incoming = Path("Incoming")
+                incoming.mkdir(exist_ok=True)
+                out_md_path = incoming / filename
 
             # 5. Save the hunt file
             with open(out_md_path, "w") as f:
                 f.write(final_content)
-            print(f"✅ Successfully wrote hunt to {out_md_path}")
+            print(f"✅ Successfully wrote {'hunt' if is_regeneration else 'draft'} to {out_md_path}")
 
             # 6. Set the output for the GitHub Action
             if "GITHUB_OUTPUT" in os.environ:
                 with open(os.environ["GITHUB_OUTPUT"], "a") as f:
                     print(f"HUNT_FILE_PATH={out_md_path}", file=f)
-                    print(f"HUNT_ID={hunt_id}", file=f)
+                    if is_regeneration:
+                        print(f"HUNT_ID={hunt_id}", file=f)
                     print("HYPOTHESIS<<EOF", file=f)
                     print(hypothesis, file=f)
                     print("EOF", file=f)

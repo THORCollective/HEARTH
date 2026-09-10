@@ -93,13 +93,18 @@ HUNT_SCHEMA: dict = {
 
 # A draft is a hunt submitted without an ID. The ID is assigned by
 # scripts/assign_hunt_ids.py when the PR merges, so that two PRs can never name
-# the same file and collide. `title` is required here (but not on a full hunt)
-# because assignment rewrites the body H1 to `# <new_id>`; the human-readable
-# name has to survive somewhere.
+# the same file and collide.
+#
+# `title` is optional, matching HUNT_SCHEMA. It was briefly required, on the
+# reasoning that assignment rewrites the body H1 to `# <new_id>` and the
+# readable name should survive. But generated hunts have no heading at all --
+# both generator prompts say "DO NOT include a title or markdown heading", and
+# the body opens with the hypothesis -- so there is nothing to preserve and the
+# requirement only blocked them.
 DRAFT_SCHEMA: dict = {
     **HUNT_SCHEMA,
     "title": "HEARTH Hunt Draft",
-    "required": sorted(set(HUNT_SCHEMA["required"]) - {"id"} | {"title"}),
+    "required": sorted(set(HUNT_SCHEMA["required"]) - {"id"}),
     # `id` stays in `properties` so a stray one still reports a pattern error
     # alongside this, rather than only an opaque "not allowed".
     "not": {"required": ["id"]},

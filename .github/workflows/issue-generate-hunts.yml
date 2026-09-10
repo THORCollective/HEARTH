@@ -334,7 +334,7 @@ jobs:
         run: |
           git config --global user.name 'hearthbot'
           git config --global user.email 'hearthbot@users.noreply.github.com'
-          git add Flames/*.md
+          git add Incoming/ Flames/*.md
           git commit -m "feat(draft): Update hunt from issue #${{ github.event.issue.number }}"
           git remote set-url origin https://x-access-token:${{ secrets.HEARTH_TOKEN }}@github.com/${{ github.repository }}
           # Draft branches are disposable: a fresh submission or a regeneration
