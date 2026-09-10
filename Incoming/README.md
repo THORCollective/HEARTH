@@ -51,9 +51,9 @@ submitter:
 - https://example.com/report
 ```
 
-`title` is required here even though full hunts don't require it: assignment
-rewrites the body heading to `# <your-id>`, so the readable name has to survive
-in the frontmatter.
+`title` is optional, but worth setting: assignment rewrites the body heading to
+`# <your-id>`, so a name that lives only in an H1 is lost. In frontmatter it
+survives and is what the hunt is listed under.
 
 Pick a filename distinctive enough that two open PRs won't collide on it — if
 they do, the second gets an ordinary git conflict. Adding a `-YYYY-MM` suffix
