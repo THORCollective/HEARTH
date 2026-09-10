@@ -92,15 +92,19 @@ def get_git_dates(filepath):
     import subprocess
 
     try:
-        # Get first commit date (creation)
+        # Get first commit date (creation).
+        # No --reverse: git silently returns only the newest commit when it is
+        # combined with --follow, which drops everything before a rename and
+        # makes created_date the rename date. Take the last line instead --
+        # git log is newest-first, so that is the oldest commit.
         result = subprocess.run(
-            ['git', 'log', '--follow', '--format=%aI', '--reverse', '--', str(filepath)],
+            ['git', 'log', '--follow', '--format=%aI', '--', str(filepath)],
             capture_output=True,
             text=True,
             timeout=5
         )
         dates = result.stdout.strip().split('\n')
-        created_date = dates[0] if dates and dates[0] else None
+        created_date = dates[-1] if dates and dates[-1] else None
 
         # Get last commit date (modification)
         result = subprocess.run(
