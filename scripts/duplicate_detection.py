@@ -3,16 +3,27 @@
 Compares a new hunt against every existing hunt in Flames/, Embers/, and
 Alchemy/ via a single Claude call and returns a markdown comment listing the
 top 3 closest matches. Used by scripts/generate_from_cti.py to annotate the
-GitHub issue comment posted after each draft is generated.
+GitHub issue comment posted after each draft is generated, and by the weekly
+CTI pipeline via the --emit-prompt/--render CLI below.
 """
 
+import argparse
 import json
 import os
 import re
+import sys
 from pathlib import Path
 from typing import Optional
 
 from dotenv import load_dotenv
+
+import frontmatter
+
+_REPO_ROOT = str(Path(__file__).resolve().parent.parent)
+if _REPO_ROOT not in sys.path:
+    sys.path.insert(0, _REPO_ROOT)
+
+from scripts.hunt_parser import parse_hunt_file
 
 load_dotenv()
 
@@ -24,12 +35,80 @@ TOP_N = 3
 HIGH_SIMILARITY = 80
 MODERATE_SIMILARITY = 60
 
+# Legacy hunts carry technique IDs inline as #T1234_001 tags rather than in a
+# frontmatter field; accept the underscore, dot and slash separators all three
+# formats have used.
+_TECHNIQUE_RE = re.compile(r"T\d{4}(?:[._/]\d{3})?")
+
+
+def _record(filename: str, filepath: str, hypothesis: str, tactic: str,
+            tags: list[str], techniques: list[str]) -> Optional[dict]:
+    """Normalize one hunt into the shape the prompt/report code consumes.
+
+    The hypothesis is flattened to a single line because the candidate listing
+    in the prompt is one hunt per line — an embedded newline would split a hunt
+    across two rows and corrupt every candidate after it.
+    """
+    hypothesis = " ".join(hypothesis.split())
+    if not hypothesis:
+        return None
+    return {
+        "filename": filename,
+        "filepath": filepath,
+        "hypothesis": hypothesis,
+        "tactic": tactic,
+        "tags": tags,
+        "techniques": techniques,
+    }
+
+
+def _frontmatter_metadata(content: str) -> Optional[dict]:
+    """Return the YAML frontmatter mapping, or None if the file has none.
+
+    Distinguishing "no frontmatter" from "frontmatter without a hypothesis"
+    matters: only the former should fall through to the legacy table parser.
+    A frontmatter hunt that falls through parses its own `---` opener as the
+    hypothesis, which is the bug this module carried until Sept 2026.
+    """
+    try:
+        post = frontmatter.loads(content)
+    except Exception:
+        return None
+    return dict(post.metadata) if post.metadata else None
+
+
+def _record_from_metadata(meta: dict, filename: str, filepath: str) -> Optional[dict]:
+    """Build a record from a frontmatter mapping, the canonical hunt format."""
+    # `title` is the fallback because a handful of hunts carry a descriptive
+    # title and push the detail into the body instead of the hypothesis field.
+    hypothesis = str(meta.get("hypothesis") or meta.get("title") or "")
+    tactics = meta.get("tactics") or []
+    if isinstance(tactics, str):
+        tactics = [tactics]
+    tags = [f"#{str(t).lstrip('#')}" for t in (meta.get("tags") or [])]
+    techniques = [str(t) for t in (meta.get("techniques") or [])]
+
+    return _record(
+        filename,
+        filepath,
+        hypothesis,
+        "/".join(str(t) for t in tactics),
+        sorted(tags),
+        techniques,
+    )
+
 
 def extract_hunt_info(content: str, filename: str, filepath: str) -> Optional[dict]:
     """Parse a hunt markdown file into a dict with hypothesis/tactic/tags.
 
-    Returns None if no hypothesis can be located.
+    Prefers YAML frontmatter (canonical since the 2026 migration) and falls back
+    to scanning for the legacy 6-cell table. Returns None if no hypothesis can
+    be located either way.
     """
+    meta = _frontmatter_metadata(content)
+    if meta is not None:
+        return _record_from_metadata(meta, filename, filepath)
+
     lines = content.splitlines()
 
     hypothesis = ""
@@ -55,18 +134,21 @@ def extract_hunt_info(content: str, filename: str, filepath: str) -> Optional[di
             break
 
     tags = sorted(set(re.findall(r"#[\w\-_]+", content)))
+    techniques = _TECHNIQUE_RE.findall(content)
 
-    return {
-        "filename": filename,
-        "filepath": filepath,
-        "hypothesis": hypothesis,
-        "tactic": tactic,
-        "tags": tags,
-    }
+    return _record(filename, filepath, hypothesis, tactic, tags,
+                   sorted(set(techniques)))
 
 
 def load_existing_hunts() -> list[dict]:
-    """Walk Flames/Embers/Alchemy and return parsed hunt info for every file."""
+    """Walk Flames/Embers/Alchemy and return parsed hunt info for every file.
+
+    Uses scripts.hunt_parser — the same parser rebuild_hunts_data.py runs — so
+    the corpus this module compares against is exactly the corpus the site
+    indexes, including its legacy-table fallback and schema validation. A file
+    that fails to parse is skipped with a warning rather than aborting: one bad
+    hunt must not cost the whole batch its duplicate check.
+    """
     hunts: list[dict] = []
     for directory in HUNT_DIRECTORIES:
         dir_path = Path(directory)
@@ -74,10 +156,14 @@ def load_existing_hunts() -> list[dict]:
             continue
         for hunt_file in sorted(dir_path.glob("*.md")):
             try:
-                info = extract_hunt_info(
-                    hunt_file.read_text(encoding="utf-8"),
+                data = parse_hunt_file(hunt_file, directory)
+                info = _record(
                     hunt_file.name,
-                    str(hunt_file),
+                    f"{directory}/{hunt_file.name}",
+                    str(data.get("hypothesis") or data.get("title") or ""),
+                    "/".join(str(t) for t in (data.get("tactics") or [])),
+                    sorted(f"#{str(t).lstrip('#')}" for t in (data.get("tags") or [])),
+                    [str(t) for t in (data.get("techniques") or [])],
                 )
             except Exception as exc:
                 print(f"⚠️ Could not parse {hunt_file}: {exc}")
@@ -92,7 +178,8 @@ def _build_prompt(new_hunt: dict, existing: list[dict]) -> str:
     for h in existing:
         hypothesis = h["hypothesis"][:200].replace("\n", " ")
         tactic = h["tactic"] or "Unknown"
-        summary_lines.append(f"{h['filename']} | {tactic} | {hypothesis}")
+        techniques = ",".join(h.get("techniques") or []) or "-"
+        summary_lines.append(f"{h['filename']} | {tactic} | {techniques} | {hypothesis}")
     existing_block = "\n".join(summary_lines)
 
     return f"""You are reviewing a new threat hunt submission for a curated hunt library. Find the {TOP_N} existing hunts most similar to the new submission and rate the similarity of each.
@@ -100,9 +187,15 @@ def _build_prompt(new_hunt: dict, existing: list[dict]) -> str:
 NEW SUBMISSION:
 - Hypothesis: {new_hunt.get('hypothesis', '')}
 - Tactic: {new_hunt.get('tactic', '') or 'Unknown'}
+- Techniques: {', '.join(new_hunt.get('techniques') or []) or 'Unknown'}
 - Tags: {', '.join(new_hunt.get('tags', []))}
 
-EXISTING HUNTS (filename | tactic | hypothesis):
+Shared technique IDs are a strong duplicate signal, but not decisive on their own:
+a hunt that splits an existing one by platform is a legitimate separate hunt, while
+two hunts describing the same behaviour under different sub-technique IDs are not.
+Judge the behaviour being hunted and the telemetry it relies on, not the IDs alone.
+
+EXISTING HUNTS (filename | tactic | techniques | hypothesis):
 {existing_block}
 
 Rank the {TOP_N} most similar existing hunts. For each, score 0-100 where:
@@ -243,14 +336,143 @@ def check_duplicates_for_new_submission(new_hunt_content: str, new_hunt_filename
     return format_comment(matches, existing)
 
 
+def novelty_axis_score(top_score: int) -> int:
+    """Map a top similarity score onto the 0-3 novelty axis of the CTI pipeline
+    quality scorecard.
+
+    The 2 -> 1 boundary is deliberately aligned with HIGH_SIMILARITY: the
+    scorecard's per-axis floor is 2, so anything the report renders red is also
+    the thing that forces a regeneration.
+    """
+    if top_score >= 90:
+        return 0
+    if top_score >= HIGH_SIMILARITY:
+        return 1
+    if top_score >= MODERATE_SIMILARITY:
+        return 2
+    return 3
+
+
+# --- CLI ---------------------------------------------------------------------
+#
+# The weekly CTI pipeline runs inside Claude Code with no ANTHROPIC_API_KEY on
+# the box (the key exists only as a GitHub Actions secret), so rank_with_claude()
+# is unavailable there. `emit` prints the ranking prompt for the agent already in
+# the loop to answer, and `render` turns its JSON back into the same report the
+# API path produces. `check` is the original single-hunt API path.
+
+
+def _load_batch(paths: list[str]) -> list[dict]:
+    batch = []
+    for p in paths:
+        path = Path(p)
+        info = extract_hunt_info(path.read_text(encoding="utf-8"), path.name, str(path))
+        if not info:
+            raise SystemExit(f"Could not extract a hypothesis from {path}")
+        batch.append(info)
+    return batch
+
+
+def _corpus_excluding(batch: list[dict]) -> list[dict]:
+    """Corpus minus the batch's own files.
+
+    On the pipeline path the hunts are already written to disk before this runs,
+    so without the filter every hunt would match itself at 100%.
+    """
+    names = {h["filename"] for h in batch}
+    return [h for h in load_existing_hunts() if h["filename"] not in names]
+
+
+def _cmd_emit(args) -> int:
+    batch = _load_batch(args.hunt)
+    existing = _corpus_excluding(batch)
+    if not existing:
+        print("No existing hunts to compare against.", file=sys.stderr)
+        return 1
+
+    # One shared corpus block for the whole batch — the candidate listing is
+    # identical across submissions and is by far the largest part of the prompt.
+    base = _build_prompt(batch[0], existing)
+    corpus_block = base.split("EXISTING HUNTS", 1)[1]
+
+    print(f"Rank each of the {len(batch)} new submissions below against the existing "
+          f"hunt library. For EACH submission return the {TOP_N} most similar existing "
+          "hunts.\n")
+    print("Scoring: 90-100 = same technique, same target, near-duplicate; "
+          "70-89 = same technique, different angle/target; "
+          "50-69 = related technique or shared component; <50 = loose overlap only.\n")
+    print("Shared technique IDs are a strong signal but not decisive: a platform split "
+          "of an existing hunt is legitimate, while the same behaviour under a different "
+          "sub-technique ID is not. Judge behaviour and telemetry, not IDs alone.\n")
+    print("Return JSON only, no prose or code fences, keyed by submission filename:")
+    print('{"H999.md": [{"filename": "H042.md", "score": 87, "explanation": "..."}]}\n')
+
+    print("NEW SUBMISSIONS:")
+    for h in batch:
+        print(f"\n### {h['filename']}")
+        print(f"- Tactic: {h['tactic'] or 'Unknown'}")
+        print(f"- Techniques: {', '.join(h['techniques']) or 'Unknown'}")
+        print(f"- Hypothesis: {h['hypothesis'][:700]}")
+
+    print(f"\nEXISTING HUNTS{corpus_block}")
+    return 0
+
+
+def _cmd_render(args) -> int:
+    batch = _load_batch(args.hunt)
+    existing = _corpus_excluding(batch)
+    rankings = json.loads(Path(args.ranking).read_text(encoding="utf-8"))
+
+    sections, summary = [], []
+    for h in batch:
+        name = h["filename"]
+        matches = rankings.get(name) or []
+        sections.append(f"## {name}\n\n{format_comment(matches, existing)}")
+        scores = [int(m.get("score", 0)) for m in matches if isinstance(m, dict)]
+        top = max(scores) if scores else 0
+        summary.append((name, top, novelty_axis_score(top)))
+
+    print("\n\n---\n\n".join(sections))
+    print("\n\n## Novelty axis (0-3), derived from top similarity\n")
+    print("| Hunt | Top match | Novelty |")
+    print("|---|---|---|")
+    for name, top, axis in summary:
+        print(f"| {name} | {top}% | {axis}/3 |")
+
+    failing = [n for n, _, a in summary if a < 2]
+    if failing:
+        print(f"\n**{len(failing)} hunt(s) below the per-axis floor of 2 — "
+              f"regenerate: {', '.join(failing)}**")
+        return 2
+    return 0
+
+
+def _cmd_check(args) -> int:
+    path = Path(args.hunt[0])
+    print(check_duplicates_for_new_submission(path.read_text(encoding="utf-8"), path.name))
+    return 0
+
+
+def main(argv=None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    emit = sub.add_parser("emit", help="print the ranking prompt for a batch of hunts")
+    emit.add_argument("--hunt", action="append", required=True, help="path to a hunt file (repeatable)")
+    emit.set_defaults(func=_cmd_emit)
+
+    render = sub.add_parser("render", help="render a ranking JSON into the duplicate report")
+    render.add_argument("--hunt", action="append", required=True)
+    render.add_argument("--ranking", required=True, help="path to the ranking JSON")
+    render.set_defaults(func=_cmd_render)
+
+    check = sub.add_parser("check", help="score one hunt via the Anthropic API (needs ANTHROPIC_API_KEY)")
+    check.add_argument("--hunt", action="append", required=True)
+    check.set_defaults(func=_cmd_check)
+
+    args = parser.parse_args(argv)
+    return args.func(args)
+
+
 if __name__ == "__main__":
-    test_content = """Threat actors are using the Snowflake GET command to exfiltrate compressed GZIP files from temporary internal stages to locally specified directories on attacker-controlled systems after staging stolen database records.
-
-| Hunt # | Idea / Hypothesis | Tactic | Notes | Tags | Submitter |
-|--------|-------------------|--------|-------|------|-----------|
-| TEST | Threat actors are using the Snowflake GET command to exfiltrate compressed GZIP files. | Exfiltration | Based on ATT&CK technique T1567.002. | #exfiltration #T1567_002 #snowflake | test-user |
-
-## Why
-- This is a smoke-test submission designed to match H142.
-"""
-    print(check_duplicates_for_new_submission(test_content, "TEST.md"))
+    raise SystemExit(main())
