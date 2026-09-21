@@ -1469,6 +1469,53 @@
     "created": "2026-09-08T22:39:48-05:00"
   },
   {
+    "id": "B045",
+    "category": "Embers",
+    "title": "Baseline of every Windows process that asks the internet what its own external IP is, and of what package-manager install scripts are allowed to spawn",
+    "tactic": "Discovery, Reconnaissance",
+    "notes": "",
+    "tags": [
+      "discovery",
+      "reconnaissance",
+      "windows",
+      "embers",
+      "baseline",
+      "t1016_001",
+      "t1016",
+      "t1195_001",
+      "internet_connection_discovery",
+      "ipify",
+      "external_ip_lookup",
+      "npm",
+      "supply_chain",
+      "developer_endpoint",
+      "phantomraven",
+      "infostealer",
+      "T1016.001",
+      "T1016",
+      "T1195.001"
+    ],
+    "techniques": [
+      "T1016.001",
+      "T1016",
+      "T1195.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [
+      "B020",
+      "H297"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "",
+    "references": "",
+    "file_path": "Embers/B045.md",
+    "created": null
+  },
+  {
     "id": "H001",
     "category": "Flames",
     "title": "An adversary is attempting to brute force the admin account on the externally facing VPN gateway.",
@@ -11031,6 +11078,143 @@
     "created": "2026-09-21T09:37:37-04:00"
   },
   {
+    "id": "H297",
+    "category": "Flames",
+    "title": "Windows process whose creation-time command line is contradicted by its later behaviour, after the PEB argument block was rewritten in a suspended child",
+    "tactic": "Defense Evasion",
+    "notes": "",
+    "tags": [
+      "defense_evasion",
+      "windows",
+      "flames",
+      "t1564_010",
+      "t1055_012",
+      "t1574_001",
+      "t1620",
+      "process_argument_spoofing",
+      "peb_manipulation",
+      "command_line_spoofing",
+      "famoussparrow",
+      "sparrowocky",
+      "earth_estries",
+      "dll_sideloading",
+      "T1564.010",
+      "T1055.012",
+      "T1574.001",
+      "T1620"
+    ],
+    "techniques": [
+      "T1564.010",
+      "T1055.012",
+      "T1574.001",
+      "T1620"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [
+      "H298"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- The technique defeats the single most widely used Windows detection field. A very large share of\n  published hunting logic, Sigma rules and EDR analytics match on `ProcessCommandLine`; against an\n  implant that hooks every argument-retrieval API, all of it returns a clean result on a compromised\n  host. A hunt that does not depend on that field is not an incremental improvement, it is the only\n  thing that works.\n- It is used by a state-aligned actor against government targets right now. ESET attributes SparroWocky\n  to FamousSparrow and reports roughly 90% of observed targets in Latin America from mid-2025 into 2026\n  — Argentina, Ecuador, Guatemala, Honduras, Panama, Peru, Puerto Rico and Venezuela — including a\n  Panamanian entity connected to the Canal ports dispute. This is current tradecraft, not a research\n  curiosity.\n- The evasion has a mandatory mechanical footprint that the evasion itself cannot hide. To rewrite the\n  PEB the parent must obtain a handle with write access and call `WriteProcessMemory` against a child it\n  has not yet resumed. That cross-process write is logged by the kernel callback Sysmon EID 10 is built\n  on, not by the process, so spoofing the process's own view of itself does nothing to suppress it.\n- The behavioural half generalises past this specific implant. Argument spoofing, parent PID spoofing\n  and hollowing all produce the same downstream shape: a process doing more than its recorded provenance\n  accounts for. Building the contradiction join once gives coverage against the variant that appears\n  after this one.",
+    "references": "- [Hide Artifacts: Process Argument Spoofing (T1564.010) — MITRE ATT&CK](https://attack.mitre.org/techniques/T1564/010/)\n- [Beware the SparroWock: The backdoor that bites, the commands that catch — ESET WeLiveSecurity](https://www.welivesecurity.com/en/eset-research/beware-sparrowock-backdoor-bites-commands-catch/)\n- [Detection Strategy for Process Argument Spoofing on Windows (DET0045) — MITRE ATT&CK](https://attack.mitre.org/detectionstrategies/DET0045/)\n- [The return of the spoof part 2: Command line spoofing — NVISO Labs](https://blog.nviso.eu/2020/02/04/the-return-of-the-spoof-part-2-command-line-spoofing/)\n- [Process Argument Spoofing — BorderGate](https://www.bordergate.co.uk/argument-spoofing/)\n- [Hide Artifacts: Process Argument Spoofing — Unprotect Project](https://unprotect.it/technique/hide-artifacts-process-argument-spoofing/)\n- [Command Line Argument Spoofing — The Red Team Vade Mecum](https://kwcsec.gitbook.io/the-red-team-handbook/techniques/defense-evasion/misdirection/command-line-argument-spoofing)",
+    "file_path": "Flames/H297.md",
+    "created": null
+  },
+  {
+    "id": "H298",
+    "category": "Flames",
+    "title": "Operator-commanded uninstall on Windows - a service or Run value deleted, then a batch file that erases the loader, the payload and its own host executable",
+    "tactic": "Defense Evasion",
+    "notes": "",
+    "tags": [
+      "defense_evasion",
+      "windows",
+      "flames",
+      "t1070_009",
+      "t1070_004",
+      "t1543_003",
+      "t1547_001",
+      "clear_persistence",
+      "anti_forensics",
+      "self_deletion",
+      "famoussparrow",
+      "sparrowocky",
+      "earth_estries",
+      "indicator_removal",
+      "T1070.009",
+      "T1070.004",
+      "T1543.003",
+      "T1547.001"
+    ],
+    "techniques": [
+      "T1070.009",
+      "T1070.004",
+      "T1543.003",
+      "T1547.001"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [
+      "H297"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- Persistence removal is the moment of highest defender value and lowest defender coverage. The actor\n  only issues the uninstall when the operation is finished or is believed to be observed, so catching it\n  is the difference between reconstructing an intrusion and discovering that a host was compromised for\n  a period nobody can bound.\n- The file cleanup is forced by Windows and therefore cannot be engineered away. An executable cannot\n  unlink its own running image, so a helper process must do it, and that helper is a child process with\n  a command line, a file creation and a set of deletions — all of it recorded, all of it happening after\n  the malware has already decided to disappear.\n- The deletion set identifies the delivery method. Removing a signed executable, an unowned adjacent DLL\n  and a same-named `.dat` file in one action describes DLL sideloading with a reflectively loaded payload\n  specifically, which means the hunt yields attribution of technique and not only evidence of cleanup.\n- A successful cleanup does not mean the host is clean. The implant performs the same sequence on its own\n  when a copy starts from a new path, so the completed uninstall is frequently a relocation, and the\n  telemetry that recorded it is the only remaining pointer to when and where to look next.",
+    "references": "- [Indicator Removal: Clear Persistence (T1070.009) — MITRE ATT&CK](https://attack.mitre.org/techniques/T1070/009/)\n- [Beware the SparroWock: The backdoor that bites, the commands that catch — ESET WeLiveSecurity](https://www.welivesecurity.com/en/eset-research/beware-sparrowock-backdoor-bites-commands-catch/)\n- [File Creation, Execution and Self-Deletion in Suspicious Directory — Elastic prebuilt detection rule](https://www.elastic.co/guide/en/security/current/file-creation-execution-and-self-deletion-in-suspicious-directory.html)\n- [File Deletion Via Del — SigmaHQ rule on Detection.FYI](https://detection.fyi/sigmahq/sigma/windows/process_creation/proc_creation_win_cmd_del_execution/)\n- [RunMRU Registry Key Deletion — SigmaHQ registry-delete rule on Detection.FYI](https://detection.fyi/sigmahq/sigma/windows/registry/registry_delete/registry_delete_runmru/)\n- [Malware and the Self-Deleting Batch File Method — Journey Into Incident Response](http://journeyintoir.blogspot.com/2014/01/malware-and-self-deleting-batch-file.html)\n- [Indicator Removal on Host: File Deletion (T1070.004) — MITRE ATT&CK](https://attack.mitre.org/techniques/T1070/004/)",
+    "file_path": "Flames/H298.md",
+    "created": null
+  },
+  {
+    "id": "H299",
+    "category": "Flames",
+    "title": "Linux SUID helper invoked with almost no arguments by an interpreter or a binary in a writable path, crossing into root in one step",
+    "tactic": "Privilege Escalation, Defense Evasion",
+    "notes": "",
+    "tags": [
+      "privilege_escalation",
+      "defense_evasion",
+      "linux",
+      "flames",
+      "t1548_001",
+      "t1059_004",
+      "t1068",
+      "setuid",
+      "setgid",
+      "suid",
+      "pkexec",
+      "sudo",
+      "polkit",
+      "gtfobins",
+      "local_privilege_escalation",
+      "T1548.001",
+      "T1059.004",
+      "T1068"
+    ],
+    "techniques": [
+      "T1548.001",
+      "T1059.004",
+      "T1068"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [
+      "M041"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- The detection target is the destination rather than the route. Elastic's framework is built on the\n  observation that privilege escalation methods proliferate but the privilege transition does not\n  change, so a hunt anchored to effective-versus-real credential divergence keeps working against\n  exploits that did not exist when it was written.\n- The distinguishing context is cheap and already collected. Argument count, parent executable path and\n  writable-directory membership are fields any competent Linux process sensor already emits — Elastic\n  Defend, auditd `execve` records, or eBPF — so this requires interpretation of existing telemetry\n  rather than new instrumentation.\n- The three query shapes close each other's gaps deliberately. Name-based helper matching misses unknown\n  SUID binaries, self-referential matching misses helpers passed as arguments, and proxy-execution\n  matching misses the ordinary case; running all three is what makes the coverage hold against an actor\n  who knows the first one exists.\n- It produces hardening output even on a clean estate. The inventory of `nosuid` mount coverage,\n  unnecessary setuid bits, and unconstrained `pkexec` callers is a durable reduction in attack surface,\n  which is a better outcome than a hunt that returns nothing and leaves nothing behind.",
+    "references": "- [Abuse Elevation Control Mechanism: Setuid and Setgid (T1548.001) — MITRE ATT&CK](https://attack.mitre.org/techniques/T1548/001/)\n- [Linux Detection Engineering - Local Privilege Escalation — Elastic Security Labs](https://www.elastic.co/security-labs/threat-command/linux-privilege-escalation-detection-framework)\n- [Privilege Escalation via SUID/SGID — Elastic prebuilt detection rule (source TOML)](https://github.com/elastic/detection-rules/blob/main/rules/linux/privilege_escalation_potential_suid_sgid_exploitation.toml)\n- [Potential Privilege Escalation via SUID/SGID Proxy Execution — Elastic rule on Detection.FYI](https://detection.fyi/elastic/detection-rules/linux/privilege_escalation_potential_suid_sgid_proxy_execution/)\n- [Linux Privilege Escalation: Attack Techniques and How to Detect Them — Hive Security](https://hivesecurity.gitlab.io/blog/linux-privilege-escalation-attack-detect-2026/)\n- [Threat hunting exercise: Privilege Escalation by Setuid and Setgid — Pak Hong Lee](https://medium.com/@guruisadog/threat-hunting-exercise-privilege-escalation-by-setuid-and-setguid-fa7457540668)\n- [Exploitation for Privilege Escalation (T1068) — MITRE ATT&CK](https://attack.mitre.org/techniques/T1068/)",
+    "file_path": "Flames/H299.md",
+    "created": null
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
@@ -12213,5 +12397,51 @@
     "references": "- [MITRE ATT&CK T1496.004: Resource Hijacking — Cloud Service Hijacking](https://attack.mitre.org/techniques/T1496/004/)\n- [Unit 42 (Palo Alto Networks): An AI-assisted cyber attack — inside a Unit 42 investigation (source report)](https://unit42.paloaltonetworks.com/ai-assisted-cyber-attack-inside-a-unit-42-investigation/)\n- [Sysdig Threat Research: LLMjacking — stolen cloud credentials used in new AI attack](https://www.sysdig.com/blog/llmjacking-stolen-cloud-credentials-used-in-new-ai-attack)\n- [BeyondTrust: AWS Bedrock API keys security guide part 2 — detection and response](https://www.beyondtrust.com/blog/entry/aws-bedrock-security-guide-api-keys-detection-response)\n- [Abstract Security: Detecting AWS Bedrock abuse — from LLMjacking to hidden attack vectors](https://www.abstract.security/blog/detecting-aws-bedrock-abuse-from-llmjacking-to-the-hidden-attack-vectors)\n- [MITRE ATLAS AML.T0043: LLM invocations via stolen API keys](https://atlas.mitre.org/techniques/AML.T0043)\n- [AWS documentation: Bedrock model invocation logging and CloudTrail event reference](https://docs.aws.amazon.com/bedrock/latest/userguide/model-invocation-logging.html)\n- [MITRE ATT&CK T1552.001: Unsecured Credentials — Credentials In Files](https://attack.mitre.org/techniques/T1552/001/)",
     "file_path": "Alchemy/M040.md",
     "created": "2026-09-08T22:39:48-05:00"
+  },
+  {
+    "id": "M041",
+    "category": "Alchemy",
+    "title": "Ranking every setuid and setgid binary in the Linux estate by fleet prevalence, so a first-ever privileged execution scores as rare rather than passing as unrecognised",
+    "tactic": "Privilege Escalation, Persistence, Defense Evasion",
+    "notes": "",
+    "tags": [
+      "privilege_escalation",
+      "persistence",
+      "defense_evasion",
+      "linux",
+      "alchemy",
+      "t1548_001",
+      "t1222_002",
+      "t1083",
+      "setuid",
+      "setgid",
+      "suid",
+      "rarity_analysis",
+      "prevalence_scoring",
+      "fleet_baseline",
+      "anomaly_scoring",
+      "gtfobins",
+      "T1548.001",
+      "T1222.002",
+      "T1083"
+    ],
+    "techniques": [
+      "T1548.001",
+      "T1222.002",
+      "T1083"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [
+      "H299"
+    ],
+    "submitter": {
+      "name": "Lauren Proehl",
+      "link": "https://x.com/jotunvillur"
+    },
+    "why": "- It answers the question the rule cannot. Elastic's allowlist-free logic correctly detects the execution\n  of an unknown setuid binary, but leaves an analyst holding a path with no way to judge it; fleet\n  prevalence, package ownership and first-seen date turn that path into a ranked, decidable finding.\n- Prevalence is robust to the thing that breaks allowlists. A curated list of legitimate helpers is stale\n  the day it is written and cannot cover a heterogeneous estate; a prevalence model recomputes itself\n  from the estate's own current state and degrades gracefully as the estate changes.\n- It sees staged capability before it is used. A setuid root binary dropped into a service account home\n  or `/usr/local/bin` as a persistence and re-escalation primitive produces no execution event until the\n  actor returns, so an execution-only hunt is blind to it while a filesystem inventory is not.\n- The by-product is a hardening backlog with a natural priority order. The same inventory identifies\n  unnecessary setuid bits on binaries such as `chfn`, `chsh`, `newgrp` and `ssh-keysign`, filesystems\n  missing `nosuid`, and package-mode divergence — ranked by how rare and how exploitable each one is,\n  which is a better remediation queue than a compliance scan produces.",
+    "references": "- [Abuse Elevation Control Mechanism: Setuid and Setgid (T1548.001) — MITRE ATT&CK](https://attack.mitre.org/techniques/T1548/001/)\n- [Linux Detection Engineering - Local Privilege Escalation — Elastic Security Labs](https://www.elastic.co/security-labs/threat-command/linux-privilege-escalation-detection-framework)\n- [osquery suid_bin table schema — fleet-wide setuid inventory](https://osquery.io/schema/current#suid_bin)\n- [GTFOBins — setuid-capable binaries and their escalation primitives](https://gtfobins.github.io/#+suid)\n- [Privilege Escalation via SUID/SGID — Elastic prebuilt detection rule (source TOML)](https://github.com/elastic/detection-rules/blob/main/rules/linux/privilege_escalation_potential_suid_sgid_exploitation.toml)\n- [File and Directory Permissions Modification: Linux and Mac File and Directory Permissions Modification (T1222.002) — MITRE ATT&CK](https://attack.mitre.org/techniques/T1222/002/)\n- [Linux Privilege Escalation: Attack Techniques and How to Detect Them — Hive Security](https://hivesecurity.gitlab.io/blog/linux-privilege-escalation-attack-detect-2026/)",
+    "file_path": "Alchemy/M041.md",
+    "created": null
   }
 ]
