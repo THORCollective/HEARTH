@@ -38,30 +38,45 @@ jobs:
       - name: Install Python dependencies
         run: pip install -r requirements.txt
 
-      - name: Run script to update hunt data
-        run: python3 scripts/rebuild_hunts_data.py
-
-      - name: Commit and push if there are changes
+      - name: Rebuild hunt data and push
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add hunts-data.js public/hunts-data.json public/actor-mentions.json
-          # Commit only if there are changes
-          if git diff --staged --quiet; then
-            echo "No changes to commit."
-            exit 0
-          fi
-          git commit -m "chore: Auto-update hunt database"
-          # Retry with rebase: the sibling update-hunt-database job (pushes
-          # database/hunts.db) or a rapid second merge can land on main between
-          # checkout and push, causing a non-fast-forward rejection. Those touch
-          # different files, so a rebase reconciles cleanly.
+
+          GENERATED="hunts-data.js public/hunts-data.json public/actor-mentions.json"
+
+          # These three files are DERIVED from the hunt markdown. On a push race the
+          # correct resolution is to rebuild them on the new tip, never to merge or
+          # rebase them — a generated commit conflicts on any byte that differs
+          # between two runs, and git cannot know that regenerating is the answer.
+          #
+          # The previous version rebased instead, and it could not work: an earlier
+          # actor-mentions.json carried a `generated_at` timestamp, so two rebuilds
+          # ALWAYS differed on that line and the rebase ALWAYS conflicted. On
+          # 2026-09-21 two PRs merged 13s apart, this job died on exactly that
+          # conflict, and main kept a stale index while the run reported green under
+          # a display name shared with .github/workflows/update-hunt-database.yml.
+          # That timestamp is gone now; this loop covers the genuine case that
+          # remains — two merges whose hunt content really does differ.
           for attempt in 1 2 3 4 5; do
-            if git push; then
+            python3 scripts/rebuild_hunts_data.py
+
+            if git diff --quiet -- $GENERATED; then
+              echo "Generated files already match the hunt sources — nothing to commit."
               exit 0
             fi
-            echo "Push failed (attempt $attempt), rebasing on origin/main and retrying..."
-            git pull --rebase origin main
+
+            git add $GENERATED
+            git commit -m "chore: Auto-update hunt database"
+
+            if git push; then
+              echo "Pushed regenerated hunt data on attempt $attempt."
+              exit 0
+            fi
+
+            echo "Push failed (attempt $attempt): main moved. Discarding this build and regenerating on the new tip."
+            git fetch origin main
+            git reset --hard FETCH_HEAD
             sleep 2
           done
           echo "::error::Failed to push hunt data after 5 attempts"

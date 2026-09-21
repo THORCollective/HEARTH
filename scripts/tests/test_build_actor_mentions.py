@@ -162,7 +162,16 @@ def test_build_writes_output_and_returns_payload(tmp_path):
     on_disk = json.loads(out_path.read_text())
     assert on_disk["mentions"] == {"actor:G0001": ["H001"]}
     assert on_disk["min_alias_len"] == MIN_ALIAS_LEN
-    assert on_disk["generated_at"].endswith("Z")
+    assert "generated_at" not in on_disk
+
+    # Determinism is the load-bearing property, not an implementation detail: CI
+    # commits this file and reconciles push races by rebuilding, so two runs over
+    # identical input must produce byte-identical output or the rebuild conflicts
+    # with itself. (2026-09-21: a `generated_at` timestamp made that conflict
+    # certain, and the committed index silently went stale on main.)
+    first = out_path.read_bytes()
+    build(cg_path, hunts_path, tmp_path / "missing-denylist.json", out_path)
+    assert out_path.read_bytes() == first
 
 
 def test_build_applies_denylist(tmp_path):

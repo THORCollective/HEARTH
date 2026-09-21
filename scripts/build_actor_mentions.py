@@ -14,7 +14,6 @@ Matching rules:
 
 Output shape:
   {
-    "generated_at": "2026-05-23T12:00:00Z",
     "min_alias_len": 4,
     "mentions": {
       "actor:G0016": ["H012", "H034"],
@@ -24,7 +23,6 @@ Output shape:
 """
 from __future__ import annotations
 
-import datetime as _dt
 import json
 import re
 from pathlib import Path
@@ -140,8 +138,6 @@ def build(
     hunts_path: Path = DEFAULT_HUNTS,
     denylist_path: Path = DEFAULT_DENYLIST,
     output_path: Path = DEFAULT_OUTPUT,
-    *,
-    now: _dt.datetime | None = None,
 ) -> dict[str, Any]:
     """Run the full pipeline. Writes output_path and returns the written dict."""
     context_graph = json.loads(context_graph_path.read_text())
@@ -151,11 +147,13 @@ def build(
     actors = load_actors(context_graph)
     mentions = find_mentions(actors, hunts, denylist)
 
+    # No `generated_at`: this file is a build artifact committed to the repo, so a
+    # timestamp makes two rebuilds of identical input differ by one line. That is not
+    # merely churn — the CI rebuild commits these files and rebases on a push race, so
+    # a guaranteed-differing line meant a guaranteed rebase conflict whenever two
+    # merges landed close together, which silently left the committed index stale.
+    # Same rationale as scripts/fetch_activity.cjs. Recency comes from git history.
     payload = {
-        "generated_at": (now or _dt.datetime.now(_dt.timezone.utc))
-        .replace(microsecond=0)
-        .isoformat()
-        .replace("+00:00", "Z"),
         "min_alias_len": MIN_ALIAS_LEN,
         "mentions": mentions,
     }
