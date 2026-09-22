@@ -13048,6 +13048,47 @@
     "created": "2026-09-21T14:22:24-05:00"
   },
   {
+    "id": "H333",
+    "category": "Flames",
+    "title": "Counterfeit npm package firing its loader at application runtime instead of install time",
+    "tactic": "Initial Access, Execution, Discovery, Command and Control, Exfiltration, Stealth",
+    "notes": "Endpoint process + network telemetry (EDR) - Core filter: `node` / `node.exe` processes whose parent is an application or service launcher (`pm2`, `next start`, container entrypoint, service manager) - not `npm`, `yarn`, or `pnpm` - initiating outbound POSTs to chat-API hosts `hooks.slack.com` or `api.telegram.org` (URL paths shaped like `/bot<token>/sendMessage`). Triage values: `process command line`, `parent process command line`, `working directory`, `destination hostname`, `HTTP method`, `URL path`. Strong red flags: first-ever chat-API POST from a service account or host with weeks of history without one, occurring shortly after a dependency update.\n\nNetwork / egress proxy telemetry - Core filter: the same source host and process contacting both a chat-API host and an Ethereum testnet JSON-RPC endpoint (`sepolia.infura.io`, `rpc.sepolia.org`, other `sepolia` provider hostnames, or JSON-RPC request bodies carrying `eth_call`) within a 15-minute window. Pivot: join chat-API events and RPC polling by `source host`, `process id`, and `destination hostname`; fixed-interval `eth_call` polling from an application with no web3 purpose is the dead-drop C2 shape. Correlation: Sepolia is a testnet - recurring testnet RPC traffic from production services or non-web3 developer fleets is independently anomalous even before the join.\n\nFile telemetry on developer/CI/server hosts - Core filter: file writes or deletions under `node_modules/` performed by a long-running application `node` process outside package-install windows and not parented by `npm`, `yarn`, or `pnpm`. Triage values: `file path`, `file operation type`, `process command line`, `parent process command line`, `process start time` vs `file event time`. Strong red flags: a process modifying or deleting files inside its own dependency directory (e.g. `node_modules/indexed-btree/`, loader artifacts such as `sharedLoad.min.js`) - self-editing installed package code is anti-forensic cleanup with no legitimate runtime equivalent.\n\nDependency inventory / registry telemetry - Correlation: sweep lockfiles, SBOMs, and internal registry pull logs for `indexed-btree` and near-name counterfeits of `sorted-btree`; treat package names strictly as triage seeds, since the campaign rotates packages. Pivot: for any inventory hit, pull that host's process, network, and `node_modules` file events from package install time to present and test for the three-legged runtime conjunction above.\n",
+    "tags": [
+      "npm",
+      "supplychain",
+      "nodejs",
+      "runtime_execution",
+      "blockchain_c2",
+      "dead_drop",
+      "developer_endpoints",
+      "T1195.002",
+      "T1059.007",
+      "T1082",
+      "T1102.001",
+      "T1567.004",
+      "T1070.004"
+    ],
+    "techniques": [
+      "T1195.002",
+      "T1059.007",
+      "T1082",
+      "T1102.001",
+      "T1567.004",
+      "T1070.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Joshua Strickland",
+      "link": "https://novasky.io"
+    },
+    "why": "- npm v12's June 2026 defenses gate preinstall/install/postinstall lifecycle scripts, and this campaign was engineered specifically to render that control irrelevant by moving the trigger into a core library method that fires at application runtime - so every team relying on install-script blocking or install-time scanning has zero coverage against a package that reached ~2M weekly downloads.\n- The hunt logic keys on an invariant conjunction rather than rotating indicators: package names, Slack/Telegram channels, and RPC providers all rotate cheaply, but the campaign's architecture requires one application node process to profile the host to a chat API, poll a blockchain read endpoint for dead-drop tasking, and edit its own installed package files for cleanup - abandoning any leg forces the actor to re-architect their unsinkholeable C2 design.\n- Every leg lands in commodity telemetry with no payload decryption required: process ancestry distinguishes application-runtime node from package-manager children, chat-API and Sepolia RPC hostnames are visible in DNS/TLS/proxy logs, and node_modules writes/deletes are standard EDR file events - the hunt is a join, not a reverse-engineering exercise.\n- False positives are structurally controllable because the benign populations do not overlap: web3 tooling polls RPC but never profiles hosts to Telegram, CI notifiers hit Slack but never poll testnets, and package managers write node_modules only with install-time ancestry - requiring two of three legs on one process collapses the noise floor, and the self-editing leg alone has effectively no legitimate equivalent.",
+    "references": "- [Checkmarx Zero - npm 'btree' Malware Campaign Affects Millions of Downloads, No Need for Install Script](https://checkmarx.com/zero-post/npm-btree-malware-campaign-affects-millions-of-downloads-no-need-for-install-script/)\n- [BleepingComputer - Malicious npm packages evade install-script defenses at runtime](https://www.bleepingcomputer.com/news/security/malicious-npm-packages-evade-install-script-defenses-at-runtime/)",
+    "file_path": "Flames/H333.md",
+    "created": "2026-09-22T15:16:13-04:00"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
