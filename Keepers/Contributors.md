@@ -6,10 +6,10 @@ Everyone listed below has submitted ideas that have been added to HEARTH. This l
 
 | Rank | Contributor | Hunts Submitted |
 |------|-------------|-----------------|
-| 1 | Lauren Proehl | 211 |
+| 1 | Lauren Proehl | 264 |
 | 2 | Jinx (THOR Collective) | 39 |
 | 3 | Sydney Marrone | 29 |
-| 4 | Joshua Strickland | 23 |
+| 4 | Joshua Strickland | 24 |
 | 5 | John Grageda | 6 |
 | 6 | Jamie Williams | 3 |
 | 7 | Azrara | 3 |
