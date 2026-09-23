@@ -110,6 +110,9 @@
 
   .digest-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:24px;align-items:start}
   .side{display:flex;flex-direction:column;gap:24px}
+  /* Keep the side column in view while the (often much longer) hunt list scrolls.
+     digest.ts lowers top when the column is taller than the screen, so its bottom pins instead. */
+  .side{position:sticky;top:88px}
 
   /* ───────── Cards ───────── */
   .card{background:oklch(0.20 0.022 300 / .7);border:1px solid var(--line-soft);border-radius:16px;padding:22px 22px 24px;backdrop-filter:blur(6px)}
@@ -176,6 +179,7 @@
   @media (max-width:1020px){
     .band-grid{grid-template-columns:1fr;gap:14px}
     .digest-grid{grid-template-columns:1fr}
+    .side{position:static}
     .nav{display:none}
     .nav-toggle{display:flex}
   }

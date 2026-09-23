@@ -53,6 +53,27 @@ async function init(): Promise<void> {
     renderWeekNav(weekKey, weeks, latest),
     ...(digest.hunts.length === 0 ? [renderEmptyWeek()] : renderDigest(digest)),
   );
+  pinSideColumn();
+}
+
+const TOPBAR_CLEARANCE = 88;
+const BOTTOM_GAP = 24;
+
+/**
+ * Sticky side column: sits under the topbar when it fits on screen; when it's
+ * taller, a negative top pins its bottom instead, so nothing is ever clipped.
+ */
+function pinSideColumn(): void {
+  const side = document.querySelector<HTMLElement>(".side");
+  if (!side) return;
+  const update = () => {
+    const top = Math.min(TOPBAR_CLEARANCE, window.innerHeight - side.offsetHeight - BOTTOM_GAP);
+    side.style.top = `${top}px`;
+  };
+  update();
+  window.addEventListener("resize", update);
+  // Opening a references group or "Show more" changes the column's height.
+  new ResizeObserver(update).observe(side);
 }
 
 function renderWeekNav(
