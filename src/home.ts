@@ -8,6 +8,7 @@ import {
   type ContextGraphData,
   type MitreMatrixData,
 } from "./lib/actor-matching";
+import { latestWeekSummary } from "./lib/digest";
 
 const BOTS = new Set(["HEARTH Bot"]);
 
@@ -165,6 +166,11 @@ async function init() {
     console.error("[HEARTH] renderActivityFeed:", err);
   }
   try {
+    renderDigestCta();
+  } catch (err) {
+    console.error("[HEARTH] renderDigestCta:", err);
+  }
+  try {
     renderLeaderboard();
   } catch (err) {
     console.error("[HEARTH] renderLeaderboard:", err);
@@ -181,6 +187,21 @@ async function init() {
   renderActorPreview().catch((err) =>
     console.error("[HEARTH] renderActorPreview:", err),
   );
+}
+
+// ----- Digest CTA -----
+// Upgrades the static "This week on HEARTH" hero button to a live count,
+// e.g. "● 55 new this week →". The static label stays if there's no data.
+function renderDigestCta() {
+  const cta = document.getElementById("digest-cta");
+  const summary = latestWeekSummary(allHunts);
+  if (!cta || !summary) return;
+  const dot = document.createElement("span");
+  dot.className = "digest-dot";
+  dot.setAttribute("aria-hidden", "true");
+  const count = document.createElement("b");
+  count.textContent = `${summary.count} new`;
+  cta.replaceChildren(dot, count, document.createTextNode(` ${summary.when} →`));
 }
 
 // ----- Embers glyph -----

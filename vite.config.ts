@@ -18,6 +18,7 @@ export default defineConfig({
         actors: resolve(__dirname, 'actors.html'),
         coverage: resolve(__dirname, 'coverage.html'),
         coverage_heatmap: resolve(__dirname, 'coverage-heatmap.html'),
+        digest: resolve(__dirname, 'digest.html'),
       },
     },
 

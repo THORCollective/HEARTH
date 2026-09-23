@@ -397,6 +397,16 @@
         box-shadow: 0 0 10px var(--ember);
         animation: pulse 1.6s ease-in-out infinite;
       }
+      .digest-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--ember);
+        box-shadow: 0 0 10px var(--ember);
+      }
+      #digest-cta b {
+        font-weight: 600;
+      }
       @keyframes pulse {
         50% {
           opacity: 0.35;
@@ -1675,6 +1685,9 @@
             </p>
             <div class="hero-actions">
               <a class="btn primary" href="index.html">Browse the library →</a>
+              <a class="btn" id="digest-cta" href="digest.html"
+                >This week on HEARTH →</a
+              >
               <a class="btn" href="#demo">Try the CTI pipeline</a>
               <a
                 class="btn"
