@@ -2152,10 +2152,10 @@ const HUNTS_DATA = [
       "privilege_escalation",
       "defense_evasion",
       "dllsideloading",
-      "T1574.002"
+      "T1574.001"
     ],
     "techniques": [
-      "T1574.002"
+      "T1574.001"
     ],
     "severity": null,
     "status": "current",
@@ -2268,11 +2268,11 @@ const HUNTS_DATA = [
       "edr",
       "dns",
       "defenseevasion",
-      "T1562.001",
+      "T1685",
       "T1112"
     ],
     "techniques": [
-      "T1562.001",
+      "T1685",
       "T1112"
     ],
     "severity": null,
@@ -2430,10 +2430,10 @@ const HUNTS_DATA = [
     "tags": [
       "defenseevasion",
       "wsc",
-      "T1562.001"
+      "T1685"
     ],
     "techniques": [
-      "T1562.001"
+      "T1685"
     ],
     "severity": null,
     "status": "current",
@@ -3510,10 +3510,10 @@ const HUNTS_DATA = [
       "powershell",
       "ta0005",
       "firewall",
-      "T1562.004"
+      "T1686"
     ],
     "techniques": [
-      "T1562.004"
+      "T1686"
     ],
     "severity": null,
     "status": "current",
@@ -3538,10 +3538,10 @@ const HUNTS_DATA = [
       "esxi",
       "hypervisor",
       "ransomware",
-      "T1562.001"
+      "T1685"
     ],
     "techniques": [
-      "T1562.001"
+      "T1685"
     ],
     "severity": null,
     "status": "current",
@@ -3594,10 +3594,10 @@ const HUNTS_DATA = [
       "macos",
       "tcc",
       "unc1069",
-      "T1562.001"
+      "T1685"
     ],
     "techniques": [
-      "T1562.001"
+      "T1685"
     ],
     "severity": null,
     "status": "current",
@@ -3943,11 +3943,11 @@ const HUNTS_DATA = [
       "spa",
       "unc6201",
       "T1205.001",
-      "T1562.004"
+      "T1686"
     ],
     "techniques": [
       "T1205.001",
-      "T1562.004"
+      "T1686"
     ],
     "severity": null,
     "status": "current",
@@ -4080,12 +4080,12 @@ const HUNTS_DATA = [
       "ransomware",
       "crazyhunter",
       "T1484.001",
-      "T1562.001",
+      "T1685",
       "T1106"
     ],
     "techniques": [
       "T1484.001",
-      "T1562.001",
+      "T1685",
       "T1106"
     ],
     "severity": null,
@@ -4310,11 +4310,11 @@ const HUNTS_DATA = [
       "supply_chain",
       "notepadpp",
       "chrysalis",
-      "T1574.002",
+      "T1574.001",
       "T1195.002"
     ],
     "techniques": [
-      "T1574.002",
+      "T1574.001",
       "T1195.002"
     ],
     "severity": null,
@@ -4964,10 +4964,10 @@ const HUNTS_DATA = [
       "defense_evasion",
       "event_log_clearing",
       "anti_forensics",
-      "T1070.001"
+      "T1685.005"
     ],
     "techniques": [
-      "T1070.001"
+      "T1685.005"
     ],
     "severity": null,
     "status": "current",
@@ -5623,10 +5623,10 @@ const HUNTS_DATA = [
       "tcc_bypass",
       "macos",
       "privacy_controls",
-      "T1562.001"
+      "T1685"
     ],
     "techniques": [
-      "T1562.001"
+      "T1685"
     ],
     "severity": null,
     "status": "current",
@@ -6007,11 +6007,11 @@ const HUNTS_DATA = [
       "tclbanker",
       "masquerading",
       "T1036.005",
-      "T1574.002"
+      "T1574.001"
     ],
     "techniques": [
       "T1036.005",
-      "T1574.002"
+      "T1574.001"
     ],
     "severity": null,
     "status": "current",
@@ -6259,12 +6259,12 @@ const HUNTS_DATA = [
       "abcdoor",
       "valleyrat",
       "T1053.005",
-      "T1574.002",
+      "T1574.001",
       "T1547.001"
     ],
     "techniques": [
       "T1053.005",
-      "T1574.002",
+      "T1574.001",
       "T1547.001"
     ],
     "severity": null,
@@ -6356,12 +6356,12 @@ const HUNTS_DATA = [
       "windows",
       "T1070",
       "T1649",
-      "T1562.002"
+      "T1685.001"
     ],
     "techniques": [
       "T1070",
       "T1649",
-      "T1562.002"
+      "T1685.001"
     ],
     "severity": null,
     "status": "current",
@@ -6732,13 +6732,13 @@ const HUNTS_DATA = [
       "windows",
       "T1574.001",
       "T1053.005",
-      "T1562.006",
+      "T1685",
       "T1574.014"
     ],
     "techniques": [
       "T1574.001",
       "T1053.005",
-      "T1562.006",
+      "T1685",
       "T1574.014"
     ],
     "severity": null,
@@ -6926,10 +6926,10 @@ const HUNTS_DATA = [
       "seo_poisoning",
       "runtime_host",
       "net_utility_hollowing",
-      "T1574.002"
+      "T1574.001"
     ],
     "techniques": [
-      "T1574.002"
+      "T1574.001"
     ],
     "severity": null,
     "status": "current",
@@ -7451,11 +7451,11 @@ const HUNTS_DATA = [
       "windows",
       "sysmon",
       "T1553.002",
-      "T1574.002"
+      "T1574.001"
     ],
     "techniques": [
       "T1553.002",
-      "T1574.002"
+      "T1574.001"
     ],
     "severity": null,
     "status": "current",
@@ -7481,10 +7481,10 @@ const HUNTS_DATA = [
       "aws",
       "cloudtrail",
       "logging",
-      "T1562.008"
+      "T1685.002"
     ],
     "techniques": [
-      "T1562.008"
+      "T1685.002"
     ],
     "severity": null,
     "status": "current",
@@ -7510,10 +7510,10 @@ const HUNTS_DATA = [
       "gcp",
       "cloud_logging",
       "logging",
-      "T1562.008"
+      "T1685.002"
     ],
     "techniques": [
-      "T1562.008"
+      "T1685.002"
     ],
     "severity": null,
     "status": "current",
@@ -7661,11 +7661,11 @@ const HUNTS_DATA = [
       "edr_killer",
       "gentlemen",
       "windows",
-      "T1562.001",
+      "T1685",
       "T1543.003"
     ],
     "techniques": [
-      "T1562.001",
+      "T1685",
       "T1543.003"
     ],
     "severity": null,
@@ -7694,11 +7694,11 @@ const HUNTS_DATA = [
       "vulnerable_driver",
       "loldrivers",
       "windows",
-      "T1562.001",
+      "T1685",
       "T1036.001"
     ],
     "techniques": [
-      "T1562.001",
+      "T1685",
       "T1036.001"
     ],
     "severity": null,
@@ -7856,10 +7856,10 @@ const HUNTS_DATA = [
       "dll_sideloading",
       "virtualbox",
       "dragonforce",
-      "T1574.002"
+      "T1574.001"
     ],
     "techniques": [
-      "T1574.002"
+      "T1574.001"
     ],
     "severity": null,
     "status": "current",
@@ -7939,10 +7939,10 @@ const HUNTS_DATA = [
       "sdwan",
       "cisco",
       "authentication_bypass",
-      "T1562.006"
+      "T1685"
     ],
     "techniques": [
-      "T1562.006"
+      "T1685"
     ],
     "severity": null,
     "status": "current",
@@ -8546,19 +8546,19 @@ const HUNTS_DATA = [
       "process_hollowing",
       "T1059.001",
       "T1105",
-      "T1574.002",
+      "T1574.001",
       "T1547.001",
       "T1055",
-      "T1562.001",
+      "T1685",
       "T1555.003"
     ],
     "techniques": [
       "T1059.001",
       "T1105",
-      "T1574.002",
+      "T1574.001",
       "T1547.001",
       "T1055",
-      "T1562.001",
+      "T1685",
       "T1555.003"
     ],
     "severity": null,
@@ -8793,7 +8793,7 @@ const HUNTS_DATA = [
       "T1570",
       "T1219",
       "T1543.003",
-      "T1562.001",
+      "T1685",
       "T1486"
     ],
     "techniques": [
@@ -8804,7 +8804,7 @@ const HUNTS_DATA = [
       "T1570",
       "T1219",
       "T1543.003",
-      "T1562.001",
+      "T1685",
       "T1486"
     ],
     "severity": null,
@@ -9545,14 +9545,14 @@ const HUNTS_DATA = [
       "browser_credentials",
       "multipart_exfiltration",
       "T1055",
-      "T1562.001",
+      "T1685",
       "T1555.003",
       "T1005",
       "T1041"
     ],
     "techniques": [
       "T1055",
-      "T1562.001",
+      "T1685",
       "T1555.003",
       "T1005",
       "T1041"
@@ -9589,7 +9589,7 @@ const HUNTS_DATA = [
       "T1570",
       "T1021.002",
       "T1569.002",
-      "T1070.001",
+      "T1685.005",
       "T1486"
     ],
     "techniques": [
@@ -9599,7 +9599,7 @@ const HUNTS_DATA = [
       "T1570",
       "T1021.002",
       "T1569.002",
-      "T1070.001",
+      "T1685.005",
       "T1486"
     ],
     "severity": null,
@@ -11414,7 +11414,7 @@ const HUNTS_DATA = [
       "T1552.005",
       "T1580",
       "T1087.004",
-      "T1562.008",
+      "T1685.002",
       "T1136.003",
       "T1098.001"
     ],
@@ -11423,7 +11423,7 @@ const HUNTS_DATA = [
       "T1552.005",
       "T1580",
       "T1087.004",
-      "T1562.008",
+      "T1685.002",
       "T1136.003",
       "T1098.001"
     ],
