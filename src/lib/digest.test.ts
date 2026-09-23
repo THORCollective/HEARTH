@@ -6,6 +6,7 @@ import {
   sourceGroup,
   isoWeekKey,
   latestWeekSummary,
+  libraryCounts,
   listWeeks,
   parseWeekKey,
   weekRange,
@@ -251,5 +252,20 @@ describe("latestWeekSummary", () => {
 
   it("returns null when no hunt is dated", () => {
     expect(latestWeekSummary([hunt("A", undefined)], now)).toBeNull();
+  });
+});
+
+describe("libraryCounts", () => {
+  it("counts hunts and distinct techniques, sub-techniques included", () => {
+    const hunts = [
+      hunt("A", undefined, { techniques: ["T1059", "T1059.001"] }),
+      hunt("B", undefined, { techniques: ["T1059.001", "T1105"] }),
+      hunt("C", undefined, { techniques: [] }),
+    ];
+    expect(libraryCounts(hunts)).toEqual({ hunts: 3, techniques: 3 });
+  });
+
+  it("handles an empty library", () => {
+    expect(libraryCounts([])).toEqual({ hunts: 0, techniques: 0 });
   });
 });
