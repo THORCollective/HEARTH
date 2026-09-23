@@ -603,11 +603,11 @@ function useFilteredHunts({ q, cat, tactic, sort }) {
     const hunts = window.HUNTS || [];
     let rows = hunts.filter((h) => {
       if (cat !== 'All' && h.cat !== cat) return false;
-      if (tactic !== 'All' && !h.tactic.includes(tactic)) return false;
+      if (tactic !== 'All' && !h.tactics.includes(tactic)) return false;
       if (!needle) return true;
       return (
         h.title.toLowerCase().includes(needle) ||
-        h.tactic.toLowerCase().includes(needle) ||
+        h.tactics.join(' ').toLowerCase().includes(needle) ||
         h.technique.toLowerCase().includes(needle) ||
         h.who.toLowerCase().includes(needle) ||
         h.id.toLowerCase().includes(needle) ||
@@ -957,9 +957,11 @@ function extractHandle(submitter) {
 }
 
 function mapHunt(h) {
-  const tactic = (h.tactic || '').split(',')[0].trim() || '—';
+  const tactics = (h.tactic || '').split(',').map(t => t.trim()).filter(Boolean);
+  const tactic = tactics[0] || '—';
   return {
     id: h.id,
+    tactics,
     cat: h.category,
     title: h.title,
     tactic,
@@ -1015,14 +1017,10 @@ function App() {
       .then(raw => {
         window.HUNTS = raw.map(mapHunt);
 
-        /* tactic filter options (split comma-separated) */
-        const allTactics = new Set();
-        raw.forEach(h => {
-          (h.tactic || '').split(',').forEach(t => {
-            const tr = t.trim();
-            if (tr) allTactics.add(tr);
-          });
-        });
+        /* Tactic filter options until site-stats.json arrives (and if it
+           fails): the tactics the hunts use. "Multiple" (M026) isn't a tactic. */
+        window.HUNT_TACTICS = [...new Set(window.HUNTS.flatMap(h => h.tactics))]
+          .filter(t => t !== 'Multiple').sort();
 
         /* Headline counts come from /site-stats.json (src/lib/site-stats.ts),
            the one definition every page shares. Only the hunt count is known
@@ -1032,11 +1030,11 @@ function App() {
           .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
           .then(s => {
             window.HUNT_STATS = { hypotheses: s.hunts, techniques: s.techniques, contributors: s.contributors, tactics: s.tactics };
+            // Tactic filter: only real ATT&CK tactics, in matrix order.
+            window.HUNT_TACTICS = s.tacticNames;
             setStatsVersion(v => v + 1);
           })
           .catch(err => console.error('Failed to load site stats:', err));
-
-        window.HUNT_TACTICS = [...allTactics].sort();
 
         /* ticker: top techniques by frequency */
         const freq = {};
