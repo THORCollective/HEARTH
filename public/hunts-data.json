@@ -4859,7 +4859,7 @@
     "status": "current",
     "related_hunt_ids": [],
     "submitter": {
-      "name": "_No response_",
+      "name": "Anonymous",
       "link": ""
     },
     "why": "- This technique allows attackers to achieve automatic code execution in high-privilege environments (CI/CD runners, developer machines) without requiring user interaction beyond routine package installation\n- TeamPCP successfully weaponized this method to compromise 47 additional npm packages across @emilgroup, @opengov, and @v7 namespaces in under 60 seconds, demonstrating the speed and scale of automated supply chain propagation\n- The malicious scripts execute before developers or security tools can inspect the package contents, bypassing traditional code review processes and establishing immediate footholds for credential theft and lateral movement\n- Detection of this behavior is critical as it targets the software development lifecycle itself, potentially exposing cloud credentials, API keys, and secrets that enable follow-on attacks across entire organizations\n- This technique is particularly dangerous because npm install operations are ubiquitous in modern development workflows and CI/CD pipelines, making the attack surface extremely broad",
@@ -8443,7 +8443,7 @@
     "status": "current",
     "related_hunt_ids": [],
     "submitter": {
-      "name": "_No response_",
+      "name": "Anonymous",
       "link": ""
     },
     "why": "- Adobe ColdFusion RDS arbitrary file read vulnerabilities (CVE-2026-48313) allow unauthenticated attackers to read any file on the server when RDS authentication is disabled, exposing sensitive configuration files, database credentials, and application secrets\n- This technique provides attackers with critical reconnaissance data needed to escalate privileges, move laterally, or chain with file write capabilities (CVE-2026-48282) for remote code execution as NT AUTHORITY\\SYSTEM\n- ColdFusion has a documented history of RDS-related vulnerabilities being exploited in the wild, and the /CFIDE/main/ide.cfm endpoint is a well-known attack surface that is often left accessible in production environments despite Adobe's warnings\n- Detection of this specific HTTP POST pattern to the RDS endpoint with FILEIO actions is highly distinctive and represents a clear indicator of exploitation attempts, as legitimate RDS usage is rare in production environments",
@@ -8912,7 +8912,7 @@
     "status": "current",
     "related_hunt_ids": [],
     "submitter": {
-      "name": "_No response_",
+      "name": "Anonymous",
       "link": ""
     },
     "why": "- Guest-to-host escape vulnerabilities like Januscape represent catastrophic failures in multi-tenant cloud isolation, allowing a single malicious tenant to compromise the host and all co-located guest VMs\n- This technique directly achieves the adversary's objective of breaking out of virtualization boundaries to gain root-level access on the physical host, enabling lateral movement to other tenant environments\n- The vulnerability affects major public cloud providers (GCP, AWS) running x86 KVM hosts with nested virtualization enabled, and was successfully exploited as a 0-day in Google kvmCTF\n- Detection of kernel module loading activity within guest VMs, especially modules that interact with KVM interfaces or unload existing KVM modules, can identify exploitation attempts before host compromise occurs\n- The 16-year dormancy period of this vulnerability highlights the critical need to monitor for anomalous kernel-level activity that may indicate exploitation of unknown hypervisor vulnerabilities",
@@ -10198,8 +10198,8 @@
     "status": "current",
     "related_hunt_ids": [],
     "submitter": {
-      "name": "_No response_",
-      "link": "_No response_"
+      "name": "Anonymous",
+      "link": ""
     },
     "why": "- This behavior sits at the seam between account compromise and financial harm: it is the mechanism by which operators conceal the confirmation/alert emails that payroll and HR self-service portals generate after a direct-deposit or bank-routing change is submitted. Without this suppression step, victims would likely notice the fraud within hours via automated confirmation notices.\n- Unlike H149's focus on the AiTM token-theft mechanics, this hunt targets a distinct, later-stage, hands-on-keyboard action that the report explicitly separates from the automated session-maintenance tooling — inbox rule creation was observed only in a subset of intrusions and was tied to interactive logins from hosting-provider ASNs (e.g., AS27176 Datawagon LLC) rather than residential proxy infrastructure, giving defenders a distinct network/identity discriminator from the bulk of the campaign's automation.\n- Correlating the SessionID across the initial AiTM sign-in, the recurring eight-hour token-refresh sign-ins, MailItemsAccessed events, and subsequent inbox-rule creation lets defenders trace a single compromised identity through its full lifecycle and catch the pivot point where the actor moves from passive collection to active fraud concealment — directly supporting detection of the \"Payroll Pirates\"/Storm-2755 objective of diverting payroll deposits before the victim organization notices.\n- This maps to a documented gap: the source notes most affected accounts showed no inbox rule manipulation, meaning existing detections tuned to \"evasive inbox rules\" broadly may be too noisy or miss the narrow behavioral signature (rule targets Deleted Items + marks as read, tied to a shared SessionID with prior anomalous automation) that is specific to this campaign's endgame.",
     "references": "- [MITRE ATT&CK T1564.008 – Hide Artifacts: Email Hiding Rules](https://attack.mitre.org/techniques/T1564/008/)\n- [Source CTI Report](https://arcticwolf.com/resources/blog/payroll-pirates-strange-new-tides-in-business-email-compromise/)",
@@ -10416,7 +10416,7 @@
     "status": "current",
     "related_hunt_ids": [],
     "submitter": {
-      "name": "MusangK1ng (_No response_)",
+      "name": "MusangK1ng",
       "link": ""
     },
     "why": "- Native messaging host registration is a rarely-monitored registry artifact that allows a sandboxed browser extension to escape its confinement and execute arbitrary shell/PowerShell commands, file writes, and process enumeration on the host OS — a significant and often-missed privilege escalation path.\n- This behavior was central to the Edgecution backdoor observed in UNC6692 intrusions, directly enabling credential/session monitoring on banking, email, VPN, and administrative portals and providing hands-on-keyboard access for a ransomware initial access broker (linked to Payouts King).\n- Detecting the creation of new `NativeMessagingHosts` registry keys, unusual `com.<random>.api.json` manifest files, and the accompanying `HKCU\\SOFTWARE\\Microsoft\\Edge\\AppKey` value can catch this technique early — before the C2 WebSocket channel is established and before ransomware deployment or credential exfiltration occurs.",
@@ -10984,7 +10984,7 @@
     "related_hunt_ids": [],
     "submitter": {
       "name": "DejaWh0",
-      "link": "_No response_"
+      "link": ""
     },
     "why": "- Rust build scripts (`build.rs`) execute automatically at compile time with the full privileges of the building user, before any application logic runs and before `cargo audit` or dependency scanners can meaningfully inspect behavior, making this an especially stealthy and high-trust execution vector.\n- A single `cargo build` or `cargo update` on a poisoned lockfile is sufficient to trigger payload download and execution; the compromised crate's own source code is never called, meaning traditional \"does this library get invoked\" review misses the threat entirely.\n- The technique bypasses supply-chain hygiene controls that focus on published package code rather than transitive build-time dependencies, and the detached process spawn with `std::mem::forget(child)` allows the payload to persist and communicate with C2 after the build step exits successfully, leaving CI logs and Actions UI green.\n- This pattern (build-time dropper as a typosquatted \"helper\" dependency) is directly reusable against any language ecosystem with build hooks (npm postinstall, Python setup.py, Rust build.rs, Go generate), so detecting it in Rust telemetry now hardens hunting playbooks for future ecosystem-agnostic supply-chain campaigns.\n- Rotating credentials and rebuilding artifacts is only effective if the initial build-time execution is detected quickly; egress monitoring for anomalous outbound connections during build steps is the most reliable way to catch this class of attack before secrets are exfiltrated.",
     "references": "- [MITRE ATT&CK T1195.002 – Compromise Software Supply Chain](https://attack.mitre.org/techniques/T1195/002/)\n- [Source CTI Report](https://www.stepsecurity.io/blog/arrayref-rust-crate-supply-chain-attack)",
@@ -11387,7 +11387,7 @@
     "status": "current",
     "related_hunt_ids": [],
     "submitter": {
-      "name": "DejaWh0 (_No response_)",
+      "name": "DejaWh0",
       "link": ""
     },
     "why": "- Abusing trusted npm mirror domains (unpkg.com, npmmirror.com, etc.) as free, reputable frontend hosting allows phishing pages to bypass URL-reputation and domain-age-based detections that would flag newly registered attacker-owned domains.\n- Because npm packages and their mirrored content can persist indefinitely across mirrors even after removal from the official npm registry, this technique provides durable, hard-to-fully-remediate hosting infrastructure for phishing and ClickFix payload delivery.\n- This pattern reflects a broader trend of adversaries weaponizing legitimate package ecosystems and their supporting infrastructure (registries, mirrors, CDNs) purely for payload storage and delivery rather than for traditional supply-chain code execution, representing a detection blind spot for teams focused only on malicious package behavior at install/runtime.\n- Successful use of this infrastructure enables staged redirection chains (fake CAPTCHA → remote-hosted decision logic via services like keyval.org → ClickFix or credential-phishing pages), complicating attribution and takedown since the final malicious destination can be dynamically reconfigured without republishing packages.",
