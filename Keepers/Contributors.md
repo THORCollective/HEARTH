@@ -9,42 +9,42 @@ Everyone listed below has submitted ideas that have been added to HEARTH. This l
 | 1 | Lauren Proehl | 264 |
 | 2 | Jinx (THOR Collective) | 39 |
 | 3 | Sydney Marrone | 29 |
-| 4 | Joshua Strickland | 24 |
+| 4 | Joshua Strickland | 25 |
 | 5 | John Grageda | 6 |
-| 6 | Jamie Williams | 3 |
-| 7 | Azrara | 3 |
-| 8 | Jocko | 3 |
-| 9 | Bruce Breuer | 3 |
-| 10 | Audra Streetman | 2 |
-| 11 | Siddhant Mishra | 2 |
-| 12 | DarkWizardCatcher | 2 |
-| 13 | Joshua Hines | 2 |
-| 14 | p-o-s-t | 2 |
-| 15 | Alan G | 2 |
-| 16 | Shilpa Merlin Joy | 2 |
-| 17 | kkroth0 | 2 |
-| 18 | Ryan Fetterman | 2 |
-| 19 | hu983r | 1 |
-| 20 | Cody Lunday | 1 |
-| 21 | wikijm | 1 |
-| 22 | Apramey "Apps" S | 1 |
-| 23 | Shaimon Weslley | 1 |
-| 24 | Duc Viet Hoang | 1 |
-| 25 | samuel-lucas6 | 1 |
-| 26 | tsof-smoky | 1 |
-| 27 | odanh | 1 |
-| 28 | smossmos | 1 |
-| 29 | Omer M | 1 |
-| 30 | asteinbr | 1 |
-| 31 | Badger | 1 |
-| 32 | T3chn3 | 1 |
-| 33 | young6x7 | 1 |
-| 34 | th3CyF0x | 1 |
-| 35 | Kelly Lehman | 1 |
-| 36 | Twitter - 0xDroogy | 1 |
-| 37 | MusangK1ng (_No response_) | 1 |
-| 38 | DejaWh0 | 1 |
-| 39 | DejaWh0 (_No response_) | 1 |
+| 6 | Anonymous | 4 |
+| 7 | Jamie Williams | 3 |
+| 8 | Azrara | 3 |
+| 9 | Jocko | 3 |
+| 10 | Bruce Breuer | 3 |
+| 11 | Audra Streetman | 2 |
+| 12 | Siddhant Mishra | 2 |
+| 13 | DarkWizardCatcher | 2 |
+| 14 | Joshua Hines | 2 |
+| 15 | p-o-s-t | 2 |
+| 16 | Alan G | 2 |
+| 17 | Shilpa Merlin Joy | 2 |
+| 18 | kkroth0 | 2 |
+| 19 | DejaWh0 | 2 |
+| 20 | Ryan Fetterman | 2 |
+| 21 | hu983r | 1 |
+| 22 | Cody Lunday | 1 |
+| 23 | wikijm | 1 |
+| 24 | Apramey "Apps" S | 1 |
+| 25 | Shaimon Weslley | 1 |
+| 26 | Duc Viet Hoang | 1 |
+| 27 | samuel-lucas6 | 1 |
+| 28 | tsof-smoky | 1 |
+| 29 | odanh | 1 |
+| 30 | smossmos | 1 |
+| 31 | Omer M | 1 |
+| 32 | asteinbr | 1 |
+| 33 | Badger | 1 |
+| 34 | T3chn3 | 1 |
+| 35 | young6x7 | 1 |
+| 36 | th3CyF0x | 1 |
+| 37 | Kelly Lehman | 1 |
+| 38 | Twitter - 0xDroogy | 1 |
+| 39 | MusangK1ng | 1 |
 | 40 | Claire Stromboe | 1 |
 | 41 | Jon Perez | 1 |
 | 42 | Collin McClaine | 1 |
