@@ -23,7 +23,7 @@ FRONTMATTER_MD = textwrap.dedent(
       passwords at userauth_passwd and writes them to an encrypted file.
     tactics:
       - Credential Access
-      - Defense Evasion
+      - Defense Impairment
     techniques:
       - T1556.003
       - T1554
@@ -74,7 +74,7 @@ def test_frontmatter_hypothesis_is_flattened_to_one_line():
 
 def test_frontmatter_tactics_list_becomes_the_tactic_field():
     info = extract_hunt_info(FRONTMATTER_MD, "H999.md", "Flames/H999.md")
-    assert info["tactic"] == "Credential Access/Defense Evasion"
+    assert info["tactic"] == "Credential Access/Defense Impairment"
 
 
 def test_frontmatter_tags_and_techniques_are_extracted():
