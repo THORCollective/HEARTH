@@ -28,6 +28,8 @@ concurrency:
 permissions:
   contents: write
   pull-requests: write
+  # "Rebuild derived hunt data" dispatches workflows, which needs actions:write.
+  actions: write
 
 jobs:
   assign:
