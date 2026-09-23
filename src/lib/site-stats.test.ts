@@ -127,7 +127,7 @@ describe("computeSiteStats", () => {
     }),
     hunt("B1", {
       category: "Embers",
-      tactic: "Defense Evasion, Multiple",
+      tactic: "Credential Access, Defense Evasion, Multiple",
       techniques: ["T1105"],
       submitter: "Jinx",
     }),
@@ -153,8 +153,12 @@ describe("computeSiteStats", () => {
     expect(s.contributors).toBe(2); // Alice, Jinx
   });
 
-  it("counts real tactics, keeping legacy Defense Evasion", () => {
-    expect(s.tactics).toBe(3); // Execution, Persistence, Defense Evasion
+  it("counts only current ATT&CK tactics (v19 retired Defense Evasion)", () => {
+    expect(s.tactics).toBe(3); // Execution, Persistence, Credential Access
+  });
+
+  it("lists covered tactics in ATT&CK matrix order, for filters", () => {
+    expect(s.tacticNames).toEqual(["Execution", "Persistence", "Credential Access"]);
   });
 
   it("breaks hunts and tactics down by PEAK category", () => {

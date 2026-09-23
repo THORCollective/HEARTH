@@ -12,8 +12,10 @@ export interface SiteStats {
   techniques: number;
   /** Distinct people credited as submitters (no bots or placeholders). */
   contributors: number;
-  /** Distinct real ATT&CK tactics the hunts cover. */
+  /** Distinct current ATT&CK tactics the hunts cover. */
   tactics: number;
+  /** Those tactics' names in ATT&CK matrix order, e.g. for filter menus. */
+  tacticNames: string[];
   byCategory: Record<HuntCategory, { hunts: number; tactics: number }>;
 }
 
@@ -22,10 +24,6 @@ const CATEGORIES: HuntCategory[] = ["Flames", "Embers", "Alchemy"];
 // Submitter names that aren't a person. "_No response_" is GitHub's issue-form
 // placeholder for a blank field.
 const NOT_A_PERSON = new Set(["hearth bot", "anonymous", "_no response_"]);
-
-// ATT&CK v18 split Defense Evasion into Stealth and Defense Impairment, so it's
-// no longer in the matrix, but many hunts still use it and it's a real tactic.
-const LEGACY_TACTICS = ["Defense Evasion"];
 
 /** The person to credit for a submitter name, or null for bots/placeholders. */
 export function contributorName(name: string | undefined): string | null {
@@ -39,7 +37,7 @@ export function contributorName(name: string | undefined): string | null {
 
 /**
  * Real tactic names in a hunt's free-text tactic field, e.g.
- * "Tactic: Defense Evasion (TA0005) - Technique: …" -> ["Defense Evasion"].
+ * "Tactic: Execution (TA0002) - Technique: …" -> ["Execution"].
  * Anything that isn't a known tactic ("Valid Accounts", "Multiple") is ignored.
  */
 export function canonicalTactics(
@@ -67,7 +65,7 @@ export function computeSiteStats(
   matrix: MitreMatrix,
 ): SiteStats {
   const inMatrix = new Set(matrix.techniques.map((t) => t.id));
-  const tacticNames = [...matrix.tactics.map((t) => t.name), ...LEGACY_TACTICS];
+  const tacticNames = matrix.tactics.map((t) => t.name);
 
   const techniques = new Set<string>();
   const people = new Set<string>();
@@ -100,6 +98,7 @@ export function computeSiteStats(
     techniques: techniques.size,
     contributors: people.size,
     tactics: tactics.size,
+    tacticNames: tacticNames.filter((t) => tactics.has(t)),
     byCategory,
   };
 }
