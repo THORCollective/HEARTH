@@ -219,6 +219,44 @@ def test_find_id_problems_submitter_compare_is_normalized():
     assert problems == []
 
 
+@pytest.mark.parametrize(
+    "main_submitter, pr_submitter",
+    [
+        # Issue-form placeholder left in the credit, then cleaned up.
+        ("DejaWh0 (_No response_)", "DejaWh0"),
+        ("MusangK1ng (_no response_)", "MusangK1ng"),
+        # No name given at all -> the repo's "Anonymous" convention.
+        ("_No response_", "Anonymous"),
+        ("_(No response)_", "Anonymous"),
+    ],
+)
+def test_find_id_problems_allows_no_response_placeholder_cleanup(main_submitter, pr_submitter):
+    modified = [("H295", "H295", pr_submitter, main_submitter)]
+    problems = find_id_problems(
+        [], main_ids={"H295"}, all_stems=["H295"], modified=modified
+    )
+    assert problems == []
+
+
+@pytest.mark.parametrize(
+    "main_submitter, pr_submitter",
+    [
+        # The exception is only for the placeholder itself, never a new person.
+        ("DejaWh0 (_No response_)", "SomeoneElse"),
+        ("_No response_", "Joshua Strickland"),
+        ("Anonymous", "Joshua Strickland"),
+        # "No response" inside a real name is not the placeholder.
+        ("No Response Team", "Anonymous"),
+    ],
+)
+def test_find_id_problems_still_flags_real_change_around_placeholder(main_submitter, pr_submitter):
+    modified = [("H295", "H295", pr_submitter, main_submitter)]
+    problems = find_id_problems(
+        [], main_ids={"H295"}, all_stems=["H295"], modified=modified
+    )
+    assert any("submitter" in p.lower() for p in problems)
+
+
 def test_find_id_problems_flags_modified_id_filename_mismatch():
     modified = [("H210", "H999", "same", "same")]
     problems = find_id_problems(

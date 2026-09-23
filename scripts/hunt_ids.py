@@ -147,9 +147,28 @@ def assign_draft_id(path: Path, new_id: str, dest_dir: Path) -> Path:
     return new_path
 
 
+# GitHub issue forms fill blank optional fields with "_No response_", which the
+# CTI pipeline has copied into submitter credits ("DejaWh0 (_No response_)", or
+# the whole name). Only this exact placeholder is ignored when comparing
+# identities; any other submitter change still counts as an overwrite.
+_NO_RESPONSE = r"_?\(?_?no response_?\)?_?"
+_NO_RESPONSE_SUFFIX_RE = re.compile(r"\s*\(" + _NO_RESPONSE + r"\)\s*$", re.IGNORECASE)
+_NO_RESPONSE_ONLY_RE = re.compile(r"^\s*" + _NO_RESPONSE + r"\s*$", re.IGNORECASE)
+
+
 def _norm_submitter(name: str | None) -> str:
-    """Case/space-insensitive submitter name for identity comparison."""
-    return re.sub(r"\s+", " ", (name or "").strip()).casefold()
+    """Case/space-insensitive submitter name for identity comparison.
+
+    Treats the issue-form "_No response_" placeholder as noise: a trailing
+    "(_No response_)" is dropped, and a name that is only the placeholder
+    compares equal to "Anonymous".
+    """
+    raw = name or ""
+    if _NO_RESPONSE_ONLY_RE.match(raw):
+        raw = "Anonymous"
+    else:
+        raw = _NO_RESPONSE_SUFFIX_RE.sub("", raw)
+    return re.sub(r"\s+", " ", raw.strip()).casefold()
 
 
 def find_id_problems(
