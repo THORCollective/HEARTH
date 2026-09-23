@@ -89,13 +89,6 @@ export function listWeeks(hunts: Hunt[]): WeekKey[] {
   return [...weeks].sort();
 }
 
-/** Library-wide totals for header pills: hunts, and distinct ATT&CK techniques. */
-export function libraryCounts(hunts: Hunt[]): { hunts: number; techniques: number } {
-  const techniques = new Set<string>();
-  for (const h of hunts) for (const t of h.techniques ?? []) techniques.add(t);
-  return { hunts: hunts.length, techniques: techniques.size };
-}
-
 export interface WeekSummary {
   weekKey: WeekKey;
   count: number;

@@ -206,7 +206,13 @@ function paintStats(state: State): void {
   const s = summarize(state.coverage);
   const scope = state.peakFilter ?? "All";
   while (el.firstChild) el.removeChild(el.firstChild);
-  el.appendChild(statSpan(String(s.huntsCount), ` hunts in ${scope}`));
+  // Hunts with no technique on the current matrix can't be placed on it, so
+  // show "mapped / total" to reconcile with the hunt count on every other page.
+  const inScope = state.peakFilter
+    ? state.hunts.filter((h) => h.category === state.peakFilter).length
+    : state.hunts.length;
+  const label = state.peakFilter ? ` ${scope} hunts mapped` : " hunts mapped";
+  el.appendChild(statSpan(`${s.huntsCount} / ${inScope}`, label));
   el.appendChild(
     statSpan(`${s.coveredCount} / ${s.totalCount}`, " techniques covered"),
   );

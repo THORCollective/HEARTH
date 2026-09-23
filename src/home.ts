@@ -9,6 +9,7 @@ import {
   type MitreMatrixData,
 } from "./lib/actor-matching";
 import { latestWeekSummary } from "./lib/digest";
+import type { SiteStats } from "./lib/site-stats";
 
 const BOTS = new Set(["HEARTH Bot"]);
 
@@ -145,15 +146,14 @@ async function init() {
     /* fall back to newest hunts */
   }
 
+  // Headline counts come from /site-stats.json (src/lib/site-stats.ts), the one
+  // definition every page shares. If it fails, the placeholders stay as "—".
   try {
-    updateStats();
+    const stats = await fetchJson<SiteStats>("/site-stats.json");
+    updateStats(stats);
+    updateCategoryCounts(stats);
   } catch (err) {
-    console.error("[HEARTH] updateStats:", err);
-  }
-  try {
-    updateCategoryCounts();
-  } catch (err) {
-    console.error("[HEARTH] updateCategoryCounts:", err);
+    console.error("[HEARTH] site stats:", err);
   }
   try {
     buildTicker();
@@ -221,62 +221,30 @@ function buildEmbersGlyph() {
 
 // ----- Stats -----
 
-function updateStats() {
-  const total = allHunts.length;
-  const contributors = new Set(
-    allHunts
-      .filter((h) => !BOTS.has(h.submitter.name))
-      .map((h) => h.submitter.name),
-  ).size;
-  const techniques = new Set<string>(
-    allHunts.flatMap((h) => h.tags.filter((t) => /^T\d{4}/.test(t))),
-  ).size;
-
+function updateStats(stats: SiteStats) {
   const totalEl = document.getElementById("stat-total");
-  if (totalEl) totalEl.innerHTML = `${total}<em>+</em>`;
-  setText("stat-contributors", String(contributors));
-  setText("stat-techniques", String(techniques));
-  setText("topbar-pill", `${total} hunts indexed`);
-  setText("contributors-blurb", String(contributors));
+  if (totalEl) totalEl.innerHTML = `${stats.hunts}<em>+</em>`;
+  setText("stat-contributors", String(stats.contributors));
+  setText("stat-techniques", String(stats.techniques));
+  setText("topbar-pill", `${stats.hunts} hunts indexed`);
+  setText("contributors-blurb", String(stats.contributors));
 }
 
 // ----- Category counts + footer text -----
 
-function updateCategoryCounts() {
-  const cats = ["Flames", "Embers", "Alchemy"] as const;
-  for (const cat of cats) {
-    const subset = allHunts.filter((h) => h.category === cat);
-    const count = subset.length;
-    const tactics = new Set(
-      subset.flatMap((h) =>
-        h.tactic.split(",").map((t) =>
-          t
-            .trim()
-            .replace(/\s*\([^)]*\)/g, "")
-            .trim(),
-        ),
-      ),
-    ).size;
+function updateCategoryCounts(stats: SiteStats) {
+  const { Flames, Embers, Alchemy } = stats.byCategory;
 
-    const key = cat.toLowerCase();
-
-    if (cat === "Flames") {
-      const el = document.getElementById("count-flames");
-      if (el) {
-        const rounded = Math.floor(count / 10) * 10;
-        el.innerHTML = `${rounded}<span class="dim">+</span>`;
-      }
-      setText("flames-foot", `${count} hypotheses · ${tactics} tactics`);
-    } else if (cat === "Embers") {
-      setText("count-embers", String(count));
-      setText("embers-foot", `${count} explorations · ${tactics} tactics`);
-    } else {
-      setText("count-alchemy", String(count));
-      setText("alchemy-foot", `${count} methods · ${tactics} tactics`);
-    }
-
-    void key; // suppress unused-variable lint
+  const flamesEl = document.getElementById("count-flames");
+  if (flamesEl) {
+    const rounded = Math.floor(Flames.hunts / 10) * 10;
+    flamesEl.innerHTML = `${rounded}<span class="dim">+</span>`;
   }
+  setText("flames-foot", `${Flames.hunts} hypotheses · ${Flames.tactics} tactics`);
+  setText("count-embers", String(Embers.hunts));
+  setText("embers-foot", `${Embers.hunts} explorations · ${Embers.tactics} tactics`);
+  setText("count-alchemy", String(Alchemy.hunts));
+  setText("alchemy-foot", `${Alchemy.hunts} methods · ${Alchemy.tactics} tactics`);
 }
 
 // ----- ATT&CK ticker -----

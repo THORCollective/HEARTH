@@ -2,8 +2,7 @@
 import './styles/main.css';
 import './styles/pages/submit.css';
 
-import type { Hunt } from './types/Hunt';
-import { libraryCounts } from './lib/digest';
+import type { SiteStats } from './lib/site-stats';
 
 const TECHNIQUE_ID_RE = /^T\d{4}(?:\.\d{3})?$/;
 
@@ -59,9 +58,9 @@ async function showLibraryCounts(): Promise<void> {
   const pill = document.getElementById('library-pill');
   if (!pill) return;
   try {
-    const res = await fetch('/hunts-data.json', { cache: 'no-cache' });
-    if (!res.ok) throw new Error(`HTTP ${res.status} for /hunts-data.json`);
-    const { hunts, techniques } = libraryCounts((await res.json()) as Hunt[]);
+    const res = await fetch('/site-stats.json', { cache: 'no-cache' });
+    if (!res.ok) throw new Error(`HTTP ${res.status} for /site-stats.json`);
+    const { hunts, techniques } = (await res.json()) as SiteStats;
     pill.textContent = `${hunts} hunts · ${techniques} techniques`;
     pill.hidden = false;
   } catch (err) {

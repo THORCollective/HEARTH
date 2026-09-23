@@ -994,6 +994,8 @@ function App() {
   const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
   const [ready, setReady] = _useState(false);
   const [loadError, setLoadError] = _useState(null);
+  // Bumped when /site-stats.json arrives so the stats strip re-renders.
+  const [, setStatsVersion] = _useState(0);
 
   const pal = PALETTES[tweaks.palette] || PALETTES.magenta;
 
@@ -1013,13 +1015,7 @@ function App() {
       .then(raw => {
         window.HUNTS = raw.map(mapHunt);
 
-        /* unique techniques */
-        const techs = new Set(window.HUNTS.map(h => h.technique).filter(t => t !== '—'));
-
-        /* unique contributors */
-        const contribs = new Set(window.HUNTS.map(h => h.who));
-
-        /* unique tactics (split comma-separated) */
+        /* tactic filter options (split comma-separated) */
         const allTactics = new Set();
         raw.forEach(h => {
           (h.tactic || '').split(',').forEach(t => {
@@ -1028,12 +1024,17 @@ function App() {
           });
         });
 
-        window.HUNT_STATS = {
-          hypotheses: window.HUNTS.length,
-          techniques: techs.size,
-          contributors: contribs.size,
-          tactics: allTactics.size,
-        };
+        /* Headline counts come from /site-stats.json (src/lib/site-stats.ts),
+           the one definition every page shares. Only the hunt count is known
+           before it loads; the others show "—" until then or if it fails. */
+        window.HUNT_STATS = { hypotheses: window.HUNTS.length, techniques: '—', contributors: '—', tactics: '—' };
+        fetch('/site-stats.json', { cache: 'no-cache' })
+          .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+          .then(s => {
+            window.HUNT_STATS = { hypotheses: s.hunts, techniques: s.techniques, contributors: s.contributors, tactics: s.tactics };
+            setStatsVersion(v => v + 1);
+          })
+          .catch(err => console.error('Failed to load site stats:', err));
 
         window.HUNT_TACTICS = [...allTactics].sort();
 
