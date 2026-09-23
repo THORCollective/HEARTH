@@ -21,6 +21,7 @@ _REPO_ROOT = str(Path(__file__).resolve().parent.parent)
 if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
 
+from scripts.attack_vocab import normalize_attack_fields
 from scripts.hunt_parser import _parse_legacy_table
 
 # Frontmatter key order, matching canonical hunts. `id` is deliberately absent.
@@ -62,6 +63,10 @@ def draft_from_legacy_markdown(markdown: str, category: str) -> tuple[str, str]:
     six-column table, then ``## Why`` / ``## References`` sections.
     """
     data = _parse_legacy_table(markdown, hunt_id="draft", category=category)
+    # The AI prompts still produce pre-v19 tactics ("Defense Evasion") and
+    # "Tactic (Txxxx)" values; map what's unambiguous to current ATT&CK so the
+    # draft passes validation. Anything left is rejected by CI, not guessed.
+    data = normalize_attack_fields(data)
 
     front: dict = {"category": category}
     for key in _FIELD_ORDER:

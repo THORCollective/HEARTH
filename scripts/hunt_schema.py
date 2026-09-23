@@ -9,6 +9,8 @@ from __future__ import annotations
 
 from jsonschema import Draft202012Validator, FormatChecker
 
+from scripts.attack_vocab import attack_errors
+
 CATEGORIES = ("Flames", "Embers", "Alchemy")
 SEVERITIES = ("critical", "high", "medium", "low", "informational")
 STATUSES = ("current", "stale", "retired")
@@ -124,12 +126,12 @@ def _format_errors(validator: Draft202012Validator, data: dict) -> list[str]:
 
 def validate_hunt(data: dict) -> list[str]:
     """Return a list of human-readable validation errors (empty if valid)."""
-    return _format_errors(_VALIDATOR, data)
+    return _format_errors(_VALIDATOR, data) + attack_errors(data)
 
 
 def validate_draft(data: dict) -> list[str]:
     """Validate an ID-less draft. Errors are empty if valid."""
-    errors = _format_errors(_DRAFT_VALIDATOR, data)
+    errors = _format_errors(_DRAFT_VALIDATOR, data) + attack_errors(data)
     if "id" in data:
         # The raw `not` failure dumps the whole document and reads as "should
         # not be valid under {'required': ['id']}", which tells a contributor

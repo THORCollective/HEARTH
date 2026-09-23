@@ -32,12 +32,31 @@ body:
   validations:
     required: true
 
-- type: input
+- type: dropdown
   id: tactic
   attributes:
     label: MITRE ATT&CK Tactic
-    description: 'Relevant MITRE ATT&CK tactic (e.g., Persistence, Defense Evasion)'
-    placeholder: 'e.g., Persistence'
+    # ATT&CK v19 Enterprise tactics, in matrix order. Defense Evasion was split
+    # into Stealth and Defense Impairment. Keep in sync with
+    # public/mitre-matrix.json; CI rejects any other value.
+    description: 'Relevant MITRE ATT&CK tactic(s). Pick every one that applies.'
+    multiple: true
+    options:
+      - Reconnaissance
+      - Resource Development
+      - Initial Access
+      - Execution
+      - Persistence
+      - Privilege Escalation
+      - Stealth
+      - Defense Impairment
+      - Credential Access
+      - Discovery
+      - Lateral Movement
+      - Collection
+      - Command and Control
+      - Exfiltration
+      - Impact
   validations:
     required: true
 

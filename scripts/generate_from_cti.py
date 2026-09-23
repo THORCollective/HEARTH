@@ -250,6 +250,7 @@ Instructions:
 4.  Write a "Why" section explaining the importance of the hunt.
 5.  Write a "References" section with a link to the chosen MITRE technique and the source CTI.
 6.  The output MUST be only the content for the hunt, starting with the hypothesis. DO NOT include a title or the metadata table.
+7.  The Tactic column MUST use only current ATT&CK Enterprise tactic names, comma-separated if several apply: Reconnaissance, Resource Development, Initial Access, Execution, Persistence, Privilege Escalation, Stealth, Defense Impairment, Credential Access, Discovery, Lateral Movement, Collection, Command and Control, Exfiltration, Impact. "Defense Evasion" no longer exists (ATT&CK v19 split it into Stealth and Defense Impairment). Do not put technique IDs or names in the Tactic column.
 
 Your output should look like this:
 

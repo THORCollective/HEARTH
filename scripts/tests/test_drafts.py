@@ -87,3 +87,18 @@ def test_slugify_never_produces_a_hunt_id():
     # find_stray_hunts exits 1 on an [HBM]NNN.md outside a category directory.
     assert slugify("H294") == "h294-draft"
     assert slugify("B045") == "b045-draft"
+
+
+def test_draft_tactics_are_normalized_to_current_attack(tmp_path):
+    # Generators still emit pre-v19 tactics and "Tactic (Txxxx)" values; the
+    # draft must land with current ATT&CK values or CI rejects it.
+    legacy = GENERATED.replace(
+        "| Command and Control |", "| Defense Evasion, Execution (T1059.001) |"
+    ).replace("#T1105", "#T1027")
+    name, text = draft_from_legacy_markdown(legacy, "Flames")
+    path = tmp_path / name
+    path.write_text(text, encoding="utf-8")
+
+    draft = parse_draft_file(path)  # raises if the ATT&CK check fails
+    assert draft["tactics"] == ["Execution", "Stealth"]
+    assert "T1059.001" in draft["techniques"] and "T1027" in draft["techniques"]

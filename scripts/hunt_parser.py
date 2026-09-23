@@ -21,6 +21,7 @@ if _REPO_ROOT not in _sys.path:
 
 import frontmatter
 
+from scripts.attack_vocab import attack_errors
 from scripts.hunt_schema import validate_draft, validate_hunt
 
 
@@ -259,6 +260,14 @@ def parse_hunt_file(path: str | Path, category: str) -> dict[str, Any]:
             stacklevel=2,
         )
         data = _parse_legacy_table(raw, hunt_id=path.stem, category=category)
+        # Legacy files skip the schema, but a hunt added directly to a
+        # category dir can still use this format, so the ATT&CK check must
+        # not be skippable by it.
+        errors = attack_errors(data)
+        if errors:
+            raise HuntValidationError(
+                f"{path.name}: invalid ATT&CK values:\n  - " + "\n  - ".join(errors)
+            )
         body = raw
 
     # Title is canonical only when authored explicitly in frontmatter.
