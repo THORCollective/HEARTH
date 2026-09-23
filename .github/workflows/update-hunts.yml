@@ -22,6 +22,10 @@ concurrency:
 jobs:
   update-data:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      # Dispatching static.yml below needs actions:write.
+      actions: write
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -39,6 +43,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Rebuild hunt data and push
+        id: rebuild
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
@@ -71,6 +76,7 @@ jobs:
 
             if git push; then
               echo "Pushed regenerated hunt data on attempt $attempt."
+              echo "pushed=true" >> "$GITHUB_OUTPUT"
               exit 0
             fi
 
@@ -80,4 +86,24 @@ jobs:
             sleep 2
           done
           echo "::error::Failed to push hunt data after 5 attempts"
+          exit 1
+
+      # The site serves public/hunts-data.json, but the push above uses
+      # GITHUB_TOKEN, which does not trigger workflows, so the Pages deploy never
+      # saw the new data: the deploy started by the hunt merge itself ran in
+      # parallel and published the old file, and the site stayed stale until the
+      # daily scheduled deploy. static.yml always builds from main's tip, and its
+      # cancel-in-progress concurrency lets this run supersede an older one.
+      - name: Redeploy site with the new data
+        if: steps.rebuild.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for _ in 1 2 3; do
+            if gh workflow run static.yml --ref main; then
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::Could not dispatch static.yml; the live site is serving stale hunt data until the next deploy"
           exit 1
