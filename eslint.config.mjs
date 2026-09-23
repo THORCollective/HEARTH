@@ -1,3 +1,6 @@
+import tsParser from '@typescript-eslint/parser';
+import tsPlugin from '@typescript-eslint/eslint-plugin';
+
 export default [
   {
     files: ['*.js'],
@@ -46,6 +49,21 @@ export default [
       'brace-style': ['error', '1tbs'],
       'max-len': ['warn', { 'code': 100, 'ignoreUrls': true, 'ignoreStrings': true }]
     }
+  },
+  {
+    // The site's TypeScript (npm run lint). Without this block ESLint parsed
+    // .ts files as plain JS and every file failed with a parsing error.
+    files: ['src/**/*.ts'],
+    languageOptions: {
+      parser: tsParser,
+      ecmaVersion: 2022,
+      sourceType: 'module',
+    },
+    plugins: { '@typescript-eslint': tsPlugin },
+    rules: {
+      ...tsPlugin.configs['eslint-recommended'].overrides[0].rules,
+      ...tsPlugin.configs.recommended.rules,
+    },
   },
   {
     ignores: [

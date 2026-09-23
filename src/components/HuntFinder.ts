@@ -45,6 +45,7 @@ export class HuntFinder {
       this.mapping = await mappingResp.json();
       this.render();
     } catch (err) {
+      console.error('[HuntFinder] load failed', err);
       this.container.innerHTML = `
         <div class="hf-error">
           <p>Failed to load data source mapping. <button onclick="location.reload()">Retry</button></p>
