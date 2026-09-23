@@ -7,6 +7,7 @@ import {
   weekRange,
   type Digest,
   type DigestSource,
+  sourceGroup,
   type WeekKey,
 } from "./lib/digest";
 
@@ -224,7 +225,7 @@ function renderContributors(d: Digest): HTMLElement {
 function renderSources(sources: DigestSource[]): HTMLElement {
   const byHost = new Map<string, DigestSource[]>();
   for (const s of sources) {
-    const host = s.host.replace(/^www\./, "");
+    const host = sourceGroup(s);
     byHost.set(host, [...(byHost.get(host) ?? []), s]);
   }
   const hosts = [...byHost.entries()].sort(
@@ -232,12 +233,12 @@ function renderSources(sources: DigestSource[]): HTMLElement {
   );
 
   const card = el("section", "card");
-  card.appendChild(text("div", "card-kicker", `Sources · ${sources.length}`));
+  card.appendChild(text("div", "card-kicker", `References · ${sources.length}`));
   card.appendChild(
     text(
       "p",
       "card-hint",
-      "The threat intel behind this week's hunts, grouped by site.",
+      "Links cited by this week's hunts (reports, detection rules, docs), grouped by site and GitHub repo.",
     ),
   );
 
@@ -270,7 +271,7 @@ function renderSources(sources: DigestSource[]): HTMLElement {
   if (hidden.length > 0) {
     const btn = el("button", "show-all") as HTMLButtonElement;
     btn.type = "button";
-    btn.textContent = `Show ${hidden.length} more sites`;
+    btn.textContent = `Show ${hidden.length} more`;
     btn.addEventListener("click", () => {
       hidden.forEach((h) => (h.hidden = false));
       btn.remove();

@@ -124,6 +124,17 @@ export function extractSources(references: string): DigestSource[] {
   return out;
 }
 
+/**
+ * Display group for a reference link: the site, except GitHub, which is split
+ * by owner/repo since one host covers unrelated projects (Sigma, Atomic Red Team...).
+ */
+export function sourceGroup(source: DigestSource): string {
+  const host = source.host.replace(/^www\./, "");
+  if (host !== "github.com") return host;
+  const [owner, repo] = new URL(source.url).pathname.split("/").filter(Boolean);
+  return owner && repo ? `github.com/${owner}/${repo}` : host;
+}
+
 function safeLink(link: string | undefined): string | null {
   if (!link) return null;
   try {

@@ -3,6 +3,7 @@ import type { Hunt, HuntCategory } from "../types/Hunt";
 import {
   buildDigest,
   extractSources,
+  sourceGroup,
   isoWeekKey,
   listWeeks,
   parseWeekKey,
@@ -125,6 +126,28 @@ describe("extractSources", () => {
     expect(
       extractSources("- [x](javascript:alert(1))\n- [y](ftp://a.b/c)"),
     ).toEqual([]);
+  });
+});
+
+describe("sourceGroup", () => {
+  const src = (url: string) => ({ url, title: "", host: new URL(url).hostname });
+
+  it("groups GitHub links by owner/repo", () => {
+    expect(sourceGroup(src("https://github.com/SigmaHQ/sigma/blob/master/rules/x.yml"))).toBe(
+      "github.com/SigmaHQ/sigma",
+    );
+    expect(sourceGroup(src("https://www.github.com/redcanaryco/atomic-red-team"))).toBe(
+      "github.com/redcanaryco/atomic-red-team",
+    );
+  });
+
+  it("falls back to the host for GitHub links without a repo", () => {
+    expect(sourceGroup(src("https://github.com/SigmaHQ"))).toBe("github.com");
+  });
+
+  it("groups everything else by host, without www", () => {
+    expect(sourceGroup(src("https://www.bleepingcomputer.com/news/x"))).toBe("bleepingcomputer.com");
+    expect(sourceGroup(src("https://learn.microsoft.com/en-us/x"))).toBe("learn.microsoft.com");
   });
 });
 
