@@ -89,6 +89,39 @@ export function listWeeks(hunts: Hunt[]): WeekKey[] {
   return [...weeks].sort();
 }
 
+export interface WeekSummary {
+  weekKey: WeekKey;
+  count: number;
+  /** "this week", "last week", or e.g. "in the week of Sep 7". */
+  when: string;
+}
+
+/**
+ * The most recent week with hunts, for a home-page teaser. Falls back to the
+ * latest non-empty week so a quiet week never reads "0 new".
+ */
+export function latestWeekSummary(hunts: Hunt[], now = new Date()): WeekSummary | null {
+  const weeks = listWeeks(hunts);
+  const weekKey = weeks[weeks.length - 1];
+  if (!weekKey) return null;
+
+  let count = 0;
+  for (const h of hunts) {
+    const t = createdTime(h);
+    if (t !== null && isoWeekKey(new Date(t)) === weekKey) count += 1;
+  }
+
+  const thisWeek = isoWeekKey(now);
+  const lastWeek = isoWeekKey(new Date(weekRange(thisWeek).start.getTime() - DAY_MS));
+  const when =
+    weekKey === thisWeek
+      ? "this week"
+      : weekKey === lastWeek
+        ? "last week"
+        : `in the week of ${weekRange(weekKey).start.toLocaleDateString("en-US", { timeZone: "UTC", month: "short", day: "numeric" })}`;
+  return { weekKey, count, when };
+}
+
 const MD_LINK_RE = /\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g;
 const BARE_URL_RE = /https?:\/\/[^\s)\]<>"']+/g;
 

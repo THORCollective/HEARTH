@@ -5,6 +5,7 @@ import {
   extractSources,
   sourceGroup,
   isoWeekKey,
+  latestWeekSummary,
   listWeeks,
   parseWeekKey,
   weekRange,
@@ -223,5 +224,32 @@ describe("buildDigest", () => {
     expect(empty.gapsClosed).toEqual([]);
     expect(empty.sources).toEqual([]);
     expect(empty.contributors).toEqual([]);
+  });
+});
+
+describe("latestWeekSummary", () => {
+  const now = new Date("2026-09-23T12:00:00Z"); // Wed of 2026-W39
+  const at = (id: string, created: string) => hunt(id, created);
+
+  it("counts this week's hunts", () => {
+    const s = latestWeekSummary(
+      [at("A", "2026-09-21T09:00:00Z"), at("B", "2026-09-22T09:00:00Z"), at("C", "2026-09-10T09:00:00Z")],
+      now,
+    );
+    expect(s).toEqual({ weekKey: "2026-W39", count: 2, when: "this week" });
+  });
+
+  it("falls back to last week instead of saying 0", () => {
+    const s = latestWeekSummary([at("A", "2026-09-15T09:00:00Z"), at("B", "2026-09-16T09:00:00Z")], now);
+    expect(s).toEqual({ weekKey: "2026-W38", count: 2, when: "last week" });
+  });
+
+  it("names the week when the latest one is older", () => {
+    const s = latestWeekSummary([at("A", "2026-09-08T09:00:00Z")], now);
+    expect(s).toEqual({ weekKey: "2026-W37", count: 1, when: "in the week of Sep 7" });
+  });
+
+  it("returns null when no hunt is dated", () => {
+    expect(latestWeekSummary([hunt("A", undefined)], now)).toBeNull();
   });
 });
