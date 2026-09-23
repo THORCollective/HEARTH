@@ -61,6 +61,11 @@ export function bucketFor(count: number): CoverageBucket {
   return 'covered';
 }
 
+/** Link to the submit page, pre-tagged with the technique the hunt should fill. */
+export function gapSubmitUrl(techniqueId: string): string {
+  return `submit.html?technique=${encodeURIComponent(techniqueId)}`;
+}
+
 export interface TacticTechnique {
   id: string;
   name: string;
