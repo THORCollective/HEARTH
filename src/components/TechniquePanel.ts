@@ -1,9 +1,6 @@
 import type { Hunt } from '../types/Hunt';
 import type { MitreTechnique } from '../types/Mitre';
-import type { CoverageCell } from '../lib/coverage';
-
-const CONTRIBUTE_URL =
-  'https://github.com/THORCollective/HEARTH/issues/new?assignees=&labels=intel-submission%2C+needs-triage&template=cti_submission.yml';
+import { gapSubmitUrl, type CoverageCell } from '../lib/coverage';
 
 export interface TechniquePanelData {
   technique: MitreTechnique;
@@ -65,10 +62,8 @@ export function renderTechniquePanel(data: TechniquePanelData): DocumentFragment
     const p = document.createElement('p');
     p.textContent = 'No hunts yet for this technique.';
     const cta = el('a', 'tp-cta') as HTMLAnchorElement;
-    cta.href = CONTRIBUTE_URL;
-    cta.target = '_blank';
-    cta.rel = 'noopener';
-    cta.textContent = 'Contribute one →';
+    cta.href = gapSubmitUrl(technique.id);
+    cta.textContent = `Submit a hunt for ${technique.id} →`;
     empty.appendChild(p);
     empty.appendChild(cta);
     huntsContainer.appendChild(empty);
