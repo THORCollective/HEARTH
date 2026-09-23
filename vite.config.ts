@@ -1,8 +1,37 @@
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 import { resolve } from 'path';
+import { readFileSync } from 'fs';
+import { computeSiteStats } from './src/lib/site-stats';
+
+// Serves /site-stats.json: the site-wide headline counts, computed once from
+// public/hunts-data.json + public/mitre-matrix.json by src/lib/site-stats.ts,
+// so every page shows the same numbers. Built into dist/ on `vite build`;
+// computed per request by the dev server so edits show up without a restart.
+function siteStats(): Plugin {
+  const compute = () =>
+    JSON.stringify(
+      computeSiteStats(
+        JSON.parse(readFileSync(resolve(__dirname, 'public/hunts-data.json'), 'utf8')),
+        JSON.parse(readFileSync(resolve(__dirname, 'public/mitre-matrix.json'), 'utf8')),
+      ),
+    );
+  return {
+    name: 'hearth-site-stats',
+    configureServer(server) {
+      server.middlewares.use('/site-stats.json', (_req, res) => {
+        res.setHeader('Content-Type', 'application/json');
+        res.end(compute());
+      });
+    },
+    generateBundle() {
+      this.emitFile({ type: 'asset', fileName: 'site-stats.json', source: compute() });
+    },
+  };
+}
 
 export default defineConfig({
   root: '.',
+  plugins: [siteStats()],
   publicDir: 'public',
 
   build: {
