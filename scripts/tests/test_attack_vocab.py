@@ -131,3 +131,33 @@ def test_multi_select_issue_answer_becomes_a_valid_draft(tmp_path):
     name, text = draft_from_legacy_markdown(md, "Flames")
     (tmp_path / name).write_text(text, encoding="utf-8")
     assert parse_draft_file(tmp_path / name)["tactics"] == ["Stealth", "Defense Impairment"]
+
+
+def _legacy_hunt(tmp_path, tactic, tags="#t #T1110"):
+    f = tmp_path / "H990.md"
+    f.write_text(
+        "# H990\n\n"
+        "| Hunt # | Idea / Hypothesis | Tactic | Notes | Tags | Submitter |\n"
+        "|---|---|---|---|---|---|\n"
+        f"| H990 | A hypothesis here | {tactic} | n | {tags} | Anonymous |\n",
+        encoding="utf-8",
+    )
+    return f
+
+
+def test_legacy_table_hunt_is_checked_too(tmp_path):
+    # A hunt file added directly (not via Incoming/) can still use the legacy
+    # table format, which skips schema validation. It must not skip this check.
+    from scripts.hunt_parser import HuntValidationError, parse_hunt_file
+
+    with pytest.raises(HuntValidationError, match="Defense Evasion"):
+        parse_hunt_file(_legacy_hunt(tmp_path, "Defense Evasion"), "Flames")
+    with pytest.raises(HuntValidationError, match="T1562.001"):
+        parse_hunt_file(_legacy_hunt(tmp_path, "Credential Access", "#t #T1562.001"), "Flames")
+
+
+def test_valid_legacy_table_hunt_still_parses(tmp_path):
+    from scripts.hunt_parser import parse_hunt_file
+
+    hunt = parse_hunt_file(_legacy_hunt(tmp_path, "Stealth, Credential Access"), "Flames")
+    assert hunt["tactics"] == ["Stealth", "Credential Access"]
