@@ -13102,6 +13102,42 @@ const HUNTS_DATA = [
     "created": "2026-09-22T15:16:13-04:00"
   },
   {
+    "id": "H334",
+    "category": "Flames",
+    "title": "Dormant-Identity OAuth Token Replay for Burst Private Repository Theft",
+    "tactic": "Credential Access, Collection",
+    "notes": "GitHub organization audit log (enable Git events; they are off by default) - Core filter: `action` equal to `git.clone` or `git.fetch` against private repositories, aggregated per actor over a rolling 10-minute window; flag when the distinct `repo` count exceeds roughly 3x that identity's 30-day daily maximum (CrowdSec lost ~170 repositories in nine minutes). Triage values: `actor`, `actor_ip`, `user_agent`, `repo`, `hashed_token`, `programmatic_access_type`. Strong red flags: the burst walks the repository list in near-alphabetical or API-enumeration order, the `user_agent` is a bare `git/2.x` or generic HTTP client instead of the actor's usual IDE and CLI mix, and the `actor_ip` sits in a hosting ASN or geography never before associated with that identity.\nGitHub token and app telemetry - Core filter: audit events where `programmatic_access_type` is `OAuth access token` or `personal access token`. Pivot: group all audit activity by `hashed_token` to reconstruct the complete token session; a single `hashed_token` touching tens of private repositories with zero writes is the chokepoint signal, regardless of which IP or token value the attacker used. Correlation: sweep `GET /orgs/{org}/credential-authorizations` (SAML-enforced orgs) and the fine-grained PAT inventory for grants whose owning user is deprovisioned in HR or the IdP — every hit is a standing exposure worth revoking even absent replay.\nIdP sign-in logs (Okta/Entra/GitHub SSO) - Correlation: join the GitHub `actor` login to the IdP user and require a successful interactive sign-in within the trailing 14-30 days; API token activity from an identity with none is the dormant-identity leg of the conjunction. Strong red flags: HR termination date precedes the token activity, or the SAML session was revoked at offboarding while API reads continue — proof that deprovisioning killed the session but not the grant.\nRead-only session shape - Core filter: for the flagged `actor` and window, absence of `git.push`, pull-request, issue, or workflow-run activity; pure enumerate-and-clone with no contribution is collection, not development. False positive: migration and backup tooling produces the same read-only burst — separate it by service-account allowlist, change tickets, recurring schedule, and a `user_agent` matching the sanctioned mirror tool.\nDeveloper endpoint precursor (optional companion) - Core filter: package-manager lifecycle execution such as `npm` spawning `node` to run a `postinstall` script that reads developer credential stores or opens connections to non-registry infrastructure; Shai-Hulud harvested the CrowdSec token this way from a former employee's endpoint, so this telemetry provides the left-of-boom edge of the same intrusion chain.\n",
+    "tags": [
+      "github",
+      "oauth",
+      "tokenreplay",
+      "supplychain",
+      "shaihulud",
+      "identity",
+      "saas",
+      "offboarding",
+      "T1528",
+      "T1213.003",
+      "T1078.004"
+    ],
+    "techniques": [
+      "T1528",
+      "T1213.003",
+      "T1078.004"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Joshua Strickland",
+      "link": "https://novasky.io"
+    },
+    "why": "- The Shai-Hulud/TanStack npm wave mass-harvested developer tokens at ecosystem scale, and CrowdSec's loss of ~170 private repositories took nine minutes in May but went undiscovered until the code hit a leak forum in September — the GitHub audit log was the only place the theft was visible in the intervening four months, making this a hunt, not an alert you already have.\n- Attacker IPs, token values, and trojanized package names rotate per victim, but monetizing a stolen repo-read token forces an invariant chokepoint: the adversary must enumerate and clone many private repositories quickly through the same API surface, producing the human-token/burst-read/dormant-owner conjunction no matter what infrastructure they use.\n- Every leg of the conjunction is first-party and queryable: org audit logs expose `git.clone`/`git.fetch` per repository with `hashed_token`, `actor_ip`, and `user_agent` once Git events are enabled, credential-authorization APIs enumerate standing grants, and IdP logs establish dormancy — no third-party sensor is required.\n- False positives collapse under the joint condition because legitimate bulk readers are either allowlisted service identities or active users with contemporaneous SSO sessions; what remains after the dormancy filter is either an incident or a deprovisioning gap, and both are worth a ticket.",
+    "references": "- [CrowdSec — TanStack Supply Chain Attack Analysis](https://www.crowdsec.net/blog/tanstack-supply-chain-attack-analysis)\n- [Dark Reading — Shai-Hulud Attack Nips Cyber-Firm CrowdSec's GitHub Data](https://www.darkreading.com/cyberattacks-data-breaches/shai-hulud-attack-cyber-firm-crowdsec-github-data)\n- [GitHub Community Discussion — Audit log of private repository downloads (git.clone/git.fetch events)](https://github.com/orgs/community/discussions/23153)",
+    "file_path": "Flames/H334.md",
+    "created": "2026-09-25T13:13:51-04:00"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
