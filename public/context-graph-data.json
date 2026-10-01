@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-01T12:35:28.041Z",
+  "generated_at": "2026-10-01T14:30:12.054Z",
   "stats": {
     "totalNodes": 511,
     "totalEdges": 3896,
@@ -13,7 +13,7 @@
       "newest": "2026-03-10T12:04:11.000Z"
     },
     "averageHypothesisAgeDays": 255,
-    "threat_actors": 2,
+    "threat_actors": 0,
     "campaigns": 0,
     "hottest_technique": "T1105",
     "hottest_technique_score": 1,
@@ -34897,5 +34897,5 @@
       "type": "EMPLOYS"
     }
   ],
-  "phase2a_enriched_at": "2026-09-01T12:35:28.041Z"
+  "phase2a_enriched_at": "2026-10-01T14:30:12.054Z"
 }
