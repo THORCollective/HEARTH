@@ -1,3 +1,4 @@
+---
 category: Flames
 title: Executable import lines in Python .pth files that run on every interpreter start
 hypothesis: An adversary who has landed code on a developer workstation, CI runner or Python-based server
@@ -38,7 +39,7 @@ related_hunt_ids:
 notes: Sweep site directories for `.pth` files with executable `import` lines (and `.start` files on Python
   3.15+), stack them by filename and hash across the fleet, and look for the same child process under
   many unrelated Python parents.
-
+---
 
 Executable import lines in Python .pth files that run on every interpreter start
 
