@@ -13816,6 +13816,52 @@ const HUNTS_DATA = [
     "created": "2026-09-27T22:04:17-05:00"
   },
   {
+    "id": "H351",
+    "category": "Flames",
+    "title": "Executable import lines in Python .pth files that run on every interpreter start",
+    "tactic": "Persistence",
+    "notes": "Sweep site directories for `.pth` files with executable `import` lines (and `.start` files on Python 3.15+), stack them by filename and hash across the fleet, and look for the same child process under many unrelated Python parents.",
+    "tags": [
+      "persistence",
+      "python",
+      "pth",
+      "sitepackages",
+      "supply_chain",
+      "pypi",
+      "teampcp",
+      "litellm",
+      "fileevents",
+      "processcreation",
+      "linux",
+      "windows",
+      "macos",
+      "developer_endpoint",
+      "ci_cd",
+      "T1546.018"
+    ],
+    "techniques": [
+      "T1546.018"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [
+      "H103",
+      "H150",
+      "H282",
+      "H283",
+      "H296",
+      "B020"
+    ],
+    "submitter": {
+      "name": "V3nom tech",
+      "link": "https://github.com/v3nomtech"
+    },
+    "why": "- The technique is in active use. On 24 March 2026 the TeamPCP campaign published `litellm` 1.82.8 to PyPI with a `litellm_init.pth` that ran a credential stealer on every Python process start on any machine where the package was installed, whether or not LiteLLM was ever imported. It collected environment variables, SSH keys, cloud and Kubernetes credentials, CI/CD secrets and wallet files, and used service-account tokens to create privileged pods. MITRE lists both TeamPCP Cloud Stealer and Mini Shai-Hulud as procedure examples for T1546.018.\n- It defeats the controls most teams rely on for package risk. The hook is an interpreter feature, not a `setup.py` or post-install script, so install-script scanners do not flag it. The file is written by `pip` and recorded in `RECORD`, so creation-based detections that exclude package managers pass over it. Hunting the content and fleet prevalence of `.pth` files, rather than who created them, exposes the hook.\n- It persists beyond the package. Uninstalling or downgrading the package does not always remove a stray `.pth`, and a hand-placed hook in the per-user site directory needs no elevated rights and survives virtualenv rebuilds of unrelated projects.\n- The blast radius is every Python process on the host: build jobs, Ansible runs, cloud CLIs, ML training, notebooks, security tooling. On a CI runner or AI gateway that means cloud keys and deployment tokens.\n- The hunt is cheap and repeatable. The benign population is tiny and stable (13 `.pth` files, 5 distinct benign hook types on the workstation this was tested on), so a first pass produces a short list to review, and the result converts directly into a content-hash allowlist and a standing detection.\n- HEARTH has hunts on npm install scripts, PyPI loaders and the LiteLLM gateway exploitation chain, but none on Python startup hooks as a persistence mechanism.",
+    "references": "- MITRE ATT&CK T1546.018, Event Triggered Execution: Python Startup Hooks — https://attack.mitre.org/techniques/T1546/018/\n- Datadog Security Labs, \"LiteLLM and Telnyx compromised on PyPI: Tracing the TeamPCP supply chain campaign\" — https://securitylabs.datadoghq.com/articles/litellm-compromised-pypi-teampcp-supply-chain-campaign/\n- SafeDep, \"Malicious litellm 1.82.8: Credential Theft and Persistent Backdoor\" — https://safedep.io/malicious-litellm-1-82-8-analysis/\n- StepSecurity, \"litellm: Credential Stealer Hidden in PyPI Wheel\" — https://www.stepsecurity.io/blog/litellm-credential-stealer-hidden-in-pypi-wheel\n- LiteLLM, \"Security Update: Suspected Supply Chain Incident\" — https://docs.litellm.ai/blog/security-update-march-2026\n- Elastic Security prebuilt rule, \"Python Path File (pth) Creation\" — https://www.elastic.co/guide/en/security/8.19/python-path-file-pth-creation.html\n- Python documentation, `site` module (how `.pth`, `sitecustomize` and `usercustomize` are processed) — https://docs.python.org/3/library/site.html\n- CPython issue #113659, \"Security risk of hidden pth files\" — https://github.com/python/cpython/issues/113659\n- Atomic Red Team, T1546.018 atomic tests (`.pth` and `usercustomize.py` on Windows, Linux and macOS) — https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1546.018/T1546.018.md\n- PEP 829, Package Startup Configuration Files (`<name>.start`, Python 3.15) — https://peps.python.org/pep-0829/\n- Microsoft Learn, `DeviceFileEvents` table schema (hash column guidance) — https://learn.microsoft.com/en-us/defender-xdr/advanced-hunting-devicefileevents-table\n- Related HEARTH hunts: H103 (npm install-script stealers), H150 (PyPI native-DLL loader), H282 / H283 / H296 (LiteLLM gateway exploitation), B020 (dependency-install baseline on CI runners)",
+    "file_path": "Flames/H351.md",
+    "created": "2026-10-03T23:47:37+05:30"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
