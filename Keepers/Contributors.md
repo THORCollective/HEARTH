@@ -45,7 +45,8 @@ Everyone listed below has submitted ideas that have been added to HEARTH. This l
 | 37 | Kelly Lehman | 1 |
 | 38 | Twitter - 0xDroogy | 1 |
 | 39 | MusangK1ng | 1 |
-| 40 | Claire Stromboe | 1 |
-| 41 | Jon Perez | 1 |
-| 42 | Collin McClaine | 1 |
-| 43 | Max Margolis | 1 |
+| 40 | V3nom tech | 1 |
+| 41 | Claire Stromboe | 1 |
+| 42 | Jon Perez | 1 |
+| 43 | Collin McClaine | 1 |
+| 44 | Max Margolis | 1 |
