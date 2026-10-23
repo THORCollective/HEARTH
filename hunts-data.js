@@ -16572,6 +16572,51 @@ const HUNTS_DATA = [
     "created": "2026-10-18T22:36:25-05:00"
   },
   {
+    "id": "H411",
+    "category": "Flames",
+    "title": "Replayed AiTM session entrenches via rogue Entra device, MFA method swap, and hidden inbox rules",
+    "tactic": "Credential Access, Stealth, Persistence",
+    "notes": "Entra ID interactive and non-interactive sign-in logs - Core filter: successful user sign-ins where the authentication details say `MFA requirement satisfied by claim in the token` and the same `session ID` (or `unique token identifier`) resolves to two or more ASNs within 24h. Keep only pairs where the later ASN has no sign-in history for the user in the previous 30 days or belongs to a hosting/VPN provider. Triage values: `session ID`, `unique token identifier`, `ASN`, `source IP address`, `user agent`, `app ID`, `incoming token type`, `device ID`, `is interactive`. Pivot: go from the origin leg (interactive, fresh MFA, browser user agent, usual ASN) to the replay leg and measure the gap. Huntress saw replay as soon as four minutes after capture. Strong red flags: a replay leg with a blank `device ID` against the Microsoft Office client `d3590ed6-52b3-4102-aeff-aad2292ab01c` using a bare runtime user agent such as `node`; Entra ID Protection detections `anomalousToken` or `attackerinTheMiddle` on the same user in the same window.\nEntra ID audit logs (Device category) - Core filter: `Register device`, `Add device`, `Add registered owner to device`, or `Add registered users to device`, started by the affected user rather than an admin or MDM service principal, within 24h after the replay leg. Triage values: `device display name`, `device OS`, `device OS version`, `device trust type` (`Workplace` = Entra registered), `initiator IP address`, `target device ID`. Correlation: match the registration's initiator IP/ASN to the replay leg. Confirm a matching sign-in to the Device Registration Service `01cb2876-7ebd-4aa4-9cc9-d28bd4d359a9` through the Microsoft Authentication Broker client `29d9ed98-a469-4536-ade2-f981bc1d605e` from the same ASN. Pivot: hunt forward on the new `device ID`. Later sign-ins carry a device claim and may move to a commercial VPN or a second hosting ASN (Huntress saw ExpressVPN and CrownCloud after registration). Strong red flags: a device OS or naming pattern that does not exist in the managed fleet; a device that is registered but never shows up in MDM or compliance records.\nEntra ID audit logs (Authentication Methods / UserManagement) - Core filter: self-initiated `User deleted security info`, `User registered security info`, or `User changed default security info` within 24h of the replay leg. Triage values: `method type` (Authenticator app, phone, OATH token), `initiated by` (user vs admin), `initiator IP address`, `target user`. Correlation: initiator ASN/IP matches the replay leg or the VPN ASN used after device registration; deletes come before registrations in one burst. Strong red flags: all prior methods deleted and one new Authenticator registration from an ASN outside the user's baseline; a new phone method with a country code that differs from every existing method.\nMicrosoft 365 Unified Audit Log (Exchange Online) - Core filter: `New-InboxRule`, `Set-InboxRule`, `UpdateInboxRules`, or Graph `messageRules` writes where the rule moves mail to `RSS Feeds`, `RSS Subscriptions`, `Conversation History`, or `Archive`, or sets `DeleteMessage` or `MarkAsRead` to `True`. Triage values: `rule name`, rule conditions (`SubjectOrBodyContainsWords`, `From`), `client IP address`, `app access context session ID`, `user agent`. Correlation: join to the flagged sign-in by session ID where present, otherwise by user plus client IP/ASN within 24h. Post-compromise pivot: `MailItemsAccessed`, `SearchQueryInitiatedExchange`, and `Send` from the same session or ASN, to scope mailbox reading, invoice/payment searches, and outbound BEC or internal phishing. Strong red flags: rule names of one or two characters; keywords such as `invoice`, `payment`, `wire`, or the names and domains of the user's external correspondents.\nScoring - High confidence when two or more of {rogue device registration, self-service MFA method replacement, mail-hiding inbox rule} link to one replayed session or replay ASN within 24h. One action plus the ASN hop is medium confidence and calls for confirmation from the user and a review of device and MFA method inventory.\n",
+    "tags": [
+      "aitm",
+      "token_replay",
+      "session_hijacking",
+      "entra_id",
+      "microsoft_365",
+      "exchange_online",
+      "business_email_compromise",
+      "device_registration",
+      "mfa_tampering",
+      "inbox_rules",
+      "identity",
+      "T1539",
+      "T1550.001",
+      "T1550.004",
+      "T1098.005",
+      "T1556.006",
+      "T1564.008"
+    ],
+    "techniques": [
+      "T1539",
+      "T1550.001",
+      "T1550.004",
+      "T1098.005",
+      "T1556.006",
+      "T1564.008"
+    ],
+    "severity": null,
+    "status": "current",
+    "related_hunt_ids": [],
+    "submitter": {
+      "name": "Joshua Strickland",
+      "link": "https://novasky.io"
+    },
+    "why": "- Huntress linked this campaign (July 14 to September 22, 2026) to 79 compromised organizations and at least 48 rogue Entra devices, with replay as soon as four minutes after capture. The rogue device and swapped MFA methods survive a password reset, so the window between replay and lasting access is the cheapest point to remove the attacker.\n- Replay infrastructure changed during the campaign (1337 Services GmbH hosting, then ExpressVPN or CrownCloud), but the behavior did not. A replayed token has to carry the victim's original MFA claim and session identity across a network boundary, and lasting access requires directory and mailbox writes that are audited and can be tied back to that same session.\n- Every leg shows up in standard Microsoft telemetry: interactive and non-interactive sign-ins, Entra audit Device and Authentication Methods activity, and Exchange Online audit operations. Session ID and IP/ASN joins connect them without endpoint coverage, which matters because the victim's phishing device is often unmanaged.\n- False positives drop sharply once a persistence write is required. Carrier handoffs and travel rarely pair an ASN hop with a self-initiated device registration and MFA method replacement within 24h. Helpdesk resets carry an admin initiator, and new-device setup follows fresh interactive MFA from the user's usual network.",
+    "references": "- [Huntress - M365 Token Spray and Replay Campaign Compromises Business Email Accounts](https://www.huntress.com/blog/token-replay-spray)\n- [Microsoft Security Blog - Detecting and mitigating a multi-stage AiTM phishing and BEC campaign](https://www.microsoft.com/en-us/security/blog/2023/06/08/detecting-and-mitigating-a-multi-stage-aitm-phishing-and-bec-campaign/)\n- [Microsoft Security Blog - Resurgence of a multi-stage AiTM phishing and BEC campaign abusing SharePoint](https://www.microsoft.com/en-us/security/blog/2026/01/21/multistage-aitm-phishing-bec-campaign-abusing-sharepoint/)\n- [Microsoft Learn - What are risk detections? (Microsoft Entra ID Protection)](https://learn.microsoft.com/en-us/entra/id-protection/concept-identity-protection-risks)",
+    "file_path": "Flames/H411.md",
+    "created": "2026-10-23T10:37:17-04:00"
+  },
+  {
     "id": "M001",
     "category": "Alchemy",
     "title": "A machine learning model can detect anomalies in user login patterns that indicate compromised accounts.",
