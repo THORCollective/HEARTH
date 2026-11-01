@@ -1260,7 +1260,7 @@
       "tactic_shortnames": [
         "resource-development"
       ],
-      "description": "Adversaries may obtain access to generative artificial intelligence tools, such as large language models (LLMs), to aid various techniques during targeting. These tools may be used to inform,…",
+      "description": "Adversaries may obtain access to generative artificial intelligence (AI) tools, such as large language models (LLMs), to aid various techniques during targeting. These tools may be used to inform,…",
       "url": "https://attack.mitre.org/techniques/T1588/007",
       "is_subtechnique": true,
       "platforms": [
@@ -1360,6 +1360,20 @@
       ],
       "description": "Adversaries may poison mechanisms that influence search engine optimization (SEO) to further lure staged capabilities towards potential victims. Search engines typically display results to users…",
       "url": "https://attack.mitre.org/techniques/T1608/006",
+      "is_subtechnique": true,
+      "platforms": [
+        "PRE"
+      ]
+    },
+    {
+      "id": "T1608.007",
+      "name": "AI Result Poisoning",
+      "parent": "T1608",
+      "tactic_shortnames": [
+        "resource-development"
+      ],
+      "description": "Adversaries may manipulate publicly accessible web content to influence generative AI systems or AI-powered search engines into retrieving, citing, or recommending attacker-controlled…",
+      "url": "https://attack.mitre.org/techniques/T1608/007",
       "is_subtechnique": true,
       "platforms": [
         "PRE"
@@ -1833,7 +1847,9 @@
       "url": "https://attack.mitre.org/techniques/T1059/001",
       "is_subtechnique": true,
       "platforms": [
-        "Windows"
+        "Windows",
+        "Linux",
+        "macOS"
       ]
     },
     {
@@ -2399,6 +2415,36 @@
       "url": "https://attack.mitre.org/techniques/T1677",
       "is_subtechnique": false,
       "platforms": [
+        "SaaS"
+      ]
+    },
+    {
+      "id": "T1698",
+      "name": "Indirect Prompt Injection",
+      "parent": null,
+      "tactic_shortnames": [
+        "execution"
+      ],
+      "description": "Adversaries may deliver malicious prompts to an LLM indirectly by embedding the prompts in content that the adversary expects may be processed by an LLM.(Citation: NIST indirect prompt injection)…",
+      "url": "https://attack.mitre.org/techniques/T1698",
+      "is_subtechnique": false,
+      "platforms": [
+        "Windows",
+        "SaaS"
+      ]
+    },
+    {
+      "id": "T1699",
+      "name": "Direct Prompt Injection",
+      "parent": null,
+      "tactic_shortnames": [
+        "execution"
+      ],
+      "description": "Adversaries may input malicious prompts directly into an LLM’s user interface.(Citation: NIST Direct Prompt Injection) The prompts can be designed to bypass safeguards, manipulate context, override…",
+      "url": "https://attack.mitre.org/techniques/T1699",
+      "is_subtechnique": false,
+      "platforms": [
+        "Windows",
         "SaaS"
       ]
     },
@@ -6190,6 +6236,48 @@
       ]
     },
     {
+      "id": "T1696",
+      "name": "Anti-Automation Evasion",
+      "parent": null,
+      "tactic_shortnames": [
+        "stealth"
+      ],
+      "description": "Adversaries may employ various means to evade or complete automation checks. Automation checks distinguish human users from bot traffic and prevent bots from reaching the web pages protected by…",
+      "url": "https://attack.mitre.org/techniques/T1696",
+      "is_subtechnique": false,
+      "platforms": [
+        "SaaS"
+      ]
+    },
+    {
+      "id": "T1696.001",
+      "name": "Automate CAPTCHA Completion",
+      "parent": "T1696",
+      "tactic_shortnames": [
+        "stealth"
+      ],
+      "description": "Adversaries may attempt to use bots to successfully solve CAPTCHA challenges. CAPTCHA challenges are typically used by defenders to detect and prevent bot and spam traffic from accessing protected…",
+      "url": "https://attack.mitre.org/techniques/T1696/001",
+      "is_subtechnique": true,
+      "platforms": [
+        "SaaS"
+      ]
+    },
+    {
+      "id": "T1696.002",
+      "name": "Avoid CAPTCHA",
+      "parent": "T1696",
+      "tactic_shortnames": [
+        "stealth"
+      ],
+      "description": "Adversaries may avoid CAPTCHA challenges by mimicking human behavior. Automation tests, such as CAPTCHA, are typically used by defenders to detect and prevent bot and spam traffic from accessing…",
+      "url": "https://attack.mitre.org/techniques/T1696/002",
+      "is_subtechnique": true,
+      "platforms": [
+        "SaaS"
+      ]
+    },
+    {
       "id": "T1112",
       "name": "Modify Registry",
       "parent": null,
@@ -6926,6 +7014,21 @@
       "platforms": [
         "Linux",
         "macOS"
+      ]
+    },
+    {
+      "id": "T1685.007",
+      "name": "Impair Autonomous Defenses",
+      "parent": "T1685",
+      "tactic_shortnames": [
+        "defense-impairment"
+      ],
+      "description": "Adversaries may use methods like [Indirect Prompt Injection](https://attack.mitre.org/techniques/T1698) to disrupt, disable, or otherwise impair autonomous defensive capabilities such as LLM-assisted…",
+      "url": "https://attack.mitre.org/techniques/T1685/007",
+      "is_subtechnique": true,
+      "platforms": [
+        "Windows",
+        "SaaS"
       ]
     },
     {
@@ -7909,6 +8012,22 @@
       ]
     },
     {
+      "id": "T1697",
+      "name": "Steal Application Specific Passwords",
+      "parent": null,
+      "tactic_shortnames": [
+        "credential-access"
+      ],
+      "description": "Adversaries may steal Application Specific Passwords (ASPs) to gain access to [Valid Accounts](https://attack.mitre.org/techniques/T1078), bypassing multifactor authentication (MFA) methods. ASPs are…",
+      "url": "https://attack.mitre.org/techniques/T1697",
+      "is_subtechnique": false,
+      "platforms": [
+        "Office Suite",
+        "Identity Provider",
+        "SaaS"
+      ]
+    },
+    {
       "id": "T1007",
       "name": "System Service Discovery",
       "parent": null,
@@ -8706,7 +8825,8 @@
       "platforms": [
         "ESXi",
         "Linux",
-        "macOS"
+        "macOS",
+        "Windows"
       ]
     },
     {
@@ -9358,7 +9478,7 @@
       "tactic_shortnames": [
         "collection"
       ],
-      "description": "Adversaries may leverage Confluence repositories to mine valuable information. Often found in development environments alongside Atlassian JIRA, Confluence is generally used to store…",
+      "description": "Adversaries may leverage Confluence repositories to mine valuable information.(Citation: Confluence Standards in Data Engineering) Often found in development environments alongside Atlassian JIRA,…",
       "url": "https://attack.mitre.org/techniques/T1213/001",
       "is_subtechnique": true,
       "platforms": [
@@ -9372,7 +9492,7 @@
       "tactic_shortnames": [
         "collection"
       ],
-      "description": "Adversaries may leverage the SharePoint repository as a source to mine valuable information. SharePoint will often contain useful information for an adversary to learn about the structure and…",
+      "description": "Adversaries may leverage the SharePoint repository as a source to mine valuable information.(Citation: Information architecture guidance for SharePoint Online portals) SharePoint will often contain…",
       "url": "https://attack.mitre.org/techniques/T1213/002",
       "is_subtechnique": true,
       "platforms": [
@@ -10591,6 +10711,21 @@
         "Office Suite",
         "SaaS",
         "Windows"
+      ]
+    },
+    {
+      "id": "T1700",
+      "name": "AI-Enabled Exfiltration",
+      "parent": null,
+      "tactic_shortnames": [
+        "exfiltration"
+      ],
+      "description": "Adversaries may utilize [Direct Prompt Injection](https://attack.mitre.org/techniques/T1699), [Indirect Prompt Injection](https://attack.mitre.org/techniques/T1698) or other methods to instruct…",
+      "url": "https://attack.mitre.org/techniques/T1700",
+      "is_subtechnique": false,
+      "platforms": [
+        "Windows",
+        "SaaS"
       ]
     },
     {
