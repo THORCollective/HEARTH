@@ -124,6 +124,7 @@ def test_frontmatter_with_all_optional_fields(tmp_path):
         "last_reviewed: 2026-04-01\n"
         "related_hunt_ids:\n  - H001\n"
         "required_data_sources:\n  - Sysmon\n"
+        "data_source_categories:\n  - endpoint\n  - windows\n"
         "false_positive_notes: |\n  None notable.\n"
         "detection_queries:\n  - platform: KQL\n    description: example\n    query: |\n      DeviceEvents | take 10\n"
         "notes: example notes\n"
@@ -135,6 +136,7 @@ def test_frontmatter_with_all_optional_fields(tmp_path):
     assert hunt["severity"] == "medium"
     assert hunt["created"] == "2026-01-01" or str(hunt["created"]) == "2026-01-01"
     assert hunt["detection_queries"][0]["platform"] == "KQL"
+    assert hunt["data_source_categories"] == ["endpoint", "windows"]
 
 
 def test_parser_does_not_synthesize_title_from_hypothesis(fixtures_dir):

@@ -191,3 +191,39 @@ def test_draft_requires_category_and_rejects_unknown_one():
 def test_draft_without_id_still_fails_full_hunt_validation():
     # The two validators must stay distinct: a draft is not a publishable hunt.
     assert any("'id' is a required property" in e for e in validate_hunt(_valid_draft()))
+
+
+def test_data_source_categories_accepts_known_ids():
+    hunt = _valid_hunt()
+    hunt["data_source_categories"] = ["cloud", "identity"]
+    assert validate_hunt(hunt) == []
+
+
+def test_data_source_categories_rejects_unknown_id():
+    hunt = _valid_hunt()
+    hunt["data_source_categories"] = ["Cloud Logs"]  # display name, not id
+    errors = validate_hunt(hunt)
+    assert any("data_source_categories" in e for e in errors)
+
+
+def test_data_source_categories_rejects_empty_and_duplicates():
+    for bad in ([], ["cloud", "cloud"]):
+        hunt = _valid_hunt()
+        hunt["data_source_categories"] = bad
+        assert any("data_source_categories" in e for e in validate_hunt(hunt)), bad
+
+
+def test_data_source_category_ids_are_a_tuple():
+    from scripts.hunt_schema import DATA_SOURCE_CATEGORIES
+
+    assert DATA_SOURCE_CATEGORIES == (
+        "endpoint", "windows", "network", "cloud",
+        "identity", "email", "web_proxy", "application", "macos", "appliance",
+    )
+
+
+def test_data_source_categories_rejects_nested_lists():
+    for bad in ([["endpoint", "windows"]], [["endpoint"]], ["endpoint", ["windows"]]):
+        hunt = _valid_hunt()
+        hunt["data_source_categories"] = bad
+        assert any("data_source_categories" in e for e in validate_hunt(hunt)), bad
