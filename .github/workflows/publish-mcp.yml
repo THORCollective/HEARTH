@@ -51,7 +51,8 @@ jobs:
   publish:
     needs: verify
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # Long enough to wait out npm's processing delay before the registry step.
+    timeout-minutes: 30
     environment: npm-publish
     permissions:
       contents: read
@@ -68,9 +69,34 @@ jobs:
       - run: npm install -g npm@11.6.2
       - run: npm ci
       - run: npm ci --prefix mcp
+      # Lets "Re-run failed jobs" pick up after a failed registry step: a
+      # version that is already on npm is never published twice.
       - name: Publish to npm with provenance
         working-directory: mcp
-        run: npm publish --provenance --access public
+        run: |
+          spec="$(node -p "require('./package.json').name")@$(node -p "require('./package.json').version")"
+          if [ "$(npm view "$spec" version --prefer-online 2>/dev/null)" ]; then
+            echo "$spec is already on npm; skipping publish"
+          else
+            npm publish --provenance --access public
+          fi
+
+      # npm can take minutes to make a new version installable ("being
+      # processed"), and the MCP Registry rejects versions npm doesn't serve yet.
+      - name: Wait for the version to appear on npm
+        working-directory: mcp
+        run: |
+          spec="$(node -p "require('./package.json').name")@$(node -p "require('./package.json').version")"
+          for _ in $(seq 1 40); do
+            if [ "$(npm view "$spec" version --prefer-online 2>/dev/null)" ]; then
+              echo "$spec is live on npm"
+              exit 0
+            fi
+            echo "waiting for npm to serve $spec..."
+            sleep 30
+          done
+          echo "::error::$spec is not on npm after 20 minutes. Once it is, use Re-run failed jobs; the npm publish step will be skipped."
+          exit 1
 
       - name: Install mcp-publisher (pinned, checksum verified)
         env:

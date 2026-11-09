@@ -132,4 +132,7 @@ The [publish workflow](../.github/workflows/publish-mcp.yml) then:
 
 1. Waits for approval in the `npm-publish` environment.
 2. Publishes to npm with provenance, using trusted publishing (no npm token is stored).
-3. Lists the release in the [MCP Registry](https://registry.modelcontextprotocol.io) as `io.github.THORCollective/hearth`.
+3. Waits for npm to serve the new version, which can take several minutes.
+4. Lists the release in the [MCP Registry](https://registry.modelcontextprotocol.io) as `io.github.THORCollective/hearth`.
+
+If the run fails after the npm publish, use **Re-run failed jobs**. A version already on npm is never published twice, so the re-run picks up at the registry step.
