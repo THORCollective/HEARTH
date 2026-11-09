@@ -15,6 +15,7 @@ permissions:
 
 jobs:
   check:
+    name: hunt-injection-check
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
