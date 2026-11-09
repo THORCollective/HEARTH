@@ -14,6 +14,20 @@ from scripts.attack_vocab import attack_errors
 CATEGORIES = ("Flames", "Embers", "Alchemy")
 SEVERITIES = ("critical", "high", "medium", "low", "informational")
 STATUSES = ("current", "stale", "retired")
+# Broad telemetry categories a hunt needs, shared with
+# public/datasource-mapping.json and the "What Can I Hunt?" filter.
+DATA_SOURCE_CATEGORIES = (
+    "endpoint",
+    "windows",
+    "network",
+    "cloud",
+    "identity",
+    "email",
+    "web_proxy",
+    "application",
+    "macos",
+    "appliance",
+)
 
 HUNT_SCHEMA: dict = {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -74,6 +88,14 @@ HUNT_SCHEMA: dict = {
             "type": "array",
             "minItems": 1,
             "items": {"type": "string"},
+        },
+        # Every category whose logs are useful for running the hunt; a team
+        # holding any one of them can run at least part of it.
+        "data_source_categories": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": True,
+            "items": {"enum": list(DATA_SOURCE_CATEGORIES)},
         },
         "false_positive_notes": {"type": "string"},
         "detection_queries": {

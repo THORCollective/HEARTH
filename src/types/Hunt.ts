@@ -6,6 +6,18 @@ export type HuntSeverity =
   | "low"
   | "informational";
 export type HuntStatus = "current" | "stale" | "retired";
+/** Mirrors DATA_SOURCE_CATEGORIES in scripts/hunt_schema.py. */
+export type DataSourceCategoryId =
+  | "endpoint"
+  | "windows"
+  | "network"
+  | "cloud"
+  | "identity"
+  | "email"
+  | "web_proxy"
+  | "application"
+  | "macos"
+  | "appliance";
 
 export interface DetectionQuery {
   platform: string;
@@ -25,6 +37,9 @@ export interface Hunt {
   status?: HuntStatus;
   related_hunt_ids?: string[];
   required_data_sources?: string[];
+  /** Every telemetry category useful for running this hunt; holding any
+   *  one of them is enough to run at least part of it. */
+  data_source_categories?: DataSourceCategoryId[];
   detection_queries?: DetectionQuery[];
   false_positive_notes?: string;
   submitter: { name: string; link: string };

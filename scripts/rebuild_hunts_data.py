@@ -115,6 +115,7 @@ def parse_hunt_file(path, category):
         "severity": parsed.get("severity"),
         "status": parsed.get("status", "current"),
         "related_hunt_ids": parsed.get("related_hunt_ids", []),
+        "data_source_categories": parsed.get("data_source_categories", []),
         "submitter": submitter,
         "why": parsed["why"],
         "references": parsed["references"],

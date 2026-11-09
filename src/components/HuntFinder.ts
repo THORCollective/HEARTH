@@ -1,18 +1,12 @@
-import type { Hunt } from '../types/Hunt';
+import type { DataSourceCategoryId, Hunt } from '../types/Hunt';
 import { HuntRanker, type RankedHunt, type RankingResult } from '../lib/hunt-ranker';
+import {
+  buildTechniqueIndex,
+  canRunHunt,
+  type DatasourceMapping,
+  type TechniqueIndex,
+} from '../lib/datasources';
 import '../styles/components/hunt-finder.css';
-
-interface DataSourceCategory {
-  name: string;
-  description: string;
-  icon: string;
-  techniques: string[];
-}
-
-interface DatasourceMapping {
-  categories: DataSourceCategory[];
-  metadata: Record<string, unknown>;
-}
 
 /**
  * HuntFinder component - "What Can I Hunt?" feature
@@ -23,6 +17,7 @@ export class HuntFinder {
   private container: HTMLElement;
   private hunts: Hunt[];
   private mapping: DatasourceMapping | null = null;
+  private techniqueIndex: TechniqueIndex = new Map();
   private selectedCategories: Set<string> = new Set();
   private ranker: HuntRanker;
 
@@ -43,6 +38,7 @@ export class HuntFinder {
 
       if (!mappingResp.ok) throw new Error(`HTTP ${mappingResp.status}`);
       this.mapping = await mappingResp.json();
+      this.techniqueIndex = buildTechniqueIndex(this.mapping!);
       this.render();
     } catch (err) {
       console.error('[HuntFinder] load failed', err);
@@ -133,13 +129,12 @@ export class HuntFinder {
   private getMatchingHunts(): Hunt[] {
     if (!this.mapping || this.selectedCategories.size === 0) return [];
 
-    const coveredTechniques = this.getCoveredTechniques();
-
-    return this.hunts.filter(hunt => {
-      const techTags = hunt.tags.filter(t => /^T\d{4}/.test(t));
-      if (techTags.length === 0) return false;
-      return techTags.some(t => coveredTechniques.has(t));
-    });
+    const available = new Set<DataSourceCategoryId>(
+      this.mapping.categories
+        .filter(c => this.selectedCategories.has(c.name))
+        .map(c => c.id),
+    );
+    return this.hunts.filter(hunt => canRunHunt(hunt, available, this.techniqueIndex));
   }
 
   private getCoveredTechniques(): Set<string> {
