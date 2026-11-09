@@ -1,0 +1,24 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.THORCollective/hearth",
+  "title": "HEARTH",
+  "description": "Search community threat hunting hypotheses by keyword, threat actor, or the log sources you have.",
+  "websiteUrl": "https://hearth.thorcollective.com",
+  "repository": {
+    "url": "https://github.com/THORCollective/HEARTH",
+    "source": "github",
+    "subfolder": "mcp"
+  },
+  "version": "0.1.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@thorcollective/hearth-mcp",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}

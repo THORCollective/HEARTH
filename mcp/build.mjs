@@ -23,6 +23,7 @@ await build({
   target: "node20",
   external: Object.keys(pkg.dependencies),
   banner: { js: "#!/usr/bin/env node" },
+  define: { __HEARTH_MCP_VERSION__: JSON.stringify(pkg.version) },
   logLevel: "warning",
 });
 

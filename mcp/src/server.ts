@@ -11,7 +11,10 @@ import { DEFAULT_LIMIT, MAX_LIMIT, filterHunts, searchHunts } from "../../src/li
 import type { DataSourceCategoryId, Hunt } from "../../src/types/Hunt";
 import { CATEGORIES, DATA_SOURCE_IDS, type HearthData } from "./data";
 
-export const VERSION = "0.0.0";
+// Injected by build.mjs from package.json; "dev" when running unbundled (tests).
+declare const __HEARTH_MCP_VERSION__: string | undefined;
+export const VERSION =
+  typeof __HEARTH_MCP_VERSION__ === "string" ? __HEARTH_MCP_VERSION__ : "dev";
 const REPO_URL = "https://github.com/THORCollective/HEARTH/blob/main/";
 const MAX_GAPS = 25;
 

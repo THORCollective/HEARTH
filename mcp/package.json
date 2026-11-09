@@ -1,10 +1,21 @@
 {
   "name": "@thorcollective/hearth-mcp",
-  "version": "0.0.0",
-  "description": "MCP server for HEARTH threat hunting hypotheses",
+  "mcpName": "io.github.THORCollective/hearth",
+  "version": "0.1.0",
+  "description": "Read-only MCP server for HEARTH, the community threat hunting hypothesis library",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "threat-hunting",
+    "mitre-attack",
+    "security"
+  ],
+  "homepage": "https://hearth.thorcollective.com",
+  "bugs": {
+    "url": "https://github.com/THORCollective/HEARTH/issues"
+  },
   "license": "MIT",
   "type": "module",
-  "private": true,
   "bin": {
     "hearth-mcp": "dist/index.js"
   },
@@ -15,7 +26,8 @@
   "scripts": {
     "build": "node build.mjs",
     "typecheck": "tsc -p tsconfig.json",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "prepublishOnly": "node build.mjs"
   },
   "engines": {
     "node": ">=20"
@@ -33,5 +45,9 @@
     "@modelcontextprotocol/client": "2.4.0",
     "esbuild": "0.28.2",
     "@types/node": "20.19.43"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   }
 }
