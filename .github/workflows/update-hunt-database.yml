@@ -21,9 +21,19 @@ jobs:
       contents: write
 
     steps:
+      # Pushes to main need the hearth bot app: the "Require approval" ruleset
+      # lets it bypass, but not GITHUB_TOKEN. Its pushes also trigger workflows.
+      - name: Mint hearth bot token
+        id: bot-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          client-id: ${{ vars.HEARTH_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.HEARTH_BOT_PRIVATE_KEY }}
+          permission-contents: write
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          token: ${{ steps.bot-token.outputs.token }}
           fetch-depth: 0  # Full history for git dates
 
       - name: Set up Python

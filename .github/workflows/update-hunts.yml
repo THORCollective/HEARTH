@@ -27,9 +27,19 @@ jobs:
       # Dispatching static.yml below needs actions:write.
       actions: write
     steps:
+      # Pushes to main need the hearth bot app: the "Require approval" ruleset
+      # lets it bypass, but not GITHUB_TOKEN. Its pushes also trigger workflows.
+      - name: Mint hearth bot token
+        id: bot-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          client-id: ${{ vars.HEARTH_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.HEARTH_BOT_PRIVATE_KEY }}
+          permission-contents: write
       - name: Check out repository
         uses: actions/checkout@v3
         with:
+          token: ${{ steps.bot-token.outputs.token }}
           # Full history so rebuild_hunts_data.py can read each hunt's
           # original git creation date for the activity feed.
           fetch-depth: 0

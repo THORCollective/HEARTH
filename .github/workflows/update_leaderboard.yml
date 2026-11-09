@@ -13,8 +13,19 @@ jobs:
   update-leaderboard:
     runs-on: ubuntu-latest
     steps:
+      # Pushes to main need the hearth bot app: the "Require approval" ruleset
+      # lets it bypass, but not GITHUB_TOKEN. Its pushes also trigger workflows.
+      - name: Mint hearth bot token
+        id: bot-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          client-id: ${{ vars.HEARTH_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.HEARTH_BOT_PRIVATE_KEY }}
+          permission-contents: write
       - name: "Checkout Repo"
         uses: actions/checkout@v4
+        with:
+          token: ${{ steps.bot-token.outputs.token }}
 
       - name: "Set up Python 3"
         uses: actions/setup-python@v5
@@ -29,7 +40,10 @@ jobs:
           git config --global user.name 'hearthbot'
           git config --global user.email 'hearthbot@users.noreply.github.com'
           git add Keepers/Contributors.md
-          # The following command will fail if there are no changes, which is fine.
-          # We use `|| true` to ensure the workflow doesn't fail if the commit is empty.
-          git commit -m "chore: update contributor leaderboard" || true
-          git push origin main || true 
+          if git diff --staged --quiet; then
+            echo "Leaderboard unchanged."
+            exit 0
+          fi
+          git commit -m "chore: update contributor leaderboard"
+          # No `|| true`: a rejected push must fail the run, not pass silently.
+          git push origin main 
