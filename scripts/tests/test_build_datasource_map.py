@@ -236,8 +236,12 @@ def test_build_mapping_keeps_site_shape(monkeypatch):
     json.dumps(out)  # serialisable
 
 
+@pytest.mark.skipif(
+    not bdm.SOURCE.exists(),
+    reason="data/enterprise-attack.json is git-ignored; download it to run",
+)
 def test_real_component_map_covers_bundled_attack():
-    """The committed table must match the committed ATT&CK bundle exactly."""
+    """The component table must match the local ATT&CK bundle exactly."""
     bundle = json.loads(bdm.SOURCE.read_text())
     bdm.technique_categories(bundle)  # raises on drift either way
 
