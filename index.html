@@ -191,6 +191,17 @@ html,body{margin:0;padding:0;background:var(--bg);min-height:100%}
   padding-right:4px;
 }
 .hl-sel select option{background:var(--bg-2);color:var(--fg)}
+.hl-dsrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:12px}
+.hl-dsrow .ds-label{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-dim);margin-right:4px}
+.hl-dsrow .ds-chip{
+  background:oklch(0.20 0.022 300 / .8);border:1px solid var(--line-soft);border-radius:999px;
+  padding:5px 11px;color:var(--fg-mute);cursor:pointer;
+  font-family:var(--sans);font-size:12.5px;display:inline-flex;align-items:center;gap:6px;transition:.12s;
+}
+.hl-dsrow .ds-chip:hover{color:var(--fg)}
+.hl-dsrow .ds-chip.on{color:var(--fg);background:var(--surface);border-color:oklch(0.55 0.18 300 / .55)}
+.hl-dsrow .ds-chip .seg-n{font-family:var(--mono);font-size:10.5px;color:var(--fg-dim)}
+.hl-dsrow .ds-chip.on .seg-n{color:var(--ember-2)}
 .hl-meta{
   display:flex;align-items:center;gap:8px;
   margin-top:12px;font-size:11.5px;color:var(--fg-mute);
@@ -597,13 +608,15 @@ function Glyph() {
   return <span className="hl-glyph" aria-hidden="true" />;
 }
 
-function useFilteredHunts({ q, cat, tactic, sort }) {
+function useFilteredHunts({ q, cat, tactic, sort, sources }) {
   return useMemo(() => {
     const needle = q.trim().toLowerCase();
     const hunts = window.HUNTS || [];
     let rows = hunts.filter((h) => {
       if (cat !== 'All' && h.cat !== cat) return false;
       if (tactic !== 'All' && !h.tactics.includes(tactic)) return false;
+      // "Data I have": show the hunt if the team holds ANY of its sources.
+      if (sources.size > 0 && !h.ds.some((c) => sources.has(c))) return false;
       if (!needle) return true;
       return (
         h.title.toLowerCase().includes(needle) ||
@@ -611,7 +624,8 @@ function useFilteredHunts({ q, cat, tactic, sort }) {
         h.technique.toLowerCase().includes(needle) ||
         h.who.toLowerCase().includes(needle) ||
         h.id.toLowerCase().includes(needle) ||
-        h.source.toLowerCase().includes(needle)
+        h.source.toLowerCase().includes(needle) ||
+        h.ds.some((c) => dsName(c).toLowerCase().includes(needle))
       );
     });
     return rows.slice().sort((a, b) => {
@@ -621,7 +635,7 @@ function useFilteredHunts({ q, cat, tactic, sort }) {
       const bi = parseInt(b.id.replace(/\D/g, ''), 10) || 0;
       return sort === 'oldest' ? ai - bi : bi - ai;
     });
-  }, [q, cat, tactic, sort]);
+  }, [q, cat, tactic, sort, sources]);
 }
 
 function TopBar() {
@@ -696,7 +710,9 @@ function HuntTable({ rows, onPick, picked }) {
           <div className="cell"><CatTag cat={h.cat} /></div>
           <div className="cell mono">{h.tactic}</div>
           <div className="cell mono">{h.technique}</div>
-          <div className="cell mono">{h.source}</div>
+          <div className="cell mono" title={h.ds.map(dsName).join(', ')}>
+            {h.ds.length ? h.ds.map((c) => DS_SHORT[c] || c).join(' · ') : h.source}
+          </div>
           <div className="cell">{h.who}</div>
           <div className="arrow mono">&rarr;</div>
         </div>
@@ -724,7 +740,10 @@ function PreviewRail({ hunt }) {
       <div className="hl-pv-grid">
         <div><span className="mono caps">Tactic</span><b>{hunt.tactic}</b></div>
         <div><span className="mono caps">Technique</span><b className="mono">{hunt.technique}</b></div>
-        <div><span className="mono caps">Source</span><b className="mono">{hunt.source}</b></div>
+        <div>
+          <span className="mono caps">Data sources{hunt.dsOrigin === 'attack' ? ' (from ATT&CK)' : ''}</span>
+          <b>{hunt.ds.length ? hunt.ds.map(dsName).join(', ') : hunt.source}</b>
+        </div>
         <div><span className="mono caps">Contributor</span><b>{hunt.who}</b></div>
       </div>
       {hypothesis && (
@@ -756,10 +775,16 @@ function LibraryToolFirst() {
   const [cat, setCat] = useState('All');
   const [tactic, setTactic] = useState('All');
   const [sort, setSort] = useState('newest');
+  const [sources, setSources] = useState(() => new Set());
   const [picked, setPicked] = useState(null);
   const searchRef = useRef(null);
 
-  const rows = useFilteredHunts({ q, cat, tactic, sort });
+  const rows = useFilteredHunts({ q, cat, tactic, sort, sources });
+  const toggleSource = (id) => setSources((prev) => {
+    const next = new Set(prev);
+    if (next.has(id)) next.delete(id); else next.add(id);
+    return next;
+  });
   const sel = picked || rows[0] || null;
   const hunts = window.HUNTS || [];
   const stats = window.HUNT_STATS || {};
@@ -791,6 +816,12 @@ function LibraryToolFirst() {
   const catCounts = useMemo(() => {
     const counts = { Flames: 0, Embers: 0, Alchemy: 0 };
     hunts.forEach(h => { if (counts[h.cat] != null) counts[h.cat]++; });
+    return counts;
+  }, [hunts]);
+
+  const dsCounts = useMemo(() => {
+    const counts = {};
+    hunts.forEach(h => h.ds.forEach(c => { counts[c] = (counts[c] || 0) + 1; }));
     return counts;
   }, [hunts]);
 
@@ -887,11 +918,33 @@ function LibraryToolFirst() {
             </div>
           </div>
 
+          {DS_CATEGORIES.length > 0 && (
+            <div className="hl-dsrow" role="group" aria-label="Filter by data sources you have">
+              <span className="ds-label mono">Data I have</span>
+              {DS_CATEGORIES.map((c) => (
+                <button
+                  key={c.id}
+                  className={`ds-chip${sources.has(c.id) ? ' on' : ''}`}
+                  aria-pressed={sources.has(c.id)}
+                  title={c.description}
+                  onClick={() => toggleSource(c.id)}
+                >
+                  {DS_SHORT[c.id] || c.name}
+                  <span className="seg-n">{dsCounts[c.id] || 0}</span>
+                </button>
+              ))}
+              {sources.size > 0 && (
+                <button className="hl-clear" onClick={() => setSources(new Set())}>clear</button>
+              )}
+            </div>
+          )}
+
           <div className="hl-meta mono">
             <span><b>{rows.length}</b> of {hunts.length} hunts</span>
             <span className="dim">&middot;</span>
             <span className="dim">{cat === 'All' ? 'All categories' : cat}</span>
             {tactic !== 'All' && <><span className="dim">&middot;</span><span className="dim">{tactic}</span></>}
+            {sources.size > 0 && <><span className="dim">&middot;</span><span className="dim">runnable with {[...sources].map(dsName).join(' or ')}</span></>}
             {q && <><span className="dim">&middot;</span><span className="dim">&ldquo;{q}&rdquo;</span></>}
             <span className="grow" />
             <span className="dim">Press <span className="kbd">/</span> to focus &middot; <span className="kbd">esc</span> to clear</span>
@@ -922,6 +975,43 @@ Object.assign(window, { LibraryToolFirst });
 const { useState: _useState, useEffect: _useEffect } = React;
 
 /* ── Mapping helpers ─── */
+
+/* Data source categories. A hunt's own data_source_categories win; hunts
+   without them fall back to categories derived from their ATT&CK techniques
+   via /datasource-mapping.json (same rule as src/lib/datasources.ts). */
+const DS_SHORT = {
+  endpoint: 'Endpoint', windows: 'Windows', network: 'Network', cloud: 'Cloud',
+  identity: 'Identity', email: 'Email', web_proxy: 'Web proxy',
+  application: 'Application', macos: 'macOS', appliance: 'Appliance',
+};
+let DS_CATEGORIES = [];
+const DS_NAMES = {};
+const DS_BY_TECHNIQUE = new Map();
+
+function dsName(id) { return DS_NAMES[id] || DS_SHORT[id] || id; }
+
+function loadDatasourceMapping(mapping) {
+  DS_CATEGORIES = (mapping.categories || []).map(({ id, name, description }) => ({ id, name, description }));
+  for (const c of mapping.categories || []) {
+    DS_NAMES[c.id] = c.name;
+    for (const t of c.techniques || []) {
+      const key = t.replace('_', '.');
+      if (!DS_BY_TECHNIQUE.has(key)) DS_BY_TECHNIQUE.set(key, new Set());
+      DS_BY_TECHNIQUE.get(key).add(c.id);
+    }
+  }
+}
+
+function huntDataSources(h) {
+  if (h.data_source_categories && h.data_source_categories.length) {
+    return { ds: [...h.data_source_categories], dsOrigin: 'declared' };
+  }
+  const techs = (h.techniques && h.techniques.length ? h.techniques : (h.tags || []).filter(t => /^T\d{4}([._]\d{3})?$/.test(t)));
+  const found = new Set();
+  techs.forEach(t => DS_BY_TECHNIQUE.get(t.replace('_', '.'))?.forEach(c => found.add(c)));
+  const order = DS_CATEGORIES.map(c => c.id);
+  return { ds: [...found].sort((a, b) => order.indexOf(a) - order.indexOf(b)), dsOrigin: found.size ? 'attack' : 'none' };
+}
 
 function extractTechnique(tags) {
   const tag = (tags || []).find(t => /^T\d{4}/.test(t));
@@ -968,6 +1058,7 @@ function mapHunt(h) {
     technique: extractTechnique(h.tags),
     source: inferSource(h.tags),
     who: extractHandle(h.submitter),
+    ...huntDataSources(h),
     added: '—',
     status: 'merged',
     github: h.file_path
@@ -1009,12 +1100,18 @@ function App() {
   }, [pal]);
 
   _useEffect(() => {
-    fetch('/hunts-data.json')
-      .then(r => {
+    const mappingReq = fetch('/datasource-mapping.json')
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(loadDatasourceMapping)
+      .catch(err => console.error('Failed to load data source mapping:', err));
+    Promise.all([
+      fetch('/hunts-data.json').then(r => {
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
-      })
-      .then(raw => {
+      }),
+      mappingReq,
+    ])
+      .then(([raw]) => {
         window.HUNTS = raw.map(mapHunt);
 
         /* Tactic filter options until site-stats.json arrives (and if it
