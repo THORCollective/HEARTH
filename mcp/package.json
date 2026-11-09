@@ -1,0 +1,37 @@
+{
+  "name": "@thorcollective/hearth-mcp",
+  "version": "0.0.0",
+  "description": "MCP server for HEARTH threat hunting hypotheses",
+  "license": "MIT",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "hearth-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "data"
+  ],
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "tsc -p tsconfig.json",
+    "start": "node dist/index.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/THORCollective/HEARTH.git",
+    "directory": "mcp"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.4.0",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/client": "2.4.0",
+    "esbuild": "0.28.2",
+    "@types/node": "20.19.43"
+  }
+}
