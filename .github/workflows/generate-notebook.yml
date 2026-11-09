@@ -38,6 +38,10 @@ on:
         required: false
         type: string
 
+# Checks out code and uploads an artifact; writes nothing back to the repo.
+permissions:
+  contents: read
+
 jobs:
   generate-notebook:
     runs-on: ubuntu-latest

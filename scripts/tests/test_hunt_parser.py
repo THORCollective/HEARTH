@@ -17,7 +17,7 @@ def test_parses_frontmatter_format(fixtures_dir):
     assert hunt["submitter"]["link"] == "https://x.com/letswastetime"
     assert "credentialaccess" in hunt["tags"]
     assert hunt["why"].startswith("- The admin account")
-    assert "attack.mitre.org" in hunt["references"]
+    assert "https://attack.mitre.org/techniques/T1110/" in hunt["references"]
 
 
 def test_parses_legacy_table_format_via_fallback(fixtures_dir):

@@ -8,6 +8,7 @@ import io
 from pathlib import Path
 import random
 import sys
+from urllib.parse import urlparse
 
 _REPO_ROOT = str(Path(__file__).resolve().parent.parent.parent)
 if _REPO_ROOT not in sys.path:
@@ -65,13 +66,19 @@ def parse_source_url(issue_body):
     return url
 
 
+def is_medium_url(url):
+    """True only for medium.com and its subdomains, not URLs that merely contain the text."""
+    host = (urlparse(url).hostname or "").lower()
+    return host == "medium.com" or host.endswith(".medium.com")
+
+
 def get_medium_content(url):
     """
     Special handling for Medium articles which often block scrapers.
     Tries multiple approaches to get the content.
     """
     # Try the ?format=json endpoint that Medium provides
-    if 'medium.com' in url:
+    if is_medium_url(url):
         try:
             json_url = url.split('?')[0] + '?format=json'
             headers = {
@@ -137,7 +144,7 @@ def get_cti_content(url):
     Handles Brotli (br) and Zstandard (zstd) compression.
     """
     # Try Medium-specific approach first
-    if 'medium.com' in url:
+    if is_medium_url(url):
         medium_content = get_medium_content(url)
         if medium_content:
             return medium_content
