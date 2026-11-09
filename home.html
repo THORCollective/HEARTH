@@ -780,6 +780,24 @@
       }
 
       /* ----- AI demo block ----- */
+      .mcp-tools {
+        display: grid;
+        gap: 14px;
+      }
+      .mcp-tools div {
+        display: grid;
+        gap: 4px;
+      }
+      .mcp-tools b {
+        font-family: var(--mono);
+        font-size: 13px;
+        color: var(--ember-2);
+        font-weight: 500;
+      }
+      .mcp-tools span {
+        color: var(--fg-mute);
+        font-size: 14px;
+      }
       .demo {
         display: grid;
         grid-template-columns: 1.05fr 1fr;
@@ -2316,12 +2334,118 @@ SigninLogs
       </div>
     </section>
 
+    <!-- ====== MCP ====== -->
+    <section class="sec" id="mcp" style="padding-top: 0">
+      <div class="wrap">
+        <div class="sec-head">
+          <div>
+            <div class="sec-num">05 — In your AI assistant</div>
+            <h2 class="sec-title">Ask what<br />to <em>hunt.</em></h2>
+          </div>
+          <p class="sec-blurb">
+            The HEARTH MCP server puts the whole library inside Claude, Cursor,
+            VS Code and any other MCP client. Ask in plain language by keyword,
+            threat actor, or the logs you actually have. It's read-only, sends no
+            telemetry, and treats community hunt text as untrusted data.
+          </p>
+        </div>
+
+        <div class="demo">
+          <!-- left: install + question -->
+          <div class="pane">
+            <div class="pane-head">
+              <div class="dots"><i></i><i></i><i></i></div>
+              <span class="ti">install · one command</span>
+            </div>
+            <div class="pane-body">
+              <p class="dim"># Claude Code</p>
+              <p>
+                <span class="dim">$</span> claude mcp add hearth -- npx -y
+                @thorcollective/hearth-mcp
+              </p>
+              <p class="dim">
+                # Claude Desktop, Cursor, VS Code: see the setup guide
+              </p>
+              <p>&nbsp;</p>
+              <p class="dim">&gt; you</p>
+              <p>
+                What can I hunt for Volt Typhoon with firewall and appliance
+                logs?
+              </p>
+              <p class="dim">→ hunts_for_actor · Volt Typhoon (G1017)</p>
+              <div class="indent">
+                <p>
+                  data sources :
+                  <span style="color: var(--fg)">network, appliance</span>
+                </p>
+                <p>
+                  runnable now : <span class="ok">9 hunts</span> · 83 more need
+                  another source
+                </p>
+                <p>coverage : 55 / 81 ATT&amp;CK techniques</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- right: tools -->
+          <div class="pane">
+            <div class="pane-head">
+              <div class="dots">
+                <i style="background: var(--ember)"></i><i></i><i></i>
+              </div>
+              <span class="ti">four read-only tools</span>
+            </div>
+            <div class="hypothesis">
+              <div class="mcp-tools">
+                <div>
+                  <b>search_hunts</b
+                  ><span>Ranked search by keyword, tactic or data source.</span>
+                </div>
+                <div>
+                  <b>get_hunt</b
+                  ><span>A full hunt: hypothesis, notes, queries, sources.</span>
+                </div>
+                <div>
+                  <b>hunts_for_actor</b
+                  ><span>Hunts, coverage and gaps for a threat actor.</span>
+                </div>
+                <div>
+                  <b>hunts_for_datasources</b
+                  ><span>What your team can run with the logs it has.</span>
+                </div>
+              </div>
+              <div
+                style="display: flex; gap: 8px; margin-top: 18px; flex-wrap: wrap"
+              >
+                <a
+                  class="btn primary"
+                  style="font-size: 12px"
+                  href="https://github.com/THORCollective/HEARTH/tree/main/mcp#install"
+                  target="_blank"
+                  rel="noopener"
+                  >Setup guide &#x2192;</a
+                >
+                <a
+                  class="btn"
+                  style="font-size: 12px"
+                  href="https://www.npmjs.com/package/@thorcollective/hearth-mcp"
+                  target="_blank"
+                  rel="noopener"
+                  >npm package</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ====== KEEPERS ====== -->
     <section class="sec" id="keepers" style="padding-top: 0">
       <div class="wrap">
         <div class="sec-head">
           <div>
-            <div class="sec-num">05 — Keepers &amp; contributors</div>
+            <div class="sec-num">06 — Keepers &amp; contributors</div>
             <h2 class="sec-title">It takes<br />a <em>collective.</em></h2>
           </div>
           <p class="sec-blurb">
@@ -2412,6 +2536,7 @@ SigninLogs
               <li><a href="#peak">PEAK framework</a></li>
               <li><a href="graph.html">Coverage map</a></li>
               <li><a href="context-graph.html">Context graph</a></li>
+              <li><a href="#mcp">MCP server</a></li>
             </ul>
           </div>
           <div>
