@@ -52,16 +52,17 @@ function extractSourceLabel(url) {
   try {
     const u = new URL(url);
     const host = u.hostname.replace(/^www\./, '');
+    const isHost = (domain) => host === domain || host.endsWith(`.${domain}`);
 
     // CISA advisories
-    if (host.includes('cisa.gov')) {
+    if (isHost('cisa.gov')) {
       const match = url.match(/aa\d{2}-\d{3}[a-z]?/i);
       if (match) return `CISA Advisory ${match[0].toUpperCase()}`;
       if (url.includes('known-exploited-vulnerabilities')) return 'CISA KEV Catalog';
       return 'CISA Advisory';
     }
     // MSRC
-    if (host.includes('msrc.microsoft.com')) {
+    if (isHost('msrc.microsoft.com')) {
       const cveMatch = url.match(/CVE-\d{4}-\d+/i);
       if (cveMatch) return `MSRC ${cveMatch[0]}`;
       return 'Microsoft Security Response Center';

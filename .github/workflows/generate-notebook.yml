@@ -38,6 +38,10 @@ on:
         required: false
         type: string
 
+# Checks out code and uploads an artifact; writes nothing back to the repo.
+permissions:
+  contents: read
+
 jobs:
   generate-notebook:
     runs-on: ubuntu-latest
@@ -67,66 +71,44 @@ jobs:
           pip install -r requirements.txt
           pip install nbformat jupyter
 
+      # Hunt fields are community-written text. They reach the shell only as
+      # environment variables, never through ${{ }} in a script, so quotes or
+      # $(...) in a hypothesis can't run as commands. Only the hunt ID is
+      # reused in later steps, and it's validated first.
       - name: Prepare hunt data
         id: prepare-data
+        env:
+          HUNT_ID: ${{ github.event.client_payload.hunt_id || github.event.inputs.hunt_id }}
+          HUNT_TITLE: ${{ github.event.client_payload.hunt_title || github.event.inputs.hunt_title }}
+          HUNT_HYPOTHESIS: ${{ github.event.client_payload.hunt_hypothesis || github.event.inputs.hunt_hypothesis }}
+          HUNT_TACTIC: ${{ github.event.client_payload.hunt_tactic || github.event.inputs.hunt_tactic }}
+          HUNT_TAGS: ${{ github.event.client_payload.hunt_tags || github.event.inputs.hunt_tags }}
+          HUNT_REFERENCES: ${{ github.event.client_payload.hunt_references || github.event.inputs.hunt_references }}
+          HUNT_WHY: ${{ github.event.client_payload.hunt_why || github.event.inputs.hunt_why }}
+          HUNT_SUBMITTER: ${{ github.event.client_payload.hunt_submitter || github.event.inputs.hunt_submitter }}
         run: |
-          # Get hunt data from inputs or event payload
-          if [ "${{ github.event_name }}" == "repository_dispatch" ]; then
-            HUNT_ID="${{ github.event.client_payload.hunt_id }}"
-            HUNT_TITLE="${{ github.event.client_payload.hunt_title }}"
-            HUNT_HYPOTHESIS="${{ github.event.client_payload.hunt_hypothesis }}"
-            HUNT_TACTIC="${{ github.event.client_payload.hunt_tactic }}"
-            HUNT_TAGS="${{ github.event.client_payload.hunt_tags }}"
-            HUNT_REFERENCES="${{ github.event.client_payload.hunt_references }}"
-            HUNT_WHY="${{ github.event.client_payload.hunt_why }}"
-            HUNT_SUBMITTER="${{ github.event.client_payload.hunt_submitter }}"
-          else
-            HUNT_ID="${{ github.event.inputs.hunt_id }}"
-            HUNT_TITLE="${{ github.event.inputs.hunt_title }}"
-            HUNT_HYPOTHESIS="${{ github.event.inputs.hunt_hypothesis }}"
-            HUNT_TACTIC="${{ github.event.inputs.hunt_tactic }}"
-            HUNT_TAGS="${{ github.event.inputs.hunt_tags }}"
-            HUNT_REFERENCES="${{ github.event.inputs.hunt_references }}"
-            HUNT_WHY="${{ github.event.inputs.hunt_why }}"
-            HUNT_SUBMITTER="${{ github.event.inputs.hunt_submitter }}"
+          if ! [[ "$HUNT_ID" =~ ^[A-Z]{1,2}[0-9]{1,5}$ ]]; then
+            echo "::error::Invalid hunt ID; expected something like H123 or B057"
+            exit 1
           fi
-          
-          # Set outputs
-          echo "hunt_id=${HUNT_ID}" >> $GITHUB_OUTPUT
-          echo "hunt_title=${HUNT_TITLE}" >> $GITHUB_OUTPUT
-          echo "hunt_hypothesis=${HUNT_HYPOTHESIS}" >> $GITHUB_OUTPUT
-          echo "hunt_tactic=${HUNT_TACTIC}" >> $GITHUB_OUTPUT
-          echo "hunt_tags=${HUNT_TAGS}" >> $GITHUB_OUTPUT
-          echo "hunt_references=${HUNT_REFERENCES}" >> $GITHUB_OUTPUT
-          echo "hunt_why=${HUNT_WHY}" >> $GITHUB_OUTPUT
-          echo "hunt_submitter=${HUNT_SUBMITTER}" >> $GITHUB_OUTPUT
-
-      - name: Create hunt article file
-        run: |
+          echo "hunt_id=${HUNT_ID}" >> "$GITHUB_OUTPUT"
           mkdir -p temp-hunt-data
-          cat > temp-hunt-data/hunt_article.md << 'EOF'
-          # ${{ steps.prepare-data.outputs.hunt_title }}
-          
-          ## Hunt ID: ${{ steps.prepare-data.outputs.hunt_id }}
-          
-          ## Hypothesis
-          ${{ steps.prepare-data.outputs.hunt_hypothesis }}
-          
-          ## Tactic
-          ${{ steps.prepare-data.outputs.hunt_tactic }}
-          
-          ## Tags
-          ${{ steps.prepare-data.outputs.hunt_tags }}
-          
-          ## Why
-          ${{ steps.prepare-data.outputs.hunt_why }}
-          
-          ## References
-          ${{ steps.prepare-data.outputs.hunt_references }}
-          
-          ## Submitter
-          ${{ steps.prepare-data.outputs.hunt_submitter }}
-          EOF
+          python3 - <<'PY'
+          import os
+          e = os.environ
+          sections = [
+              f"# {e['HUNT_TITLE']}",
+              f"## Hunt ID: {e['HUNT_ID']}",
+              f"## Hypothesis\n{e['HUNT_HYPOTHESIS']}",
+              f"## Tactic\n{e['HUNT_TACTIC']}",
+              f"## Tags\n{e['HUNT_TAGS']}",
+              f"## Why\n{e['HUNT_WHY']}",
+              f"## References\n{e['HUNT_REFERENCES']}",
+              f"## Submitter\n{e['HUNT_SUBMITTER']}",
+          ]
+          with open("temp-hunt-data/hunt_article.md", "w", encoding="utf-8") as f:
+              f.write("\n\n".join(sections) + "\n")
+          PY
 
       - name: Generate notebook
         run: |

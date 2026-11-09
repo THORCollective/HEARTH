@@ -5,6 +5,10 @@ on:
   schedule:
     - cron: '0 0 * * *' # Runs at midnight every day
 
+# Commits the regenerated leaderboard.
+permissions:
+  contents: write
+
 jobs:
   update-leaderboard:
     runs-on: ubuntu-latest

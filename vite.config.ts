@@ -54,9 +54,6 @@ export default defineConfig({
     // Output configuration
     assetsDir: 'assets',
 
-    // Minification (using esbuild for reliability)
-    minify: 'esbuild',
-
     // Source maps for debugging
     sourcemap: false, // Disable in production for smaller bundle
   },

@@ -35,9 +35,9 @@ LABEL = "injection-reviewed"
 # controls other than tab/newline/CR, and Unicode tag characters / variation
 # selectors supplement (used to spell hidden sentences).
 HIDDEN = re.compile(
-    "[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f-\u009f\u00ad\u061c\u180e"
-    "\u200b-\u200f\u202a-\u202e\u2060-\u2064\u2066-\u2069\ufeff"
-    "\U000e0000-\U000e007f\U000e0100-\U000e01ef]"
+    r"[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f-\u009f\u00ad\u061c\u180e"
+    r"\u200b-\u200f\u202a-\u202e\u2060-\u2064\u2066-\u2069\ufeff"
+    r"\U000e0000-\U000e007f\U000e0100-\U000e01ef]"
 )
 
 _I = re.IGNORECASE
