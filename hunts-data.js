@@ -20,6 +20,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://x.com/letswastetime"
@@ -47,6 +51,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network"
+    ],
     "submitter": {
       "name": "John Grageda",
       "link": "https://www.linkedin.com/in/johngrageda/"
@@ -74,6 +83,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "John Grageda",
       "link": "https://www.linkedin.com/in/johngrageda/"
@@ -102,6 +115,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "windows",
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Jamie Williams",
       "link": "https://x.com/jamieantisocial"
@@ -130,6 +148,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Claire Stromboe",
       "link": "https://x.com/csthreathunting"
@@ -159,6 +181,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "web_proxy",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -189,6 +217,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "email"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -216,6 +248,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "windows",
+      "identity"
+    ],
     "submitter": {
       "name": "Jon Perez",
       "link": "https://bsky.app/profile/j-nohandle.bsky.social"
@@ -248,6 +284,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Joshua Hines",
       "link": ""
@@ -275,6 +315,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "cloud"
+    ],
     "submitter": {
       "name": "Bruce Breuer",
       "link": ""
@@ -301,6 +345,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Collin McClaine",
       "link": ""
@@ -331,6 +379,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity",
+      "application"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -360,6 +413,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -389,6 +446,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -420,6 +481,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -446,6 +511,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -477,6 +548,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -509,6 +583,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -542,6 +620,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -574,6 +658,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -606,6 +695,13 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -638,6 +734,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "identity",
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -669,6 +771,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -701,6 +808,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -733,6 +844,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "email",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -765,6 +881,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -798,6 +918,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -832,6 +956,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -872,6 +1002,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -906,6 +1041,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -941,6 +1081,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -975,6 +1119,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -1009,6 +1157,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -1047,6 +1199,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -1088,6 +1244,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -1122,6 +1282,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "identity"
+    ],
     "submitter": {
       "name": "Max Margolis",
       "link": ""
@@ -1160,6 +1325,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -1199,6 +1368,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -1237,6 +1410,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -1278,6 +1455,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -1320,6 +1501,11 @@ const HUNTS_DATA = [
     "status": "current",
     "related_hunt_ids": [
       "H279"
+    ],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -1366,6 +1552,9 @@ const HUNTS_DATA = [
       "H282",
       "H283"
     ],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -1411,6 +1600,11 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "H286",
       "H288"
+    ],
+    "data_source_categories": [
+      "cloud",
+      "identity",
+      "email"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -1460,6 +1654,9 @@ const HUNTS_DATA = [
       "H290",
       "H291"
     ],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -1507,6 +1704,11 @@ const HUNTS_DATA = [
       "B020",
       "H297"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -1546,6 +1748,10 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "H300",
       "H301"
+    ],
+    "data_source_categories": [
+      "windows",
+      "identity"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -1591,6 +1797,11 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "H308"
     ],
+    "data_source_categories": [
+      "windows",
+      "identity",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -1633,6 +1844,10 @@ const HUNTS_DATA = [
     "status": "current",
     "related_hunt_ids": [
       "H314"
+    ],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -1677,6 +1892,11 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "H313",
       "M044"
+    ],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "web_proxy"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -1725,6 +1945,10 @@ const HUNTS_DATA = [
       "H325",
       "H326"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -1772,6 +1996,12 @@ const HUNTS_DATA = [
       "H305",
       "H327"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -1816,6 +2046,10 @@ const HUNTS_DATA = [
       "H331",
       "H332",
       "H270"
+    ],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -1866,6 +2100,11 @@ const HUNTS_DATA = [
       "H286",
       "H324"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -1903,6 +2142,11 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "H336"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -1938,6 +2182,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -1982,6 +2230,10 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "H355"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2023,6 +2275,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2065,6 +2321,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2108,6 +2369,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2148,6 +2414,14 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy",
+      "application",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2188,6 +2462,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "windows",
+      "network",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2238,6 +2517,11 @@ const HUNTS_DATA = [
       "H306",
       "B045"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2276,6 +2560,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2308,6 +2596,13 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2341,6 +2636,13 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "identity",
+      "application",
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2376,6 +2678,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2419,6 +2725,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2465,6 +2775,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "web_proxy",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2504,6 +2818,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "web_proxy",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2554,6 +2872,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "identity",
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2581,6 +2904,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "identity"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://x.com/letswastetime"
@@ -2609,6 +2936,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://x.com/letswastetime"
@@ -2636,6 +2967,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "web_proxy",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -2663,6 +3000,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "John Grageda",
       "link": "https://www.linkedin.com/in/johngrageda/"
@@ -2690,6 +3032,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "John Grageda",
       "link": "https://www.linkedin.com/in/johngrageda/"
@@ -2716,6 +3061,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "identity"
+    ],
     "submitter": {
       "name": "Jamie Williams",
       "link": "https://x.com/jamieantisocial"
@@ -2742,6 +3093,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Jamie Williams",
       "link": "https://x.com/jamieantisocial"
@@ -2768,6 +3123,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "identity"
+    ],
     "submitter": {
       "name": "Audra Streetman",
       "link": "https://x.com/audrastreetman"
@@ -2794,6 +3154,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Azrara",
       "link": "https://www.linkedin.com/in/azrara/"
@@ -2820,6 +3185,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Azrara",
       "link": "https://www.linkedin.com/in/azrara/"
@@ -2848,6 +3217,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "hu983r",
       "link": "https://github.com/Communicateme"
@@ -2877,6 +3249,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network"
+    ],
     "submitter": {
       "name": "Cody Lunday",
       "link": "https://www.linkedin.com/in/codylunday/"
@@ -2905,6 +3280,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Siddhant Mishra",
       "link": "https://www.linkedin.com/in/siddhant-mishra-b190b630/"
@@ -2936,6 +3315,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Siddhant Mishra",
       "link": "https://github.com/Blackbird2Raven"
@@ -2966,6 +3349,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "wikijm",
       "link": "https://github.com/wikijm"
@@ -2992,6 +3379,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "identity",
+      "appliance"
+    ],
     "submitter": {
       "name": "HEARTH Bot",
       "link": "https://github.com/THORCollective/HEARTH"
@@ -3019,6 +3411,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "application"
+    ],
     "submitter": {
       "name": "HEARTH Bot",
       "link": "https://github.com/THORCollective/HEARTH"
@@ -3046,6 +3442,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud"
+    ],
     "submitter": {
       "name": "HEARTH Bot",
       "link": "https://github.com/THORCollective/HEARTH"
@@ -3074,6 +3473,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "HEARTH Bot",
       "link": "https://github.com/THORCollective/HEARTH"
@@ -3100,6 +3502,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network"
+    ],
     "submitter": {
       "name": "HEARTH Bot",
       "link": "https://github.com/THORCollective/HEARTH"
@@ -3126,6 +3533,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "HEARTH Bot",
       "link": "https://github.com/THORCollective/HEARTH"
@@ -3152,6 +3563,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -3178,6 +3593,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -3207,6 +3626,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -3237,6 +3660,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -3263,6 +3690,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -3290,6 +3721,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "web_proxy",
+      "macos"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -3317,6 +3754,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -3344,6 +3785,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -3371,6 +3816,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -3398,6 +3847,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -3426,6 +3879,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -3454,6 +3911,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -3482,6 +3945,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "macos"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -3511,6 +3979,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -3538,6 +4010,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -3566,6 +4042,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "web_proxy",
+      "application"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -3593,6 +4073,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -3620,6 +4104,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -3647,6 +4134,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "windows",
+      "network",
+      "identity"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -3674,6 +4166,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "appliance"
+    ],
     "submitter": {
       "name": "Jocko",
       "link": ""
@@ -3701,6 +4196,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Jocko",
       "link": ""
@@ -3728,6 +4227,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Jocko",
       "link": ""
@@ -3755,6 +4258,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -3782,6 +4289,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -3811,6 +4324,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network"
+    ],
     "submitter": {
       "name": "DarkWizardCatcher",
       "link": ""
@@ -3838,6 +4356,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -3870,6 +4393,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Joshua Hines",
       "link": ""
@@ -3899,6 +4426,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "email"
+    ],
     "submitter": {
       "name": "Bruce Breuer",
       "link": ""
@@ -3927,6 +4458,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "windows",
+      "identity"
+    ],
     "submitter": {
       "name": "Bruce Breuer",
       "link": ""
@@ -3955,6 +4490,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Apramey \"Apps\" S",
       "link": ""
@@ -3983,6 +4522,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -4010,6 +4553,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "application"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -4038,6 +4585,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://www.linkedin.com/in/sydneymarrone/"
@@ -4066,6 +4617,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Anonymous",
       "link": ""
@@ -4093,6 +4648,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Azrara",
       "link": "https://www.linkedin.com/in/azrara/"
@@ -4120,6 +4679,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Shaimon Weslley",
       "link": "https://www.linkedin.com/in/weslley-s-1540b356/"
@@ -4148,6 +4711,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Duc Viet Hoang",
       "link": "https://linkedin.com/in/hvdtsof/"
@@ -4176,6 +4743,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "samuel-lucas6",
       "link": ""
@@ -4204,6 +4775,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "tsof-smoky",
       "link": ""
@@ -4232,6 +4807,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "appliance"
+    ],
     "submitter": {
       "name": "p-o-s-t",
       "link": "https://github.com/p-o-s-t"
@@ -4260,6 +4838,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "p-o-s-t",
       "link": "https://github.com/p-o-s-t"
@@ -4288,6 +4872,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "odanh",
       "link": ""
@@ -4316,6 +4904,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network"
+    ],
     "submitter": {
       "name": "DarkWizardCatcher",
       "link": ""
@@ -4345,6 +4936,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "appliance"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -4376,6 +4970,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -4406,6 +5004,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "application",
+      "macos"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -4437,6 +5041,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "email",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -4469,6 +5079,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -4498,6 +5113,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -4527,6 +5146,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -4556,6 +5180,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -4588,6 +5216,13 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "email",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -4620,6 +5255,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "appliance"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -4652,6 +5291,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "appliance"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -4686,6 +5330,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -4720,6 +5369,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "appliance"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -4757,6 +5411,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "email",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -4791,6 +5451,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "identity"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -4825,6 +5490,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -4860,6 +5530,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "application",
+      "macos"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -4892,6 +5568,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "application",
+      "macos"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -4924,6 +5606,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "email"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -4959,6 +5646,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -4988,6 +5679,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -5020,6 +5716,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -5052,6 +5753,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "application",
+      "macos"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -5087,6 +5794,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -5121,6 +5833,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -5154,6 +5870,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -5189,6 +5910,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "macos"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -5219,6 +5945,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "web_proxy",
+      "application"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -5250,6 +5981,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -5281,6 +6016,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -5313,6 +6052,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "application"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -5347,6 +6090,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "windows",
+      "network",
+      "identity",
+      "appliance"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -5379,6 +6128,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "web_proxy",
+      "macos"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -5411,6 +6166,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -5443,6 +6202,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "cloud"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -5475,6 +6239,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "application"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -5503,6 +6271,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Alan G",
       "link": ""
@@ -5531,6 +6303,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network"
+    ],
     "submitter": {
       "name": "Alan G",
       "link": ""
@@ -5559,6 +6335,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "application",
+      "macos"
+    ],
     "submitter": {
       "name": "Anonymous",
       "link": ""
@@ -5586,6 +6367,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "web_proxy",
+      "application"
+    ],
     "submitter": {
       "name": "smossmos",
       "link": "https://github.com/smossmos"
@@ -5615,6 +6401,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "web_proxy",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -5645,6 +6437,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -5672,6 +6468,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -5700,6 +6500,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -5728,6 +6532,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "windows",
+      "network"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -5758,6 +6566,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -5786,6 +6598,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -5815,6 +6632,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -5844,6 +6665,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -5873,6 +6698,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -5902,6 +6733,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -5933,6 +6768,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -5961,6 +6801,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -5989,6 +6833,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "cloud",
+      "email"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6017,6 +6867,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6045,6 +6900,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6076,6 +6936,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6105,6 +6970,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity",
+      "email"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6133,6 +7003,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6161,6 +7036,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6189,6 +7067,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6217,6 +7099,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6246,6 +7132,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6274,6 +7165,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6303,6 +7198,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6331,6 +7230,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6359,6 +7262,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6388,6 +7295,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6416,6 +7327,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6444,6 +7359,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6473,6 +7391,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6502,6 +7424,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6532,6 +7458,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "cloud"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6565,6 +7496,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6594,6 +7528,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6626,6 +7563,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6658,6 +7598,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "application",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6686,6 +7632,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "application"
+    ],
     "submitter": {
       "name": "Omer M",
       "link": ""
@@ -6716,6 +7665,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6747,6 +7700,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6777,6 +7733,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "email"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6806,6 +7766,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6838,6 +7801,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6871,6 +7838,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6905,6 +7876,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity",
+      "email"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6937,6 +7913,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -6970,6 +7950,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7002,6 +7986,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7034,6 +8023,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7066,6 +8060,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7099,6 +8097,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7132,6 +8135,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7165,6 +8172,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7196,6 +8207,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7229,6 +8243,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "cloud",
+      "email"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7263,6 +8282,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7299,6 +8323,13 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "identity",
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7336,6 +8367,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7372,6 +8407,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7408,6 +8446,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7444,6 +8486,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7475,6 +8521,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7506,6 +8557,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "cloud"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7538,6 +8594,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7570,6 +8631,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7602,6 +8667,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7634,6 +8703,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7667,6 +8741,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7699,6 +8778,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "application",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7731,6 +8816,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7763,6 +8852,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7795,6 +8887,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7827,6 +8922,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7859,6 +8958,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7891,6 +8994,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "cloud"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7919,6 +9026,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "asteinbr",
       "link": ""
@@ -7955,6 +9066,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -7991,6 +9106,14 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "cloud",
+      "identity",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -8025,6 +9148,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -8061,6 +9188,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -8097,6 +9228,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -8127,6 +9261,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -8160,6 +9298,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -8189,6 +9331,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -8218,6 +9363,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -8248,6 +9396,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "web_proxy",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -8279,6 +9433,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -8309,6 +9467,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -8339,6 +9501,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -8371,6 +9537,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -8404,6 +9574,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -8436,6 +9610,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -8468,6 +9646,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -8502,6 +9684,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -8536,6 +9722,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -8564,6 +9754,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Badger",
       "link": ""
@@ -8592,6 +9785,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "email"
+    ],
     "submitter": {
       "name": "T3chn3",
       "link": ""
@@ -8619,6 +9816,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "web_proxy",
+      "macos"
+    ],
     "submitter": {
       "name": "Shilpa Merlin Joy",
       "link": "https://github.com/shilpamerlin/"
@@ -8647,6 +9850,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "appliance"
+    ],
     "submitter": {
       "name": "young6x7",
       "link": ""
@@ -8681,6 +9888,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -8715,6 +9926,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -8749,6 +9963,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -8782,6 +10000,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -8813,6 +10035,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -8858,6 +10084,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "cloud"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": ""
@@ -8886,6 +10118,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "th3CyF0x",
       "link": "https://x.com/th3cyf0x"
@@ -8914,6 +10150,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "web_proxy",
+      "application"
+    ],
     "submitter": {
       "name": "kkroth0",
       "link": ""
@@ -8941,6 +10181,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "kkroth0",
       "link": "https://github.com/kkroth0"
@@ -8974,6 +10219,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -9008,6 +10257,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -9048,6 +10301,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -9081,6 +10338,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -9115,6 +10376,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -9143,6 +10408,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "web_proxy",
+      "application"
+    ],
     "submitter": {
       "name": "Anonymous",
       "link": ""
@@ -9182,6 +10451,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "application"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -9222,6 +10497,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -9264,6 +10543,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -9298,6 +10581,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -9333,6 +10620,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -9364,6 +10656,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -9399,6 +10696,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -9430,6 +10731,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -9465,6 +10770,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -9510,6 +10819,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -9552,6 +10865,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -9584,6 +10901,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -9612,6 +10933,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Anonymous",
       "link": ""
@@ -9639,6 +10963,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "identity",
+      "email"
+    ],
     "submitter": {
       "name": "Shilpa Merlin Joy",
       "link": "www.linkedin.com/in/shilpa-merlin"
@@ -9679,6 +11007,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "application",
+      "macos"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -9714,6 +11048,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "identity",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -9748,6 +11086,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -9794,6 +11136,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "macos"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -9822,6 +11170,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "identity"
+    ],
     "submitter": {
       "name": "Kelly Lehman",
       "link": ""
@@ -9863,6 +11214,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -9902,6 +11257,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -9940,6 +11299,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -9974,6 +11337,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -10008,6 +11375,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -10042,6 +11412,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -10078,6 +11452,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -10114,6 +11493,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -10150,6 +11533,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -10187,6 +11574,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -10222,6 +11613,13 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "cloud",
+      "identity",
+      "email"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -10260,6 +11658,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -10305,6 +11707,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -10348,6 +11754,13 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "cloud",
+      "application",
+      "macos"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -10386,6 +11799,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -10424,6 +11842,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -10462,6 +11884,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -10497,6 +11923,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -10536,6 +11966,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "application",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -10575,6 +12010,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -10607,6 +12046,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "identity"
+    ],
     "submitter": {
       "name": "Twitter - 0xDroogy",
       "link": "https://t.co/JHM8u3D9na",
@@ -10649,6 +12091,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -10690,6 +12136,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -10730,6 +12180,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -10767,6 +12221,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -10820,6 +12280,13 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy",
+      "application"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -10870,6 +12337,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "cloud",
+      "application",
+      "macos"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -10898,6 +12371,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity",
+      "email"
+    ],
     "submitter": {
       "name": "Anonymous",
       "link": ""
@@ -10934,6 +12412,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -10971,6 +12453,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -11006,6 +12493,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -11045,6 +12536,14 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "cloud",
+      "identity",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -11088,6 +12587,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -11116,6 +12621,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "MusangK1ng",
       "link": ""
@@ -11155,6 +12663,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -11194,6 +12706,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -11234,6 +12750,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -11276,6 +12797,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "email"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -11317,6 +12843,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -11359,6 +12890,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -11402,6 +12937,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "web_proxy",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -11444,6 +12985,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -11486,6 +13031,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -11527,6 +13075,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -11569,6 +13121,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -11613,6 +13168,9 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "H282"
     ],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -11654,6 +13212,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -11683,6 +13246,13 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "application",
+      "macos"
+    ],
     "submitter": {
       "name": "DejaWh0",
       "link": ""
@@ -11725,6 +13295,13 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "identity",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -11764,6 +13341,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -11808,6 +13390,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -11851,6 +13437,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -11891,6 +13480,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -11932,6 +13524,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -11973,6 +13568,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -12016,6 +13615,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -12058,6 +13663,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "web_proxy",
+      "application"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -12087,6 +13697,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "DejaWh0",
       "link": ""
@@ -12130,6 +13745,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "web_proxy",
+      "application"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -12175,6 +13795,10 @@ const HUNTS_DATA = [
     "status": "current",
     "related_hunt_ids": [
       "H298"
+    ],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -12222,6 +13846,12 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "H297"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -12267,6 +13897,9 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "M041"
     ],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -12306,6 +13939,11 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "H301",
       "B046"
+    ],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "identity"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -12348,6 +13986,11 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "H300",
       "B046"
+    ],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "identity"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -12392,6 +14035,10 @@ const HUNTS_DATA = [
       "H303",
       "M042"
     ],
+    "data_source_categories": [
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -12434,6 +14081,9 @@ const HUNTS_DATA = [
       "H302",
       "M042"
     ],
+    "data_source_categories": [
+      "email"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -12474,6 +14124,12 @@ const HUNTS_DATA = [
     "status": "current",
     "related_hunt_ids": [
       "H305"
+    ],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -12516,6 +14172,11 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "H304"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -12556,6 +14217,13 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "M043",
       "H307"
+    ],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy",
+      "application"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -12598,6 +14266,13 @@ const HUNTS_DATA = [
       "H306",
       "M043"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -12637,6 +14312,13 @@ const HUNTS_DATA = [
     "status": "current",
     "related_hunt_ids": [
       "B047"
+    ],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "identity",
+      "application"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -12684,6 +14366,11 @@ const HUNTS_DATA = [
       "H310",
       "M036"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -12726,6 +14413,11 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "H309",
       "M036"
+    ],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "web_proxy"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -12773,6 +14465,12 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "H312"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "web_proxy",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -12814,6 +14512,12 @@ const HUNTS_DATA = [
     "status": "current",
     "related_hunt_ids": [
       "H311"
+    ],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -12862,6 +14566,12 @@ const HUNTS_DATA = [
       "B049",
       "H270"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -12908,6 +14618,10 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "B048"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -12950,6 +14664,11 @@ const HUNTS_DATA = [
     "status": "current",
     "related_hunt_ids": [
       "H316"
+    ],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "macos"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -12997,6 +14716,11 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "H315",
       "H270"
+    ],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "macos"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -13046,6 +14770,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -13096,6 +14824,11 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "H319",
       "H320"
+    ],
+    "data_source_categories": [
+      "endpoint",
+      "web_proxy",
+      "application"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -13149,6 +14882,9 @@ const HUNTS_DATA = [
       "H318",
       "H320"
     ],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -13198,6 +14934,10 @@ const HUNTS_DATA = [
       "H318",
       "H319"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "network"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -13242,6 +14982,10 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "B050"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -13283,6 +15027,11 @@ const HUNTS_DATA = [
     "status": "current",
     "related_hunt_ids": [
       "H323"
+    ],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "web_proxy"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -13326,6 +15075,10 @@ const HUNTS_DATA = [
     "status": "current",
     "related_hunt_ids": [
       "H322"
+    ],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -13372,6 +15125,11 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "B050"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -13412,6 +15170,12 @@ const HUNTS_DATA = [
     "status": "current",
     "related_hunt_ids": [
       "H326"
+    ],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "web_proxy",
+      "macos"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -13459,6 +15223,10 @@ const HUNTS_DATA = [
       "H325",
       "B050"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -13503,6 +15271,11 @@ const HUNTS_DATA = [
     "status": "current",
     "related_hunt_ids": [
       "B051"
+    ],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "application"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -13553,6 +15326,10 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "H305"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -13596,6 +15373,12 @@ const HUNTS_DATA = [
       "B051",
       "H169",
       "M046"
+    ],
+    "data_source_categories": [
+      "network",
+      "cloud",
+      "identity",
+      "web_proxy"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -13641,6 +15424,12 @@ const HUNTS_DATA = [
       "H332",
       "H304",
       "B052"
+    ],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -13691,6 +15480,10 @@ const HUNTS_DATA = [
       "H332",
       "B052"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -13739,6 +15532,10 @@ const HUNTS_DATA = [
       "H024",
       "B049"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -13780,6 +15577,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "web_proxy",
+      "application"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -13816,6 +15619,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "identity",
+      "application"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -13851,6 +15658,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -13891,6 +15702,11 @@ const HUNTS_DATA = [
       "H272",
       "H334"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -13928,6 +15744,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -13963,6 +15785,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -14001,6 +15827,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -14039,6 +15869,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -14077,6 +15913,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -14115,6 +15957,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -14152,6 +16000,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -14190,6 +16044,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -14227,6 +16085,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -14264,6 +16126,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "email",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -14302,6 +16170,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -14342,6 +16216,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -14380,6 +16258,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -14422,6 +16304,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -14468,6 +16354,11 @@ const HUNTS_DATA = [
       "H296",
       "B020"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "macos"
+    ],
     "submitter": {
       "name": "V3nom tech",
       "link": "https://github.com/v3nomtech"
@@ -14512,6 +16403,10 @@ const HUNTS_DATA = [
       "H353",
       "B056"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -14554,6 +16449,9 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "H352",
       "B056"
+    ],
+    "data_source_categories": [
+      "endpoint"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -14599,6 +16497,10 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "M053"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -14640,6 +16542,10 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "B056"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -14679,6 +16585,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -14717,6 +16627,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -14756,6 +16672,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "web_proxy",
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -14795,6 +16715,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -14834,6 +16757,14 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "identity",
+      "web_proxy",
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -14873,6 +16804,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -14912,6 +16848,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -14948,6 +16889,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -14988,6 +16933,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -15028,6 +16978,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -15069,6 +17024,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -15110,6 +17069,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -15142,6 +17105,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -15178,6 +17145,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "windows",
+      "cloud",
+      "identity",
+      "email"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -15219,6 +17192,14 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "cloud",
+      "email",
+      "web_proxy",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -15267,6 +17248,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -15312,6 +17298,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -15357,6 +17347,13 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "cloud",
+      "identity",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -15397,6 +17394,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -15436,6 +17438,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -15474,6 +17480,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -15513,6 +17523,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -15552,6 +17566,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "email"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -15591,6 +17610,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -15628,6 +17651,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -15672,6 +17701,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -15712,6 +17745,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -15753,6 +17791,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -15790,6 +17832,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -15832,6 +17878,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "windows",
+      "network",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -15872,6 +17923,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -15912,6 +17967,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -15952,6 +18011,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -15990,6 +18053,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "web_proxy",
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -16028,6 +18097,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -16066,6 +18141,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -16107,6 +18188,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -16149,6 +18234,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -16190,6 +18279,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "email",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -16238,6 +18333,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "email",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -16285,6 +18386,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "email",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -16330,6 +18437,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -16378,6 +18491,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -16416,6 +18534,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -16456,6 +18578,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -16496,6 +18622,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -16537,6 +18667,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -16581,6 +18714,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -16625,6 +18761,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -16669,6 +18809,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -16711,6 +18855,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "identity",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -16753,6 +18903,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "cloud"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -16797,6 +18952,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -16840,6 +19000,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -16885,6 +19050,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity",
+      "email"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -16921,6 +19091,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -16956,6 +19130,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -16991,6 +19168,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -17026,6 +19206,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -17061,6 +19246,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -17094,6 +19283,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -17128,6 +19321,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -17162,6 +19359,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "email"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -17197,6 +19399,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -17233,6 +19439,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -17269,6 +19481,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -17304,6 +19519,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -17339,6 +19560,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "web_proxy",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -17374,6 +19599,13 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "cloud",
+      "web_proxy",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -17439,6 +19671,13 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "cloud",
+      "web_proxy",
+      "macos"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -17485,6 +19724,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity",
+      "email"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -17532,6 +19776,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -17582,6 +19830,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -17626,6 +19878,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -17678,6 +19935,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -17729,6 +19989,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -17773,6 +20037,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "cloud",
+      "email",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -17820,6 +20090,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -17864,6 +20138,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "application",
+      "macos"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -17915,6 +20194,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -17963,6 +20246,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -18013,6 +20302,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -18063,6 +20358,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -18117,6 +20418,15 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "cloud",
+      "identity",
+      "web_proxy",
+      "application",
+      "macos"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -18168,6 +20478,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "cloud",
+      "application"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -18232,6 +20547,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "macos"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -18294,6 +20615,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "cloud",
+      "identity",
+      "macos"
+    ],
     "submitter": {
       "name": "Joshua Strickland",
       "link": "https://novasky.io"
@@ -18334,6 +20661,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -18376,6 +20706,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -18418,6 +20751,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -18459,6 +20796,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -18499,6 +20840,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "web_proxy",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -18548,6 +20894,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -18594,6 +20945,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -18640,6 +20995,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -18693,6 +21054,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -18740,6 +21105,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -18783,6 +21154,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -18830,6 +21204,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -18877,6 +21255,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -18927,6 +21311,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -18974,6 +21362,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -19019,6 +21412,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -19067,6 +21465,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -19114,6 +21516,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -19161,6 +21567,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -19186,6 +21598,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "identity"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://x.com/letswastetime"
@@ -19211,6 +21626,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network"
+    ],
     "submitter": {
       "name": "Sydney Marrone",
       "link": "https://x.com/letswastetime"
@@ -19234,6 +21652,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network"
+    ],
     "submitter": {
       "name": "John Grageda",
       "link": "https://www.linkedin.com/in/johngrageda/"
@@ -19257,6 +21678,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "application"
+    ],
     "submitter": {
       "name": "John Grageda",
       "link": "https://www.linkedin.com/in/johngrageda/"
@@ -19280,6 +21704,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Audra Streetman",
       "link": "https://x.com/audrastreetman"
@@ -19307,6 +21735,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Ryan Fetterman",
       "link": "https://github.com/fetterm4n"
@@ -19335,6 +21767,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Ryan Fetterman",
       "link": "https://github.com/fetterm4n"
@@ -19367,6 +21803,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -19402,6 +21842,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "macos"
+    ],
     "submitter": {
       "name": "Jinx (THOR Collective)",
       "link": ""
@@ -19432,6 +21878,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -19464,6 +21914,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -19496,6 +21949,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -19528,6 +21986,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "cloud",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -19560,6 +22024,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -19591,6 +22060,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "email",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -19623,6 +22098,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -19660,6 +22140,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -19698,6 +22182,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "windows",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -19733,6 +22221,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -19767,6 +22261,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -19795,6 +22293,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -19828,6 +22329,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -19863,6 +22367,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -19899,6 +22406,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "email",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -19936,6 +22448,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -19974,6 +22489,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -20013,6 +22533,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "cloud"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -20053,6 +22578,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -20094,6 +22625,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -20135,6 +22670,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -20177,6 +22717,13 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -20218,6 +22765,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -20260,6 +22813,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -20302,6 +22860,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "email",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -20345,6 +22909,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -20391,6 +22959,9 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "H299"
     ],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -20434,6 +23005,10 @@ const HUNTS_DATA = [
       "H302",
       "H303"
     ],
+    "data_source_categories": [
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -20474,6 +23049,13 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "H306",
       "H307"
+    ],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy",
+      "application"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -20518,6 +23100,9 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "H314",
       "M045"
+    ],
+    "data_source_categories": [
+      "endpoint"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -20564,6 +23149,10 @@ const HUNTS_DATA = [
     "status": "current",
     "related_hunt_ids": [
       "H313"
+    ],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -20612,6 +23201,11 @@ const HUNTS_DATA = [
       "H169",
       "H329"
     ],
+    "data_source_categories": [
+      "cloud",
+      "identity",
+      "email"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -20652,6 +23246,9 @@ const HUNTS_DATA = [
     "status": "current",
     "related_hunt_ids": [
       "H169"
+    ],
+    "data_source_categories": [
+      "email"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -20700,6 +23297,10 @@ const HUNTS_DATA = [
       "B015",
       "H053"
     ],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -20737,6 +23338,10 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "M036",
       "H335"
+    ],
+    "data_source_categories": [
+      "endpoint",
+      "web_proxy"
     ],
     "submitter": {
       "name": "Lauren Proehl",
@@ -20776,6 +23381,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -20811,6 +23420,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -20849,6 +23462,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -20895,6 +23512,11 @@ const HUNTS_DATA = [
     "related_hunt_ids": [
       "H354"
     ],
+    "data_source_categories": [
+      "cloud",
+      "identity",
+      "email"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -20937,6 +23559,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "web_proxy",
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -20978,6 +23604,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "email"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -21024,6 +23654,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity",
+      "email",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -21062,6 +23698,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -21100,6 +23739,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -21141,6 +23784,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -21187,6 +23833,14 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "windows",
+      "network",
+      "cloud",
+      "identity",
+      "application",
+      "appliance"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -21228,6 +23882,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -21264,6 +23922,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -21300,6 +23962,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network",
+      "web_proxy",
+      "application"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -21346,6 +24013,10 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -21390,6 +24061,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -21436,6 +24112,12 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "network",
+      "web_proxy"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -21485,6 +24167,11 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "endpoint",
+      "windows",
+      "identity"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -21526,6 +24213,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "cloud"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
@@ -21569,6 +24259,9 @@ const HUNTS_DATA = [
     "severity": null,
     "status": "current",
     "related_hunt_ids": [],
+    "data_source_categories": [
+      "network"
+    ],
     "submitter": {
       "name": "Lauren Proehl",
       "link": "https://x.com/jotunvillur"
