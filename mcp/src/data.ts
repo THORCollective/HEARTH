@@ -12,6 +12,7 @@ import {
   type TechniqueIndex,
 } from "../../src/lib/datasources";
 import type { Hunt } from "../../src/types/Hunt";
+import { cleanDeep } from "./sanitize";
 
 /** Mirrors DATA_SOURCE_CATEGORIES in scripts/hunt_schema.py. */
 export const DATA_SOURCE_IDS = [
@@ -153,7 +154,8 @@ export interface RawData {
 }
 
 export function parseData(raw: RawData): HearthData {
-  const hunts = z.array(HuntSchema).min(1).parse(raw.hunts) as Hunt[];
+  // Hunt text is community-written: validate, then clean it before serving.
+  const hunts = cleanDeep(z.array(HuntSchema).min(1).parse(raw.hunts)) as Hunt[];
   const mapping = MappingSchema.parse(raw.mapping);
   const graph = GraphSchema.parse(raw.graph ?? { nodes: [], edges: [] });
   const mentions = MentionsSchema.parse(

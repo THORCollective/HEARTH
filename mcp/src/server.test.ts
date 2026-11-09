@@ -78,7 +78,7 @@ describe("get_hunt", () => {
     expect(h.url).toBe(
       "https://github.com/THORCollective/HEARTH/blob/main/Flames/H087.md",
     );
-    expect(JSON.parse(r.content[0].text).id).toBe("H087");
+    expect(JSON.parse(r.content[0].text.split("\n").slice(1).join("\n")).id).toBe("H087");
   });
 
   it("accepts lowercase ids", async () => {
