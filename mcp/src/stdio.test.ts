@@ -110,7 +110,7 @@ describe("stdio server", () => {
 });
 
 describe("published package", () => {
-  it("ships only the bundle, data snapshot, README and package.json", () => {
+  it("ships only the bundle, data snapshot, LICENSE, README and package.json", () => {
     const out = execFileSync(
       "npm",
       ["pack", "--dry-run", "--json", "--ignore-scripts"],
@@ -123,6 +123,7 @@ describe("published package", () => {
       .map((f) => f.path)
       .sort();
     expect(files).toEqual([
+      "LICENSE",
       "README.md",
       "data/actor-mentions.json",
       "data/context-graph-data.json",
@@ -132,6 +133,12 @@ describe("published package", () => {
       "dist/index.js",
       "package.json",
     ]);
+  });
+
+  it("ships the same LICENSE as the repository", () => {
+    expect(readFileSync(join(MCP_DIR, "LICENSE"), "utf8")).toBe(
+      readFileSync(join(MCP_DIR, "..", "LICENSE"), "utf8"),
+    );
   });
 
   it("has a shebang so npx can run the bin directly", () => {
