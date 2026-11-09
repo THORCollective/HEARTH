@@ -28,9 +28,15 @@ describe("golden hunts_for_actor", () => {
     expect(out.actor.id).toBe(g.expect_actor);
     const top = new Set(out.hunts.slice(0, g.expect_top_ids.length).map((h: any) => h.id));
     expect(top).toEqual(new Set(g.expect_top_ids));
-    if (g.expect_not_in_top) {
-      const head = out.hunts.slice(0, g.expect_not_in_top.n).map((h: any) => h.id);
-      for (const id of g.expect_not_in_top.ids) expect(head).not.toContain(id);
+    if (g.expect_full_matches !== undefined) {
+      expect(out.full_matches).toBe(g.expect_full_matches);
+      // Fully runnable hunts come straight after any that name the actor.
+      const full = out.hunts.slice(0, g.expect_full_matches);
+      for (const h of full) expect(h.missing_sources).toEqual([]);
+    }
+    for (const id of g.expect_weak_ids ?? []) {
+      const h = out.hunts.find((x: any) => x.id === id);
+      expect(h?.relevance).toBeLessThan(1.5);
     }
   });
 });

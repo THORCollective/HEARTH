@@ -50,7 +50,7 @@
    "source": "actor-mentions.json"
   },
   {
-   "name": "Volt Typhoon, network + appliance: weak single-common-technique match ranks low",
+   "name": "Volt Typhoon, network + appliance: runnable hunts first, H064 flagged weak",
    "args": {
     "actor": "Volt Typhoon",
     "data_sources": [
@@ -62,13 +62,11 @@
    "expect_top_ids": [
     "H432"
    ],
-   "expect_not_in_top": {
-    "ids": [
-     "H064"
-    ],
-    "n": 80
-   },
-   "source": "2026-11-09 hearth-dev dry run: analyst judged H064 (Punycode domains, shares only T1036.005) a weak fit"
+   "source": "2026-11-09 hearth-dev dry run: analyst judged H064 (Punycode domains, shares only T1036.005) a weak fit; 9 fully runnable confirmed by hand in both dry runs",
+   "expect_full_matches": 9,
+   "expect_weak_ids": [
+    "H064"
+   ]
   }
  ],
  "hunts_for_datasources": [

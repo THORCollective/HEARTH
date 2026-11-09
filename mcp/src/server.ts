@@ -272,9 +272,18 @@ export function createServer(data: HearthData): McpServer {
           gap_techniques: z.number().int(),
         }),
         total_hunts: z.number().int(),
+        full_matches: z
+          .number()
+          .int()
+          .optional()
+          .describe("With data_sources: hunts whose every data source you have"),
         hunts: z.array(
           HuntSummary.extend({
             reasons: z.array(z.enum(["technique", "mention"])),
+            missing_sources: z
+              .array(z.enum(DATA_SOURCE_IDS))
+              .optional()
+              .describe("With data_sources: categories this hunt uses that you don't have"),
             shared_techniques: z.array(z.string()),
             relevance: z
               .number()
@@ -304,16 +313,23 @@ export function createServer(data: HearthData): McpServer {
       const allMatches = matchHuntsForActor(actor.id, visible, data.mentions, data.actors);
       const coverage = computeCoverage(actor.id, allMatches, data.actors);
       const sources = args.data_sources ? new Set<DataSourceCategoryId>(args.data_sources) : null;
-      // Hunts that name the actor first (written about this actor), then by how
-      // distinctive the shared techniques are, then newest. The site's Actors
-      // page orders these differently.
+      // Hunts that name the actor first (written about this actor), then hunts
+      // you have every source for, then by how distinctive the shared
+      // techniques are, then newest. The site's Actors page orders these differently.
       const matches = (
         sources ? allMatches.filter((m) => canRunHunt(m.hunt, sources, data.index)) : allMatches
       )
-        .map((m) => ({ ...m, relevance: relevance(m.sharedTechniques) }))
+        .map((m) => ({
+          ...m,
+          relevance: relevance(m.sharedTechniques),
+          missing: sources
+            ? huntDataSources(m.hunt, data.index).categories.filter((c) => !sources.has(c))
+            : undefined,
+        }))
         .sort(
           (a, b) =>
             Number(b.reasons.includes("MENTION")) - Number(a.reasons.includes("MENTION")) ||
+            Number(b.missing?.length === 0) - Number(a.missing?.length === 0) ||
             b.relevance - a.relevance ||
             idNumber(b.hunt.id) - idNumber(a.hunt.id),
         );
@@ -328,9 +344,11 @@ export function createServer(data: HearthData): McpServer {
           gap_techniques: coverage.gapTechniqueCount,
         },
         total_hunts: matches.length,
+        full_matches: sources ? matches.filter((m) => m.missing?.length === 0).length : undefined,
         hunts: matches.slice(0, args.limit ?? DEFAULT_LIMIT).map((m) => ({
           ...summary(m.hunt, data),
           reasons: m.reasons.map((r) => (r === "TECH" ? ("technique" as const) : ("mention" as const))),
+          missing_sources: m.missing,
           shared_techniques: m.sharedTechniques,
           relevance: m.relevance,
         })),
