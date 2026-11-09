@@ -2,6 +2,12 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import * as z from "zod/v4";
 import {
+  buildActorIndex,
+  buildTechniqueTactics,
+  type ActorIndex,
+  type ActorMentionsData,
+} from "../../src/lib/actor-matching";
+import {
   buildTechniqueIndex,
   type TechniqueIndex,
 } from "../../src/lib/datasources";
@@ -22,6 +28,15 @@ export const DATA_SOURCE_IDS = [
 ] as const;
 
 export const CATEGORIES = ["Flames", "Embers", "Alchemy"] as const;
+
+/** Files the server reads, all from the site's public/ directory. */
+export const DATA_FILES = [
+  "hunts-data.json",
+  "datasource-mapping.json",
+  "context-graph-data.json",
+  "actor-mentions.json",
+  "mitre-matrix.json",
+] as const;
 
 const DataSourceId = z.enum(DATA_SOURCE_IDS);
 
@@ -71,19 +86,83 @@ const MappingSchema = z.object({
   metadata: z.record(z.string(), z.unknown()),
 });
 
+// Graph, mentions and matrix carry many fields the tools don't read; only the
+// ones used are validated, the rest pass through.
+const GraphSchema = z.object({
+  nodes: z.array(
+    z
+      .object({
+        id: z.string(),
+        type: z.string(),
+        label: z.string().optional(),
+        aliases: z.array(z.string()).optional(),
+        description: z.string().optional(),
+        technique_count: z.number().optional(),
+        mitre_techniques: z.array(z.string()).optional(),
+        external_references: z
+          .array(z.object({ source: z.string(), url: z.string() }))
+          .optional(),
+        tactics: z.array(z.string()).optional(),
+      })
+      .loose(),
+  ),
+  edges: z.array(
+    z
+      .object({ source: z.string(), target: z.string(), type: z.string() })
+      .loose(),
+  ),
+});
+
+const MentionsSchema = z
+  .object({ mentions: z.record(z.string(), z.array(z.string())) })
+  .loose();
+
+const MatrixSchema = z
+  .object({
+    tactics: z.array(
+      z
+        .object({ id: z.string(), shortname: z.string(), name: z.string() })
+        .loose(),
+    ),
+    techniques: z.array(
+      z
+        .object({
+          id: z.string(),
+          tactic_shortnames: z.array(z.string()).optional(),
+        })
+        .loose(),
+    ),
+  })
+  .loose();
+
 export interface HearthData {
   hunts: Hunt[];
   byId: Map<string, Hunt>;
   index: TechniqueIndex;
   categoryNames: Record<string, string>;
+  actors: ActorIndex;
+  mentions: ActorMentionsData;
 }
 
-export function parseData(
-  huntsJson: unknown,
-  mappingJson: unknown,
-): HearthData {
-  const hunts = z.array(HuntSchema).min(1).parse(huntsJson) as Hunt[];
-  const mapping = MappingSchema.parse(mappingJson);
+export interface RawData {
+  hunts: unknown;
+  mapping: unknown;
+  graph?: unknown;
+  mentions?: unknown;
+  matrix?: unknown;
+}
+
+export function parseData(raw: RawData): HearthData {
+  const hunts = z.array(HuntSchema).min(1).parse(raw.hunts) as Hunt[];
+  const mapping = MappingSchema.parse(raw.mapping);
+  const graph = GraphSchema.parse(raw.graph ?? { nodes: [], edges: [] });
+  const mentions = MentionsSchema.parse(
+    raw.mentions ?? { mentions: {} },
+  ) as ActorMentionsData;
+  const matrix = MatrixSchema.parse(
+    raw.matrix ?? { tactics: [], techniques: [] },
+  );
+
   const byId = new Map(hunts.map((h) => [h.id, h]));
   if (byId.size !== hunts.length)
     throw new Error("hunts-data.json has duplicate hunt ids");
@@ -94,11 +173,19 @@ export function parseData(
     categoryNames: Object.fromEntries(
       mapping.categories.map((c) => [c.id, c.name]),
     ),
+    actors: buildActorIndex(graph, buildTechniqueTactics(matrix)),
+    mentions,
   };
 }
 
 export function loadData(dir: string): HearthData {
-  const read = (name: string) =>
+  const read = (name: (typeof DATA_FILES)[number]) =>
     JSON.parse(readFileSync(join(dir, name), "utf8"));
-  return parseData(read("hunts-data.json"), read("datasource-mapping.json"));
+  return parseData({
+    hunts: read("hunts-data.json"),
+    mapping: read("datasource-mapping.json"),
+    graph: read("context-graph-data.json"),
+    mentions: read("actor-mentions.json"),
+    matrix: read("mitre-matrix.json"),
+  });
 }

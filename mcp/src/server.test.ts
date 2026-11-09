@@ -37,27 +37,24 @@ describe("data loading", () => {
 
   it("fails closed on malformed hunts", () => {
     const mapping = { categories: [], metadata: {} };
-    expect(() => parseData([{ id: "H001" }], mapping)).toThrow();
-    expect(() => parseData([], mapping)).toThrow();
-    expect(() => parseData("not an array", mapping)).toThrow();
+    expect(() => parseData({ hunts: [{ id: "H001" }], mapping })).toThrow();
+    expect(() => parseData({ hunts: [], mapping })).toThrow();
+    expect(() => parseData({ hunts: "not an array", mapping })).toThrow();
   });
 
   it("rejects unknown data source categories", () => {
     const good = data.hunts[0];
     expect(() =>
-      parseData([{ ...good, data_source_categories: ["mainframe"] }], {
-        categories: [],
-        metadata: {},
-      }),
+      parseData({ hunts: [{ ...good, data_source_categories: ["mainframe"] }], mapping: { categories: [], metadata: {} } }),
     ).toThrow();
   });
 });
 
 describe("tools/list", () => {
-  it("exposes get_hunt and search_hunts with schemas", async () => {
+  it("exposes every tool with schemas", async () => {
     const { tools } = await client.listTools();
     const names = tools.map((t) => t.name).sort();
-    expect(names).toEqual(["get_hunt", "search_hunts"]);
+    expect(names).toEqual(["get_hunt", "hunts_for_actor", "hunts_for_datasources", "search_hunts"]);
     for (const t of tools) {
       expect(t.description).toBeTruthy();
       expect(t.inputSchema).toBeTruthy();

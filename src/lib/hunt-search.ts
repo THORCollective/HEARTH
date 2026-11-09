@@ -131,6 +131,22 @@ function idNumber(id: string): number {
   return parseInt(id.replace(/\D/g, ""), 10) || 0;
 }
 
+/** Apply the non-text filters: retired, category, tactic and data sources. */
+export function filterHunts(
+  hunts: readonly Hunt[],
+  q: Omit<HuntQuery, "query" | "limit">,
+  index: TechniqueIndex = EMPTY_INDEX,
+): Hunt[] {
+  const tactic = q.tactic?.trim().toLowerCase();
+  const sources = q.dataSources?.length ? new Set(q.dataSources) : null;
+  return hunts.filter((hunt) => {
+    if (!q.includeRetired && hunt.status === "retired") return false;
+    if (q.category && hunt.category !== q.category) return false;
+    if (tactic && !huntTactics(hunt).some((t) => t.toLowerCase() === tactic)) return false;
+    return !sources || canRunHunt(hunt, sources, index);
+  });
+}
+
 export function searchHunts(
   hunts: readonly Hunt[],
   q: HuntQuery,
@@ -138,16 +154,9 @@ export function searchHunts(
 ): HuntSearchResult {
   const termMap = queryTermMap(q.query ?? "");
   const terms = [...termMap.values()];
-  const tactic = q.tactic?.trim().toLowerCase();
-  const sources = q.dataSources?.length ? new Set(q.dataSources) : null;
   const limit = Math.min(Math.max(q.limit ?? DEFAULT_LIMIT, 1), MAX_LIMIT);
 
-  const candidates = hunts.filter((hunt) => {
-    if (!q.includeRetired && hunt.status === "retired") return false;
-    if (q.category && hunt.category !== q.category) return false;
-    if (tactic && !huntTactics(hunt).some((t) => t.toLowerCase() === tactic)) return false;
-    return !sources || canRunHunt(hunt, sources, index);
-  });
+  const candidates = filterHunts(hunts, q, index);
 
   if (terms.length === 0) {
     const all = candidates.map((hunt) => ({ hunt, score: 1 }));
