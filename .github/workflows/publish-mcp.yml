@@ -1,0 +1,88 @@
+name: Publish MCP server
+
+# Publishes @thorcollective/hearth-mcp to npm and lists it in the official MCP
+# Registry when a maintainer pushes an `mcp-v<version>` tag (see mcp/README.md).
+#
+# Supply-chain posture:
+# - npm trusted publishing (OIDC): no npm token is stored anywhere, and npm
+#   attaches provenance automatically.
+# - The publish job runs in the `npm-publish` environment, which requires a
+#   maintainer's approval, and only from tags.
+# - Actions are pinned to commit SHAs; mcp-publisher is pinned to a release
+#   and checked against its published SHA-256 before it runs.
+
+on:
+  push:
+    tags: ["mcp-v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-mcp
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Tag matches package and server.json versions
+        run: |
+          tag="${GITHUB_REF_NAME#mcp-v}"
+          pkg=$(node -p "require('./mcp/package.json').version")
+          srv=$(node -p "require('./mcp/server.json').version")
+          echo "tag=$tag package=$pkg server.json=$srv"
+          [ "$tag" = "$pkg" ] && [ "$tag" = "$srv" ]
+      - run: npm ci
+      - run: npm ci --prefix mcp
+      - run: npx tsc -p mcp/tsconfig.json
+      - name: Test (unit, golden, stdio protocol)
+        run: npm test
+      - run: npm audit --omit=dev --audit-level=high --prefix mcp
+
+  publish:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: npm-publish
+    permissions:
+      contents: read
+      id-token: write # npm trusted publishing and MCP Registry login
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+      # Trusted publishing needs npm >= 11.5.1; Node 22 ships npm 10.
+      - run: npm install -g npm@11.6.2
+      - run: npm ci
+      - run: npm ci --prefix mcp
+      - name: Publish to npm with provenance
+        working-directory: mcp
+        run: npm publish --provenance --access public
+
+      - name: Install mcp-publisher (pinned, checksum verified)
+        env:
+          VERSION: v1.8.8
+          SHA256: 09f1fa70ee146b640584274a1a6b2b8a0310b05d4321fa9224e6df6a016d67f4
+        run: |
+          curl -fsSL -o mcp-publisher.tar.gz \
+            "https://github.com/modelcontextprotocol/registry/releases/download/${VERSION}/mcp-publisher_linux_amd64.tar.gz"
+          echo "${SHA256}  mcp-publisher.tar.gz" | sha256sum -c -
+          tar xzf mcp-publisher.tar.gz mcp-publisher
+      - name: List in the MCP Registry
+        working-directory: mcp
+        run: |
+          ../mcp-publisher login github-oidc
+          ../mcp-publisher publish
