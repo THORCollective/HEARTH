@@ -1,0 +1,20 @@
+{
+  "//": "DOM lib only for types: src/lib/actor-matching.ts has a browser fetchJson helper (fetch cache option) that the server never calls.",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "DOM"],
+    "types": ["node"],
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true
+  },
+  "include": ["src/**/*", "../src/lib/datasources.ts", "../src/lib/hunt-search.ts", "../src/types/Hunt.ts"],
+  "exclude": ["src/**/*.test.ts"]
+}
