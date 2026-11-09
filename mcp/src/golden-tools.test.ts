@@ -28,6 +28,10 @@ describe("golden hunts_for_actor", () => {
     expect(out.actor.id).toBe(g.expect_actor);
     const top = new Set(out.hunts.slice(0, g.expect_top_ids.length).map((h: any) => h.id));
     expect(top).toEqual(new Set(g.expect_top_ids));
+    if (g.expect_not_in_top) {
+      const head = out.hunts.slice(0, g.expect_not_in_top.n).map((h: any) => h.id);
+      for (const id of g.expect_not_in_top.ids) expect(head).not.toContain(id);
+    }
   });
 });
 

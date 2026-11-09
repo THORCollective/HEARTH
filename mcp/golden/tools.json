@@ -48,6 +48,27 @@
     "H432"
    ],
    "source": "actor-mentions.json"
+  },
+  {
+   "name": "Volt Typhoon, network + appliance: weak single-common-technique match ranks low",
+   "args": {
+    "actor": "Volt Typhoon",
+    "data_sources": [
+     "network",
+     "appliance"
+    ]
+   },
+   "expect_actor": "G1017",
+   "expect_top_ids": [
+    "H432"
+   ],
+   "expect_not_in_top": {
+    "ids": [
+     "H064"
+    ],
+    "n": 80
+   },
+   "source": "2026-11-09 hearth-dev dry run: analyst judged H064 (Punycode domains, shares only T1036.005) a weak fit"
   }
  ],
  "hunts_for_datasources": [

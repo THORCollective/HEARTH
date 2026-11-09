@@ -101,6 +101,19 @@ function detail(h: Hunt, d: HearthData): z.infer<typeof HuntDetail> {
 }
 
 /** Numeric part of a hunt id, for newest-first ordering. */
+/**
+ * How distinctive each ATT&CK technique is across all actors: ln(actors /
+ * actors using it). T1090.001 (9 of 165 groups) scores 2.9; T1036.005 (66 of
+ * 165) scores 0.9, so a hunt sharing only very common techniques ranks low.
+ */
+function techniqueRarity(actorTechniques: Map<string, Set<string>>): Map<string, number> {
+  const df = new Map<string, number>();
+  for (const techs of actorTechniques.values())
+    for (const t of techs) df.set(t, (df.get(t) ?? 0) + 1);
+  const n = actorTechniques.size;
+  return new Map([...df].map(([t, k]) => [t, Math.log(n / k)]));
+}
+
 function idNumber(id: string): number {
   return parseInt(id.replace(/\D/g, ""), 10) || 0;
 }
@@ -119,6 +132,9 @@ function result<T extends Record<string, unknown>>(output: T) {
 
 export function createServer(data: HearthData): McpServer {
   const server = new McpServer({ name: "hearth", version: VERSION });
+  const rarity = techniqueRarity(data.actors.actorTechniques);
+  const relevance = (techs: string[]) =>
+    Math.round(techs.reduce((sum, t) => sum + (rarity.get(t) ?? 0), 0) * 100) / 100;
 
   server.registerTool(
     "get_hunt",
@@ -228,7 +244,8 @@ export function createServer(data: HearthData): McpServer {
       description:
         "Find HEARTH hunts relevant to a threat actor (name, alias or ATT&CK group id such as " +
         "APT29, Cozy Bear or G0016). A hunt matches when it shares ATT&CK techniques with the " +
-        "actor or names the actor in its text. Also returns how much of the actor's known " +
+        "actor or names the actor in its text; hunts naming the actor come first, then hunts " +
+        "sharing the most distinctive techniques (see relevance). Also returns how much of the actor's known " +
         "technique profile HEARTH covers and the biggest uncovered techniques.",
       inputSchema: z.object({
         actor: z.string().min(2).max(100).describe("Actor name, alias or ATT&CK group id"),
@@ -259,6 +276,12 @@ export function createServer(data: HearthData): McpServer {
           HuntSummary.extend({
             reasons: z.array(z.enum(["technique", "mention"])),
             shared_techniques: z.array(z.string()),
+            relevance: z
+              .number()
+              .describe(
+                "Sum over shared techniques of how rare each is among ATT&CK groups. " +
+                  "Under 1.5 means only commonly used techniques are shared: a weak match.",
+              ),
           }),
         ),
         gaps: z
@@ -281,16 +304,18 @@ export function createServer(data: HearthData): McpServer {
       const allMatches = matchHuntsForActor(actor.id, visible, data.mentions, data.actors);
       const coverage = computeCoverage(actor.id, allMatches, data.actors);
       const sources = args.data_sources ? new Set<DataSourceCategoryId>(args.data_sources) : null;
-      // Hunts that name the actor first (written about this actor), then by
-      // shared techniques. The site's Actors page orders these differently.
+      // Hunts that name the actor first (written about this actor), then by how
+      // distinctive the shared techniques are, then newest. The site's Actors
+      // page orders these differently.
       const matches = (
         sources ? allMatches.filter((m) => canRunHunt(m.hunt, sources, data.index)) : allMatches
       )
-        .slice()
+        .map((m) => ({ ...m, relevance: relevance(m.sharedTechniques) }))
         .sort(
           (a, b) =>
             Number(b.reasons.includes("MENTION")) - Number(a.reasons.includes("MENTION")) ||
-            b.sharedTechniques.length - a.sharedTechniques.length,
+            b.relevance - a.relevance ||
+            idNumber(b.hunt.id) - idNumber(a.hunt.id),
         );
       const url = actor.external_references?.find((r) => r.source === "mitre-attack")?.url;
       return result({
@@ -307,6 +332,7 @@ export function createServer(data: HearthData): McpServer {
           ...summary(m.hunt, data),
           reasons: m.reasons.map((r) => (r === "TECH" ? ("technique" as const) : ("mention" as const))),
           shared_techniques: m.sharedTechniques,
+          relevance: m.relevance,
         })),
         gaps: computeGap(actor.id, allMatches, data.actors)
           .slice(0, MAX_GAPS)
