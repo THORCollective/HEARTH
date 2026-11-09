@@ -63,17 +63,28 @@ const HUNTS: Hunt[] = [
 const ids = (r: ReturnType<typeof searchHunts>) => r.hunts.map((h) => h.id);
 
 describe("searchHunts", () => {
-  it("matches every query word across title, tactic, techniques and tags", () => {
-    expect(ids(searchHunts(HUNTS, { query: "kerberoasting" }))).toEqual([
-      "H001",
-    ]);
+  it("matches words across title, techniques and tags", () => {
+    expect(ids(searchHunts(HUNTS, { query: "kerberoasting" }))).toEqual(["H001"]);
     expect(ids(searchHunts(HUNTS, { query: "T1543" }))).toEqual(["H010"]);
-    expect(ids(searchHunts(HUNTS, { query: "launchagent developer" }))).toEqual(
-      ["H010"],
-    );
-    expect(ids(searchHunts(HUNTS, { query: "launchagent windows" }))).toEqual(
-      [],
-    );
+    expect(ids(searchHunts(HUNTS, { query: "launchagent developer" }))).toEqual(["H010"]);
+  });
+
+  it("ranks hunts matching more of the query first instead of requiring every word", () => {
+    // Only B002 is a Windows scheduled task; H010 only matches "persistence".
+    const r = ids(searchHunts(HUNTS, { query: "windows scheduled task persistence" }));
+    expect(r[0]).toBe("B002");
+  });
+
+  it("ignores stopwords and normalises plurals and spacing", () => {
+    expect(ids(searchHunts(HUNTS, { query: "persistence on macs" }))[0]).toBe("H010");
+    expect(ids(searchHunts(HUNTS, { query: "launch agents" }))).toEqual(["H010"]);
+    expect(ids(searchHunts(HUNTS, { query: "the of on" }))).toHaveLength(4); // no real terms: list all
+  });
+
+  it("keeps technique ids exact apart from sub-technique prefixes", () => {
+    expect(ids(searchHunts(HUNTS, { query: "T1053" }))).toEqual(["B002"]);
+    expect(ids(searchHunts(HUNTS, { query: "T1053.005" }))).toEqual(["B002"]);
+    expect(ids(searchHunts(HUNTS, { query: "T1558" }))).toEqual(["H001"]);
   });
 
   it("matches hunt ids and is case-insensitive", () => {

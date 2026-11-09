@@ -1,0 +1,200 @@
+[
+ {
+  "name": "macOS persistence",
+  "args": {
+   "query": "macOS persistence"
+  },
+  "expect_ids": [
+   "B067",
+   "H030",
+   "H131",
+   "H133",
+   "H148",
+   "H204",
+   "H260",
+   "H325",
+   "H429",
+   "H441"
+  ],
+  "source": "title matches /launch ?agent|launchd|launch ?daemon/i"
+ },
+ {
+  "name": "persistence on macs (natural phrasing)",
+  "args": {
+   "query": "persistence on macs"
+  },
+  "expect_ids": [
+   "B067",
+   "H030",
+   "H131",
+   "H133",
+   "H148",
+   "H204",
+   "H260",
+   "H325",
+   "H429",
+   "H441"
+  ],
+  "source": "title matches /launch ?agent|launchd|launch ?daemon/i"
+ },
+ {
+  "name": "LaunchAgent",
+  "args": {
+   "query": "LaunchAgent"
+  },
+  "expect_ids": [
+   "B067",
+   "H030",
+   "H131",
+   "H133",
+   "H148",
+   "H204",
+   "H260",
+   "H325",
+   "H429",
+   "H441"
+  ],
+  "source": "title matches /launch ?agent|launch ?daemon/i"
+ },
+ {
+  "name": "ransomware on ESXi hosts",
+  "args": {
+   "query": "ransomware on ESXi hosts"
+  },
+  "expect_ids": [
+   "H061",
+   "H065",
+   "H074",
+   "H077",
+   "H458"
+  ],
+  "source": "title matches /esxi|vcenter|vsphere/i"
+ },
+ {
+  "name": "ESXi",
+  "args": {
+   "query": "ESXi"
+  },
+  "expect_ids": [
+   "H061",
+   "H074",
+   "H077",
+   "H458"
+  ],
+  "source": "title matches /esxi/i"
+ },
+ {
+  "name": "ClickFix fake CAPTCHA",
+  "args": {
+   "query": "ClickFix fake CAPTCHA"
+  },
+  "expect_ids": [
+   "H024",
+   "H071",
+   "H088",
+   "H090",
+   "H097",
+   "H147",
+   "H221",
+   "H277",
+   "H295",
+   "H328",
+   "H441"
+  ],
+  "source": "title matches /clickfix|fake captcha/i"
+ },
+ {
+  "name": "ClickFix",
+  "args": {
+   "query": "ClickFix"
+  },
+  "expect_ids": [
+   "H024",
+   "H071",
+   "H088",
+   "H090",
+   "H097",
+   "H147",
+   "H221",
+   "H277",
+   "H295",
+   "H328",
+   "H441"
+  ],
+  "source": "title matches /clickfix/i"
+ },
+ {
+  "name": "malicious OAuth app consent",
+  "args": {
+   "query": "malicious OAuth app consent"
+  },
+  "expect_ids": [
+   "H208",
+   "H227",
+   "H230",
+   "H234",
+   "H336"
+  ],
+  "source": "manual: hunts whose title is about OAuth consent, grants, app identity or prompts"
+ },
+ {
+  "name": "DCSync",
+  "args": {
+   "query": "DCSync"
+  },
+  "expect_ids": [
+   "H050"
+  ],
+  "source": "manual: H050 \"DC Sync\" (T1003.006)"
+ },
+ {
+  "name": "RMM tool abuse",
+  "args": {
+   "query": "RMM tool abuse"
+  },
+  "expect_ids": [
+   "B002",
+   "B021",
+   "B041",
+   "B051",
+   "H181",
+   "H182",
+   "H279",
+   "H374",
+   "M018"
+  ],
+  "source": "title matches /\\brmm\\b/i"
+ },
+ {
+  "name": "npm supply chain attacks",
+  "args": {
+   "query": "npm supply chain attacks"
+  },
+  "expect_ids": [
+   "B020",
+   "H081",
+   "H087",
+   "H103",
+   "H141",
+   "H173",
+   "H175",
+   "H199",
+   "H264",
+   "H295",
+   "H333",
+   "H409",
+   "M014"
+  ],
+  "source": "title matches /\\bnpm\\b/i"
+ },
+ {
+  "name": "DNS tunneling",
+  "args": {
+   "query": "DNS tunneling"
+  },
+  "expect_ids": [
+   "H012"
+  ],
+  "source": "title matches /dns tunnel/i"
+ }
+]
