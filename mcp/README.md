@@ -76,6 +76,16 @@ Add this to `.vscode/mcp.json` in your workspace:
 }
 ```
 
+### Settings
+
+| Environment variable | Effect |
+|---|---|
+| `HEARTH_OFFLINE=1` | Never touch the network; serve the bundled snapshot or the last download. |
+| `HEARTH_DATA_URL` | Fetch data from a mirror instead of `https://hearth.thorcollective.com/`. Must be https (http only for localhost). |
+| `HEARTH_CACHE_DIR` | Where downloaded data is kept. Defaults to your platform's cache folder (`~/Library/Caches/hearth-mcp` on macOS). |
+
+Set them in your client's config, for example `"env": { "HEARTH_OFFLINE": "1" }` next to `"args"`.
+
 ### Other clients
 
 Any MCP client that supports stdio servers can run the same command: `npx -y @thorcollective/hearth-mcp`.
@@ -83,7 +93,8 @@ Any MCP client that supports stdio servers can run the same command: `npx -y @th
 ## Privacy and security
 
 - **No telemetry.** The server sends nothing anywhere.
-- **No network access.** It serves the copy of HEARTH bundled in the package, which is refreshed with each release.
+- **One small network check a day.** At most once every 24 hours the server asks hearth.thorcollective.com whether the hunt data has changed. It uses conditional requests, so usually nothing is downloaded. It sends only those requests and a `hearth-mcp/<version>` user agent.
+- **Works offline.** If the site can't be reached, or sends data that fails validation, the server keeps using its last good copy, falling back to the snapshot bundled with each release.
 - **Hunt text is treated as untrusted.** Hunts are written by the community:
   - The server makes hidden and right-to-left characters visible, and removes hidden text.
   - It caps field lengths.

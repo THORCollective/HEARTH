@@ -23,7 +23,11 @@ await build({
   target: "node20",
   external: Object.keys(pkg.dependencies),
   banner: { js: "#!/usr/bin/env node" },
-  define: { __HEARTH_MCP_VERSION__: JSON.stringify(pkg.version) },
+  define: {
+    __HEARTH_MCP_VERSION__: JSON.stringify(pkg.version),
+    // A cached download older than the bundled snapshot is ignored.
+    __HEARTH_SNAPSHOT_AT__: JSON.stringify(new Date().toISOString()),
+  },
   logLevel: "warning",
 });
 

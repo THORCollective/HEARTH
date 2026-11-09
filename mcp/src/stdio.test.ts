@@ -1,7 +1,8 @@
 import { Client } from "@modelcontextprotocol/client";
 import { StdioClientTransport } from "@modelcontextprotocol/client/stdio";
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
@@ -23,6 +24,8 @@ beforeAll(async () => {
     command: process.execPath,
     args: [join(MCP_DIR, pkg.bin["hearth-mcp"])],
     stderr: "pipe",
+    // Tests never touch the network or the user's real cache.
+    env: { HEARTH_OFFLINE: "1", HEARTH_CACHE_DIR: mkdtempSync(join(tmpdir(), "hearth-mcp-stdio-")) },
   });
   transport.stderr?.on("data", (d) => (stderr += d));
   client = new Client({ name: "stdio-test", version: "1.0" });
@@ -101,7 +104,8 @@ describe("stdio server", () => {
   });
 
   it("logs only to stderr", () => {
-    expect(stderr).toMatch(/hearth-mcp: serving \d+ hunts over stdio/);
+    expect(stderr).toMatch(/hearth-mcp: serving \d+ hunts over stdio \(bundled data\)/);
+    expect(stderr).toMatch(/HEARTH_OFFLINE is set/);
   });
 });
 
