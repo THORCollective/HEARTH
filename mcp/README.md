@@ -86,6 +86,31 @@ Add this to `.vscode/mcp.json` in your workspace:
 
 Set them in your client's config, for example `"env": { "HEARTH_OFFLINE": "1" }` next to `"args"`.
 
+### Locked-down setup (enterprise)
+
+For teams that review every change before it reaches analysts:
+
+- **Pin the version.** `npx -y @thorcollective/hearth-mcp` always fetches the latest release. Name an exact version instead, and nothing changes until you choose to upgrade.
+- **Turn off the network.** `HEARTH_OFFLINE=1` stops the daily check, so the server only uses the hunt data that shipped with the version you pinned.
+- **Or use your own mirror.** Set `HEARTH_DATA_URL` to an internal copy of the site's data files, which you update on your own schedule.
+- **Verify the package.** After installing, run `npm audit signatures` to check that the package was built from this repository by GitHub Actions.
+
+For example, in Claude Desktop:
+
+```json
+{
+  "mcpServers": {
+    "hearth": {
+      "command": "npx",
+      "args": ["-y", "@thorcollective/hearth-mcp@0.1.1"],
+      "env": { "HEARTH_OFFLINE": "1" }
+    }
+  }
+}
+```
+
+[Releases](https://www.npmjs.com/package/@thorcollective/hearth-mcp?activeTab=versions) lists every version.
+
 ### Other clients
 
 Any MCP client that supports stdio servers can run the same command: `npx -y @thorcollective/hearth-mcp`.
@@ -124,7 +149,7 @@ The server reuses the site's own logic from `src/lib`, so search behaves the sam
 
 Maintainers only:
 
-1. Bump `version` in `mcp/package.json` and `mcp/server.json`. A test fails if they differ.
+1. Bump `version` in `mcp/package.json`, `mcp/server.json` and the pinned example under **Locked-down setup** in this README. A test fails if any of them differ.
 2. Merge to `main`.
 3. Push a tag named `mcp-v<version>`, for example `mcp-v0.1.0`.
 

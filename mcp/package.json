@@ -1,7 +1,7 @@
 {
   "name": "@thorcollective/hearth-mcp",
   "mcpName": "io.github.THORCollective/hearth",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Read-only MCP server for HEARTH, the community threat hunting hypothesis library",
   "keywords": [
     "mcp",

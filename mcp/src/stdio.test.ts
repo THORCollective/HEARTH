@@ -158,4 +158,13 @@ describe("published package", () => {
     expect(server.packages[0].identifier).toBe(pkg.name);
     expect(server.packages[0].version).toBe(pkg.version);
   });
+
+  it("keeps the README's pinned-version example current", () => {
+    const readme = readFileSync(join(MCP_DIR, "README.md"), "utf8");
+    const pinned = [
+      ...readme.matchAll(/@thorcollective\/hearth-mcp@(\d+\.\d+\.\d+)/g),
+    ].map((m) => m[1]);
+    expect(pinned.length).toBeGreaterThan(0);
+    for (const v of pinned) expect(v).toBe(pkg.version);
+  });
 });
