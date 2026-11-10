@@ -66,6 +66,27 @@ export default [
     },
   },
   {
+    // src/lib is shared with the MCP server, which runs it in Node (mcp/).
+    // Browser globals and Vite-only code there break the MCP build or runtime.
+    files: ['src/lib/**/*.ts'],
+    rules: {
+      'no-restricted-globals': [
+        'error',
+        ...['window', 'document', 'navigator', 'localStorage', 'sessionStorage', 'location', 'HTMLElement'].map(
+          (name) => ({ name, message: 'src/lib is shared with the MCP server (Node): no DOM globals.' }),
+        ),
+      ],
+      'no-restricted-imports': [
+        'error',
+        { patterns: [{ group: ['vite', 'vite/*', '*.css', '*.html', '*?raw', '*?url'], message: 'src/lib is shared with the MCP server: no Vite imports.' }] },
+      ],
+      'no-restricted-syntax': [
+        'error',
+        { selector: 'MetaProperty[meta.name="import"][property.name="meta"]', message: 'src/lib is shared with the MCP server: no import.meta (Vite env).' },
+      ],
+    },
+  },
+  {
     ignores: [
       'node_modules/',
       'database/',
