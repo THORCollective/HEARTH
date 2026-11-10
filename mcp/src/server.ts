@@ -6,6 +6,7 @@ import {
   matchHuntsForActor,
   resolveActor,
 } from "../../src/lib/actor-matching";
+import { gapSubmitUrl } from "../../src/lib/coverage";
 import { canRunHunt, huntDataSources } from "../../src/lib/datasources";
 import { DEFAULT_LIMIT, MAX_LIMIT, filterHunts, searchHunts } from "../../src/lib/hunt-search";
 import type { DataSourceCategoryId, Hunt } from "../../src/types/Hunt";
@@ -17,6 +18,15 @@ export const VERSION =
   typeof __HEARTH_MCP_VERSION__ === "string" ? __HEARTH_MCP_VERSION__ : "dev";
 const REPO_URL = "https://github.com/THORCollective/HEARTH/blob/main/";
 const MAX_GAPS = 25;
+
+/** Fixed link, never built from hunt text or user input. */
+const SITE_URL = "https://hearth.thorcollective.com/";
+export const SUBMIT_URL = SITE_URL + "submit.html";
+const SUBMIT_HUNT = `No HEARTH hunt covers this yet. Anyone can submit one: ${SUBMIT_URL}`;
+const SubmitHunt = z
+  .string()
+  .optional()
+  .describe("Present when HEARTH has no hunt for part of the request: where to submit one");
 
 const DataSourceList = z
   .array(z.enum(DATA_SOURCE_IDS))
@@ -252,6 +262,7 @@ export function createServer(source: HearthData | (() => HearthData)): McpServer
       outputSchema: z.object({
         total: z.number().int(),
         hunts: z.array(HuntSummary),
+        submit_hunt: SubmitHunt,
       }),
       annotations: { readOnlyHint: true, openWorldHint: false },
     },
@@ -269,7 +280,11 @@ export function createServer(source: HearthData | (() => HearthData)): McpServer
         },
         data.index,
       );
-      return result({ total, hunts: hunts.map((h) => summary(h, data)) });
+      return result({
+        total,
+        hunts: hunts.map((h) => summary(h, data)),
+        submit_hunt: total === 0 ? SUBMIT_HUNT : undefined,
+      });
     },
   );
 
@@ -330,8 +345,9 @@ export function createServer(source: HearthData | (() => HearthData)): McpServer
           }),
         ),
         gaps: z
-          .array(z.object({ technique: z.string(), tactic: z.string() }))
+          .array(z.object({ technique: z.string(), tactic: z.string(), submit_url: z.string() }))
           .describe(`Actor techniques no HEARTH hunt covers (first ${MAX_GAPS})`),
+        submit_hunt: SubmitHunt,
       }),
       annotations: { readOnlyHint: true, openWorldHint: false },
     },
@@ -370,6 +386,7 @@ export function createServer(source: HearthData | (() => HearthData)): McpServer
             b.relevance - a.relevance ||
             idNumber(b.hunt.id) - idNumber(a.hunt.id),
         );
+      const gaps = computeGap(actor.id, allMatches, data.actors);
       const url = actor.external_references?.find((r) => r.source === "mitre-attack")?.url;
       return result({
         actor: { id: groupId(actor.id), name: actor.label, aliases: actor.aliases, url },
@@ -389,9 +406,12 @@ export function createServer(source: HearthData | (() => HearthData)): McpServer
           shared_techniques: m.sharedTechniques,
           relevance: m.relevance,
         })),
-        gaps: computeGap(actor.id, allMatches, data.actors)
-          .slice(0, MAX_GAPS)
-          .map((g) => ({ technique: g.id, tactic: g.tactic })),
+        gaps: gaps.slice(0, MAX_GAPS).map((g) => ({
+          technique: g.id,
+          tactic: g.tactic,
+          submit_url: SITE_URL + gapSubmitUrl(g.id),
+        })),
+        submit_hunt: gaps.length > 0 || matches.length === 0 ? SUBMIT_HUNT : undefined,
       });
     },
   );
@@ -421,6 +441,7 @@ export function createServer(source: HearthData | (() => HearthData)): McpServer
             missing_sources: z.array(z.enum(DATA_SOURCE_IDS)),
           }),
         ),
+        submit_hunt: SubmitHunt,
       }),
       annotations: { readOnlyHint: true, openWorldHint: false },
     },
@@ -451,6 +472,7 @@ export function createServer(source: HearthData | (() => HearthData)): McpServer
         full_matches: rows.filter((r) => r.have_all_sources).length,
         by_category: byCategory,
         hunts: rows.slice(0, args.limit ?? DEFAULT_LIMIT),
+        submit_hunt: rows.length === 0 ? SUBMIT_HUNT : undefined,
       });
     },
   );
