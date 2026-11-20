@@ -101,5 +101,28 @@
    },
    "source": "any-of / subset counts over data_source_categories in public/hunts-data.json, computed in the test"
   }
+
+ ],
+ "coverage_gaps": [
+  {
+   "name": "whole matrix",
+   "args": {},
+   "source": "parent techniques outside Reconnaissance/Resource Development with no current hunt on them or a sub-technique, from public/mitre-matrix.json and hunts-data.json, computed in the test"
+  },
+  {
+   "name": "Windows persistence",
+   "args": {
+    "tactic": "Persistence",
+    "platform": "Windows"
+   },
+   "source": "same rule, filtered to the tactic and platform in public/mitre-matrix.json"
+  },
+  {
+   "name": "Resource Development asked for",
+   "args": {
+    "tactic": "Resource Development"
+   },
+   "source": "same rule; asking for the tactic brings pre-compromise techniques back"
+  }
  ]
 }

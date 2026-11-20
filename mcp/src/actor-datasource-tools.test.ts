@@ -24,9 +24,10 @@ beforeAll(async () => {
 });
 
 describe("tools/list", () => {
-  it("exposes all four v0.1 tools, all read-only", async () => {
+  it("exposes all five tools, all read-only", async () => {
     const { tools } = await client.listTools();
     expect(tools.map((t) => t.name).sort()).toEqual([
+      "coverage_gaps",
       "get_hunt",
       "hunts_for_actor",
       "hunts_for_datasources",
@@ -176,5 +177,83 @@ describe("hunts_for_datasources", () => {
       (await call("hunts_for_datasources", { data_sources: ["mainframe"] }))
         .isError,
     ).toBe(true);
+  });
+});
+
+describe("coverage_gaps", () => {
+  it("returns parent-technique gaps, most-used first, skipping pre-compromise tactics", async () => {
+    const r = await call("coverage_gaps", {});
+    expect(r.isError).toBeFalsy();
+    const out = r.structuredContent;
+    expect(out.gaps.length).toBe(Math.min(25, out.total_gaps));
+    expect(out.pre_compromise_skipped).toBeGreaterThan(0);
+    for (const g of out.gaps) {
+      expect(g.technique).toMatch(/^T\d{4}$/);
+      expect(g.tactics).not.toContain("Reconnaissance");
+      expect(g.tactics).not.toContain("Resource Development");
+      expect(g.submit_url).toContain(`technique=${g.technique}`);
+    }
+    const counts = out.gaps.map((g: any) => g.group_count);
+    expect(counts).toEqual([...counts].sort((a, b) => b - a));
+    expect(out.submit_hunt).toContain("submit.html");
+  });
+
+  it("never lists a technique that a hunt covers directly or through a sub-technique", async () => {
+    const covered = new Set(
+      data.hunts.filter((h) => h.status !== "retired").flatMap((h) => (h.techniques ?? []).map((t) => t.split(".")[0])),
+    );
+    const out = (await call("coverage_gaps", { limit: 100 })).structuredContent;
+    for (const g of out.gaps) expect(covered.has(g.technique)).toBe(false);
+  });
+
+  it("shows pre-compromise gaps when their tactic is asked for", async () => {
+    const out = (await call("coverage_gaps", { tactic: "Resource Development" })).structuredContent;
+    expect(out.total_gaps).toBeGreaterThan(0);
+    expect(out.pre_compromise_skipped).toBe(0);
+    for (const g of out.gaps) expect(g.tactics).toContain("Resource Development");
+  });
+
+  it("combines actor, tactic and platform", async () => {
+    const out = (await call("coverage_gaps", { actor: "APT29", tactic: "Discovery", platform: "Windows" }))
+      .structuredContent;
+    expect(out.actor.id).toBe("G0016");
+    const apt29 = data.actors.actorTechniques.get("actor:G0016")!;
+    const parents = new Set([...apt29].map((t) => t.split(".")[0]));
+    for (const g of out.gaps) {
+      expect(parents.has(g.technique)).toBe(true);
+      expect(g.tactics).toContain("Discovery");
+    }
+  });
+
+  it("lists uncovered sub-techniques on request", async () => {
+    const out = (await call("coverage_gaps", { include_subtechniques: true, limit: 100 })).structuredContent;
+    const withSubs = out.gaps.filter((g: any) => g.uncovered_subtechniques.length > 0);
+    expect(withSubs.length).toBeGreaterThan(0);
+    expect(out.gaps.some((g: any) => g.has_hunt)).toBe(true);
+    for (const g of withSubs)
+      for (const s of g.uncovered_subtechniques) expect(s.technique.startsWith(`${g.technique}.`)).toBe(true);
+  });
+
+  it("with data sources, lists covered techniques you can't run", async () => {
+    const out = (await call("coverage_gaps", { data_sources: ["email"], limit: 100 })).structuredContent;
+    expect(out.total_cant_run).toBeGreaterThan(0);
+    for (const c of out.cant_run) {
+      expect(c.hunts.length).toBeGreaterThan(0);
+      expect(c.missing_sources).not.toContain("email");
+    }
+    expect((await call("coverage_gaps", {})).structuredContent.cant_run).toBeUndefined();
+  });
+
+  it("rejects unknown actors, tactics and platforms", async () => {
+    expect((await call("coverage_gaps", { actor: "zzzz-no-such-actor" })).isError).toBe(true);
+    expect((await call("coverage_gaps", { tactic: "Defense Evasion" })).isError).toBe(true);
+    expect((await call("coverage_gaps", { platform: "PRE" })).isError).toBe(true);
+  });
+
+  it("agrees with hunts_for_actor about an actor's gaps", async () => {
+    const a = (await call("hunts_for_actor", { actor: "APT29" })).structuredContent;
+    const g = (await call("coverage_gaps", { actor: "APT29" })).structuredContent;
+    expect(a.total_gaps).toBe(g.total_gaps);
+    expect(a.gaps.map((x: any) => x.technique)).toEqual(g.gaps.map((x: any) => x.technique));
   });
 });

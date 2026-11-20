@@ -2,11 +2,11 @@ import { McpServer } from "@modelcontextprotocol/server";
 import * as z from "zod/v4";
 import {
   computeCoverage,
-  computeGap,
   matchHuntsForActor,
   resolveActor,
 } from "../../src/lib/actor-matching";
 import { gapSubmitUrl } from "../../src/lib/coverage";
+import { findCoverageGaps, type Gap } from "../../src/lib/coverage-gaps";
 import { canRunHunt, huntDataSources } from "../../src/lib/datasources";
 import { DEFAULT_LIMIT, MAX_LIMIT, filterHunts, searchHunts } from "../../src/lib/hunt-search";
 import type { DataSourceCategoryId, Hunt } from "../../src/types/Hunt";
@@ -18,6 +18,43 @@ export const VERSION =
   typeof __HEARTH_MCP_VERSION__ === "string" ? __HEARTH_MCP_VERSION__ : "dev";
 const REPO_URL = "https://github.com/THORCollective/HEARTH/blob/main/";
 const MAX_GAPS = 25;
+const MAX_GAP_LIMIT = 100;
+
+/** ATT&CK Enterprise tactics, as named in public/mitre-matrix.json. */
+const TACTICS = [
+  "Reconnaissance",
+  "Resource Development",
+  "Initial Access",
+  "Execution",
+  "Persistence",
+  "Privilege Escalation",
+  "Stealth",
+  "Defense Impairment",
+  "Credential Access",
+  "Discovery",
+  "Lateral Movement",
+  "Collection",
+  "Command and Control",
+  "Exfiltration",
+  "Impact",
+] as const;
+
+/** ATT&CK Enterprise platforms, without PRE (use the Reconnaissance or Resource Development tactic). */
+const PLATFORMS = [
+  "Windows",
+  "macOS",
+  "Linux",
+  "ESXi",
+  "IaaS",
+  "Network Devices",
+  "Office Suite",
+  "SaaS",
+  "Identity Provider",
+  "Containers",
+] as const;
+
+/** "Command and Control" -> "command-and-control" */
+const tacticShortname = (name: string) => name.toLowerCase().replace(/ /g, "-");
 
 /** Fixed link, never built from hunt text or user input. */
 const SITE_URL = "https://hearth.thorcollective.com/";
@@ -146,6 +183,24 @@ function idNumber(id: string): number {
 /** "actor:G0016" -> "G0016" */
 function groupId(actorId: string): string {
   return actorId.replace(/^actor:/, "");
+}
+
+const GapTechnique = z.object({
+  technique: z.string(),
+  name: z.string(),
+  tactics: z.array(z.string()),
+  group_count: z.number().int().describe("ATT&CK groups known to use it or one of its sub-techniques"),
+  submit_url: z.string().describe("Where to submit a hunt for it"),
+});
+
+function gapTechnique(g: Pick<Gap, "id" | "name" | "tactics" | "groupCount">, d: HearthData) {
+  return {
+    technique: g.id,
+    name: g.name,
+    tactics: g.tactics.map((s) => d.tacticNames.get(s) ?? s),
+    group_count: g.groupCount,
+    submit_url: SITE_URL + gapSubmitUrl(g.id),
+  };
 }
 
 function result<T extends Record<string, unknown>>(output: T) {
@@ -320,7 +375,10 @@ export function createServer(source: HearthData | (() => HearthData)): McpServer
           actor_techniques: z.number().int(),
           techniques_covered: z.number().int(),
           coverage_percent: z.number().int(),
-          gap_techniques: z.number().int(),
+          gap_techniques: z
+            .number()
+            .int()
+            .describe("Actor technique ids, sub-techniques included, with no hunt; total_gaps is the parent-level count"),
         }),
         total_hunts: z.number().int(),
         full_matches: z
@@ -344,9 +402,14 @@ export function createServer(source: HearthData | (() => HearthData)): McpServer
               ),
           }),
         ),
+        total_gaps: z.number().int().describe("Actor techniques no HEARTH hunt covers, counted as coverage_gaps counts them"),
         gaps: z
-          .array(z.object({ technique: z.string(), tactic: z.string(), submit_url: z.string() }))
-          .describe(`Actor techniques no HEARTH hunt covers (first ${MAX_GAPS})`),
+          .array(GapTechnique)
+          .describe(
+            `Uncovered actor techniques, most used by ATT&CK groups first (first ${MAX_GAPS}). ` +
+              "Same rule as coverage_gaps: parent techniques, a hunt on any sub-technique covers " +
+              "its parent, Reconnaissance and Resource Development left out.",
+          ),
         submit_hunt: SubmitHunt,
       }),
       annotations: { readOnlyHint: true, openWorldHint: false },
@@ -386,7 +449,9 @@ export function createServer(source: HearthData | (() => HearthData)): McpServer
             b.relevance - a.relevance ||
             idNumber(b.hunt.id) - idNumber(a.hunt.id),
         );
-      const gaps = computeGap(actor.id, allMatches, data.actors);
+      const gaps = findCoverageGaps(visible, data.techniques, data.actors.actorTechniques, data.index, {
+        actorTechniques: data.actors.actorTechniques.get(actor.id) ?? new Set(),
+      }).gaps;
       const url = actor.external_references?.find((r) => r.source === "mitre-attack")?.url;
       return result({
         actor: { id: groupId(actor.id), name: actor.label, aliases: actor.aliases, url },
@@ -406,11 +471,8 @@ export function createServer(source: HearthData | (() => HearthData)): McpServer
           shared_techniques: m.sharedTechniques,
           relevance: m.relevance,
         })),
-        gaps: gaps.slice(0, MAX_GAPS).map((g) => ({
-          technique: g.id,
-          tactic: g.tactic,
-          submit_url: SITE_URL + gapSubmitUrl(g.id),
-        })),
+        total_gaps: gaps.length,
+        gaps: gaps.slice(0, MAX_GAPS).map((g) => gapTechnique(g, data)),
         submit_hunt: gaps.length > 0 || matches.length === 0 ? SUBMIT_HUNT : undefined,
       });
     },
@@ -473,6 +535,144 @@ export function createServer(source: HearthData | (() => HearthData)): McpServer
         by_category: byCategory,
         hunts: rows.slice(0, args.limit ?? DEFAULT_LIMIT),
         submit_hunt: rows.length === 0 ? SUBMIT_HUNT : undefined,
+      });
+    },
+  );
+
+  server.registerTool(
+    "coverage_gaps",
+    {
+      title: "HEARTH coverage gaps",
+      description:
+        "What are we blind to? Lists the ATT&CK techniques no HEARTH hunt covers, optionally for " +
+        "one threat actor, tactic and platform (combined with AND). Gaps are parent techniques: " +
+        "a hunt on any sub-technique covers its parent. The techniques used by the most ATT&CK " +
+        "groups come first. Reconnaissance and Resource Development happen on attacker " +
+        "infrastructure and are left out unless asked for as the tactic. With data_sources, also " +
+        "lists techniques HEARTH covers but whose hunts all need data sources you don't have.",
+      inputSchema: z.object({
+        actor: z
+          .string()
+          .min(2)
+          .max(100)
+          .optional()
+          .describe("Only this actor's techniques: name, alias or ATT&CK group id"),
+        tactic: z.enum(TACTICS).optional(),
+        platform: z.enum(PLATFORMS).optional(),
+        include_subtechniques: z
+          .boolean()
+          .optional()
+          .describe(
+            "Also list uncovered sub-techniques under their parent, including parents a hunt already covers",
+          ),
+        data_sources: DataSourceList.optional(),
+        limit: z
+          .number()
+          .int()
+          .min(1)
+          .max(MAX_GAP_LIMIT)
+          .optional()
+          .describe(`Max gaps returned (default ${MAX_GAPS})`),
+      }),
+      outputSchema: z.object({
+        actor: z.object({ id: z.string(), name: z.string() }).optional(),
+        other_matches: z
+          .array(z.object({ id: z.string(), name: z.string() }))
+          .optional()
+          .describe("Other actors the name could refer to; call again with one of these ids"),
+        techniques_in_scope: z.number().int().describe("Parent techniques checked"),
+        total_gaps: z.number().int(),
+        gaps: z.array(
+          GapTechnique.extend({
+            has_hunt: z
+              .boolean()
+              .optional()
+              .describe("With include_subtechniques: a hunt covers the parent or another sub-technique"),
+            uncovered_subtechniques: z
+              .array(GapTechnique.omit({ tactics: true }))
+              .optional()
+              .describe("With include_subtechniques"),
+          }),
+        ),
+        pre_compromise_skipped: z
+          .number()
+          .int()
+          .describe("Reconnaissance and Resource Development gaps left out; ask for either tactic to see them"),
+        total_cant_run: z.number().int().optional(),
+        cant_run: z
+          .array(
+            GapTechnique.omit({ submit_url: true }).extend({
+              hunts: z.array(z.string()).describe("HEARTH hunts covering it; get_hunt for details"),
+              missing_sources: z
+                .array(z.enum(DATA_SOURCE_IDS))
+                .describe("Data source categories those hunts use; any one makes a hunt runnable"),
+            }),
+          )
+          .optional()
+          .describe("With data_sources: techniques HEARTH covers, but with no hunt you can run"),
+        submit_hunt: SubmitHunt,
+      }),
+      annotations: { readOnlyHint: true, openWorldHint: false },
+    },
+    async (args) => {
+      const data = current();
+      let actor: { id: string; name: string } | undefined;
+      let otherMatches: { id: string; name: string }[] | undefined;
+      let actorTechniques: Set<string> | undefined;
+      if (args.actor) {
+        const [best, ...rest] = resolveActor(args.actor, data.actors, 6);
+        if (!best) {
+          return {
+            content: [{ type: "text", text: `No threat actor matches "${args.actor}".` }],
+            isError: true,
+          };
+        }
+        actor = { id: groupId(best.actor.id), name: best.actor.label };
+        otherMatches = rest.map((r) => ({ id: groupId(r.actor.id), name: r.actor.label }));
+        actorTechniques = data.actors.actorTechniques.get(best.actor.id) ?? new Set();
+      }
+      const limit = args.limit ?? MAX_GAPS;
+      const report = findCoverageGaps(
+        data.hunts.filter((h) => h.status !== "retired"),
+        data.techniques,
+        data.actors.actorTechniques,
+        data.index,
+        {
+          actorTechniques,
+          tactic: args.tactic && tacticShortname(args.tactic),
+          platform: args.platform,
+          includeSubtechniques: args.include_subtechniques,
+          dataSources: args.data_sources && new Set<DataSourceCategoryId>(args.data_sources),
+        },
+      );
+      return result({
+        actor,
+        other_matches: otherMatches,
+        techniques_in_scope: report.techniquesInScope,
+        total_gaps: report.gaps.length,
+        gaps: report.gaps.slice(0, limit).map((g) => ({
+          ...gapTechnique(g, data),
+          has_hunt: args.include_subtechniques ? g.hasHunt : undefined,
+          uncovered_subtechniques: g.subtechniques?.map((s) => ({
+            technique: s.id,
+            name: s.name,
+            group_count: s.groupCount,
+            submit_url: SITE_URL + gapSubmitUrl(s.id),
+          })),
+        })),
+        pre_compromise_skipped: report.preCompromiseSkipped,
+        total_cant_run: args.data_sources ? report.cantRun.length : undefined,
+        cant_run: args.data_sources
+          ? report.cantRun.slice(0, limit).map((c) => ({
+              technique: c.id,
+              name: c.name,
+              tactics: c.tactics.map((s) => data.tacticNames.get(s) ?? s),
+              group_count: c.groupCount,
+              hunts: c.huntIds,
+              missing_sources: c.missingSources,
+            }))
+          : undefined,
+        submit_hunt: report.gaps.length > 0 ? SUBMIT_HUNT : undefined,
       });
     },
   );

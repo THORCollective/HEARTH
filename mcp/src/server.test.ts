@@ -54,7 +54,7 @@ describe("tools/list", () => {
   it("exposes every tool with schemas", async () => {
     const { tools } = await client.listTools();
     const names = tools.map((t) => t.name).sort();
-    expect(names).toEqual(["get_hunt", "hunts_for_actor", "hunts_for_datasources", "search_hunts"]);
+    expect(names).toEqual(["coverage_gaps", "get_hunt", "hunts_for_actor", "hunts_for_datasources", "search_hunts"]);
     for (const t of tools) {
       expect(t.description).toBeTruthy();
       expect(t.inputSchema).toBeTruthy();
