@@ -22,7 +22,7 @@ Anyone can add one. If HEARTH gave you a poor answer, a golden query is the most
 
 ## `tools.json`: questions for the other tools
 
-`hunts_for_actor` entries name the actor to resolve and the hunts that must come first. `hunts_for_datasources` entries give the expected counts. Copy an existing entry as a starting point, and include a `source` saying where the expectation came from.
+`hunts_for_actor` entries name the actor to resolve and the hunts that must come first. `hunts_for_datasources` entries give only the data sources to query: the test counts the expected matches from `public/hunts-data.json`, so new hunts don't break it. Copy an existing entry as a starting point, and include a `source` saying where the expectation came from.
 
 ## Run them
 
