@@ -11,7 +11,7 @@
   </p>
   <p align="center">
     <a href="https://github.com/THORCollective/HEARTH/blob/main/LICENSE"><img src="https://img.shields.io/github/license/THORCollective/HEARTH?style=flat-square" alt="License" /></a>
-    <a href="/Keepers/Contributors.md"><img src="https://img.shields.io/badge/contributors-38+-blue?style=flat-square" alt="Contributors" /></a>
+    <a href="/Keepers/Contributors.md"><img src="https://img.shields.io/badge/contributors-40+-blue?style=flat-square" alt="Contributors" /></a>
     <a href="https://github.com/THORCollective/HEARTH/issues"><img src="https://img.shields.io/github/issues/THORCollective/HEARTH?style=flat-square" alt="Issues" /></a>
   </p>
   <p align="center">
@@ -31,7 +31,7 @@
 
 Generating effective, timely threat hunts is hard. You're staring at logs wondering where to start, or you're reading CTI reports and thinking _"someone should hunt for this"_ — but writing up the hypothesis takes time you don't have.
 
-**HEARTH is a community-curated library of 300+ threat hunting hypotheses** that security teams can use, adapt, and build on. Submit a CTI link and our AI pipeline drafts a complete hunt hypothesis for you. Or browse what others have shared, fork what works, and contribute back.
+**HEARTH is a community-curated library of 600+ threat hunting hypotheses** that security teams can use, adapt, and build on. Submit a CTI link and our AI pipeline drafts a complete hunt hypothesis for you. Or browse what others have shared, fork what works, and contribute back.
 
 Every hunt is categorized using the **[PEAK Threat Hunting Framework](https://www.splunk.com/en_us/blog/security/peak-threat-hunting-framework.html)**, giving you structured, actionable starting points — not vague ideas.
 
@@ -41,15 +41,15 @@ Every hunt is categorized using the **[PEAK Threat Hunting Framework](https://ww
 
 HEARTH organizes hunts into three categories based on the PEAK framework. Each serves a different hunting approach:
 
-### 🔥 Flames — Hypothesis-Driven Hunts (250+)
+### 🔥 Flames — Hypothesis-Driven Hunts (450+)
 
 Classic threat hunting. You have a specific theory about adversary behavior and you go looking for evidence. _"An adversary is using DLL side-loading to maintain persistence via a legitimate application."_
 
-### 🪵 Embers — Baselining & Exploration (30+)
+### 🪵 Embers — Baselining & Exploration (70+)
 
 Understand your environment before the bad stuff happens. Establish baselines, find anomalies, and discover what "normal" looks like so you can spot what isn't.
 
-### 🔮 Alchemy — Model-Assisted Detection (25+)
+### 🔮 Alchemy — Model-Assisted Detection (65+)
 
 Algorithmic and ML-powered approaches. Statistical analysis, clustering, and other techniques that let the data surface threats you might not think to look for.
 
@@ -101,10 +101,11 @@ Maintainers reviewing submissions: see **[Review-Process.md](/Keepers/Review-Pro
 | **Interactive Database**     | [Searchable, filterable, sortable](https://thorcollective.github.io/HEARTH/) interface for all hunts. Find what you need fast.                                                                                                                                                                                                                                                      |
 | **Coverage Heatmap**         | [/coverage-heatmap.html](https://hearth.thorcollective.com/coverage-heatmap.html) — the full MITRE ATT&CK matrix, colored by how many community hunts cover each technique. Click a cell to see the hunts (or the gap). Lives alongside the [Coverage Map](https://hearth.thorcollective.com/graph.html) under the [Coverage hub](https://hearth.thorcollective.com/coverage.html). |
 | **AI-Powered CTI Analysis**  | Submit a CTI link — **Claude** reads, analyzes, and drafts a complete hunt hypothesis automatically.                                                                                                                                                                                                                                                                                |
-| **MITRE ATT&CK Integration** | Validates technique IDs against the full Enterprise framework (691 techniques, 99% accuracy).                                                                                                                                                                                                                                                                                       |
+| **MITRE ATT&CK Integration** | Validates technique IDs against the full Enterprise framework (697 techniques, 99% accuracy).                                                                                                                                                                                                                                                                                       |
 | **Duplicate Detection**      | AI-powered similarity analysis flags potential duplicates before they're merged, ranked by closeness with an explanation for each.                                                                                                                                                                                                                                                  |
 | **Automated Workflows**      | GitHub Actions manage the full submission lifecycle — from draft to PR to merge.                                                                                                                                                                                                                                                                                                    |
 | **Review & Regeneration**    | Maintainers can re-roll AI-generated hunts by adding a `regenerate` label — iterate until it's right.                                                                                                                                                                                                                                                                               |
+| **MCP Server**               | [Ask your AI assistant what to hunt for.](/mcp/README.md) Claude, Cursor, VS Code and other MCP clients get read-only search over every hunt, by keyword, threat actor or the log sources you have.                                                                                                                                                                                 |
 | **Contributor Leaderboard**  | [Automated tracking](/Keepers/Contributors.md) of submissions. We celebrate our community.                                                                                                                                                                                                                                                                                          |
 
 ---
@@ -134,7 +135,7 @@ Maintainers reviewing submissions: see **[Review-Process.md](/Keepers/Review-Pro
 
 ### MITRE ATT&CK Integration
 
-- **691 Techniques**: Complete Enterprise ATT&CK framework indexed
+- **697 Techniques**: Complete Enterprise ATT&CK framework indexed
 - **Real-time Validation**: Technique IDs validated against MITRE data
 - **Confidence Scoring**: Multi-tier fallback (MITRE → table → keywords)
 
@@ -153,7 +154,7 @@ Maintainers reviewing submissions: see **[Review-Process.md](/Keepers/Review-Pro
 <details>
 <summary><strong>Built With</strong></summary>
 
-- **Frontend**: HTML5, CSS3, Vanilla JavaScript
+- **Frontend**: HTML5, CSS3, React (loaded in the browser, no build step)
 - **Backend & Automation**: GitHub Actions, Python, Claude (Anthropic) API, OpenAI API, SQLite
 - **Hosting**: GitHub Pages
 
