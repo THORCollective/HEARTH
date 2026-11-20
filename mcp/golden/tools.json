@@ -77,9 +77,7 @@
      "appliance"
     ]
    },
-   "expect_total": 40,
-   "expect_full": 8,
-   "source": "count of hunts labelled appliance / labelled only appliance"
+   "source": "any-of / subset counts over data_source_categories in public/hunts-data.json, computed in the test"
   },
   {
    "name": "Windows shop",
@@ -90,9 +88,7 @@
      "identity"
     ]
    },
-   "expect_total": 524,
-   "expect_full": 221,
-   "source": "any-of / subset counts over labels"
+   "source": "any-of / subset counts over data_source_categories in public/hunts-data.json, computed in the test"
   },
   {
    "name": "M365 shop",
@@ -103,9 +99,7 @@
      "email"
     ]
    },
-   "expect_total": 161,
-   "expect_full": 54,
-   "source": "any-of / subset counts over labels"
+   "source": "any-of / subset counts over data_source_categories in public/hunts-data.json, computed in the test"
   }
  ]
 }

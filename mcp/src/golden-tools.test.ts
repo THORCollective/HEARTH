@@ -11,6 +11,7 @@ import { createServer } from "./server";
  * entry's `source`). Add one by appending to mcp/golden/tools.json.
  */
 const golden = JSON.parse(readFileSync(join(__dirname, "..", "golden", "tools.json"), "utf8"));
+const rawHunts = JSON.parse(readFileSync(join(__dirname, "..", "..", "public", "hunts-data.json"), "utf8"));
 let client: Client;
 
 beforeAll(async () => {
@@ -43,8 +44,11 @@ describe("golden hunts_for_actor", () => {
 
 describe("golden hunts_for_datasources", () => {
   it.each(golden.hunts_for_datasources)("$name", async (g: any) => {
+    // Counted from the raw labels, not pinned, so new hunts don't break the test.
+    const have = new Set<string>(g.args.data_sources);
+    const labelled = rawHunts.map((h: any) => h.data_source_categories ?? []).filter((c: string[]) => c.length);
     const out = await call("hunts_for_datasources", g.args);
-    expect(out.total).toBe(g.expect_total);
-    expect(out.full_matches).toBe(g.expect_full);
+    expect(out.total).toBe(labelled.filter((c: string[]) => c.some((x) => have.has(x))).length);
+    expect(out.full_matches).toBe(labelled.filter((c: string[]) => c.every((x) => have.has(x))).length);
   });
 });
