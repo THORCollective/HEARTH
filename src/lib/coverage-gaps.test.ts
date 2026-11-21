@@ -104,4 +104,35 @@ describe("findCoverageGaps", () => {
     ]);
     expect(run().cantRun).toEqual([]);
   });
+
+  it("ignores retired hunts", () => {
+    const retired = { ...hunt("H003", ["T1012"]), status: "retired" } as Hunt;
+    const r = findCoverageGaps([...HUNTS, retired], TECHNIQUES, ACTORS, INDEX);
+    expect(ids(r.gaps)).toContain("T1012");
+  });
+
+  it("reads revoked technique ids in actor profiles as their replacement", () => {
+    const actors = new Map([["actor:G9", new Set(["T1562.001"])]]);
+    const revokedBy = new Map([["T1562.001", "T1012"]]);
+    const r = findCoverageGaps(HUNTS, TECHNIQUES, actors, INDEX, {
+      actorTechniques: actors.get("actor:G9"),
+      revokedBy,
+    });
+    expect(ids(r.gaps)).toEqual(["T1012"]);
+    expect(r.gaps[0].groupCount).toBe(1);
+  });
+
+  it("leaves a technique out of cantRun when a covering hunt has no known data sources", () => {
+    const unlabelled = hunt("H004", ["T1059"], []);
+    const r = findCoverageGaps(
+      [...HUNTS, unlabelled],
+      TECHNIQUES,
+      ACTORS,
+      INDEX,
+      {
+        dataSources: new Set<DataSourceCategoryId>(["endpoint"]),
+      },
+    );
+    expect(r.cantRun).toEqual([]);
+  });
 });

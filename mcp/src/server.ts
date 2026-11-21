@@ -21,7 +21,7 @@ const MAX_GAPS = 25;
 const MAX_GAP_LIMIT = 100;
 
 /** ATT&CK Enterprise tactics, as named in public/mitre-matrix.json. */
-const TACTICS = [
+export const TACTICS = [
   "Reconnaissance",
   "Resource Development",
   "Initial Access",
@@ -40,7 +40,7 @@ const TACTICS = [
 ] as const;
 
 /** ATT&CK Enterprise platforms, without PRE (use the Reconnaissance or Resource Development tactic). */
-const PLATFORMS = [
+export const PLATFORMS = [
   "Windows",
   "macOS",
   "Linux",
@@ -54,7 +54,7 @@ const PLATFORMS = [
 ] as const;
 
 /** "Command and Control" -> "command-and-control" */
-const tacticShortname = (name: string) => name.toLowerCase().replace(/ /g, "-");
+export const tacticShortname = (name: string) => name.toLowerCase().replace(/ /g, "-");
 
 /** Fixed link, never built from hunt text or user input. */
 const SITE_URL = "https://hearth.thorcollective.com/";
@@ -189,7 +189,7 @@ const GapTechnique = z.object({
   technique: z.string(),
   name: z.string(),
   tactics: z.array(z.string()),
-  group_count: z.number().int().describe("ATT&CK groups known to use it or one of its sub-techniques"),
+  group_count: z.number().int().describe("ATT&CK groups known to use it (for a parent technique, or any of its sub-techniques)"),
   submit_url: z.string().describe("Where to submit a hunt for it"),
 });
 
@@ -449,8 +449,10 @@ export function createServer(source: HearthData | (() => HearthData)): McpServer
             b.relevance - a.relevance ||
             idNumber(b.hunt.id) - idNumber(a.hunt.id),
         );
-      const gaps = findCoverageGaps(visible, data.techniques, data.actors.actorTechniques, data.index, {
+      // Same rule as coverage_gaps: retired hunts never count as coverage, even with include_retired.
+      const gaps = findCoverageGaps(data.hunts, data.techniques, data.actors.actorTechniques, data.index, {
         actorTechniques: data.actors.actorTechniques.get(actor.id) ?? new Set(),
+        revokedBy: data.revokedBy,
       }).gaps;
       const url = actor.external_references?.find((r) => r.source === "mitre-attack")?.url;
       return result({
@@ -575,13 +577,29 @@ export function createServer(source: HearthData | (() => HearthData)): McpServer
           .describe(`Max gaps returned (default ${MAX_GAPS})`),
       }),
       outputSchema: z.object({
-        actor: z.object({ id: z.string(), name: z.string() }).optional(),
+        actor: z
+          .object({
+            id: z.string(),
+            name: z.string(),
+            techniques: z.number().int().describe("Techniques in the actor's ATT&CK profile"),
+          })
+          .optional(),
+        note: z.string().optional().describe("Read this before reporting the result"),
         other_matches: z
           .array(z.object({ id: z.string(), name: z.string() }))
           .optional()
           .describe("Other actors the name could refer to; call again with one of these ids"),
-        techniques_in_scope: z.number().int().describe("Parent techniques checked"),
-        total_gaps: z.number().int(),
+        techniques_in_scope: z
+          .number()
+          .int()
+          .describe("Parent techniques checked; 0 means nothing matched the scope, not full coverage"),
+        total_gaps: z
+          .number()
+          .int()
+          .describe(
+            "Parent techniques no hunt covers. With include_subtechniques, also counts covered " +
+              "parents that have uncovered sub-techniques (see has_hunt)",
+          ),
         gaps: z.array(
           GapTechnique.extend({
             has_hunt: z
@@ -609,14 +627,17 @@ export function createServer(source: HearthData | (() => HearthData)): McpServer
             }),
           )
           .optional()
-          .describe("With data_sources: techniques HEARTH covers, but with no hunt you can run"),
+          .describe(
+            "With data_sources: techniques HEARTH covers, but with no hunt you can run. " +
+              "Same scope as gaps, so Reconnaissance and Resource Development are left out unless asked for",
+          ),
         submit_hunt: SubmitHunt,
       }),
       annotations: { readOnlyHint: true, openWorldHint: false },
     },
     async (args) => {
       const data = current();
-      let actor: { id: string; name: string } | undefined;
+      let actor: { id: string; name: string; techniques: number } | undefined;
       let otherMatches: { id: string; name: string }[] | undefined;
       let actorTechniques: Set<string> | undefined;
       if (args.actor) {
@@ -627,13 +648,13 @@ export function createServer(source: HearthData | (() => HearthData)): McpServer
             isError: true,
           };
         }
-        actor = { id: groupId(best.actor.id), name: best.actor.label };
-        otherMatches = rest.map((r) => ({ id: groupId(r.actor.id), name: r.actor.label }));
         actorTechniques = data.actors.actorTechniques.get(best.actor.id) ?? new Set();
+        actor = { id: groupId(best.actor.id), name: best.actor.label, techniques: actorTechniques.size };
+        otherMatches = rest.map((r) => ({ id: groupId(r.actor.id), name: r.actor.label }));
       }
       const limit = args.limit ?? MAX_GAPS;
       const report = findCoverageGaps(
-        data.hunts.filter((h) => h.status !== "retired"),
+        data.hunts,
         data.techniques,
         data.actors.actorTechniques,
         data.index,
@@ -643,10 +664,19 @@ export function createServer(source: HearthData | (() => HearthData)): McpServer
           platform: args.platform,
           includeSubtechniques: args.include_subtechniques,
           dataSources: args.data_sources && new Set<DataSourceCategoryId>(args.data_sources),
+          revokedBy: data.revokedBy,
         },
       );
+      const note =
+        actor?.techniques === 0
+          ? `ATT&CK lists no techniques for ${actor.name}, so its coverage can't be measured. ` +
+            "No gaps here does not mean HEARTH covers it."
+          : report.techniquesInScope === 0
+            ? "No ATT&CK techniques match this scope, so there is nothing to measure."
+            : undefined;
       return result({
         actor,
+        note,
         other_matches: otherMatches,
         techniques_in_scope: report.techniquesInScope,
         total_gaps: report.gaps.length,

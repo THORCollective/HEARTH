@@ -34,6 +34,8 @@ export interface GapScope {
   includeSubtechniques?: boolean;
   /** Data source categories the team has; adds the cantRun list. */
   dataSources?: ReadonlySet<DataSourceCategoryId>;
+  /** Revoked technique id -> its replacement, applied to actor profiles. */
+  revokedBy?: ReadonlyMap<string, string>;
 }
 
 export interface SubtechniqueGap {
@@ -83,9 +85,10 @@ const byUse = (
 ) => b.groupCount - a.groupCount || a.id.localeCompare(b.id);
 
 /**
- * ATT&CK techniques no hunt covers, at parent-technique level: a parent is
- * covered when a hunt names it or any of its sub-techniques. Ranked by how many
- * ATT&CK groups use the technique, so the most common blind spots come first.
+ * ATT&CK techniques no current hunt covers, at parent-technique level: a parent
+ * is covered when a hunt names it or any of its sub-techniques. Ranked by how
+ * many ATT&CK groups use the technique, so the most common blind spots come
+ * first. Retired hunts never count as coverage.
  */
 export function findCoverageGaps(
   hunts: Hunt[],
@@ -97,20 +100,25 @@ export function findCoverageGaps(
   const exact = new Set<string>();
   const huntsByParent = new Map<string, Hunt[]>();
   for (const h of hunts) {
+    if (h.status === "retired") continue;
     const ts = h.techniques ?? [];
     ts.forEach((t) => exact.add(t));
     for (const p of new Set(ts.map(parentOf)))
       huntsByParent.set(p, [...(huntsByParent.get(p) ?? []), h]);
   }
 
+  // Some actor profiles still use revoked ids, e.g. T1562.001 for T1685.
+  const current = (techs: ReadonlySet<string>) =>
+    new Set([...techs].map((t) => scope.revokedBy?.get(t) ?? t));
   const groupsExact = new Map<string, number>();
   const groupsParent = new Map<string, number>();
-  for (const techs of actorTechniques.values()) {
+  for (const raw of actorTechniques.values()) {
+    const techs = current(raw);
     techs.forEach((t) => count(groupsExact, t));
     new Set([...techs].map(parentOf)).forEach((p) => count(groupsParent, p));
   }
 
-  const actor = scope.actorTechniques;
+  const actor = scope.actorTechniques && current(scope.actorTechniques);
   const actorParents = actor ? new Set([...actor].map(parentOf)) : null;
   const inScope = (t: MatrixTechnique) =>
     (!scope.tactic || (t.tactic_shortnames ?? []).includes(scope.tactic)) &&
@@ -174,11 +182,16 @@ export function findCoverageGaps(
         hasHunt: covering.length > 0,
         ...(scope.includeSubtechniques ? { subtechniques: subs } : {}),
       });
+    // A hunt with no known data sources might be runnable, so it rules the technique out.
     const have = scope.dataSources;
     if (
       have &&
       covering.length > 0 &&
-      !covering.some((h) => canRunHunt(h, have, index))
+      !covering.some(
+        (h) =>
+          huntDataSources(h, index).categories.length === 0 ||
+          canRunHunt(h, have, index),
+      )
     ) {
       const missing = new Set(
         covering.flatMap((h) => huntDataSources(h, index).categories),

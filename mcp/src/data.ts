@@ -136,6 +136,9 @@ const MatrixSchema = z
         })
         .loose(),
     ),
+    deprecated: z
+      .record(z.string(), z.object({ revoked_by: z.string().nullish() }).loose())
+      .optional(),
   })
   .loose();
 
@@ -149,6 +152,8 @@ export interface HearthData {
   techniques: MatrixTechnique[];
   /** Tactic shortname -> name, e.g. "command-and-control" -> "Command and Control". */
   tacticNames: Map<string, string>;
+  /** Revoked ATT&CK technique id -> its replacement. */
+  revokedBy: Map<string, string>;
 }
 
 export interface RawData {
@@ -185,6 +190,11 @@ export function parseData(raw: RawData): HearthData {
     mentions,
     techniques: matrix.techniques,
     tacticNames: new Map(matrix.tactics.map((t) => [t.shortname, t.name])),
+    revokedBy: new Map(
+      Object.entries(matrix.deprecated ?? {}).flatMap(([id, d]) =>
+        d.revoked_by ? [[id, d.revoked_by] as [string, string]] : [],
+      ),
+    ),
   };
 }
 
