@@ -7,6 +7,7 @@ import {
   type ActorIndex,
   type ActorMentionsData,
 } from "../../src/lib/actor-matching";
+import type { MatrixTechnique } from "../../src/lib/coverage-gaps";
 import {
   buildTechniqueIndex,
   type TechniqueIndex,
@@ -129,10 +130,15 @@ const MatrixSchema = z
       z
         .object({
           id: z.string(),
+          name: z.string(),
           tactic_shortnames: z.array(z.string()).optional(),
+          platforms: z.array(z.string()).optional(),
         })
         .loose(),
     ),
+    deprecated: z
+      .record(z.string(), z.object({ revoked_by: z.string().nullish() }).loose())
+      .optional(),
   })
   .loose();
 
@@ -143,6 +149,11 @@ export interface HearthData {
   categoryNames: Record<string, string>;
   actors: ActorIndex;
   mentions: ActorMentionsData;
+  techniques: MatrixTechnique[];
+  /** Tactic shortname -> name, e.g. "command-and-control" -> "Command and Control". */
+  tacticNames: Map<string, string>;
+  /** Revoked ATT&CK technique id -> its replacement. */
+  revokedBy: Map<string, string>;
 }
 
 export interface RawData {
@@ -177,6 +188,13 @@ export function parseData(raw: RawData): HearthData {
     ),
     actors: buildActorIndex(graph, buildTechniqueTactics(matrix)),
     mentions,
+    techniques: matrix.techniques,
+    tacticNames: new Map(matrix.tactics.map((t) => [t.shortname, t.name])),
+    revokedBy: new Map(
+      Object.entries(matrix.deprecated ?? {}).flatMap(([id, d]) =>
+        d.revoked_by ? [[id, d.revoked_by] as [string, string]] : [],
+      ),
+    ),
   };
 }
 

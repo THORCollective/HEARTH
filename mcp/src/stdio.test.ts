@@ -46,9 +46,10 @@ describe("stdio server", () => {
     expect(client.getInstructions()).toMatch(/untrusted/);
   });
 
-  it("lists exactly the four read-only tools", async () => {
+  it("lists exactly the five read-only tools", async () => {
     const { tools } = await client.listTools();
     expect(tools.map((t) => t.name).sort()).toEqual([
+      "coverage_gaps",
       "get_hunt",
       "hunts_for_actor",
       "hunts_for_datasources",
@@ -74,6 +75,10 @@ describe("stdio server", () => {
         },
       ],
       ["hunts_for_datasources", { data_sources: ["appliance"], limit: 3 }],
+      [
+        "coverage_gaps",
+        { actor: "Volt Typhoon", platform: "Windows", data_sources: ["network"], limit: 3 },
+      ],
     ];
     for (const [name, args] of calls) {
       const r = (await client.callTool({ name, arguments: args })) as {

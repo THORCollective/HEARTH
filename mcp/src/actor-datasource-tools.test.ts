@@ -1,8 +1,9 @@
 import { Client, InMemoryTransport } from "@modelcontextprotocol/client";
+import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
 import { loadData, type HearthData } from "./data";
-import { createServer } from "./server";
+import { PLATFORMS, TACTICS, createServer, tacticShortname } from "./server";
 
 const PUBLIC = join(__dirname, "..", "..", "public");
 let data: HearthData;
@@ -24,9 +25,10 @@ beforeAll(async () => {
 });
 
 describe("tools/list", () => {
-  it("exposes all four v0.1 tools, all read-only", async () => {
+  it("exposes all five tools, all read-only", async () => {
     const { tools } = await client.listTools();
     expect(tools.map((t) => t.name).sort()).toEqual([
+      "coverage_gaps",
       "get_hunt",
       "hunts_for_actor",
       "hunts_for_datasources",
@@ -176,5 +178,122 @@ describe("hunts_for_datasources", () => {
       (await call("hunts_for_datasources", { data_sources: ["mainframe"] }))
         .isError,
     ).toBe(true);
+  });
+});
+
+describe("coverage_gaps", () => {
+  it("returns parent-technique gaps, most-used first, skipping pre-compromise tactics", async () => {
+    const r = await call("coverage_gaps", {});
+    expect(r.isError).toBeFalsy();
+    const out = r.structuredContent;
+    expect(out.gaps.length).toBe(Math.min(25, out.total_gaps));
+    expect(out.pre_compromise_skipped).toBeGreaterThan(0);
+    for (const g of out.gaps) {
+      expect(g.technique).toMatch(/^T\d{4}$/);
+      expect(g.tactics).not.toContain("Reconnaissance");
+      expect(g.tactics).not.toContain("Resource Development");
+      expect(g.submit_url).toContain(`technique=${g.technique}`);
+    }
+    const counts = out.gaps.map((g: any) => g.group_count);
+    expect(counts).toEqual([...counts].sort((a, b) => b - a));
+    expect(out.submit_hunt).toContain("submit.html");
+  });
+
+  it("never lists a technique that a hunt covers directly or through a sub-technique", async () => {
+    const covered = new Set(
+      data.hunts.filter((h) => h.status !== "retired").flatMap((h) => (h.techniques ?? []).map((t) => t.split(".")[0])),
+    );
+    const out = (await call("coverage_gaps", { limit: 100 })).structuredContent;
+    for (const g of out.gaps) expect(covered.has(g.technique)).toBe(false);
+  });
+
+  it("shows pre-compromise gaps when their tactic is asked for", async () => {
+    const out = (await call("coverage_gaps", { tactic: "Resource Development" })).structuredContent;
+    expect(out.total_gaps).toBeGreaterThan(0);
+    expect(out.pre_compromise_skipped).toBe(0);
+    for (const g of out.gaps) expect(g.tactics).toContain("Resource Development");
+  });
+
+  it("combines actor, tactic and platform", async () => {
+    const out = (await call("coverage_gaps", { actor: "APT29", tactic: "Discovery", platform: "Windows" }))
+      .structuredContent;
+    expect(out.actor.id).toBe("G0016");
+    const apt29 = data.actors.actorTechniques.get("actor:G0016")!;
+    const parents = new Set([...apt29].map((t) => t.split(".")[0]));
+    for (const g of out.gaps) {
+      expect(parents.has(g.technique)).toBe(true);
+      expect(g.tactics).toContain("Discovery");
+    }
+  });
+
+  it("lists uncovered sub-techniques on request", async () => {
+    const out = (await call("coverage_gaps", { include_subtechniques: true, limit: 100 })).structuredContent;
+    const withSubs = out.gaps.filter((g: any) => g.uncovered_subtechniques.length > 0);
+    expect(withSubs.length).toBeGreaterThan(0);
+    expect(out.gaps.some((g: any) => g.has_hunt)).toBe(true);
+    for (const g of withSubs)
+      for (const s of g.uncovered_subtechniques) expect(s.technique.startsWith(`${g.technique}.`)).toBe(true);
+  });
+
+  it("with data sources, lists covered techniques you can't run", async () => {
+    const out = (await call("coverage_gaps", { data_sources: ["email"], limit: 100 })).structuredContent;
+    expect(out.total_cant_run).toBeGreaterThan(0);
+    for (const c of out.cant_run) {
+      expect(c.hunts.length).toBeGreaterThan(0);
+      expect(c.missing_sources).not.toContain("email");
+    }
+    expect((await call("coverage_gaps", {})).structuredContent.cant_run).toBeUndefined();
+  });
+
+  it("rejects unknown actors, tactics and platforms", async () => {
+    expect((await call("coverage_gaps", { actor: "zzzz-no-such-actor" })).isError).toBe(true);
+    expect((await call("coverage_gaps", { tactic: "Defense Evasion" })).isError).toBe(true);
+    expect((await call("coverage_gaps", { platform: "PRE" })).isError).toBe(true);
+  });
+
+  it("agrees with hunts_for_actor about an actor's gaps", async () => {
+    const a = (await call("hunts_for_actor", { actor: "APT29" })).structuredContent;
+    const g = (await call("coverage_gaps", { actor: "APT29" })).structuredContent;
+    expect(a.total_gaps).toBe(g.total_gaps);
+    expect(a.gaps.map((x: any) => x.technique)).toEqual(g.gaps.map((x: any) => x.technique));
+  });
+
+  it("says when an actor has no techniques to measure, rather than reporting no gaps", async () => {
+    const empty = data.actors.actors.find((a) => (data.actors.actorTechniques.get(a.id)?.size ?? 0) === 0);
+    expect(empty).toBeDefined();
+    const out = (await call("coverage_gaps", { actor: empty!.id.replace(/^actor:/, "") })).structuredContent;
+    expect(out.actor.techniques).toBe(0);
+    expect(out.total_gaps).toBe(0);
+    expect(out.note).toMatch(/can't be measured/);
+    expect((await call("coverage_gaps", {})).structuredContent.note).toBeUndefined();
+  });
+
+  it("counts an actor's revoked technique ids as their replacements", async () => {
+    // Profiles that still list T1562.001 mean T1685 (Disable or Modify Tools).
+    const holder = [...data.actors.actorTechniques].find(([, s]) => s.has("T1562.001") && !s.has("T1685"));
+    expect(holder).toBeDefined();
+    const [id, raw] = holder!;
+    const mapped = new Set([...raw].map((x) => (data.revokedBy.get(x) ?? x).split(".")[0]));
+    const inTactic = data.techniques.filter(
+      (x) => !x.id.includes(".") && mapped.has(x.id) && x.tactic_shortnames?.includes("defense-impairment"),
+    );
+    expect(inTactic.map((x) => x.id)).toContain("T1685");
+    const out = (await call("coverage_gaps", { actor: id.replace(/^actor:/, ""), tactic: "Defense Impairment" }))
+      .structuredContent;
+    expect(out.techniques_in_scope).toBe(inTactic.length);
+  });
+
+  it("keeps hunts_for_actor's gaps on current hunts even with include_retired", async () => {
+    const a = (await call("hunts_for_actor", { actor: "APT29", include_retired: true })).structuredContent;
+    const g = (await call("coverage_gaps", { actor: "APT29" })).structuredContent;
+    expect(a.total_gaps).toBe(g.total_gaps);
+  });
+
+  it("offers exactly the tactics and platforms in the ATT&CK data", () => {
+    const matrix = JSON.parse(readFileSync(join(PUBLIC, "mitre-matrix.json"), "utf8"));
+    expect(TACTICS.map(tacticShortname)).toEqual(matrix.tactics.map((t: any) => t.shortname));
+    const platforms = new Set<string>(matrix.techniques.flatMap((t: any) => t.platforms ?? []));
+    platforms.delete("PRE");
+    expect([...PLATFORMS].sort()).toEqual([...platforms].sort());
   });
 });

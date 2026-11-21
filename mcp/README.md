@@ -8,15 +8,17 @@ Questions you can ask:
 - "Find hunts for macOS persistence."
 - "We only have Windows endpoint and identity logs. Which hunts can we run fully?"
 - "Show me H432."
+- "What Windows persistence techniques does HEARTH have no hunts for?"
 
 ## Tools
 
-| Tool                    | What it does                                                                            |
-| ----------------------- | --------------------------------------------------------------------------------------- |
-| `search_hunts`          | Ranked keyword search, with filters for category, tactic and data sources.              |
-| `get_hunt`              | One hunt in full: hypothesis, why it matters, notes, queries and references.            |
-| `hunts_for_actor`       | Hunts for a threat actor by name, alias or ATT&CK group ID. Includes coverage and gaps. |
-| `hunts_for_datasources` | Hunts your team can run with the log sources it has, and what each one is missing.      |
+| Tool                    | What it does                                                                                                                                           |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `search_hunts`          | Ranked keyword search, with filters for category, tactic and data sources.                                                                             |
+| `get_hunt`              | One hunt in full: hypothesis, why it matters, notes, queries and references.                                                                           |
+| `hunts_for_actor`       | Hunts for a threat actor by name, alias or ATT&CK group ID. Includes coverage and gaps.                                                                |
+| `hunts_for_datasources` | Hunts your team can run with the log sources it has, and what each one is missing.                                                                     |
+| `coverage_gaps`         | ATT&CK techniques no hunt covers, for an actor, tactic or platform, most-used first. With your log sources, also techniques whose hunts you can't run. |
 
 Every tool is read-only. Retired hunts are hidden unless you ask for them.
 
@@ -78,11 +80,11 @@ Add this to `.vscode/mcp.json` in your workspace:
 
 ### Settings
 
-| Environment variable | Effect |
-|---|---|
-| `HEARTH_OFFLINE=1` | Never touch the network; serve the bundled snapshot or the last download. |
-| `HEARTH_DATA_URL` | Fetch data from a mirror instead of `https://hearth.thorcollective.com/`. Must be https (http only for localhost). |
-| `HEARTH_CACHE_DIR` | Where downloaded data is kept. Defaults to your platform's cache folder (`~/Library/Caches/hearth-mcp` on macOS). |
+| Environment variable | Effect                                                                                                             |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `HEARTH_OFFLINE=1`   | Never touch the network; serve the bundled snapshot or the last download.                                          |
+| `HEARTH_DATA_URL`    | Fetch data from a mirror instead of `https://hearth.thorcollective.com/`. Must be https (http only for localhost). |
+| `HEARTH_CACHE_DIR`   | Where downloaded data is kept. Defaults to your platform's cache folder (`~/Library/Caches/hearth-mcp` on macOS).  |
 
 Set them in your client's config, for example `"env": { "HEARTH_OFFLINE": "1" }` next to `"args"`.
 
@@ -102,7 +104,7 @@ For example, in Claude Desktop:
   "mcpServers": {
     "hearth": {
       "command": "npx",
-      "args": ["-y", "@thorcollective/hearth-mcp@0.1.1"],
+      "args": ["-y", "@thorcollective/hearth-mcp@0.2.0"],
       "env": { "HEARTH_OFFLINE": "1" }
     }
   }

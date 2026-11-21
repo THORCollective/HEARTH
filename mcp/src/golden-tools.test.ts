@@ -52,3 +52,34 @@ describe("golden hunts_for_datasources", () => {
     expect(out.full_matches).toBe(labelled.filter((c: string[]) => c.every((x) => have.has(x))).length);
   });
 });
+
+describe("golden coverage_gaps", () => {
+  // Computed from the raw matrix and hunts with the rule written out here, not
+  // the tool code, so new hunts don't break the test.
+  const matrix = JSON.parse(readFileSync(join(__dirname, "..", "..", "public", "mitre-matrix.json"), "utf8"));
+  const tacticName = new Map<string, string>(matrix.tactics.map((t: any) => [t.shortname, t.name]));
+  const covered = new Set(
+    rawHunts
+      .filter((h: any) => h.status !== "retired")
+      .flatMap((h: any) => (h.techniques ?? []).map((t: string) => t.split(".")[0])),
+  );
+  const PRE = new Set(["Reconnaissance", "Resource Development"]);
+
+  it.each(golden.coverage_gaps)("$name", async (g: any) => {
+    const expected = matrix.techniques
+      .filter((t: any) => !t.is_subtechnique && !covered.has(t.id))
+      .filter((t: any) => {
+        const tactics = (t.tactic_shortnames ?? []).map((s: string) => tacticName.get(s));
+        if (g.args.tactic) return tactics.includes(g.args.tactic);
+        return !(tactics.length && tactics.every((x: string) => PRE.has(x)));
+      })
+      .filter((t: any) => !g.args.platform || (t.platforms ?? []).includes(g.args.platform))
+      .map((t: any) => t.id)
+      .sort();
+    const out = await call("coverage_gaps", { ...g.args, limit: 100 });
+    expect(out.total_gaps).toBe(expected.length);
+    // The tool returns the 100 most-used; the set only matches when everything fits.
+    if (expected.length <= 100) expect(out.gaps.map((x: any) => x.technique).sort()).toEqual(expected);
+    for (const x of out.gaps) expect(expected).toContain(x.technique);
+  });
+});
